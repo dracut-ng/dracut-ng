@@ -6,38 +6,19 @@ BOOT_DIR_ABS="$3"
 KERNEL_IMAGE="$4"
 
 # If KERNEL_INSTALL_MACHINE_ID is defined but empty, BOOT_DIR_ABS is a fake directory.
-# So, let's skip to create initrd.
+# In this case, do not create the initrd.
 if ! [[ ${KERNEL_INSTALL_MACHINE_ID-x} ]]; then
     exit 0
 fi
 
-# Do not attempt to create initramfs if the supplied image is already a UKI
-if [[ "$KERNEL_INSTALL_IMAGE_TYPE" = "uki" ]]; then
+# Skip this plugin if we're using a different generator. If nothing is specified,
+# assume we're wanted since we're installed.
+if [ "${KERNEL_INSTALL_INITRD_GENERATOR:-dracut}" != "dracut" ]; then
     exit 0
 fi
 
-# Mismatching the install layout and the --uefi/--no-uefi opts just creates a mess.
-if [[ $KERNEL_INSTALL_LAYOUT == "uki" && -n $KERNEL_INSTALL_STAGING_AREA ]]; then
-    BOOT_DIR_ABS="$KERNEL_INSTALL_STAGING_AREA"
-    if [[ -z $KERNEL_INSTALL_UKI_GENERATOR || $KERNEL_INSTALL_UKI_GENERATOR == "dracut" ]]; then
-        # No uki generator preference set or we have been chosen
-        IMAGE="uki.efi"
-        UEFI_OPTS="--uefi"
-    elif [[ -z $KERNEL_INSTALL_INITRD_GENERATOR || $KERNEL_INSTALL_INITRD_GENERATOR == "dracut" ]]; then
-        # We aren't the uki generator, but we have been requested to make the initrd
-        IMAGE="initrd"
-        UEFI_OPTS="--no-uefi"
-    else
-        exit 0
-    fi
-elif [[ $KERNEL_INSTALL_LAYOUT == "bls" && -n $KERNEL_INSTALL_STAGING_AREA ]]; then
-    BOOT_DIR_ABS="$KERNEL_INSTALL_STAGING_AREA"
-    if [[ -z $KERNEL_INSTALL_INITRD_GENERATOR || $KERNEL_INSTALL_INITRD_GENERATOR == "dracut" ]]; then
-        IMAGE="initrd"
-        UEFI_OPTS="--no-uefi"
-    else
-        exit 0
-    fi
+if [[ -d "$BOOT_DIR_ABS" ]]; then
+    INITRD="initrd"
 else
     # No layout information, use users --uefi/--no-uefi preference
     UEFI_OPTS=""
