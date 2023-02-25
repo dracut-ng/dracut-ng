@@ -177,8 +177,7 @@ qemu_add_drive() {
         -device "scsi-hd,bus=scsi${index}.0,drive=drive-data${index},id=data${index},${bootindex:+bootindex=$bootindex,}serial=${name}" \
         ')'
 
-    # shellcheck disable=SC2219
-    let "${1}++"
+    [ $(("${1}++")) -ne 0 ]
 }
 
 test_marker_reset() {
