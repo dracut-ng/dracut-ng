@@ -133,7 +133,6 @@ EOF
 
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         --modules "test dash dmsquash-live qemu" \
-        --omit "rngd" \
         --drivers "ext4 ntfs3 sd_mod" \
         --install "mkfs.ext4" \
         --include /tmp/ntfs3.rules /lib/udev/rules.d/ntfs3.rules \
@@ -142,7 +141,6 @@ EOF
 
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         --modules "test dmsquash-live-autooverlay qemu" \
-        --omit "rngd" \
         --drivers "ext4 sd_mod" \
         --install "mkfs.ext4" \
         --no-hostonly --no-hostonly-cmdline \

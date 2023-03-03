@@ -149,7 +149,7 @@ test_setup() {
     )
 
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -o "plymouth network kernel-network-modules" \
+        -o "dbus" \
         -a "debug" \
         -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
         --no-hostonly-cmdline -N \

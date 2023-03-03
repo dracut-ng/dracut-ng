@@ -65,7 +65,6 @@ test_setup() {
     echo -n "test" > /tmp/key
 
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -o "plymouth network kernel-network-modules" \
         -a "test" \
         -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
         --no-hostonly-cmdline -N \

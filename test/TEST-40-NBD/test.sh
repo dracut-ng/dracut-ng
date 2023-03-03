@@ -469,7 +469,6 @@ test_setup() {
     )
 
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -o "plymouth iscsi nfs" \
         -a "debug watchdog ${USE_NETWORK}" \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
