@@ -40,11 +40,10 @@ Chat (Matrix):
 See [News](NEWS.md) for information about changes in the releases and
 the [Wiki](https://github.com/dracut-ng/dracut-ng/wiki) to share information.
 
-See the github issue tracker for things which still need to be done and [Hacking](docs/HACKING.md)
-for some instructions on how to get started.  There is also a mailing list
-that is being used for the discussion -- initramfs@vger.kernel.org.
-It is a typical vger list, send mail to majordomo@vger.kernel.org with body
-of 'subscribe initramfs email@host.com'
+See the [GitHub issue tracker](https://github.com/dracut-ng/dracut-ng/issues) for
+things which still need to be done. This is also the main place used for
+discussions.
+See [Hacking](docs/HACKING.md) for some instructions on how to get started.
 
 
 Licensed under the GPLv2
