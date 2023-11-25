@@ -1,4 +1,7 @@
-ARG TAG=musl
+# ARG TAG=musl # to enable musl instead of glibc
+
+ARG TAG=systemd
+
 FROM docker.io/gentoo/portage:latest as portage
 
 # uefi stub in a separate builder
