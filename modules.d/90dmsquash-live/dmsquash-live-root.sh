@@ -25,6 +25,7 @@ squash_image=$(getarg rd.live.squashimg)
 getargbool 0 rd.live.ram && live_ram="yes"
 getargbool 0 rd.live.overlay.reset && reset_overlay="yes"
 getargbool 0 rd.live.overlay.readonly && readonly_overlay="--readonly" || readonly_overlay=""
+getargbool 0 rd.live.overlay.nouserconfirmprompt && overlay_no_user_confirm_prompt="--noprompt" || overlay_no_user_confirm_prompt=""
 overlay=$(getarg rd.live.overlay)
 getargbool 0 rd.writable.fsimg && writable_fsimg="yes"
 overlay_size=$(getarg rd.live.overlay.size=)
@@ -218,7 +219,7 @@ do_live_overlay() {
     fi
 
     if [ -z "$setup" ] || [ -n "$readonly_overlay" ]; then
-        if [ -n "$setup" ]; then
+        if [ -n "$setup" ] || [ -n "$overlay_no_user_confirm_prompt" ]; then
             warn "Using temporary overlay."
         elif [ -n "$devspec" ] && [ -n "$pathspec" ]; then
             [ -z "$m" ] \
