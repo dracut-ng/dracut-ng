@@ -1272,6 +1272,11 @@ of the base root filesystem and the persistent overlay, or
 root filesystem, and `/run/overlayfs` becomes the temporary, writable, upper
 directory overlay, to complete the bootable root filesystem.
 
+**rd.live.overlay.nouserconfirmprompt=**::
+Suppresses the 'Using temporary overlay' blocking prompt that asks for a
+user confirmation before proceeding to boot. This allows the boot process
+to continue to completion without user interation.
+
 **rd.live.overlay.reset=**1::
 Specifies that a persistent overlay should be reset on boot.  All previous root
 filesystem changes are vacated by this action.
