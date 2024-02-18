@@ -58,7 +58,8 @@ installkernel() {
             yenta_socket intel_lpss_pci spi_pxa2xx_platform \
             atkbd i8042 firewire-ohci pcmcia hv-vmbus \
             virtio virtio_ring virtio_pci pci_hyperv \
-            surface_aggregator_registry "=drivers/pcmcia"
+            surface_aggregator_registry psmouse \
+            "=drivers/pcmcia"
 
         if [[ ${DRACUT_ARCH:-$(uname -m)} == arm* || ${DRACUT_ARCH:-$(uname -m)} == aarch64 || ${DRACUT_ARCH:-$(uname -m)} == riscv* ]]; then
             # arm/aarch64 specific modules
