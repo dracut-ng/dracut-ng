@@ -1,11 +1,11 @@
-dracut
+dracut-ng
 ====
 
-dracut is an event driven initramfs infrastructure.
+dracut-ng is an event driven initramfs infrastructure.
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](docs/CODE_OF_CONDUCT.md)
 
-dracut (the tool) is used to create an initramfs image by copying tools
+dracut-ng (the tool) is used to create an initramfs image by copying tools
 and files from an installed system and combining it with the
 dracut framework, usually found in /usr/lib/dracut/modules.d.
 
@@ -30,15 +30,15 @@ Documentation:
  - [Introduction](man/dracut.asc)
  - [User Manual](man/dracut.usage.asc)
 
-Currently dracut is developed on [github.com](https://github.com/dracutdevs/dracut).
+Currently dracut-ng is developed on [github.com](https://github.com/dracut-ng/dracut-ng).
 
-The release tarballs are [here](https://github.com/dracutdevs/dracut/releases).
+The release tarballs are [here](https://github.com/dracut-ng/dracut-ng/releases).
 
 Gitter (chat):
  - https://gitter.im/dracutdevs/Lobby
 
 See [News](NEWS.md) for information about changes in the releases and
-the [Wiki](https://github.com/dracutdevs/dracut/wiki) to share information.
+the [Wiki](https://github.com/dracut-ng/dracut-ng/wiki) to share information.
 
 See the github issue tracker for things which still need to be done and [Hacking](docs/HACKING.md)
 for some instructions on how to get started.  There is also a mailing list
