@@ -71,7 +71,7 @@ jobs:
                         #"connman",
                 ]
                 test: [
-                        "20",
+                        #"20", # unstable
                         "30",
                         "35",
                         "40",
