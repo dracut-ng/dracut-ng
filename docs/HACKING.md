@@ -4,9 +4,9 @@ Please make sure to follow our [Contribution Guidelines](../CONTRIBUTING.md).
 
 ## git
 
-Currently dracut lives on github.com.
+Currently dracut-ng lives on github.com.
 
-* https://github.com/dracutdevs/dracut.git
+* https://github.com/dracut-ng/dracut-ng.git
 
 Pull requests should be filed preferably on github nowadays.
 
@@ -244,8 +244,8 @@ $ podman run --rm -it \
 ```
 
 with `[CONTAINER]` being one of the
-[github `dracutdevs` containers](https://github.com/orgs/dracutdevs/packages),
-e.g. `ghcr.io/dracutdevs/fedora:latest`.
+[github `dracut-ng` containers](https://github.com/orgs/dracut-ng/packages),
+e.g. `ghcr.io/dracut-ng/fedora:latest`.
 
 ### On bare metal
 
