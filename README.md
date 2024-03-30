@@ -34,8 +34,8 @@ Currently dracut-ng is developed on [github.com](https://github.com/dracut-ng/dr
 
 The release tarballs are [here](https://github.com/dracut-ng/dracut-ng/releases).
 
-Gitter (chat):
- - https://gitter.im/dracutdevs/Lobby
+Chat (Matrix):
+ - https://matrix.to/#/#dracut-ng:matrix.org
 
 See [News](NEWS.md) for information about changes in the releases and
 the [Wiki](https://github.com/dracut-ng/dracut-ng/wiki) to share information.
