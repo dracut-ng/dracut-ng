@@ -3,12 +3,12 @@ on:
     schedule:
         -  cron: '30 11 * * *'   # every day at 11:30 UTC
     push:
-        branches: [ master ]
+        branches: [ main ]
         paths:
             - 'test/container/**'
             - '.github/workflows/container.yml'
     pull_request:
-        branches: [ master ]
+        branches: [ main ]
         paths:
             - 'test/container/**'
             - '.github/workflows/container.yml'

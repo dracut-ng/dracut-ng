@@ -28,7 +28,7 @@ This documents contains the necessary steps to conduct a successful release.
 
    ```console
    $ git commit -m "docs: update NEWS.md and AUTHORS" NEWS.md AUTHORS
-   $ git push origin master
+   $ git push origin main
    ```
 
 5. Tag the release, validate the tag and push
