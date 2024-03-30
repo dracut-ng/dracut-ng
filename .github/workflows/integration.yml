@@ -2,7 +2,7 @@ name: Integration Test
 
 on:
     pull_request:
-        branches: [ master ]
+        branches: [ main ]
 
 env:
     DEBUGFAIL: "${{ secrets.ACTIONS_STEP_DEBUG && 'rd.debug' }}"

@@ -48,7 +48,7 @@ printf "#!/bin/sh\n# shellcheck disable=SC2034\nDRACUT_VERSION=%s\n" "$NEW_VERSI
 git config user.name "Dracut Release Bot"
 git config user.email "<>"
 git commit -m "docs: update NEWS.md and AUTHORS" NEWS.md AUTHORS dracut-version.sh
-git push origin master
+git push origin main
 git tag "$NEW_VERSION" -m "$NEW_VERSION"
 git push --tags
 
