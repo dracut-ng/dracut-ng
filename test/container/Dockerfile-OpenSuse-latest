@@ -1,7 +1,5 @@
 FROM registry.opensuse.org/opensuse/tumbleweed-dnf:latest
 
-MAINTAINER https://github.com/dracutdevs/dracut
-
 # Install needed packages for the dracut CI container
 RUN dnf -y install --setopt=install_weak_deps=False \
     dash asciidoc mdadm lvm2 dmraid cryptsetup nfs-utils nbd dhcp-server \

@@ -1,7 +1,5 @@
 FROM docker.io/archlinux
 
-MAINTAINER https://github.com/dracutdevs/dracut
-
 # Install needed packages for the dracut CI container
 RUN pacman --noconfirm -Syu \
     linux dash strace dhclient asciidoc cpio pigz squashfs-tools \

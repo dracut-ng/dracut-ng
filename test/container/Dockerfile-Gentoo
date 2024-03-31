@@ -23,8 +23,6 @@ COPY --from=kernel /lib/modules /lib/modules
 COPY --from=efistub /usr/lib/systemd/boot/efi /usr/lib/systemd/boot/efi
 ARG TAG
 
-MAINTAINER https://github.com/dracutdevs/dracut
-
 # required by sys-fs/dmraid
 RUN echo 'sys-fs/lvm2 lvm thin' > /etc/portage/package.use/lvm2
 
