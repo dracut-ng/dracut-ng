@@ -1,7 +1,5 @@
 FROM registry.fedoraproject.org/fedora:latest
 
-MAINTAINER https://github.com/dracutdevs/dracut
-
 # Install needed packages for the dracut CI container
 RUN dnf -y install --setopt=install_weak_deps=False \
     asciidoc \
