@@ -6,7 +6,7 @@ This documents contains the necessary steps to conduct a successful release.
 
     Get a first template with [`clog`](https://github.com/clog-tool/clog-cli)
     ```console
-    $ clog -F -r https://github.com/dracutdevs/dracut
+    $ clog -F -r https://github.com/dracut-ng/dracut-ng
     ```
 
 2. Update the contributors list in NEWS.md
@@ -42,7 +42,7 @@ This documents contains the necessary steps to conduct a successful release.
    Add the section from `NEWS.md` to the git tag message excluding the Rendered
    view entry.
 
-6. Create a new release on github (https://github.com/dracutdevs/dracut/releases/new)
+6. Create a new release on github (https://github.com/dracut-ng/dracut-ng/releases/new)
    - Add the section from `NEWS.md` to the release.
 
-7. Open a new milestone, move all unfinished issue from the previous milestone to the new one and close the released milestone (https://github.com/dracutdevs/dracut/milestones)
+7. Open a new milestone, move all unfinished issue from the previous milestone to the new one and close the released milestone (https://github.com/dracut-ng/dracut-ng/milestones)
