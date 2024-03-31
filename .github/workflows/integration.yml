@@ -68,7 +68,6 @@ jobs:
                 ]
                 network: [
                         "network-manager",
-                        "network-legacy",
                         #"systemd-networkd",
                         #"connman",
                 ]
@@ -79,6 +78,38 @@ jobs:
                         "40",
                         "60",
                         # "50", # times out
+                ]
+            fail-fast: false
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            options: "--privileged -v /dev:/dev"
+        steps:
+            -   name: "Checkout Repository"
+                uses: actions/checkout@v3
+                with:
+                    fetch-depth: 0
+
+            -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+                run: USE_NETWORK=${{ matrix.network }} ./tools/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    network-legacy:
+        name: ${{ matrix.test }} on ${{ matrix.container }} using ${{ matrix.network }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 45
+        concurrency:
+            group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
+            cancel-in-progress: true
+        strategy:
+            matrix:
+                container: [
+                        "opensuse",
+                ]
+                network: [
+                        "network-legacy",
+                ]
+                test: [
+                        "30",
+                        "35",
+                        "40",
                 ]
             fail-fast: false
         container:
