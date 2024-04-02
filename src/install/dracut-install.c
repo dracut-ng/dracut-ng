@@ -687,11 +687,9 @@ void mark_hostonly(const char *path)
 
         _asprintf(&fulldstpath, "%s/lib/dracut/hostonly-files", destrootdir);
 
-        int fd = open(fulldstpath, O_RDONLY | O_APPEND, 0600);
-        if (fd != -1)
-                f = fdopen(fd, "a");
+        f = fopen(fulldstpath, "a");
 
-        if (fd == -1 || f == NULL) {
+        if (f == NULL) {
                 log_error("Could not open '%s' for writing.", fulldstpath);
                 return;
         }
