@@ -63,6 +63,5 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     tcpdump \
     tpm2-tools \
     wget \
-    which \
     xz \
     && dnf -y remove dracut --noautoremove && dnf -y update && dnf clean all
