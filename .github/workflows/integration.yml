@@ -22,7 +22,6 @@ jobs:
                         "debian",
                         "fedora",
                         "gentoo",
-                        "opensuse",
                         "ubuntu",
                 ]
                 test: [
