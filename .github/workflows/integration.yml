@@ -71,7 +71,7 @@ jobs:
                         #"connman",
                 ]
                 test: [
-                        #"20", # unstable
+                        "20",
                         "30",
                         "35",
                         "40",
@@ -106,6 +106,7 @@ jobs:
                         "network-legacy",
                 ]
                 test: [
+                        "20",
                         "30",
                         "35",
                         "40",
