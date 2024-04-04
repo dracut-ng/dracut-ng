@@ -75,8 +75,8 @@ jobs:
                         "30",
                         "35",
                         "40",
+                        "50",
                         "60",
-                        # "50", # times out
                 ]
             fail-fast: false
         container:
