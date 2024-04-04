@@ -4,7 +4,6 @@
 /man/dracut.conf.5
 /dracut.conf.d/*.conf
 /man/dracut.cmdline.7
-/dracut.html
 /man/dracut.kernel.7
 /man/dracut.bootup.7
 /man/dracut.modules.7
