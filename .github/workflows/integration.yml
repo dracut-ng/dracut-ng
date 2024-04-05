@@ -155,3 +155,30 @@ jobs:
 
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
                 run: ./tools/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    dracut-cpio:
+        name: ${{ matrix.test }} on ${{ matrix.container }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        concurrency:
+            group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            cancel-in-progress: true
+        strategy:
+            matrix:
+                container: [
+                        "opensuse",
+                ]
+                test: [
+                        "63",
+                ]
+            fail-fast: false
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            options: "--privileged -v /dev:/dev"
+        steps:
+            -   name: "Checkout Repository"
+                uses: actions/checkout@v1
+                with:
+                    fetch-depth: 0
+
+            -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+                run: ./tools/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
