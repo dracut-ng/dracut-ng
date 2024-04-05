@@ -7,6 +7,24 @@ KERNEL_VERSION="$2"
 BOOT_DIR_ABS="${3%/*}/0-rescue"
 KERNEL_IMAGE="$4"
 
+# If the initrd was provided on the kernel command line, we shouldn't generate our own.
+if [[ "$COMMAND" = "add" && "$#" -gt 4 ]]; then
+    exit 0
+fi
+
+# Do not attempt to create initramfs if the supplied image is already a UKI
+if [[ "$KERNEL_INSTALL_IMAGE_TYPE" = "uki" ]]; then
+    exit 0
+fi
+
+if [[ "$KERNEL_INSTALL_UKI_GENERATOR" = "dracut" ]]; then
+    # Rescue images currently not compatible with UKIs
+    exit 0
+elif [[ "${KERNEL_INSTALL_INITRD_GENERATOR:-dracut}" != "dracut" ]]; then
+    # We are not the initrd generator
+    exit 0
+fi
+
 dropindirs_sort() {
     suffix=$1
     shift
