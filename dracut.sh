@@ -1886,7 +1886,11 @@ mkdir -p "${initdir}"/lib/dracut
 
 if [[ $kernel_only != yes ]]; then
     mkdir -p "${initdir}/etc/cmdline.d"
-    mkdir -m 0755 "${initdir}"/lib/dracut/hooks
+    mkdir -m 0755 -p "${initdir}"/var/lib/dracut/hooks
+
+    # symlink to old hooks location for compatibility
+    ln_r /var/lib/dracut/hooks /lib/dracut/hooks
+
     for _d in $hookdirs; do
         # shellcheck disable=SC2174
         mkdir -m 0755 -p "${initdir}/lib/dracut/hooks/$_d"
