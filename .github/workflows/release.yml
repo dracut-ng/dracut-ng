@@ -22,6 +22,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install dependencies
+        run: |
+          sudo apt -y update
+          sudo apt -y install asciidoc
+
       - name: Build
         run: bash ${GITHUB_WORKSPACE}/tools/release.sh ${{ inputs.tag }}
 

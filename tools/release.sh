@@ -50,6 +50,8 @@ cat -s NEWS_body_new.md CONTRIBUTORS.md > release.md
 # dracut-version.sh
 printf "#!/bin/sh\n# shellcheck disable=SC2034\nDRACUT_VERSION=%s\n" "$NEW_VERSION" > dracut-version.sh
 
+make dracut.html
+
 if [ -z "$(git config --get user.name)" ]; then
     git config user.name "dracutng[bot]"
 fi
@@ -59,7 +61,7 @@ if [ -z "$(git config --get user.email)" ]; then
 fi
 
 # Check in AUTHORS and NEWS.md
-git commit -m "docs: update NEWS.md and AUTHORS" NEWS.md AUTHORS dracut-version.sh
+git commit -m "docs: update NEWS.md and AUTHORS" NEWS.md AUTHORS dracut-version.sh dracut.html
 
 # git push can fail due to insufficient permissions
 if ! git push -u origin release; then
