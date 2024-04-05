@@ -7,7 +7,12 @@ set -ex
 RUN_ID="$1"
 TESTS=$2
 
-./configure
+# if is cargo installed, let's build and test dracut-cpio
+if command -v cargo > /dev/null; then
+    ./configure --enable-dracut-cpio
+else
+    ./configure
+fi
 
 NCPU=$(getconf _NPROCESSORS_ONLN)
 

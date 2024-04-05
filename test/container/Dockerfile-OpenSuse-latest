@@ -6,6 +6,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     bash-completion \
     btrfsprogs \
     bzip2 \
+    cargo \
     cryptsetup \
     dash \
     dbus-broker \
