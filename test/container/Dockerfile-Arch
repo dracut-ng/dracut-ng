@@ -4,17 +4,25 @@ RUN pacman --noconfirm -Syu \
     asciidoc \
     astyle \
     base-devel \
+    bluez \
     btrfs-progs \
+    busybox \
+    cargo \
+    cifs-utils \
     connman \
     cpio \
     dash \
     dhclient \
     dhcp \
     dmraid \
+    elfutils \
+    f2fs-tools \
     git \
     glibc \
+    jq \
     linux \
     lvm2 \
+    lzop \
     mdadm \
     multipath-tools \
     nbd \
@@ -22,15 +30,21 @@ RUN pacman --noconfirm -Syu \
     nfsidmap \
     nfs-utils \
     ntfs-3g \
+    nvme-cli \
     open-iscsi \
+    openssh \
     parted \
     pigz \
+    plymouth \
     qemu \
+    rng-tools \
+    sbsigntools \
     shellcheck \
     shfmt \
     squashfs-tools \
     strace \
     tcpdump \
     tgt \
+    tpm2-tools \
     vi \
     && yes | pacman -Scc
