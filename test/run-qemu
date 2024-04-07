@@ -58,6 +58,8 @@ if ! [ -f "$VMLINUZ" ]; then
         VMLINUZ="/boot/vmlinuz-${KVERSION}"
     elif [ -f "/boot/vmlinux-${KVERSION}" ]; then
         VMLINUZ="/boot/vmlinux-${KVERSION}"
+    elif [ -f "/boot/kernel-${KVERSION}" ]; then
+        VMLINUZ="/boot/kernel-${KVERSION}"
     else
         echo "Could not find a Linux kernel version $KVERSION to test with!" >&2
         echo "Please install linux." >&2
