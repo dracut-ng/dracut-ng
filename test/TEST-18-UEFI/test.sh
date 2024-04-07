@@ -36,7 +36,7 @@ test_marker_check() {
 }
 
 test_dracut() {
-    TEST_DRACUT_ARGS+=" --local --no-hostonly --no-early-microcode --add test --kver $KVERSION"
+    TEST_DRACUT_ARGS+=" --no-compress --local --no-hostonly --no-early-microcode --add test --kver $KVERSION"
 
     # shellcheck disable=SC2162
     IFS=' ' read -a TEST_DRACUT_ARGS_ARRAY <<< "$TEST_DRACUT_ARGS"
