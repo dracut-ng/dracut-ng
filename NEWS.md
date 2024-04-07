@@ -1,5 +1,24 @@
 [Rendered view](https://github.com/dracut-ng/dracut-ng/blob/master/NEWS.md)
 
+dracut-ng-101
+=============
+
+#### Bug Fixes
+
+Release 101 resolves a regression introduced by release 100 - https://github.com/dracut-ng/dracut-ng/issues/130 .
+
+* **dracut.sh:**  revert: "do not add device if find_block_device returns" ([0885d6b2](https://github.com/dracut-ng/dracut-ng/commit/0885d6b2bb9d449f8a4e4f89ded3b619338df28d))
+* **dmsquash-live:**  update documentation ([d2d41a36](https://github.com/dracut-ng/dracut-ng/commit/d2d41a36d86aca3deb05fe1be41bd06576c13d3f))
+* **dracut-install:**  continue parsing if ldd prints "cannot be preloaded" ([ace9e1b5](https://github.com/dracut-ng/dracut-ng/commit/ace9e1b58c09e1e91621ad2219f7a96b7edbbd38))
+* **dracut-systemd:**  replace `rd.udev.log-priority` with `rd.udev.log_level` ([c1275d87](https://github.com/dracut-ng/dracut-ng/commit/c1275d878cc6f6dac5b59a2024e6b5cc777dd6c7))
+* **dracut.sh:**  omit compressed kernel modules from find searching exec files ([ad36b61e](https://github.com/dracut-ng/dracut-ng/commit/ad36b61ec1a26714fbe3049435eff7199ffea5e0))
+*   improve Gentoo container ([76963537](https://github.com/dracut-ng/dracut-ng/commit/76963537edcfbad21c5fa096834e982564653808))
+
+#### Contributors
+
+- Antonio Alvarez Feijoo <antonio.feijoo@suse.com>
+- Laszlo Gombos <laszlo.gombos@gmail.com>
+
 dracut-ng-100
 =============
 
