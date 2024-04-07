@@ -12,6 +12,7 @@ on:
                 default: 'all'
                 options:
                     - "all"
+                    - "alpine"
                     - "fedora"
                     - "arch"
                     - "debian"

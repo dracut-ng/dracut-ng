@@ -8,7 +8,7 @@ env:
     DEBUGFAIL: "${{ secrets.ACTIONS_STEP_DEBUG && 'rd.debug' }}"
 
 jobs:
-    test:
+    basic:
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-latest
         timeout-minutes: 30
@@ -18,28 +18,16 @@ jobs:
         strategy:
             matrix:
                 container: [
+                        "alpine",
                         "arch",
                         "debian",
                         "fedora",
                         "gentoo",
+                        "opensuse",
                         "ubuntu",
                 ]
                 test: [
                         "01",
-                        "02",
-                        "03",
-                        "04",
-                        "10",
-                        "11",
-                        "12",
-                        "13",
-                        "14",
-                        "15",
-                        "16",
-                        "17",
-                        "18",
-                        "62",
-                        "98",
                 ]
             fail-fast: false
         container:
@@ -123,3 +111,46 @@ jobs:
 
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
                 run: USE_NETWORK=${{ matrix.network }} ./tools/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    extended:
+        name: ${{ matrix.test }} on ${{ matrix.container }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        concurrency:
+            group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            cancel-in-progress: true
+        strategy:
+            matrix:
+                container: [
+                        "arch",
+                        "debian",
+                        "fedora",
+                        "ubuntu",
+                ]
+                test: [
+                        "02",
+                        "03",
+                        "04",
+                        "10",
+                        "11",
+                        "12",
+                        "13",
+                        "14",
+                        "15",
+                        "16",
+                        "17",
+                        "18",
+                        "62",
+                        "98",
+                ]
+            fail-fast: false
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            options: "--privileged -v /dev:/dev"
+        steps:
+            -   name: "Checkout Repository"
+                uses: actions/checkout@v1
+                with:
+                    fetch-depth: 0
+
+            -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+                run: ./tools/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
