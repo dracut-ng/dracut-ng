@@ -69,6 +69,8 @@ test_setup() {
         dpkg -L systemd | xargs -r "$PKGLIBDIR"/dracut-install ${initdir:+-D "$initdir"} -o -a -l
     elif type -P pacman &> /dev/null; then
         pacman -Q -l systemd | while read -r _ a; do printf -- "%s\0" "$a"; done | xargs -0 -r "$PKGLIBDIR"/dracut-install ${initdir:+-D "$initdir"} -o -a -l
+    elif type -P equery &> /dev/null; then
+        equery f 'sys-apps/systemd*' | xargs -r "$PKGLIBDIR"/dracut-install ${initdir:+-D "$initdir"} -o -a -l
     else
         echo "Can't install systemd base"
         return 1
