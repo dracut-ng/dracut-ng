@@ -39,8 +39,8 @@ elif [[ -d /boot/efi/loader/entries || -L /boot/efi/loader/entries ]] \
     IMG="/boot/efi/$MACHINE_ID/$KERNEL_VERSION/initrd"
 elif [[ -f /lib/modules/${KERNEL_VERSION}/initrd ]]; then
     IMG="/lib/modules/${KERNEL_VERSION}/initrd"
-elif [[ -f /boot/initramfs-${KERNEL_VERSION}.img ]]; then
-    IMG="/boot/initramfs-${KERNEL_VERSION}.img"
+elif [[ -f /boot/@INITRDPREFIX@${KERNEL_VERSION}@INITRDSUFFIX@ ]]; then
+    IMG="/boot/@INITRDPREFIX@${KERNEL_VERSION}@INITRDSUFFIX@"
 elif mountpoint -q /efi; then
     IMG="/efi/$MACHINE_ID/$KERNEL_VERSION/initrd"
 elif mountpoint -q /boot/efi; then
