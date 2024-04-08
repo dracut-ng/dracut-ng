@@ -4,31 +4,41 @@ ARG TAG=systemd
 
 FROM docker.io/gentoo/portage:latest as portage
 
-# uefi stub in a separate builder
-FROM docker.io/gentoo/stage3 as efistub
-COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
-
-# systemd-boot
-RUN echo 'sys-apps/systemd-utils boot kernel-install' > /etc/portage/package.use/systemd-utils && \
-    emerge -qv sys-apps/systemd-utils
-
 # kernel and its dependencies in a separate builder
 FROM docker.io/gentoo/stage3:$TAG as kernel
 COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
-# disable initramfs generation, only need the kernel image itself
-RUN echo 'sys-kernel/gentoo-kernel-bin -initramfs' > /etc/portage/package.use/kernel
+
+# Speed-up using binpkgs
+RUN echo "MAKEOPTS=\"-j$(nproc) -l$(nproc)\"" >> /etc/portage/make.conf
+RUN echo "EMERGE_DEFAULT_OPTS=\"-j$(nproc) -l$(nproc)\"" >> /etc/portage/make.conf
+RUN echo "FEATURES=\"getbinpkg binpkg-ignore-signature parallel-fetch parallel-install pkgdir-index-trusted\"" >> /etc/portage/make.conf
+# systemd-boot, no need to install intramfs with kernel
+RUN echo "USE=\"boot kernel-install -initramfs\"" >> /etc/portage/make.conf
+# Use debian's installkernel
 RUN echo 'sys-kernel/installkernel -systemd' >> /etc/portage/package.use/kernel
+# required by sys-fs/dmraid
+RUN echo 'sys-fs/lvm2 lvm thin' > /etc/portage/package.use/lvm2
+
 RUN emerge -qv sys-kernel/gentoo-kernel-bin
+
+# uefi stub in a separate builder
+FROM docker.io/gentoo/stage3 as efistub
+COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
+COPY --from=kernel /etc/portage /etc/portage
+COPY --from=kernel /usr/src /usr/src
+COPY --from=kernel /boot /boot
+COPY --from=kernel /lib/modules /lib/modules
+
+RUN if [[ "$TAG" == *systemd* ]]; then emerge -qv sys-apps/systemd; else emerge -qv sys-apps/systemd-utils; fi
 
 FROM docker.io/gentoo/stage3:$TAG
 COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
+COPY --from=kernel /etc/portage /etc/portage
+COPY --from=kernel /usr/src /usr/src
 COPY --from=kernel /boot /boot
 COPY --from=kernel /lib/modules /lib/modules
 COPY --from=efistub /usr/lib/systemd/boot/efi /usr/lib/systemd/boot/efi
 ARG TAG
-
-# required by sys-fs/dmraid
-RUN echo 'sys-fs/lvm2 lvm thin' > /etc/portage/package.use/lvm2
 
 # workaround for https://bugs.gentoo.org/734022 whereby Gentoo does not support NFS4 with musl
 RUN if [[ "$TAG" == 'musl' ]]; then echo 'net-fs/nfs-utils -nfsv4' > /etc/portage/package.use/nfs-utils ; fi
@@ -42,6 +52,7 @@ RUN if [[ "$TAG" != 'musl' ]]; then emerge -qv sys-block/tgt sys-block/open-iscs
 RUN emerge -qv \
     app-arch/cpio \
     app-emulation/qemu \
+    app-portage/gentoolkit \
     app-shells/dash \
     net-fs/nfs-utils \
     net-misc/dhcp \
