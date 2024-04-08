@@ -144,7 +144,8 @@ if test "$enable_dracut_cpio" = "yes"; then
     fi
 fi
 
-cat > Makefile.inc.$$ << EOF
+{
+    cat << EOF
 prefix ?= ${prefix}
 libdir ?= ${libdir:-${prefix}/lib}
 datadir ?= ${datadir:-${prefix}/share}
@@ -159,7 +160,6 @@ KMOD_LIBS ?= $(${PKG_CONFIG} --libs " libkmod >= 23 ")
 FTS_LIBS ?= ${FTS_LIBS}
 EOF
 
-{
     [[ $programprefix ]] && echo "programprefix ?= ${programprefix}"
     [[ $execprefix ]] && echo "execprefix ?= ${execprefix}"
     [[ $includedir ]] && echo "includedir ?= ${includedir}"
@@ -169,6 +169,5 @@ EOF
     [[ $infodir ]] && echo "infodir ?= ${infodir}"
     [[ $systemdsystemunitdir ]] && echo "systemdsystemunitdir ?= ${systemdsystemunitdir}"
     [[ $bashcompletiondir ]] && echo "bashcompletiondir ?= ${bashcompletiondir}"
-} >> Makefile.inc.$$
-
-mv Makefile.inc.$$ Makefile.inc
+} > Makefile.inc
+:
