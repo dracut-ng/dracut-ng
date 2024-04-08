@@ -55,9 +55,7 @@ jobs:
                         "fedora",
                 ]
                 network: [
-                        "network-manager",
-                        #"systemd-networkd",
-                        #"connman",
+                        "network",
                 ]
                 test: [
                         "20",
@@ -98,6 +96,36 @@ jobs:
                         "20",
                         "30",
                         "35",
+                        "40",
+                ]
+            fail-fast: false
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            options: "--privileged -v /dev:/dev"
+        steps:
+            -   name: "Checkout Repository"
+                uses: actions/checkout@v4
+                with:
+                    fetch-depth: 0
+
+            -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+                run: USE_NETWORK=${{ matrix.network }} ./tools/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    systemd-networkd:
+        name: ${{ matrix.test }} on ${{ matrix.container }} using ${{ matrix.network }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 45
+        concurrency:
+            group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
+            cancel-in-progress: true
+        strategy:
+            matrix:
+                container: [
+                        "arch",
+                ]
+                network: [
+                        "systemd-networkd",
+                ]
+                test: [
                         "40",
                 ]
             fail-fast: false
