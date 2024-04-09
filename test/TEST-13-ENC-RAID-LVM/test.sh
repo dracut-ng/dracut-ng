@@ -23,7 +23,7 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=/dev/dracut/root rw rd.auto rd.retry=20 console=ttyS0,115200n81 selinux=0 rd.debug rootwait $LUKSARGS rd.shell=0 $DEBUGFAIL" \
+        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=/dev/dracut/root rw rd.auto rd.retry=20 console=ttyS0,115200n81 selinux=0 rootwait $LUKSARGS rd.shell=0 $DEBUGFAIL" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check || return 1
     echo "CLIENT TEST END: [OK]"
@@ -33,7 +33,7 @@ test_run() {
     echo "CLIENT TEST START: Any LUKS"
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=/dev/dracut/root rw quiet rd.auto rd.retry=20 rd.info console=ttyS0,115200n81 selinux=0 rd.debug  $DEBUGFAIL" \
+        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=/dev/dracut/root rw quiet rd.auto rd.retry=20 rd.info console=ttyS0,115200n81 selinux=0 $DEBUGFAIL" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check || return 1
     echo "CLIENT TEST END: [OK]"
@@ -43,7 +43,7 @@ test_run() {
     echo "CLIENT TEST START: Wrong LUKS UUID"
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=/dev/dracut/root rw quiet rd.auto rd.retry=10 rd.info console=ttyS0,115200n81 selinux=0 rd.debug  $DEBUGFAIL rd.luks.uuid=failme" \
+        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=/dev/dracut/root rw quiet rd.auto rd.retry=10 rd.info console=ttyS0,115200n81 selinux=0 $DEBUGFAIL rd.luks.uuid=failme" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check && return 1
     echo "CLIENT TEST END: [OK]"

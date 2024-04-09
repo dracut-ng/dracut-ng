@@ -9,7 +9,7 @@ test_check() {
 
 # Uncomment this to debug failures
 #DEBUGFAIL="rd.debug loglevel=7 rd.break=initqueue rd.shell"
-SERVER_DEBUG="rd.debug loglevel=7"
+#SERVER_DEBUG="rd.debug loglevel=7"
 #SERIAL="unix:/tmp/server.sock"
 
 run_server() {
