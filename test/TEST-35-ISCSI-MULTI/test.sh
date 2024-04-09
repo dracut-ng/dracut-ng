@@ -60,7 +60,7 @@ run_client() {
         -net nic,macaddr=52:54:00:12:34:00,model=e1000 \
         -net nic,macaddr=52:54:00:12:34:01,model=e1000 \
         -net socket,connect=127.0.0.1:12331 \
-        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot rw rd.auto rd.retry=50 console=ttyS0,115200n81 selinux=0 rd.debug=0 rd.shell=0 $DEBUGFAIL $*" \
+        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot rw rd.auto rd.retry=50 console=ttyS0,115200n81 selinux=0 rd.shell=0 $DEBUGFAIL $*" \
         -initrd "$TESTDIR"/initramfs.testing
     if ! test_marker_check iscsi-OK; then
         echo "CLIENT TEST END: $test_name [FAILED - BAD EXIT]"
