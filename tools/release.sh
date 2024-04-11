@@ -50,7 +50,7 @@ cat -s NEWS_body_new.md CONTRIBUTORS.md > release.md
 # dracut-version.sh
 printf "#!/bin/sh\n# shellcheck disable=SC2034\nDRACUT_VERSION=%s\n" "$NEW_VERSION" > dracut-version.sh
 
-make dracut.html
+DRACUT_FULL_VERSION=$NEW_VERSION DRACUT_MAIN_VERSION=$NEW_VERSION make dracut.html
 
 if [ -z "$(git config --get user.name)" ]; then
     git config user.name "dracutng[bot]"
