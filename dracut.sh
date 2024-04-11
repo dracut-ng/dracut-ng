@@ -1668,10 +1668,13 @@ if [[ $hostonly ]] && [[ $hostonly_default_device != "no" ]]; then
         mp=$(readlink -f "$dracutsysrootdir$mp")
         mountpoint "$mp" > /dev/null 2>&1 || continue
         _dev=$(find_block_device "$mp")
-        _bdev=$(readlink -f "/dev/block/$_dev")
-        [[ -b $_bdev ]] && _dev=$_bdev
-        [[ $mp == "/" ]] && root_devs+=("$_dev")
-        push_host_devs "$_dev"
+        # shellcheck disable=SC2181
+        if [[ $? -eq 0 ]]; then
+            _bdev=$(readlink -f "/dev/block/$_dev")
+            [[ -b $_bdev ]] && _dev=$_bdev
+            [[ $mp == "/" ]] && root_devs+=("$_dev")
+            push_host_devs "$_dev"
+        fi
         if [[ $(find_mp_fstype "$mp") == btrfs ]]; then
             for i in $(btrfs_devs "$mp"); do
                 [[ $mp == "/" ]] && root_devs+=("$i")
