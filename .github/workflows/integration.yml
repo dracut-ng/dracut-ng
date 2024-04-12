@@ -25,6 +25,7 @@ jobs:
                         "gentoo",
                         "opensuse",
                         "ubuntu",
+                        "void",
                 ]
                 test: [
                         "01",

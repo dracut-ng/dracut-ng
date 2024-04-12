@@ -1,0 +1,44 @@
+FROM ghcr.io/void-linux/void-glibc-full
+
+RUN xbps-install -Syu xbps && xbps-install -yu \
+    asciidoc \
+    base-devel \
+    bash \
+    binutils \
+    btrfs-progs \
+    busybox \
+    cargo \
+    cpio \
+    cryptsetup \
+    curl \
+    dhclient \
+    dmraid \
+    dosfstools \
+    e2fsprogs \
+    edk2-ovmf \
+    eudev \
+    git \
+    gnupg \
+    gummiboot \
+    iputils \
+    kbd \
+    libkmod-devel \
+    linux \
+    lvm2 \
+    make \
+    mdadm \
+    mtools \
+    nbd \
+    NetworkManager \
+    ntfs-3g \
+    open-iscsi \
+    openssh \
+    parted \
+    pigz \
+    procps-ng \
+    qemu \
+    squashfs-tools \
+    sudo \
+    util-linux \
+    xz \
+    && rm -rf /var/cache/xbps

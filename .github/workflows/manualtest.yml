@@ -19,6 +19,7 @@ on:
                     - "ubuntu"
                     - "opensuse"
                     - "gentoo"
+                    - "void"
             env:
                 description: 'Environment (optional)'
                 default: '{"DEBUGFAIL": "rd.debug"}'

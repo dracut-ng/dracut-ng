@@ -36,6 +36,7 @@ jobs:
                     - { dockerfile: 'Dockerfile-Gentoo',            tag: 'gentoo:latest' }
                     - { dockerfile: 'Dockerfile-Ubuntu',            tag: 'ubuntu:latest' }
                     - { dockerfile: 'Dockerfile-alpine',            tag: 'alpine:latest' }
+                    - { dockerfile: 'Dockerfile-Void',              tag: 'void:latest' }
         steps:
             -   name: Check out the repo
                 uses: actions/checkout@v4
