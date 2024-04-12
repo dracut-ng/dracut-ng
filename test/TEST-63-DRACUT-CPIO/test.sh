@@ -21,19 +21,16 @@ test_dracut_cpio() {
 
     mkdir -p "$tdir"
 
-    # VM script to print sentinel on boot
-    # write to kmsg so that sysrq messages don't race with console output
     cat > "$tdir/init.sh" << EOF
-echo "Image with ${dracut_cpio_params[*]} booted successfully" > /dev/kmsg
-echo 1 > /proc/sys/kernel/sysrq
-echo o > /proc/sysrq-trigger
-sleep 20
+echo "Image with ${dracut_cpio_params[*]} booted successfully"
+poweroff -f
 EOF
 
-    "$DRACUT" -l --drivers "" \
+    "$DRACUT" -l --no-kernel --drivers "" \
         "${dracut_cpio_params[@]}" \
         --modules "bash base" \
         --include "$tdir/init.sh" /lib/dracut/hooks/emergency/00-init.sh \
+        --install "poweroff" \
         --no-hostonly --no-hostonly-cmdline \
         "$tdir/initramfs" \
         || return 1
