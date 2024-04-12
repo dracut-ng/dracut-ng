@@ -8,4 +8,4 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     tcpdump iproute iputils kbd NetworkManager btrfsprogs tgt dbus-broker \
     iscsiuio open-iscsi ShellCheck shfmt procps pigz parted squashfs \
     util-linux-systemd systemd-boot \
-    && dnf -y remove dracut && dnf -y update && dnf clean all
+    && rpm -e --nodeps dracut && dnf -y update && dnf clean all
