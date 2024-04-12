@@ -1140,6 +1140,9 @@ if ! [[ $outfile ]]; then
         mkdir -p "$dracutsysrootdir$efidir/Linux"
         outfile="$dracutsysrootdir$efidir/Linux/linux-$kernel${MACHINE_ID:+-${MACHINE_ID}}${BUILD_ID:+-${BUILD_ID}}.efi"
     else
+        if ! [[ $initrdname ]]; then
+            initrdname="initramfs-${kernel}.img"
+        fi
         if [[ -d "$dracutsysrootdir"/efi/loader/entries || -L "$dracutsysrootdir"/efi/loader/entries ]] \
             && [[ $MACHINE_ID ]] \
             && [[ -d "$dracutsysrootdir"/efi/${MACHINE_ID} || -L "$dracutsysrootdir"/efi/${MACHINE_ID} ]]; then
@@ -1155,7 +1158,7 @@ if ! [[ $outfile ]]; then
         elif [[ -f "$dracutsysrootdir"/lib/modules/${kernel}/initrd ]]; then
             outfile="$dracutsysrootdir/lib/modules/${kernel}/initrd"
         elif [[ -e $dracutsysrootdir/boot/vmlinuz-${kernel} || -e $dracutsysrootdir/boot/vmlinux-${kernel} ]]; then
-            outfile="$dracutsysrootdir/boot/initramfs-${kernel}.img"
+            outfile="$dracutsysrootdir/boot/$initrdname"
         elif [[ -z $dracutsysrootdir ]] \
             && [[ $MACHINE_ID ]] \
             && mountpoint -q /efi; then
@@ -1165,7 +1168,7 @@ if ! [[ $outfile ]]; then
             && mountpoint -q /boot/efi; then
             outfile="/boot/efi/${MACHINE_ID}/${kernel}/initrd"
         else
-            outfile="$dracutsysrootdir/boot/initramfs-${kernel}.img"
+            outfile="$dracutsysrootdir/boot/$initrdname"
         fi
     fi
 fi

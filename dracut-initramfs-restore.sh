@@ -46,8 +46,15 @@ elif mountpoint -q /efi; then
 elif mountpoint -q /boot/efi; then
     IMG="/boot/efi/$MACHINE_ID/$KERNEL_VERSION/initrd"
 else
-    echo "No initramfs image found to restore!"
-    exit 1
+    files=("/boot/initr*${KERNEL_VERSION}*")
+    if [ "${#files[@]}" -ge 1 ] && [ -e "${files[0]}" ]; then
+        IMG="${files[0]}"
+    elif [[ -f /boot/initramfs-linux.img ]]; then
+        IMG="/boot/initramfs-linux.img"
+    else
+        echo "No initramfs image found to restore!"
+        exit 1
+    fi
 fi
 
 cd /run/initramfs
