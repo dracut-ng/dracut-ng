@@ -29,15 +29,19 @@ jobs:
             fail-fast: false
             matrix:
                 config:
-                    - { dockerfile: 'Dockerfile-Fedora-latest',     tag: 'fedora:latest' }
-                    - { dockerfile: 'Dockerfile-OpenSuse-latest',   tag: 'opensuse:latest' }
-                    - { dockerfile: 'Dockerfile-Arch',              tag: 'arch:latest' }
-                    - { dockerfile: 'Dockerfile-Debian',            tag: 'debian:latest' }
-                    - { dockerfile: 'Dockerfile-Gentoo',            tag: 'gentoo:latest' }
-                    - { dockerfile: 'Dockerfile-Ubuntu',            tag: 'ubuntu:latest' }
-                    - { dockerfile: 'Dockerfile-alpine',            tag: 'alpine:latest' }
-                    - { dockerfile: 'Dockerfile-Void',              tag: 'void:latest' }
+                    - { dockerfile: 'Dockerfile-Fedora-latest',     tag: 'fedora:latest',     platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-OpenSuse-latest',   tag: 'opensuse:latest',   platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-Arch',              tag: 'arch:latest',       platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-Debian',            tag: 'debian:latest',     platform: 'linux/arm64,linux/amd64' }
+                    - { dockerfile: 'Dockerfile-Gentoo',            tag: 'gentoo:latest',     platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-Ubuntu',            tag: 'ubuntu:latest',     platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-alpine',            tag: 'alpine:latest',     platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-Void',              tag: 'void:latest',       platform: 'linux/amd64' }
         steps:
+            -   name: Set up QEMU
+                uses: docker/setup-qemu-action@v3
+                with:
+                    platforms: ${{ matrix.config.platform }}
             -   name: Check out the repo
                 uses: actions/checkout@v4
             -   name: Set up Docker Buildx
@@ -56,3 +60,4 @@ jobs:
                     file: test/container/${{ matrix.config.dockerfile }}
                     tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}
                     push: ${{ github.event_name == 'push' ||  github.event_name == 'schedule' }}
+                    platforms: ${{ matrix.config.platform }}
