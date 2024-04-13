@@ -1662,7 +1662,8 @@ if [[ $hostonly ]] && [[ $hostonly_default_device != "no" ]]; then
         "/usr/lib64" \
         "/boot" \
         "/boot/efi" \
-        "/boot/zipl"; do
+        "/boot/zipl" \
+        "/efi"; do
         mp=$(readlink -f "$dracutsysrootdir$mp")
         mountpoint "$mp" > /dev/null 2>&1 || continue
         _dev=$(find_block_device "$mp")
