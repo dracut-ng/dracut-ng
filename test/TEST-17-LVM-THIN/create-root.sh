@@ -11,6 +11,7 @@ udevadm control --reload
 udevadm settle
 
 set -ex
+modprobe dm_thin_pool
 for dev in /dev/disk/by-id/ata-disk_disk[123]; do
     lvm pvcreate -ff -y "$dev"
 done
