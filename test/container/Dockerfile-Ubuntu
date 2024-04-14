@@ -50,7 +50,6 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     shellcheck \
     squashfs-tools \
     strace \
-    sudo \
     systemd \
     tcpdump \
     tgt \
