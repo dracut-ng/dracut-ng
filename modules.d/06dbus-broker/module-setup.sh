@@ -6,7 +6,6 @@
 check() {
 
     # If the binary(s) requirements are not fulfilled the module can't be installed
-    require_binaries busctl || return 1
     require_binaries dbus-broker || return 1
     require_binaries dbus-broker-launch || return 1
 

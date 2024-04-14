@@ -3,6 +3,7 @@
 # called by dracut
 check() {
     require_binaries sed grep NetworkManager || return 1
+    require_binaries busctl || return 1
 
     # do not add this module by default
     return 255
