@@ -3,6 +3,7 @@ FROM registry.fedoraproject.org/fedora:latest
 # Install needed packages for the dracut CI container
 RUN dnf -y install --setopt=install_weak_deps=False \
     asciidoc \
+    astyle \
     bash-completion \
     biosdevname \
     bluez \
@@ -27,6 +28,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     iproute \
     iputils \
     iscsi-initiator-utils \
+    jq \
     kbd \
     kernel \
     kmod-devel \
@@ -49,6 +51,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     pcsc-lite \
     pigz \
     qemu-system-x86-core \
+    qrencode \
     rng-tools \
     rpm-build \
     sbsigntools \

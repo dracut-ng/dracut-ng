@@ -37,6 +37,7 @@ RUN pacman --noconfirm -Syu \
     pigz \
     plymouth \
     qemu \
+    qrencode \
     rng-tools \
     sbsigntools \
     shellcheck \
