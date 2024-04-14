@@ -24,7 +24,6 @@ RUN apk add --no-cache \
     git \
     gpg \
     grep \
-    gummiboot \
     iputils \
     kbd \
     kmod-dev \
@@ -40,7 +39,6 @@ RUN apk add --no-cache \
     ntfs-3g-progs \
     open-iscsi \
     openssh \
-    ovmf \
     parted \
     partx \
     pigz \

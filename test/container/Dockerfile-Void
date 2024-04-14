@@ -19,7 +19,6 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     eudev \
     git \
     gnupg \
-    gummiboot \
     iputils \
     kbd \
     libkmod-devel \
@@ -35,10 +34,8 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     openssh \
     parted \
     pigz \
-    procps-ng \
     qemu \
     squashfs-tools \
-    sudo \
-    util-linux \
+    systemd-boot-efistub \
     xz \
     && rm -rf /var/cache/xbps
