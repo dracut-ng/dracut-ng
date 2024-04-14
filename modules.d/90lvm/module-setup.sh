@@ -86,6 +86,10 @@ install() {
     # debian udev rules
     inst_rules 56-lvm.rules 60-persistent-storage-lvm.rules
 
+    if dracut_module_included "systemd"; then
+        inst_multiple -o "$udevrulesdir"/69-dm-lvm.rules
+    fi
+
     inst_script "$moddir/lvm_scan.sh" /sbin/lvm_scan
     inst_hook cmdline 30 "$moddir/parse-lvm.sh"
 
