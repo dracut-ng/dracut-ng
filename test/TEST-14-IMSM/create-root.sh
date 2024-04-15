@@ -29,9 +29,9 @@ udevadm settle
 sfdisk -g /dev/mapper/isw*Test0
 sfdisk --no-reread /dev/mapper/isw*Test0 << EOF
 ,4M
-,28M
-,28M
-,28M
+,56M
+,56M
+,56M
 EOF
 
 set -x
