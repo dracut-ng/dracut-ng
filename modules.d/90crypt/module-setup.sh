@@ -31,6 +31,9 @@ depends() {
             deps+=" tpm2-tss"
         fi
     fi
+    if dracut_module_included "systemd"; then
+        deps+=" systemd-ask-password"
+    fi
     echo "$deps"
     return 0
 }
@@ -167,13 +170,10 @@ install() {
             "$tmpfilesdir"/cryptsetup.conf \
             "$systemdutildir"/system-generators/systemd-cryptsetup-generator \
             "$systemdutildir"/systemd-cryptsetup \
-            "$systemdsystemunitdir"/systemd-ask-password-console.path \
-            "$systemdsystemunitdir"/systemd-ask-password-console.service \
             "$systemdsystemunitdir"/cryptsetup.target \
             "$systemdsystemunitdir"/sysinit.target.wants/cryptsetup.target \
             "$systemdsystemunitdir"/remote-cryptsetup.target \
-            "$systemdsystemunitdir"/initrd-root-device.target.wants/remote-cryptsetup.target \
-            systemd-ask-password systemd-tty-ask-password-agent
+            "$systemdsystemunitdir"/initrd-root-device.target.wants/remote-cryptsetup.target
     fi
 
     # Install required libraries.
