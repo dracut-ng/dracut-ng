@@ -14,7 +14,7 @@ check() {
 # Module dependency requirements.
 depends() {
     # This module has external dependency on other module(s).
-    echo systemd-journald
+    echo systemd-journald systemd-modules-load
     # Return 0 to include the dependent module(s) in the initramfs.
     return 0
 }
@@ -27,8 +27,6 @@ installkernel() {
 
 # Install the required file(s) and directories for the module in the initramfs.
 install() {
-    local _mods
-
     if [[ $prefix == /run/* ]]; then
         dfatal 'systemd does not work with a prefix, which contains "/run"!!'
         exit 1
@@ -44,7 +42,6 @@ install() {
         "$systemdutildir"/systemd-fsck \
         "$systemdutildir"/systemd-udevd \
         "$systemdutildir"/systemd-sysctl \
-        "$systemdutildir"/systemd-modules-load \
         "$systemdutildir"/systemd-vconsole-setup \
         "$systemdutildir"/systemd-volatile-root \
         "$systemdutildir"/systemd-sysroot-fstab-check \
@@ -93,7 +90,6 @@ install() {
         "$systemdsystemunitdir"/systemd-udevd-kernel.socket \
         "$systemdsystemunitdir"/systemd-ask-password-plymouth.path \
         "$systemdsystemunitdir"/systemd-ask-password-console.service \
-        "$systemdsystemunitdir"/systemd-modules-load.service \
         "$systemdsystemunitdir"/systemd-halt.service \
         "$systemdsystemunitdir"/systemd-poweroff.service \
         "$systemdsystemunitdir"/systemd-reboot.service \
@@ -106,7 +102,6 @@ install() {
         "$systemdsystemunitdir"/systemd-vconsole-setup.service \
         "$systemdsystemunitdir"/systemd-volatile-root.service \
         "$systemdsystemunitdir"/systemd-sysctl.service \
-        "$systemdsystemunitdir"/sysinit.target.wants/systemd-modules-load.service \
         "$systemdsystemunitdir"/sysinit.target.wants/systemd-ask-password-console.path \
         "$systemdsystemunitdir"/sockets.target.wants/systemd-udevd-control.socket \
         "$systemdsystemunitdir"/sockets.target.wants/systemd-udevd-kernel.socket \
@@ -133,29 +128,7 @@ install() {
         /etc/udev/udev.hwdb
 
     inst_multiple -o \
-        /usr/lib/modules-load.d/*.conf \
         /usr/lib/sysctl.d/*.conf
-
-    modules_load_get() {
-        local _line i
-        for i in "$dracutsysrootdir$1"/*.conf; do
-            [[ -f $i ]] || continue
-            while read -r _line || [ -n "$_line" ]; do
-                case $_line in
-                    \#*) ;;
-
-                    \;*) ;;
-
-                    *)
-                        echo "$_line"
-                        ;;
-                esac
-            done < "$i"
-        done
-    }
-
-    mapfile -t _mods < <(modules_load_get /usr/lib/modules-load.d)
-    [[ ${#_mods[@]} -gt 0 ]] && hostonly='' instmods "${_mods[@]}"
 
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
@@ -170,13 +143,9 @@ install() {
             /etc/machine-info \
             /etc/vconsole.conf \
             /etc/locale.conf \
-            /etc/modules-load.d/*.conf \
             /etc/sysctl.d/*.conf \
             /etc/sysctl.conf \
             /etc/udev/udev.conf
-
-        mapfile -t _mods < <(modules_load_get /etc/modules-load.d)
-        [[ ${#_mods[@]} -gt 0 ]] && hostonly='' instmods "${_mods[@]}"
     fi
 
     if ! [[ -e "$initdir/etc/machine-id" ]]; then
