@@ -1,10 +1,10 @@
 #!/bin/bash
 
-COMMAND="$1"
-KERNEL_VERSION="$2"
+COMMAND="${1:?}"
+KERNEL_VERSION="${2:?}"
 #shellcheck disable=SC2034
 BOOT_DIR_ABS="$3"
-KERNEL_IMAGE="$4"
+KERNEL_IMAGE="${4:?}"
 
 # If the initrd was provided on the kernel command line, we shouldn't generate our own.
 if [[ "$COMMAND" != "add" || "$#" -gt 4 ]]; then
@@ -34,8 +34,8 @@ if [[ -f ${KERNEL_IMAGE%/*}/$IMAGE ]]; then
     # we found an initrd or uki.efi at the same place as the kernel
     # use this and don't generate a new one
     [[ $KERNEL_INSTALL_VERBOSE == 1 ]] && echo \
-        "There is an ${IMAGE} image at the same place as the kernel, skipping generating a new one"
-    cp --reflink=auto "$IMAGE_PREGENERATED" "$KERNEL_INSTALL_STAGING_AREA/$IMAGE" \
+        "There is an $IMAGE image at the same place as the kernel, skipping generating a new one"
+    cp --reflink=auto "${KERNEL_IMAGE%/*}/$IMAGE" "$KERNEL_INSTALL_STAGING_AREA/$IMAGE" \
         && chown root:root "$KERNEL_INSTALL_STAGING_AREA/$IMAGE" \
         && chmod 0600 "$KERNEL_INSTALL_STAGING_AREA/$IMAGE" \
         && exit 0

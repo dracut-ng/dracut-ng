@@ -2,10 +2,10 @@
 
 export LANG=C
 
-COMMAND="$1"
-KERNEL_VERSION="$2"
+COMMAND="${1:?}"
+KERNEL_VERSION="${2:?}"
 BOOT_DIR_ABS="${3%/*}/0-rescue"
-KERNEL_IMAGE="$4"
+KERNEL_IMAGE="${4:?}"
 
 # If the initrd was provided on the kernel command line, we shouldn't generate our own.
 if [[ "$COMMAND" = "add" && "$#" -gt 4 ]]; then
