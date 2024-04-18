@@ -1,70 +1,53 @@
-# ARG TAG=musl # to enable musl instead of glibc
-
-ARG TAG=systemd
-
 FROM docker.io/gentoo/portage:latest as portage
 
-# kernel and its dependencies in a separate builder
-FROM docker.io/gentoo/stage3:$TAG as kernel
+FROM docker.io/gentoo/stage3:systemd
 COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
 
 # Speed-up using binpkgs
 RUN echo "MAKEOPTS=\"-j$(nproc) -l$(nproc)\"" >> /etc/portage/make.conf
 RUN echo "EMERGE_DEFAULT_OPTS=\"-j$(nproc) -l$(nproc)\"" >> /etc/portage/make.conf
 RUN echo "FEATURES=\"getbinpkg binpkg-ignore-signature parallel-fetch parallel-install pkgdir-index-trusted\"" >> /etc/portage/make.conf
+
 # systemd-boot, no need to install intramfs with kernel
 RUN echo "USE=\"boot kernel-install -initramfs\"" >> /etc/portage/make.conf
+
 # Use debian's installkernel
 RUN echo 'sys-kernel/installkernel -systemd' >> /etc/portage/package.use/kernel
+
+# Enable cryptsetup tools (includes unit generator for crypttab)
+RUN echo 'sys-apps/systemd cryptsetup' >> /etc/portage/package.use/systemd
+
 # required by sys-fs/dmraid
-RUN echo 'sys-fs/lvm2 lvm thin' > /etc/portage/package.use/lvm2
+RUN echo 'sys-fs/lvm2 lvm' >> /etc/portage/package.use/lvm2
 
-RUN emerge -qv sys-kernel/gentoo-kernel-bin
-
-# uefi stub in a separate builder
-FROM docker.io/gentoo/stage3 as efistub
-COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
-COPY --from=kernel /etc/portage /etc/portage
-COPY --from=kernel /usr/src /usr/src
-COPY --from=kernel /boot /boot
-COPY --from=kernel /lib/modules /lib/modules
-
-RUN if [[ "$TAG" == *systemd* ]]; then emerge -qv sys-apps/systemd; else emerge -qv sys-apps/systemd-utils; fi
-
-FROM docker.io/gentoo/stage3:$TAG
-COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
-COPY --from=kernel /etc/portage /etc/portage
-COPY --from=kernel /usr/src /usr/src
-COPY --from=kernel /boot /boot
-COPY --from=kernel /lib/modules /lib/modules
-COPY --from=efistub /usr/lib/systemd/boot/efi /usr/lib/systemd/boot/efi
-ARG TAG
-
-# workaround for https://bugs.gentoo.org/734022 whereby Gentoo does not support NFS4 with musl
-RUN if [[ "$TAG" == 'musl' ]]; then echo 'net-fs/nfs-utils -nfsv4' > /etc/portage/package.use/nfs-utils ; fi
-
-# workaround for packages do not compile on musl
-# https://bugs.gentoo.org/713490 for tgt
-# https://bugs.gentoo.org/908587 for open-iscsi
-RUN if [[ "$TAG" != 'musl' ]]; then emerge -qv sys-block/tgt sys-block/open-iscsi ; fi
-
-# Install needed packages for the dracut CI container
 RUN emerge -qv \
+    app-admin/rsyslog \
     app-arch/cpio \
+    app-crypt/tpm2-tools \
     app-emulation/qemu \
+    app-misc/jq \
     app-portage/gentoolkit \
     app-shells/dash \
+    dev-lang/rust-bin \
+    net-fs/cifs-utils \
     net-fs/nfs-utils \
     net-misc/dhcp \
+    net-wireless/bluez \
+    sys-apps/biosdevname \
     sys-apps/busybox \
+    sys-apps/nvme-cli \
+    sys-apps/rng-tools \
+    sys-apps/systemd \
     sys-block/nbd \
+    sys-block/open-iscsi \
     sys-block/parted \
+    sys-block/tgt \
     sys-fs/btrfs-progs \
     sys-fs/cryptsetup \
     sys-fs/dmraid \
-    sys-fs/lvm2 \
     sys-fs/mdadm \
     sys-fs/multipath-tools \
     sys-fs/ntfs3g \
     sys-fs/squashfs-tools \
+    sys-kernel/gentoo-kernel-bin \
     && rm -rf /var/cache/* /usr/share/doc/* /usr/share/man/*
