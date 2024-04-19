@@ -9,12 +9,12 @@ TEST_DESCRIPTION="live root on a squash filesystem"
 test_run() {
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/root.img root
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root
 
     # NTFS drive
     if modprobe --dry-run ntfs3 &> /dev/null && command -v mkfs.ntfs &> /dev/null; then
-        qemu_add_drive_args disk_index disk_args "$TESTDIR"/root_ntfs.img root_ntfs
+        qemu_add_drive disk_index disk_args "$TESTDIR"/root_ntfs.img root_ntfs
     fi
 
     test_marker_reset
@@ -106,13 +106,13 @@ test_setup() {
     # Create the blank file to use as a root filesystem
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/root.img root 160
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 160
 
     # NTFS drive
     if modprobe --dry-run ntfs3 &> /dev/null && command -v mkfs.ntfs &> /dev/null; then
         dd if=/dev/zero of="$TESTDIR"/root_ntfs.img bs=1MiB count=160
-        qemu_add_drive_args disk_index disk_args "$TESTDIR"/root_ntfs.img root_ntfs
+        qemu_add_drive disk_index disk_args "$TESTDIR"/root_ntfs.img root_ntfs
     fi
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
@@ -141,7 +141,7 @@ EOF
 
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         --modules "test dmsquash-live-autooverlay qemu" \
-        --drivers "ext4 sd_mod" \
+        --drivers "ext4" \
         --install "mkfs.ext4" \
         --no-hostonly --no-hostonly-cmdline \
         --force "$TESTDIR"/initramfs.testing-autooverlay "$KVERSION" || return 1

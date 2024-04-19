@@ -49,8 +49,8 @@ test_dracut() {
 test_run() {
     declare -a disk_args=()
     declare -i disk_index=1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/squashfs.img root
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
+    qemu_add_drive disk_index disk_args "$TESTDIR"/squashfs.img root
 
     test_marker_reset
     "$testdir"/run-qemu "${disk_args[@]}" -net none \
@@ -78,8 +78,8 @@ test_setup() {
     mkdir -p "$TESTDIR"/ESP/EFI/BOOT
     test_dracut \
         --modules 'rootfs-block test' \
-        --kernel-cmdline 'root=/dev/disk/by-id/ata-disk_root ro rd.skipfsck rootfstype=squashfs' \
-        --drivers 'ahci sd_mod squashfs' \
+        --kernel-cmdline 'root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root ro rd.skipfsck rootfstype=squashfs' \
+        --drivers 'squashfs' \
         --uefi \
         "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
 }

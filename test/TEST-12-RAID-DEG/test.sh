@@ -12,11 +12,11 @@ client_run() {
     echo "CLIENT TEST START: $*"
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
     # degrade the RAID
-    # qemu_add_drive_args disk_index disk_args "$TESTDIR"/raid-1.img raid1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/raid-2.img raid2
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/raid-3.img raid3
+    # qemu_add_drive disk_index disk_args "$TESTDIR"/raid-1.img raid1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/raid-2.img raid2
+    qemu_add_drive disk_index disk_args "$TESTDIR"/raid-3.img raid3
 
     test_marker_reset
     "$testdir"/run-qemu \
@@ -81,10 +81,10 @@ test_setup() {
     # Create the blank files to use as a root filesystem
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/raid-1.img raid1 40
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/raid-2.img raid2 40
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/raid-3.img raid3 40
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/raid-1.img raid1 40
+    qemu_add_drive disk_index disk_args "$TESTDIR"/raid-2.img raid2 40
+    qemu_add_drive disk_index disk_args "$TESTDIR"/raid-3.img raid3 40
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
@@ -106,7 +106,7 @@ test_setup() {
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         -o "dbus" \
         -a "test" \
-        -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
+        -d "piix ide-gd_mod ata_piix ext4" \
         -i "./cryptroot-ask.sh" "/sbin/cryptroot-ask" \
         -i "/tmp/mdadm.conf" "/etc/mdadm.conf" \
         -i "/tmp/crypttab" "/etc/crypttab" \

@@ -12,11 +12,11 @@ udevadm settle
 
 set -ex
 
-mkfs.ext4 -L '  rdinit=/bin/sh' /dev/disk/by-id/ata-disk_root
+mkfs.ext4 -L '  rdinit=/bin/sh' /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root
 mkdir -p /root
-mount -t ext4 /dev/disk/by-id/ata-disk_root /root
+mount -t ext4 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root /root
 cp -a -t /root /source/*
 mkdir -p /root/run
 umount /root
-echo "dracut-root-block-created" | dd oflag=direct,dsync of=/dev/disk/by-id/ata-disk_marker
+echo "dracut-root-block-created" | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
 poweroff -f

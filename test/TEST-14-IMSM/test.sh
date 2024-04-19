@@ -11,9 +11,9 @@ client_run() {
 
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/disk-1.img disk1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/disk-2.img disk2
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2
 
     test_marker_reset
     "$testdir"/run-qemu \
@@ -77,9 +77,9 @@ test_setup() {
     # Create the blank files to use as a root filesystem
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/disk-1.img disk1 200
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/disk-2.img disk2 200
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1 200
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2 200
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
@@ -97,7 +97,7 @@ test_setup() {
     echo "$MD_UUID" > "$TESTDIR"/mduuid
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         -a "test" \
-        -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
+        -d "piix ide-gd_mod ata_piix ext4" \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
 }

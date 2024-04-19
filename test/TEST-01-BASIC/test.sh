@@ -8,8 +8,8 @@ TEST_DESCRIPTION="root filesystem on a ext4 filesystem"
 test_run() {
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/root.img root
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root
 
     test_marker_reset
     "$testdir"/run-qemu \
@@ -47,13 +47,13 @@ test_setup() {
 
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/root.img root 80
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 80
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=/dev/dracut/root rw rootfstype=ext4 quiet console=ttyS0,115200n81 selinux=0" \
+        -append "root=/dev/dracut/root rw rootfstype=ext4 console=ttyS0,115200n81 selinux=0" \
         -initrd "$TESTDIR"/initramfs.makeroot || return 1
     test_marker_check dracut-root-block-created || return 1
     rm -- "$TESTDIR"/marker.img
@@ -61,7 +61,7 @@ test_setup() {
     # make sure --omit-drivers does not filter out drivers using regexp to test for an earlier regression (assuming there is no one letter linux kernel module needed to run the test)
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         -a "test watchdog" \
-        -d "piix ide-gd_mod ata_piix ext4 sd_mod i6300esb" \
+        -d "piix ide-gd_mod ata_piix ext4 i6300esb" \
         --omit-drivers 'a b c d e f g h i j k l m n o p q r s t u v w x y z' \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1

@@ -21,7 +21,7 @@ else
         echo "**************************FAILED**************************"
 
     else
-        echo "dracut-root-block-success" | dd oflag=direct,dsync of=/dev/disk/by-id/ata-disk_marker
+        echo "dracut-root-block-success" | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
         echo "All OK"
     fi
 fi
