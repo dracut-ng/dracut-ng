@@ -12,17 +12,17 @@ udevadm settle
 
 set -e
 
-mkfs.btrfs -draid10 -mraid10 -L root /dev/disk/by-id/ata-disk_raid[1234]
+mkfs.btrfs -draid10 -mraid10 -L root /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid[1234]
 udevadm settle
 
 btrfs device scan
 udevadm settle
 
 mkdir -p /sysroot
-mount -t btrfs /dev/disk/by-id/ata-disk_raid4 /sysroot
+mount -t btrfs /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid4 /sysroot
 cp -a -t /sysroot /source/*
 umount /sysroot
 
-echo "dracut-root-block-created" | dd oflag=direct,dsync of=/dev/disk/by-id/ata-disk_marker
+echo "dracut-root-block-created" | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
 sync
 poweroff -f

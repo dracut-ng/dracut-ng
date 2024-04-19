@@ -20,9 +20,9 @@ client_run() {
 
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/root.btrfs root
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/usr.btrfs usr
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root.btrfs root
+    qemu_add_drive disk_index disk_args "$TESTDIR"/usr.btrfs usr
 
     test_marker_reset
     "$testdir"/run-qemu \
@@ -132,9 +132,9 @@ EOF
     declare -a disk_args=()
     # shellcheck disable=SC2034
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/root.btrfs root 160
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/usr.btrfs usr 160
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root.btrfs root 160
+    qemu_add_drive disk_index disk_args "$TESTDIR"/usr.btrfs usr 160
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
@@ -153,7 +153,7 @@ EOF
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         -a "test systemd i18n qemu" \
         ${EXTRA_MACHINE:+-I "$EXTRA_MACHINE"} \
-        -d "piix ide-gd_mod ata_piix btrfs sd_mod i6300esb" \
+        -d "piix ide-gd_mod ata_piix btrfs i6300esb" \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
 

@@ -52,9 +52,30 @@ COLOR_FAILURE='\033[0;31m'
 COLOR_WARNING='\033[0;33m'
 COLOR_NORMAL='\033[0;39m'
 
+# obsolete - use qemu_add_drive
+qemu_add_drive_args() {
+    local index=${!1}
+    local file=$3
+    local name=${4:-$index}
+    local size=${5:-0}
+    local bootindex=$6
+
+    if [ "${size}" -ne 0 ]; then
+        dd if=/dev/zero of="${file}" bs=1MiB count="${size}"
+    fi
+
+    eval "${2}"'+=(' \
+        -drive "if=none,format=raw,file=${file},id=drive-sata${index}" \
+        -device "ide-hd,bus=ide.${index},drive=drive-sata${index},id=sata${index},${bootindex:+bootindex=$bootindex,}model=disk,serial=${name}" \
+        ')'
+
+    # shellcheck disable=SC2219
+    let "${1}++"
+}
+
 # generate qemu arguments for named raw disks
 #
-# qemu_add_drive_args <index> <args> <filename> <id-name> [<bootindex>]
+# qemu_add_drive <index> <args> <filename> <id-name> [<bootindex>]
 #
 # index: name of the index variable (set to 0 at start)
 # args: name of the argument array variable (set to () at start)
@@ -72,13 +93,13 @@ COLOR_NORMAL='\033[0;39m'
 # ```
 #   declare -a disk_args=()
 #   declare -i disk_index=0
-#   qemu_add_drive_args disk_index disk_args "$TESTDIR"/root.ext3 root 0 1
-#   qemu_add_drive_args disk_index disk_args "$TESTDIR"/client.img client
-#   qemu_add_drive_args disk_index disk_args "$TESTDIR"/iscsidisk2.img iscsidisk2
-#   qemu_add_drive_args disk_index disk_args "$TESTDIR"/iscsidisk3.img iscsidisk3
+#   qemu_add_drive disk_index disk_args "$TESTDIR"/root.ext3 root 0 1
+#   qemu_add_drive disk_index disk_args "$TESTDIR"/client.img client
+#   qemu_add_drive disk_index disk_args "$TESTDIR"/iscsidisk2.img iscsidisk2
+#   qemu_add_drive disk_index disk_args "$TESTDIR"/iscsidisk3.img iscsidisk3
 #   qemu "${disk_args[@]}"
 # ```
-qemu_add_drive_args() {
+qemu_add_drive() {
     local index=${!1}
     local file=$3
     local name=${4:-$index}
@@ -90,8 +111,9 @@ qemu_add_drive_args() {
     fi
 
     eval "${2}"'+=(' \
-        -drive "if=none,format=raw,file=${file},id=drive-sata${index}" \
-        -device "ide-hd,bus=ide.${index},drive=drive-sata${index},id=sata${index},${bootindex:+bootindex=$bootindex,}model=disk,serial=${name}" \
+        -device "virtio-scsi-pci,id=scsi${index}" \
+        -drive "if=none,format=raw,file=${file},id=drive-data${index}" \
+        -device "scsi-hd,bus=scsi${index}.0,drive=drive-data${index},id=data${index},${bootindex:+bootindex=$bootindex,}serial=${name}" \
         ')'
 
     # shellcheck disable=SC2219

@@ -9,6 +9,13 @@ depends() {
     echo "debug"
 }
 
+installkernel() {
+    instmods \
+        sd_mod \
+        virtio_pci \
+        virtio_scsi
+}
+
 install() {
     inst poweroff
     inst_hook shutdown-emergency 000 "$moddir/hard-off.sh"

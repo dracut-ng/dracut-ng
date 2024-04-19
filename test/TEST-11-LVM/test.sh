@@ -9,10 +9,10 @@ TEST_DESCRIPTION="root filesystem on LVM PV"
 test_run() {
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/disk-1.img disk1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/disk-2.img disk2
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/disk-3.img disk3
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-3.img disk3
 
     test_marker_reset
     "$testdir"/run-qemu \
@@ -51,10 +51,10 @@ test_setup() {
     declare -a disk_args=()
     # shellcheck disable=SC2034
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/disk-1.img disk1 40
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/disk-2.img disk2 40
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/disk-3.img disk3 40
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1 40
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2 40
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-3.img disk3 40
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
@@ -64,7 +64,7 @@ test_setup() {
 
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         -a "test" \
-        -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
+        -d "piix ide-gd_mod ata_piix ext4" \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
 }

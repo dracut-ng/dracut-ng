@@ -10,7 +10,7 @@ rm -f -- /etc/lvm/lvm.conf
 udevadm control --reload
 udevadm settle
 set -ex
-mdadm --create /dev/md0 --run --auto=yes --level=5 --raid-devices=3 /dev/disk/by-id/ata-disk_raid[123]
+mdadm --create /dev/md0 --run --auto=yes --level=5 --raid-devices=3 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid[123]
 # wait for the array to finish initializing, otherwise this sometimes fails
 # randomly.
 mdadm -W /dev/md0 || :
@@ -42,6 +42,6 @@ eval "$(udevadm info --query=property --name=/dev/md0 | while read -r line || [ 
     echo "dracut-root-block-created"
     echo MD_UUID="$MD_UUID"
     echo "ID_FS_UUID=$ID_FS_UUID"
-} | dd oflag=direct,dsync of=/dev/disk/by-id/ata-disk_marker
+} | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
 sync
 poweroff -f

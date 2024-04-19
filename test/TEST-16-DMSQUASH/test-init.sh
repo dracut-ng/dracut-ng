@@ -7,7 +7,7 @@ export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 command -v plymouth > /dev/null 2>&1 && plymouth --quit
 exec > /dev/console 2>&1
 
-echo "dracut-root-block-success" | dd oflag=direct,dsync of=/dev/disk/by-id/ata-disk_marker
+echo "dracut-root-block-success" | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
 
 if grep -qF ' rd.live.overlay=LABEL=persist ' /proc/cmdline; then
     # Writing to a file in the root filesystem lets test_run() verify that the autooverlay module successfully created
