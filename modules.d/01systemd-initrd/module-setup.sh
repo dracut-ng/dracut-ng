@@ -4,7 +4,8 @@
 check() {
     [[ $mount_needs ]] && return 1
 
-    return 0
+    # Return 255 to only include the module, if another module requires it.
+    return 255
 }
 
 # called by dracut
