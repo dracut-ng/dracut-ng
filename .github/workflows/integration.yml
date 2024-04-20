@@ -210,3 +210,28 @@ jobs:
 
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
                 run: ./tools/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    arm64:
+        name: ${{ matrix.test }} on ${{ matrix.container }} on arm64
+        runs-on: ubuntu-latest
+        timeout-minutes: 30
+        concurrency:
+            group: arm64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            cancel-in-progress: true
+        strategy:
+            matrix:
+                container: [
+                        "debian",
+                ]
+                test: [
+                        "98",
+                ]
+            fail-fast: false
+        steps:
+            -   name: Set up QEMU
+                uses: docker/setup-qemu-action@v3
+                with:
+                    platforms: 'linux/arm64'
+            -   name: "Checkout Repository"
+                uses: actions/checkout@v4
+            -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+                run: docker run --platform linux/arm64 --privileged -v /dev:/dev -v $PWD:/w ghcr.io/dracut-ng/${{ matrix.container }} /w/tools/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
