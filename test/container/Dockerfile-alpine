@@ -9,6 +9,7 @@ RUN apk add --no-cache \
     btrfs-progs \
     busybox \
     bzip2 \
+    cargo \
     coreutils \
     cpio \
     cryptsetup \
