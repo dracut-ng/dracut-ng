@@ -35,6 +35,10 @@ install() {
         systemd-ask-password \
         systemd-tty-ask-password-agent
 
+    if [ -e "$systemdsystemunitdir"/systemd-vconsole-setup.service ]; then
+        $SYSTEMCTL -q --root "$initdir" add-wants systemd-ask-password-console.service systemd-vconsole-setup.service
+    fi
+
     # Enable the systemd type service unit for systemd-ask-password.
     $SYSTEMCTL -q --root "$initdir" enable systemd-ask-password-console.service
 
@@ -43,6 +47,10 @@ install() {
         inst_multiple -o \
             "$systemdsystemunitdir"/systemd-ask-password-plymouth.path \
             "$systemdsystemunitdir"/systemd-ask-password-plymouth.service
+
+        if [ -e "$systemdsystemunitdir"/systemd-vconsole-setup.service ]; then
+            $SYSTEMCTL -q --root "$initdir" add-wants systemd-ask-password-plymouth.service systemd-vconsole-setup.service
+        fi
 
         $SYSTEMCTL -q --root "$initdir" enable systemd-ask-password-plymouth.service
     fi

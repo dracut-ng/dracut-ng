@@ -21,6 +21,43 @@ depends() {
 
 }
 
+# Install kernel module(s).
+installkernel() {
+    local _mods
+
+    modules_load_get() {
+        local _line _i
+        for _i in "$dracutsysrootdir$1"/*.conf; do
+            [[ -f $_i ]] || continue
+            while read -r _line || [ -n "$_line" ]; do
+                case $_line in
+                    \#*) ;;
+
+                    \;*) ;;
+
+                    *)
+                        echo "$_line"
+                        ;;
+                esac
+            done < "$_i"
+        done
+    }
+
+    mapfile -t _mods < <(modules_load_get "$modulesload")
+    if [[ ${#_mods[@]} -gt 0 ]]; then
+        hostonly='' instmods "${_mods[@]}"
+    fi
+
+    if [[ $hostonly ]]; then
+        mapfile -t _mods < <(modules_load_get "$modulesloadconfdir")
+        if [[ ${#_mods[@]} -gt 0 ]]; then
+            hostonly='' instmods "${_mods[@]}"
+        fi
+    fi
+
+    return 0
+}
+
 # Install the required file(s) and directories for the module in the initramfs.
 install() {
 
