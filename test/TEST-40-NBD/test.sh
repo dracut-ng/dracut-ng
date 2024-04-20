@@ -29,16 +29,16 @@ run_server() {
     declare -a disk_args=()
     # shellcheck disable=SC2034
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/unencrypted.img unencrypted
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/encrypted.img encrypted
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/server.img serverroot
+    qemu_add_drive disk_index disk_args "$TESTDIR"/unencrypted.img unencrypted
+    qemu_add_drive disk_index disk_args "$TESTDIR"/encrypted.img encrypted
+    qemu_add_drive disk_index disk_args "$TESTDIR"/server.img serverroot
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
         -net nic,macaddr=52:54:00:12:34:56,model=e1000 \
         -net socket,listen=127.0.0.1:12340 \
-        -append "panic=1 oops=panic softlockup_panic=1 rd.luks=0 systemd.crash_reboot quiet root=/dev/disk/by-id/ata-disk_serverroot rootfstype=ext4 rw console=ttyS0,115200n81 selinux=0 $SERVER_DEBUG" \
+        -append "panic=1 oops=panic softlockup_panic=1 rd.luks=0 systemd.crash_reboot quiet root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_serverroot rootfstype=ext4 rw console=ttyS0,115200n81 selinux=0 $SERVER_DEBUG" \
         -initrd "$TESTDIR"/initramfs.server \
         -pidfile "$TESTDIR"/server.pid -daemonize || return 1
     chmod 644 "$TESTDIR"/server.pid || return 1
@@ -74,7 +74,7 @@ client_test() {
 
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
 
     test_marker_reset
     "$testdir"/run-qemu \
@@ -253,8 +253,8 @@ make_encrypted_root() {
     declare -a disk_args=()
     # shellcheck disable=SC2034
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/encrypted.img root 120
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/encrypted.img root 120
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
@@ -331,8 +331,8 @@ make_client_root() {
     declare -a disk_args=()
     # shellcheck disable=SC2034
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/unencrypted.img root 120
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/unencrypted.img root 120
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
@@ -363,11 +363,11 @@ make_server_root() {
         cat > "$initdir/etc/nbd-server/config" << EOF
 [generic]
 [raw]
-exportname = /dev/disk/by-id/ata-disk_unencrypted
+exportname = /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_unencrypted
 port = 2000
 bs = 4096
 [encrypted]
-exportname = /dev/disk/by-id/ata-disk_encrypted
+exportname = /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_encrypted
 port = 2001
 bs = 4096
 EOF
@@ -427,8 +427,8 @@ EOF
     declare -a disk_args=()
     # shellcheck disable=SC2034
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/server.img root 120
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/server.img root 120
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \

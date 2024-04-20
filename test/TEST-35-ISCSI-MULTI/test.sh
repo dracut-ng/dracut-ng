@@ -13,10 +13,10 @@ run_server() {
 
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/server.img serverroot 0 1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/singleroot.img singleroot
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/raid0-1.img raid0-1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/raid0-2.img raid0-2
+    qemu_add_drive disk_index disk_args "$TESTDIR"/server.img serverroot 0 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/singleroot.img singleroot
+    qemu_add_drive disk_index disk_args "$TESTDIR"/raid0-1.img raid0-1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/raid0-2.img raid0-2
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
@@ -24,7 +24,7 @@ run_server() {
         -net nic,macaddr=52:54:00:12:34:56,model=e1000 \
         -net nic,macaddr=52:54:00:12:34:57,model=e1000 \
         -net socket,listen=127.0.0.1:12331 \
-        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=/dev/disk/by-id/ata-disk_serverroot rootfstype=ext4 rw console=ttyS0,115200n81 selinux=0 $SERVER_DEBUG" \
+        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_serverroot rootfstype=ext4 rw console=ttyS0,115200n81 selinux=0 $SERVER_DEBUG" \
         -initrd "$TESTDIR"/initramfs.server \
         -pidfile "$TESTDIR"/server.pid -daemonize || return 1
     chmod 644 "$TESTDIR"/server.pid || return 1
@@ -52,7 +52,7 @@ run_client() {
 
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
 
     test_marker_reset
     "$testdir"/run-qemu \
@@ -198,10 +198,10 @@ test_setup() {
 
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/singleroot.img singleroot 200
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/raid0-1.img raid0-1 100
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/raid0-2.img raid0-2 100
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/singleroot.img singleroot 200
+    qemu_add_drive disk_index disk_args "$TESTDIR"/raid0-1.img raid0-1 100
+    qemu_add_drive disk_index disk_args "$TESTDIR"/raid0-2.img raid0-2 100
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
@@ -285,8 +285,8 @@ test_setup() {
     declare -a disk_args=()
     # shellcheck disable=SC2034
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/server.img root 60
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/server.img root 60
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \

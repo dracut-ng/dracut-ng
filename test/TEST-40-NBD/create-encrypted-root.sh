@@ -13,9 +13,9 @@ udevadm settle
 set -ex
 
 printf test > keyfile
-cryptsetup -q luksFormat /dev/disk/by-id/ata-disk_root /keyfile
+cryptsetup -q luksFormat /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root /keyfile
 echo "The passphrase is test"
-cryptsetup luksOpen /dev/disk/by-id/ata-disk_root dracut_crypt_test < /keyfile
+cryptsetup luksOpen /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root dracut_crypt_test < /keyfile
 lvm pvcreate -ff -y /dev/mapper/dracut_crypt_test
 lvm vgcreate dracut /dev/mapper/dracut_crypt_test
 lvm lvcreate -l 100%FREE -n root dracut
@@ -32,10 +32,10 @@ udevadm settle
 cryptsetup luksClose /dev/mapper/dracut_crypt_test
 udevadm settle
 sleep 1
-eval "$(udevadm info --query=property --name=/dev/disk/by-id/ata-disk_root | while read -r line || [ -n "$line" ]; do [ "$line" != "${line#*ID_FS_UUID*}" ] && echo "$line"; done)"
+eval "$(udevadm info --query=property --name=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root | while read -r line || [ -n "$line" ]; do [ "$line" != "${line#*ID_FS_UUID*}" ] && echo "$line"; done)"
 {
     echo "dracut-root-block-created"
     echo "ID_FS_UUID=$ID_FS_UUID"
-} | dd oflag=direct,dsync of=/dev/disk/by-id/ata-disk_marker
+} | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
 sync
 poweroff -f

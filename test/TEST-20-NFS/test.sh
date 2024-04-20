@@ -18,7 +18,7 @@ run_server() {
     declare -a disk_args=()
     # shellcheck disable=SC2034
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/server.img root 0 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/server.img root 0 1
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
@@ -59,8 +59,8 @@ client_test() {
     declare -a disk_args=()
     # shellcheck disable=SC2034
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker2.img marker2 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker2.img marker2 1
     cmdline="$cmdline rd.net.timeout.dhcp=30"
 
     "$testdir"/run-qemu \
@@ -378,8 +378,8 @@ test_setup() {
     declare -a disk_args=()
     # shellcheck disable=SC2034
     declare -i disk_index=0
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive_args disk_index disk_args "$TESTDIR"/server.img root 80
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_index disk_args "$TESTDIR"/server.img root 80
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
