@@ -12,11 +12,11 @@ udevadm settle
 
 set -ex
 modprobe dm_thin_pool
-for dev in /dev/disk/by-id/ata-disk_disk[123]; do
+for dev in /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[123]; do
     lvm pvcreate -ff -y "$dev"
 done
 
-lvm vgcreate dracut /dev/disk/by-id/ata-disk_disk[123]
+lvm vgcreate dracut /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[123]
 lvm lvcreate --ignoremonitoring -l 100%FREE -T dracut/mythinpool
 lvm lvcreate --ignoremonitoring -V100M -T dracut/mythinpool -n root
 lvm vgchange --ignoremonitoring -ay
@@ -28,7 +28,7 @@ umount /sysroot
 lvm lvchange -a n /dev/dracut/root
 
 if ! dmsetup status | grep -q out_of_data_space; then
-    echo "dracut-root-block-created" | dd oflag=direct,dsync of=/dev/disk/by-id/ata-disk_marker
+    echo "dracut-root-block-created" | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
 fi
 
 sync

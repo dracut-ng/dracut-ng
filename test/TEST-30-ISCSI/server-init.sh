@@ -69,9 +69,9 @@ tgtd
 tgtadm --lld iscsi --mode target --op new --tid 1 --targetname iqn.2009-06.dracut:target0
 tgtadm --lld iscsi --mode target --op new --tid 2 --targetname iqn.2009-06.dracut:target1
 tgtadm --lld iscsi --mode target --op new --tid 3 --targetname iqn.2009-06.dracut:target2
-tgtadm --lld iscsi --mode logicalunit --op new --tid 1 --lun 1 -b /dev/disk/by-id/ata-disk_singleroot
-tgtadm --lld iscsi --mode logicalunit --op new --tid 2 --lun 2 -b /dev/disk/by-id/ata-disk_raid0-1
-tgtadm --lld iscsi --mode logicalunit --op new --tid 3 --lun 3 -b /dev/disk/by-id/ata-disk_raid0-2
+tgtadm --lld iscsi --mode logicalunit --op new --tid 1 --lun 1 -b /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_singleroot
+tgtadm --lld iscsi --mode logicalunit --op new --tid 2 --lun 2 -b /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid0-1
+tgtadm --lld iscsi --mode logicalunit --op new --tid 3 --lun 3 -b /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid0-2
 tgtadm --lld iscsi --mode target --op bind --tid 1 -I 192.168.50.101
 tgtadm --lld iscsi --mode target --op bind --tid 2 -I 192.168.51.101
 tgtadm --lld iscsi --mode target --op bind --tid 3 -I 192.168.50.101
