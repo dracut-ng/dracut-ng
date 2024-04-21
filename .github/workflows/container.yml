@@ -18,30 +18,23 @@ permissions:
     contents: read
 
 jobs:
-    push_to_registry:
+    arm64:
         if: github.repository == 'dracut-ng/dracut-ng' || vars.CONTAINER == 'enabled'
-        name: Build and push containers image to GitHub Packages
+        name: ${{ matrix.config.tag }} on ${{ matrix.config.platform }}
         runs-on: ubuntu-latest
         concurrency:
-            group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.dockerfile }}
+            group: arm64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.dockerfile }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
             matrix:
                 config:
-                    - { dockerfile: 'Dockerfile-Fedora-latest',     tag: 'fedora:latest',     platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-OpenSuse-latest',   tag: 'opensuse:latest',   platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-Arch',              tag: 'arch:latest',       platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-Debian',            tag: 'debian:latest',     platform: 'linux/arm64,linux/amd64' }
-                    - { dockerfile: 'Dockerfile-Gentoo',            tag: 'gentoo:latest',     platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-Ubuntu',            tag: 'ubuntu:latest',     platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-alpine',            tag: 'alpine:latest',     platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-Void',              tag: 'void:latest',       platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-Debian',            tag: 'debian',     platform: 'arm64' }
         steps:
             -   name: Set up QEMU
                 uses: docker/setup-qemu-action@v3
                 with:
-                    platforms: ${{ matrix.config.platform }}
+                    platforms: linux/${{ matrix.config.platform }}
             -   name: Check out the repo
                 uses: actions/checkout@v4
             -   name: Set up Docker Buildx
@@ -58,6 +51,46 @@ jobs:
                 uses: docker/build-push-action@v5
                 with:
                     file: test/container/${{ matrix.config.dockerfile }}
-                    tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}
+                    tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}:latest
                     push: ${{ github.event_name == 'push' ||  github.event_name == 'schedule' }}
-                    platforms: ${{ matrix.config.platform }}
+                    platforms: linux/${{ matrix.config.platform }}
+
+    amd64:
+        if: github.repository == 'dracut-ng/dracut-ng' || vars.CONTAINER == 'enabled'
+        name: ${{ matrix.config.tag }} on ${{ matrix.config.platform }}
+        runs-on: ubuntu-latest
+        concurrency:
+            group: amd64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.dockerfile }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                config:
+                    - { dockerfile: 'Dockerfile-Fedora-latest',     tag: 'fedora',     platform: 'amd64' }
+                    - { dockerfile: 'Dockerfile-OpenSuse-latest',   tag: 'opensuse',   platform: 'amd64' }
+                    - { dockerfile: 'Dockerfile-Arch',              tag: 'arch',       platform: 'amd64' }
+                    - { dockerfile: 'Dockerfile-Debian',            tag: 'debian',     platform: 'amd64' }
+                    - { dockerfile: 'Dockerfile-Gentoo',            tag: 'gentoo',     platform: 'amd64' }
+                    - { dockerfile: 'Dockerfile-Ubuntu',            tag: 'ubuntu',     platform: 'amd64' }
+                    - { dockerfile: 'Dockerfile-alpine',            tag: 'alpine',     platform: 'amd64' }
+                    - { dockerfile: 'Dockerfile-Void',              tag: 'void',       platform: 'amd64' }
+        steps:
+            -   name: Check out the repo
+                uses: actions/checkout@v4
+            -   name: Set up Docker Buildx
+                uses: docker/setup-buildx-action@v3
+            -   name: Login to GitHub Container Registry
+                uses: docker/login-action@v3
+                with:
+                    registry: ghcr.io
+                    username: ${{ github.repository_owner }}
+                    password: ${{ secrets.GITHUB_TOKEN }}
+            -   name: Set up env
+                run: echo "repository_owner=${GITHUB_REPOSITORY_OWNER,,}" >>${GITHUB_ENV}
+            -   name: Build and Push Container
+                uses: docker/build-push-action@v5
+                with:
+                    file: test/container/${{ matrix.config.dockerfile }}
+                    tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}:latest
+                    push: ${{ github.event_name == 'push' ||  github.event_name == 'schedule' }}
+                    platforms: linux/${{ matrix.config.platform }}
