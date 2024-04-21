@@ -203,6 +203,7 @@ jobs:
             matrix:
                 container: [
                         "debian",
+                        "fedora",
                 ]
                 test: [
                         "98",
