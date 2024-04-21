@@ -30,6 +30,7 @@ jobs:
             matrix:
                 config:
                     - { dockerfile: 'Dockerfile-Debian',            tag: 'debian',     platform: 'arm64' }
+                    - { dockerfile: 'Dockerfile-Fedora-latest',     tag: 'fedora',     platform: 'arm64' }
         steps:
             -   name: Set up QEMU
                 uses: docker/setup-qemu-action@v3
