@@ -71,9 +71,9 @@ test_setup() {
 
     mkdir -p "$TESTDIR"/ESP/EFI/BOOT
 
-    if [ -f "/usr/lib/gummiboot/linuxx64.efi.stub" ]; then
-        TEST_DRACUT_ARGS+=" --uefi-stub /usr/lib/gummiboot/linuxx64.efi.stub "
-    fi
+    TEST_DRACUT_ARGS+=" --uefi-stub /usr/share/qemu-efi-aarch64/QEMU_EFI.fd "
+
+    find /usr/share/
 
     mkdir -p "$TESTDIR"/ESP/EFI/BOOT
     test_dracut \
