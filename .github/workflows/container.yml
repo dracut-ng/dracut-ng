@@ -29,13 +29,13 @@ jobs:
             fail-fast: false
             matrix:
                 config:
-                    - { dockerfile: 'Dockerfile-Debian',            tag: 'debian',     platform: 'arm64' }
-                    - { dockerfile: 'Dockerfile-Fedora-latest',     tag: 'fedora',     platform: 'arm64' }
+                    - { dockerfile: 'Dockerfile-Debian',            tag: 'debian',     platform: 'linux/arm64,linux/amd64' }
+                    - { dockerfile: 'Dockerfile-Fedora-latest',     tag: 'fedora',     platform: 'linux/arm64,linux/amd64' }
         steps:
             -   name: Set up QEMU
                 uses: docker/setup-qemu-action@v3
                 with:
-                    platforms: linux/${{ matrix.config.platform }}
+                    platforms: ${{ matrix.config.platform }}
             -   name: Check out the repo
                 uses: actions/checkout@v4
             -   name: Set up Docker Buildx
@@ -54,7 +54,7 @@ jobs:
                     file: test/container/${{ matrix.config.dockerfile }}
                     tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}:latest
                     push: ${{ github.event_name == 'push' ||  github.event_name == 'schedule' }}
-                    platforms: linux/${{ matrix.config.platform }}
+                    platforms: ${{ matrix.config.platform }}
 
     amd64:
         if: github.repository == 'dracut-ng/dracut-ng' || vars.CONTAINER == 'enabled'
@@ -67,14 +67,12 @@ jobs:
             fail-fast: false
             matrix:
                 config:
-                    - { dockerfile: 'Dockerfile-Fedora-latest',     tag: 'fedora',     platform: 'amd64' }
-                    - { dockerfile: 'Dockerfile-OpenSuse-latest',   tag: 'opensuse',   platform: 'amd64' }
-                    - { dockerfile: 'Dockerfile-Arch',              tag: 'arch',       platform: 'amd64' }
-                    - { dockerfile: 'Dockerfile-Debian',            tag: 'debian',     platform: 'amd64' }
-                    - { dockerfile: 'Dockerfile-Gentoo',            tag: 'gentoo',     platform: 'amd64' }
-                    - { dockerfile: 'Dockerfile-Ubuntu',            tag: 'ubuntu',     platform: 'amd64' }
-                    - { dockerfile: 'Dockerfile-alpine',            tag: 'alpine',     platform: 'amd64' }
-                    - { dockerfile: 'Dockerfile-Void',              tag: 'void',       platform: 'amd64' }
+                    - { dockerfile: 'Dockerfile-OpenSuse-latest',   tag: 'opensuse',   platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-Arch',              tag: 'arch',       platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-Gentoo',            tag: 'gentoo',     platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-Ubuntu',            tag: 'ubuntu',     platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-alpine',            tag: 'alpine',     platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-Void',              tag: 'void',       platform: 'linux/amd64' }
         steps:
             -   name: Check out the repo
                 uses: actions/checkout@v4
@@ -94,4 +92,4 @@ jobs:
                     file: test/container/${{ matrix.config.dockerfile }}
                     tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}:latest
                     push: ${{ github.event_name == 'push' ||  github.event_name == 'schedule' }}
-                    platforms: linux/${{ matrix.config.platform }}
+                    platforms: ${{ matrix.config.platform }}
