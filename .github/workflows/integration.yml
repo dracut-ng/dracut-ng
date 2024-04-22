@@ -141,6 +141,7 @@ jobs:
                         "arch",
                         "debian",
                         "fedora",
+                        "gentoo",
                         "ubuntu",
                 ]
                 test: [
