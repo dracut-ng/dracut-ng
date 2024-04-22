@@ -70,12 +70,6 @@ test_setup() {
     mksquashfs "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/squashfs.img -quiet -no-progress
 
     mkdir -p "$TESTDIR"/ESP/EFI/BOOT
-
-    if [ -f "/usr/lib/gummiboot/linuxx64.efi.stub" ]; then
-        TEST_DRACUT_ARGS+=" --uefi-stub /usr/lib/gummiboot/linuxx64.efi.stub "
-    fi
-
-    mkdir -p "$TESTDIR"/ESP/EFI/BOOT
     test_dracut \
         --modules 'rootfs-block test' \
         --kernel-cmdline 'root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root ro rd.skipfsck rootfstype=squashfs' \
