@@ -141,7 +141,6 @@ test_check() {
 }
 
 test_setup() {
-    kernel=$KVERSION
     # Create what will eventually be our root filesystem onto an overlay
     rm -rf -- "$TESTDIR"/overlay
     (
@@ -211,8 +210,6 @@ test_setup() {
     test_marker_check dracut-root-block-created || return 1
     rm -- "$TESTDIR"/marker.img
 
-    # shellcheck disable=SC2031
-    export kernel=$KVERSION
     rm -rf -- "$TESTDIR"/overlay
     (
         mkdir -p "$TESTDIR"/overlay/source

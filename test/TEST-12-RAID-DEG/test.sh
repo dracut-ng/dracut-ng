@@ -55,7 +55,6 @@ test_run() {
 }
 
 test_setup() {
-    kernel=$KVERSION
     "$basedir"/dracut.sh -l --keep --tmpdir "$TESTDIR" \
         -m "test-root" \
         -i ./test-init.sh /sbin/init \

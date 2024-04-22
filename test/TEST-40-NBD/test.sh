@@ -188,7 +188,6 @@ client_run() {
 
 make_encrypted_root() {
     rm -fr "$TESTDIR"/overlay
-    kernel=$KVERSION
     # Create what will eventually be our root filesystem onto an overlay
     (
         # shellcheck disable=SC2030
@@ -267,7 +266,6 @@ make_encrypted_root() {
 
 make_client_root() {
     rm -fr "$TESTDIR"/overlay
-    kernel=$KVERSION
     (
         mkdir -p "$TESTDIR"/overlay/source
         # shellcheck disable=SC2030
@@ -345,8 +343,6 @@ make_client_root() {
 
 make_server_root() {
     rm -fr "$TESTDIR"/overlay
-    # shellcheck disable=SC2031
-    export kernel=$KVERSION
     (
         mkdir -p "$TESTDIR"/overlay/source
         # shellcheck disable=SC2030
