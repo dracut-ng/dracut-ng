@@ -286,7 +286,7 @@ fn archive_path<W: Seek + Write>(
     mut writer: W,
 ) -> std::io::Result<()> {
     let inpath = path;
-    let mut outpath = path.clone();
+    let mut outpath = path;
     let mut datalen: u32 = 0;
     let mut rmajor: u32 = 0;
     let mut rminor: u32 = 0;
