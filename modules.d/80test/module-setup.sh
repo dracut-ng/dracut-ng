@@ -6,7 +6,7 @@ check() {
 }
 
 depends() {
-    echo "debug"
+    echo "base debug"
 }
 
 installkernel() {
