@@ -28,7 +28,7 @@ EOF
 
     "$DRACUT" -l --no-kernel --drivers "" \
         "${dracut_cpio_params[@]}" \
-        --modules "bash base" \
+        --modules "test" \
         --include "$tdir/init.sh" /lib/dracut/hooks/emergency/00-init.sh \
         --install "poweroff" \
         --no-hostonly --no-hostonly-cmdline \
