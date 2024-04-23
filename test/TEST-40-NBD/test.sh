@@ -191,7 +191,7 @@ make_encrypted_root() {
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
         -m "test-root" \
         -i ./client-init.sh /sbin/init \
-        -I "ip ping grep" \
+        -I "ip grep" \
         -i "${basedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${basedir}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
@@ -229,7 +229,7 @@ make_client_root() {
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
         -m "test-root" \
         -i ./client-init.sh /sbin/init \
-        -I "ip ping" \
+        -I "ip" \
         -i "${basedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${basedir}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
@@ -281,7 +281,7 @@ EOF
         -m "test-root network network-legacy" \
         -d "nfsd sunrpc ipv6 lockd af_packet 8021q ipvlan macvlan" \
         -i ./server-init.sh /sbin/init \
-        -I "ip ping grep sleep nbd-server chmod modprobe vi pidof" \
+        -I "ip grep sleep nbd-server chmod modprobe vi pidof" \
         -i "${basedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${basedir}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
         --install-optional "/etc/netconfig dhcpd /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
