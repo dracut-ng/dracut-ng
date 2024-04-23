@@ -7,6 +7,7 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
     asciidoc \
     astyle \
+    bluez \
     btrfs-progs \
     busybox-static \
     bzip2 \
@@ -28,6 +29,7 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --
     iputils-ping \
     isc-dhcp-client \
     isc-dhcp-server \
+    iscsiuio \
     kmod \
     less \
     libdmraid-dev \
