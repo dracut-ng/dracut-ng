@@ -203,8 +203,8 @@ make_encrypted_root() {
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -m "test-makeroot" \
-        -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-encrypted-root.sh \
+        -m "test-makeroot crypt lvm mdraid" \
+        -i ./create-encrypted-root.sh /lib/dracut/hooks/initqueue/01-create-encrypted-root.sh \
         -I "mkfs.ext4" \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
