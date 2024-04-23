@@ -155,7 +155,7 @@ test_setup() {
             mkdir -p -- var/lib/nfs/rpc_pipefs
         )
         inst_multiple sh shutdown poweroff stty cat ps ln ip \
-            mount dmesg mkdir cp ping grep setsid dd sync
+            mount dmesg mkdir cp grep setsid dd sync
         for _terminfodir in /lib/terminfo /etc/terminfo /usr/share/terminfo; do
             [ -f ${_terminfodir}/l/linux ] && break
         done
@@ -224,7 +224,7 @@ test_setup() {
         )
         inst /etc/passwd /etc/passwd
         inst_multiple sh ls shutdown poweroff stty cat ps ln ip \
-            dmesg mkdir cp ping modprobe tcpdump setsid \
+            dmesg mkdir cp modprobe tcpdump setsid \
             sleep mount chmod pidof
         inst_multiple tgtd tgtadm
         for _terminfodir in /lib/terminfo /etc/terminfo /usr/share/terminfo; do

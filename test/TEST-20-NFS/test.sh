@@ -252,7 +252,7 @@ test_setup() {
         )
 
         inst_multiple sh ls shutdown poweroff stty cat ps ln ip \
-            dmesg mkdir cp ping exportfs \
+            dmesg mkdir cp exportfs \
             modprobe rpc.nfsd rpc.mountd showmount tcpdump \
             sleep mount chmod rm
         for _terminfodir in /lib/terminfo /etc/terminfo /usr/share/terminfo; do
@@ -312,7 +312,7 @@ test_setup() {
         )
 
         inst_multiple sh shutdown poweroff stty cat ps ln ip dd \
-            mount dmesg mkdir cp ping grep setsid ls vi less cat sync
+            mount dmesg mkdir cp grep setsid ls vi less cat sync
         for _terminfodir in /lib/terminfo /etc/terminfo /usr/share/terminfo; do
             if [ -f "${_terminfodir}"/l/linux ]; then
                 inst_multiple -o "${_terminfodir}"/l/linux

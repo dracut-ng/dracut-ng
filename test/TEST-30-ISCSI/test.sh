@@ -133,7 +133,7 @@ test_setup() {
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
         -m "test-root" \
         -i ./client-init.sh /sbin/init \
-        -I "ip ping grep setsid" \
+        -I "ip grep setsid" \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
@@ -175,7 +175,7 @@ test_setup() {
         -i ./server-init.sh /sbin/init \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
-        -I "modprobe chmod ip ping tcpdump setsid pidof tgtd tgtadm /etc/passwd" \
+        -I "modprobe chmod ip tcpdump setsid pidof tgtd tgtadm /etc/passwd" \
         --install-optional "/etc/netconfig dhcpd /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
         -i "./hosts" "/etc/hosts" \
         -i "./dhcpd.conf" "/etc/dhcpd.conf" \
