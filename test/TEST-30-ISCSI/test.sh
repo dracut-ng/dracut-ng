@@ -126,6 +126,10 @@ test_check() {
         echo "Need tgtd and tgtadm from scsi-target-utils"
         return 1
     fi
+    if ! [ -f /lib/systemd/system/iscsiuio.socket ]; then
+        echo "Need iscsiuio.socket to run this test"
+        return 1
+    fi
 }
 
 test_setup() {
