@@ -3,13 +3,6 @@
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="UEFI boot"
 
-# Linux kernel requirements
-# CONFIG_BLK_DEV_INITRD for initramfs
-# CONFIG_EFI_HANDOVER_PROTOCOL for ovmf (Open Virtual Machine Firmware)
-# CONFIG_SATA_AHCI for ahci.ko
-# CONFIG_BLK_DEV_SD for sd_mod.ko
-# CONFIG_SQUASHFS_ZLIB for squashfs.ko
-
 ovmf_code() {
     for path in \
         "/usr/share/OVMF/OVMF_CODE.fd" \
@@ -22,28 +15,6 @@ ovmf_code() {
 
 test_check() {
     [[ -n "$(ovmf_code)" ]]
-}
-
-KVERSION="${KVERSION-$(uname -r)}"
-
-test_marker_reset() {
-    dd if=/dev/zero of="$TESTDIR"/marker.img bs=1MiB count=1
-}
-
-test_marker_check() {
-    grep -U --binary-files=binary -F -m 1 -q dracut-root-block-success -- "$TESTDIR"/marker.img
-    return $?
-}
-
-test_dracut() {
-    TEST_DRACUT_ARGS+=" --local --no-hostonly --no-early-microcode --add test --kver $KVERSION"
-
-    # shellcheck disable=SC2162
-    IFS=' ' read -a TEST_DRACUT_ARGS_ARRAY <<< "$TEST_DRACUT_ARGS"
-
-    "$DRACUT" "$@" \
-        --kernel-cmdline "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot selinux=0 console=ttyS0,115200n81 $DEBUGFAIL" \
-        "${TEST_DRACUT_ARGS_ARRAY[@]}" || return 1
 }
 
 test_run() {
