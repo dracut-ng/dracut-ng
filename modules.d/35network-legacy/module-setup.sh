@@ -10,7 +10,7 @@ check() {
 
 # called by dracut
 depends() {
-    echo net-lib
+    echo net-lib kernel-network-modules
     return 0
 }
 
