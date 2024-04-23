@@ -204,7 +204,6 @@ make_encrypted_root() {
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot" \
-        -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-encrypted-root.sh \
         -I "mkfs.ext4" \
         --no-hostonly-cmdline -N \
@@ -243,7 +242,6 @@ make_client_root() {
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot" \
-        -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
         -I "mkfs.ext4" \
         -i ./create-client-root.sh /lib/dracut/hooks/initqueue/01-create-client-root.sh \
         --nomdadmconf \
@@ -302,7 +300,6 @@ EOF
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot" \
-        -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
         -I "mkfs.ext4" \
         --nomdadmconf \
