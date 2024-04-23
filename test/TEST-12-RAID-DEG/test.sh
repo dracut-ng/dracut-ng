@@ -70,7 +70,6 @@ test_setup() {
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot bash crypt lvm mdraid kernel-modules" \
-        -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
         -I "mkfs.ext4 grep sfdisk" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         --no-hostonly-cmdline -N \
