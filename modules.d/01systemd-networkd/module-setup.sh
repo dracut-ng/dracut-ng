@@ -7,7 +7,7 @@ check() {
     [[ $mount_needs ]] && return 1
 
     # If the binary(s) requirements are not fulfilled the module can't be installed
-    require_binaries ip networkctl \
+    require_binaries ip \
         "$systemdutildir"/systemd-networkd \
         "$systemdutildir"/systemd-network-generator \
         "$systemdutildir"/systemd-networkd-wait-online \
@@ -56,7 +56,7 @@ install() {
         "$systemdsystemunitdir"/systemd-networkd-wait-online@.service \
         "$systemdsystemunitdir"/systemd-network-generator.service \
         "$sysusers"/systemd-network.conf \
-        networkctl ip
+        ip
 
     # Enable systemd type units
     for i in \
