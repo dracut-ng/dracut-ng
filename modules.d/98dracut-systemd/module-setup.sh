@@ -9,7 +9,7 @@ check() {
 
 # called by dracut
 depends() {
-    echo "systemd-initrd"
+    echo "systemd-initrd systemd-ask-password"
     return 0
 }
 
