@@ -23,7 +23,7 @@ client_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -device i6300esb -watchdog-action poweroff \
-        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=LABEL=dracut $client_opts rd.retry=3 rd.info console=ttyS0,115200n81 selinux=0 rd.shell=0 $DEBUGFAIL" \
+        -append "root=LABEL=dracut $client_opts rd.retry=3" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     if ! test_marker_check; then
@@ -83,11 +83,10 @@ test_setup() {
         return 1
     fi
 
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -a "test watchdog" \
-        -d "piix ide-gd_mod ata_piix btrfs i6300esb" \
-        --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
+    test_dracut \
+        -a "watchdog" \
+        -d "btrfs" \
+        "$TESTDIR"/initramfs.testing
     rm -rf -- "$TESTDIR"/overlay
 }
 

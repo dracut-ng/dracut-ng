@@ -94,14 +94,13 @@ client_test() {
         -hda "$TESTDIR"/client.img \
         -device i6300esb -watchdog-action poweroff \
         -append "
-        panic=1 oops=panic softlockup_panic=1
         ifname=net1:52:54:00:12:34:01
         ifname=net2:52:54:00:12:34:02
         ifname=net3:52:54:00:12:34:03
         ifname=net4:52:54:00:12:34:04
         ifname=net5:52:54:00:12:34:05
-        $cmdline rd.net.timeout.dhcp=30 systemd.crash_reboot
-        $DEBUGFAIL rd.retry=5 rw console=ttyS0,115200n81 selinux=0 init=/sbin/init" \
+        $cmdline rd.net.timeout.dhcp=30
+        rd.retry=5 rw init=/sbin/init" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     {
@@ -369,11 +368,9 @@ test_setup() {
         inst_simple ./client.link /etc/systemd/network/01-client.link
     )
     # Make client's dracut image
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        --no-early-microcode \
+    test_dracut \
         -a "debug ${USE_NETWORK} ifcfg" \
-        --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
+        "$TESTDIR"/initramfs.testing
 
     (
         # shellcheck disable=SC2031

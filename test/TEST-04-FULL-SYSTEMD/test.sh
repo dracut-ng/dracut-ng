@@ -27,7 +27,7 @@ client_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "systemd.unit=testsuite.target systemd.mask=systemd-firstboot rd.multipath=0 panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=LABEL=dracut $client_opts rd.retry=3 console=ttyS0,115200n81 selinux=0 $DEBUGOUT rd.shell=0 $DEBUGFAIL" \
+        -append "systemd.unit=testsuite.target systemd.mask=systemd-firstboot rd.multipath=0 root=LABEL=dracut $client_opts rd.retry=3 $DEBUGOUT" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     if ! test_marker_check; then
@@ -152,12 +152,11 @@ EOF
     [ -e /etc/machine-id ] && EXTRA_MACHINE="/etc/machine-id"
     [ -e /etc/machine-info ] && EXTRA_MACHINE+=" /etc/machine-info"
 
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -a "test systemd i18n qemu" \
+    test_dracut \
+        -a "systemd i18n qemu" \
+        -d "btrfs" \
         ${EXTRA_MACHINE:+-I "$EXTRA_MACHINE"} \
-        -d "piix ide-gd_mod ata_piix btrfs i6300esb" \
-        --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
+        "$TESTDIR"/initramfs.testing
 
     rm -rf -- "$TESTDIR"/overlay
 }

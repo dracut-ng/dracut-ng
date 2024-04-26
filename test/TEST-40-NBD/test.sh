@@ -80,7 +80,7 @@ client_test() {
         "${disk_args[@]}" \
         -net nic,macaddr="$mac",model=e1000 \
         -net socket,connect=127.0.0.1:12340 \
-        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot rd.shell=0 $cmdline $DEBUGFAIL rd.auto rd.info rd.retry=10 ro console=ttyS0,115200n81  selinux=0  " \
+        -append "$cmdline rd.auto ro" \
         -initrd "$TESTDIR"/initramfs.testing
 
     # shellcheck disable=SC2181
@@ -334,14 +334,13 @@ test_setup() {
     echo "luks-$ID_FS_UUID /dev/nbd0 /etc/key" > /tmp/crypttab
     echo -n test > /tmp/key
 
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -a "test debug watchdog ${USE_NETWORK}" \
+    test_dracut \
+        -a "watchdog ${USE_NETWORK}" \
         -i "./cryptroot-ask.sh" "/sbin/cryptroot-ask" \
         -i "./client.link" "/etc/systemd/network/01-client.link" \
         -i "/tmp/crypttab" "/etc/crypttab" \
         -i "/tmp/key" "/etc/key" \
-        --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
+        "$TESTDIR"/initramfs.testing
 
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         -a "test rootfs-block debug kernel-modules network network-legacy" \

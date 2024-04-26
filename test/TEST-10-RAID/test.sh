@@ -16,7 +16,7 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=/dev/dracut/root rd.auto rw rd.retry=10 console=ttyS0,115200n81 selinux=0 rd.shell=0 $DEBUGFAIL" \
+        -append "root=/dev/dracut/root rd.auto rw" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     test_marker_check || return 1
@@ -63,14 +63,11 @@ test_setup() {
     echo "testluks UUID=$ID_FS_UUID /etc/key" > /tmp/crypttab
     echo -n "test" > /tmp/key
 
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -a "test" \
-        -d "piix ide-gd_mod ata_piix ext4" \
-        --no-hostonly-cmdline -N \
+    test_dracut \
         -i "./cryptroot-ask.sh" "/sbin/cryptroot-ask" \
         -i "/tmp/crypttab" "/etc/crypttab" \
         -i "/tmp/key" "/etc/key" \
-        -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
+        "$TESTDIR"/initramfs.testing
 }
 
 # shellcheck disable=SC1090
