@@ -85,13 +85,10 @@ install() {
         "$systemdsystemunitdir"/systemd-tmpfiles-setup.service \
         "$systemdsystemunitdir"/systemd-tmpfiles-setup-dev.service \
         "$systemdsystemunitdir"/systemd-tmpfiles-setup-dev-early.service \
-        "$systemdsystemunitdir"/systemd-ask-password-console.path \
         "$systemdsystemunitdir"/systemd-udevd-control.socket \
         "$systemdsystemunitdir"/systemd-udevd-kernel.socket \
-        "$systemdsystemunitdir"/systemd-ask-password-plymouth.path \
         "$systemdsystemunitdir"/systemd-journald.socket \
         "$systemdsystemunitdir"/systemd-journald-audit.socket \
-        "$systemdsystemunitdir"/systemd-ask-password-console.service \
         "$systemdsystemunitdir"/systemd-modules-load.service \
         "$systemdsystemunitdir"/systemd-halt.service \
         "$systemdsystemunitdir"/systemd-poweroff.service \
@@ -101,13 +98,11 @@ install() {
         "$systemdsystemunitdir"/systemd-udevd.service \
         "$systemdsystemunitdir"/systemd-udev-trigger.service \
         "$systemdsystemunitdir"/systemd-udev-settle.service \
-        "$systemdsystemunitdir"/systemd-ask-password-plymouth.service \
         "$systemdsystemunitdir"/systemd-journald.service \
         "$systemdsystemunitdir"/systemd-vconsole-setup.service \
         "$systemdsystemunitdir"/systemd-volatile-root.service \
         "$systemdsystemunitdir"/systemd-sysctl.service \
         "$systemdsystemunitdir"/sysinit.target.wants/systemd-modules-load.service \
-        "$systemdsystemunitdir"/sysinit.target.wants/systemd-ask-password-console.path \
         "$systemdsystemunitdir"/sysinit.target.wants/systemd-journald.service \
         "$systemdsystemunitdir"/sockets.target.wants/systemd-udevd-control.socket \
         "$systemdsystemunitdir"/sockets.target.wants/systemd-udevd-kernel.socket \
@@ -133,7 +128,6 @@ install() {
         mount umount reboot poweroff \
         systemd-run systemd-escape \
         systemd-cgls systemd-tmpfiles \
-        systemd-ask-password systemd-tty-ask-password-agent \
         /etc/udev/udev.hwdb
 
     inst_multiple -o \
@@ -239,9 +233,7 @@ EOF
 
     for i in \
         emergency.target \
-        rescue.target \
-        systemd-ask-password-console.service \
-        systemd-ask-password-plymouth.service; do
+        rescue.target; do
         [[ -f "$systemdsystemunitdir"/$i ]] || continue
         $SYSTEMCTL -q --root "$initdir" add-wants "$i" systemd-vconsole-setup.service
     done
