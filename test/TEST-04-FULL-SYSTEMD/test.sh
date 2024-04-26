@@ -53,7 +53,6 @@ test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
         -m "test-root systemd" \
-        -I "ldconfig" \
         -i ./test-init.sh /sbin/test-init \
         -i ./fstab /etc/fstab \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
@@ -78,6 +77,9 @@ test_setup() {
 
     # softlink mtab
     ln -fs /proc/self/mounts "$initdir"/etc/mtab
+
+    # Do not need ldconfig.service in our rootfs
+    rm -rf "$initdir"/usr/lib/systemd/system/sysinit.target.wants/ldconfig.service
 
     # install any Execs from the service files
     grep -Eho '^Exec[^ ]*=[^ ]+' "$initdir"{,/usr}/lib/systemd/system/*.service \
