@@ -26,14 +26,12 @@ echo "Image with ${dracut_cpio_params[*]} booted successfully"
 poweroff -f
 EOF
 
-    "$DRACUT" -l --no-kernel --drivers "" \
+    test_dracut \
+        --no-kernel --drivers "" \
         "${dracut_cpio_params[@]}" \
-        --modules "test" \
         --include "$tdir/init.sh" /lib/dracut/hooks/emergency/00-init.sh \
         --install "poweroff" \
-        --no-hostonly --no-hostonly-cmdline \
-        "$tdir/initramfs" \
-        || return 1
+        "$tdir/initramfs"
 
     "$testdir"/run-qemu \
         -device i6300esb -watchdog-action poweroff \

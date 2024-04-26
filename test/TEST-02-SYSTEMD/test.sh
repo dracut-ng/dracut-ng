@@ -17,7 +17,7 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=LABEL=dracut rw systemd.log_target=console rd.retry=3 rd.info console=ttyS0,115200n81 selinux=0 init=/sbin/init rd.shell=0 $DEBUGFAIL" \
+        -append "root=LABEL=dracut rw systemd.log_target=console rd.retry=3 init=/sbin/init" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     test_marker_check || return 1
@@ -62,13 +62,11 @@ test_setup() {
 
     # systemd-analyze.sh calls man indirectly
     # make the man command succeed always
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -a "test systemd" \
-        -d "piix ide-gd_mod ata_piix ext4" \
+    test_dracut \
+        -a "systemd" \
         -i ./systemd-analyze.sh /lib/dracut/hooks/pre-pivot/00-systemd-analyze.sh \
         -i "/bin/true" "/usr/bin/man" \
-        --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
+        "$TESTDIR"/initramfs.testing
 }
 
 # shellcheck disable=SC1090

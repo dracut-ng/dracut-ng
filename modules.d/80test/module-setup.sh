@@ -11,6 +11,11 @@ depends() {
 
 installkernel() {
     instmods \
+        ata_piix \
+        ext4 \
+        i6300esb \
+        ide-gd_mod \
+        piix \
         sd_mod \
         virtio_pci \
         virtio_scsi

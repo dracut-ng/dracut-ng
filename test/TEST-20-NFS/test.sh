@@ -68,7 +68,7 @@ client_test() {
         -net nic,macaddr="$mac",model=e1000 \
         -net socket,connect=127.0.0.1:12320 \
         -device i6300esb -watchdog-action poweroff \
-        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot rd.shell=0 $cmdline $DEBUGFAIL rd.retry=10 quiet ro console=ttyS0,115200n81 selinux=0" \
+        -append "$cmdline ro" \
         -initrd "$TESTDIR"/initramfs.testing
 
     # shellcheck disable=SC2181
@@ -403,10 +403,9 @@ test_setup() {
     )
 
     # Make client's dracut image
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -a "dmsquash-live debug watchdog ${USE_NETWORK}" \
-        --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
+    test_dracut \
+        -a "dmsquash-live watchdog ${USE_NETWORK}" \
+        "$TESTDIR"/initramfs.testing
 
     (
         # shellcheck disable=SC2031

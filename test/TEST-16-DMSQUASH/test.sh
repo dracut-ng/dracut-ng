@@ -21,7 +21,7 @@ test_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -boot order=d \
-        -append "rd.live.overlay.overlayfs=1 root=live:/dev/disk/by-label/dracut console=ttyS0,115200n81 quiet selinux=0 rd.info rd.shell=0 panic=1 oops=panic softlockup_panic=1 $DEBUGFAIL" \
+        -append "rd.live.overlay.overlayfs=1 root=live:/dev/disk/by-label/dracut" \
         -initrd "$TESTDIR"/initramfs.testing
 
     test_marker_check || return 1
@@ -30,7 +30,7 @@ test_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -boot order=d \
-        -append "rd.live.image rd.live.overlay.overlayfs=1 root=LABEL=dracut console=ttyS0,115200n81 quiet selinux=0 rd.info rd.shell=0 panic=1 oops=panic softlockup_panic=1 $DEBUGFAIL" \
+        -append "rd.live.image rd.live.overlay.overlayfs=1 root=LABEL=dracut" \
         -initrd "$TESTDIR"/initramfs.testing
 
     test_marker_check || return 1
@@ -39,7 +39,7 @@ test_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -boot order=d \
-        -append "rd.live.image rd.live.overlay.overlayfs=1 rd.live.dir=testdir root=LABEL=dracut console=ttyS0,115200n81 quiet selinux=0 rd.info rd.shell=0 panic=1 oops=panic softlockup_panic=1 $DEBUGFAIL" \
+        -append "rd.live.image rd.live.overlay.overlayfs=1 rd.live.dir=testdir root=LABEL=dracut" \
         -initrd "$TESTDIR"/initramfs.testing
 
     test_marker_check || return 1
@@ -50,7 +50,7 @@ test_run() {
         "$testdir"/run-qemu \
             "${disk_args[@]}" \
             -boot order=d \
-            -append "rd.live.image rd.live.overlay.overlayfs=1 rd.live.dir=testdir root=LABEL=dracut_ntfs console=ttyS0,115200n81 quiet selinux=0 rd.info rd.shell=0 panic=1 oops=panic softlockup_panic=1 $DEBUGFAIL" \
+            -append "rd.live.image rd.live.overlay.overlayfs=1 rd.live.dir=testdir root=LABEL=dracut_ntfs quiet rd.info rd.shell=0" \
             -initrd "$TESTDIR"/initramfs.testing
 
         test_marker_check || return 1
@@ -131,20 +131,17 @@ test_setup() {
 SUBSYSTEM=="block", ENV{ID_FS_TYPE}=="ntfs", ENV{ID_FS_TYPE}="ntfs3"
 EOF
 
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        --modules "test dash dmsquash-live qemu" \
-        --drivers "ext4 ntfs3 sd_mod" \
+    test_dracut \
+        --modules "dash dmsquash-live qemu" \
+        --drivers "ntfs3" \
         --install "mkfs.ext4" \
         --include /tmp/ntfs3.rules /lib/udev/rules.d/ntfs3.rules \
-        --no-hostonly --no-hostonly-cmdline \
-        --force "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
+        "$TESTDIR"/initramfs.testing
 
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        --modules "test dmsquash-live-autooverlay qemu" \
-        --drivers "ext4" \
+    test_dracut \
+        --modules "dmsquash-live-autooverlay qemu" \
         --install "mkfs.ext4" \
-        --no-hostonly --no-hostonly-cmdline \
-        --force "$TESTDIR"/initramfs.testing-autooverlay "$KVERSION" || return 1
+        "$TESTDIR"/initramfs.testing-autooverlay
 
     rm -rf -- "$TESTDIR"/overlay
 }

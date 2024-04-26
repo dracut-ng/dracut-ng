@@ -18,7 +18,7 @@ client_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot $* root=LABEL=root rw rd.retry=5 console=ttyS0,115200n81 selinux=0 rd.info rd.shell=0 $DEBUGFAIL" \
+        -append "$* root=LABEL=root rw rd.retry=5" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     if ! test_marker_check; then
@@ -93,11 +93,9 @@ test_setup() {
     fi
 
     echo "$MD_UUID" > "$TESTDIR"/mduuid
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -a "test" \
-        -d "piix ide-gd_mod ata_piix ext4" \
-        --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
+
+    test_dracut \
+        "$TESTDIR"/initramfs.testing
 }
 
 # shellcheck disable=SC1090

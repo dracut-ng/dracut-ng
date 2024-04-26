@@ -17,7 +17,7 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=/dev/dracut/root rw rd.auto=1 quiet rd.retry=3 rd.info console=ttyS0,115200n81 selinux=0 rd.shell=0 $DEBUGFAIL" \
+        -append "root=/dev/dracut/root rw rd.auto=1 rd.retry=3" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     test_marker_check || return 1
@@ -61,11 +61,8 @@ test_setup() {
         -initrd "$TESTDIR"/initramfs.makeroot || return 1
     test_marker_check dracut-root-block-created || return 1
 
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -a "test" \
-        -d "piix ide-gd_mod ata_piix ext4" \
-        --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
+    test_dracut \
+        "$TESTDIR"/initramfs.testing
 }
 
 # shellcheck disable=SC1090

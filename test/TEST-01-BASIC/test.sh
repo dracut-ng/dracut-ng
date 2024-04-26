@@ -15,7 +15,7 @@ test_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -device i6300esb -watchdog-action poweroff \
-        -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot \"root=LABEL=  rdinit=/bin/sh\" rw rd.retry=3 console=ttyS0,115200n81 rd.shell=0 $DEBUGFAIL" \
+        -append 'rw "root=LABEL=  rdinit=/bin/sh" rd.retry=3' \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     test_marker_check || return 1
@@ -59,12 +59,10 @@ test_setup() {
     rm -- "$TESTDIR"/marker.img
 
     # make sure --omit-drivers does not filter out drivers using regexp to test for an earlier regression (assuming there is no one letter linux kernel module needed to run the test)
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -a "test watchdog" \
-        -d "piix ide-gd_mod ata_piix ext4 i6300esb" \
+    test_dracut \
+        -a "watchdog" \
         --omit-drivers 'a b c d e f g h i j k l m n o p q r s t u v w x y z' \
-        --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.testing "$KVERSION" || return 1
+        "$TESTDIR"/initramfs.testing
 }
 
 # shellcheck disable=SC1090
