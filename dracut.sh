@@ -1051,6 +1051,7 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $prefix_l ]] && prefix=$prefix_l
 [[ $prefix == "/" ]] && unset prefix
 [[ $hostonly_l ]] && hostonly=$hostonly_l
+[[ $hostonly ]] || hostonly="-h"
 [[ $hostonly_cmdline_l ]] && hostonly_cmdline=$hostonly_cmdline_l
 [[ $hostonly_mode_l ]] && hostonly_mode=$hostonly_mode_l
 [[ $hostonly == "yes" ]] && ! [[ $hostonly_cmdline ]] && hostonly_cmdline="yes"
