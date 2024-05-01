@@ -53,7 +53,7 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     shellcheck \
     squashfs-tools \
     strace \
-    systemd \
+    systemd-boot-efi \
     tcpdump \
     tgt \
     thin-provisioning-tools \
