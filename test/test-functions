@@ -20,7 +20,7 @@ DRACUT=${DRACUT-${basedir}/dracut.sh}
 PKGLIBDIR=${PKGLIBDIR-$basedir}
 
 test_dracut() {
-    TEST_DRACUT_ARGS+=" --local --no-hostonly --no-hostonly-cmdline --no-early-microcode --add test --force --kver $KVERSION"
+    TEST_DRACUT_ARGS+=" --local --hostonly --no-early-microcode --add test --force --kver $KVERSION"
 
     # include $TESTDIR"/overlay if exists
     if [ -d "$TESTDIR"/overlay ]; then
@@ -30,9 +30,10 @@ test_dracut() {
     # shellcheck disable=SC2162
     IFS=' ' read -a TEST_DRACUT_ARGS_ARRAY <<< "$TEST_DRACUT_ARGS"
 
-    "$DRACUT" "$@" \
-        --kernel-cmdline "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot quiet rd.retry=10 rd.info rd.shell=0 selinux=0 console=ttyS0,115200n81 $DEBUGFAIL" \
-        "${TEST_DRACUT_ARGS_ARRAY[@]}" || return 1
+    "$DRACUT" \
+        --kernel-cmdline "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot rd.retry=10 rd.debug rd.shell=0 selinux=0 console=ttyS0,115200n81 systemd.log_level=debug systemd.log_target=console loglevel=77  rd.info rd.debug $DEBUGFAIL" \
+        "${TEST_DRACUT_ARGS_ARRAY[@]}" \
+        "$@" || return 1
 }
 
 command -v test_check &> /dev/null || test_check() {

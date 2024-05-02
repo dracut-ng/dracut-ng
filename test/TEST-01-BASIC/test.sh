@@ -3,7 +3,7 @@
 TEST_DESCRIPTION="root filesystem on a ext4 filesystem"
 
 # Uncomment this to debug failures
-# DEBUGFAIL="rd.shell rd.break"
+DEBUGFAIL="rd.shell rd.debug"
 
 test_run() {
     declare -a disk_args=()
@@ -60,6 +60,7 @@ test_setup() {
 
     # make sure --omit-drivers does not filter out drivers using regexp to test for an earlier regression (assuming there is no one letter linux kernel module needed to run the test)
     test_dracut \
+        --hostonly \
         -a "watchdog" \
         --omit-drivers 'a b c d e f g h i j k l m n o p q r s t u v w x y z' \
         "$TESTDIR"/initramfs.testing
