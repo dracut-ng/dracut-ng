@@ -10,8 +10,15 @@ check() {
 
 # Module dependency requirements.
 depends() {
+    local deps
     # This module has external dependency on other module(s).
-    echo systemd-udevd
+    deps="systemd-udevd"
+    if dracut_module_included "crypt"; then
+        if [[ $hostonly && -f "$dracutsysrootdir"/etc/crypttab ]] && grep -q -e "fido2-device=" -e "fido2-cid=" "$dracutsysrootdir"/etc/crypttab; then
+            deps+=" fido2"
+        fi
+    fi
+    echo "$deps"
     # Return 0 to include the dependent module(s) in the initramfs.
     return 0
 }
