@@ -39,7 +39,6 @@ install() {
         "$systemdutildir"/systemd-reply-password \
         "$systemdutildir"/systemd-fsck \
         "$systemdutildir"/systemd-udevd \
-        "$systemdutildir"/systemd-journald \
         "$systemdutildir"/systemd-sysctl \
         "$systemdutildir"/systemd-modules-load \
         "$systemdutildir"/systemd-vconsole-setup \
@@ -82,13 +81,8 @@ install() {
         "$systemdsystemunitdir"/sys-kernel-config.mount \
         "$systemdsystemunitdir"/modprobe@.service \
         "$systemdsystemunitdir"/kmod-static-nodes.service \
-        "$systemdsystemunitdir"/systemd-tmpfiles-setup.service \
-        "$systemdsystemunitdir"/systemd-tmpfiles-setup-dev.service \
-        "$systemdsystemunitdir"/systemd-tmpfiles-setup-dev-early.service \
         "$systemdsystemunitdir"/systemd-udevd-control.socket \
         "$systemdsystemunitdir"/systemd-udevd-kernel.socket \
-        "$systemdsystemunitdir"/systemd-journald.socket \
-        "$systemdsystemunitdir"/systemd-journald-audit.socket \
         "$systemdsystemunitdir"/systemd-modules-load.service \
         "$systemdsystemunitdir"/systemd-halt.service \
         "$systemdsystemunitdir"/systemd-poweroff.service \
@@ -98,36 +92,27 @@ install() {
         "$systemdsystemunitdir"/systemd-udevd.service \
         "$systemdsystemunitdir"/systemd-udev-trigger.service \
         "$systemdsystemunitdir"/systemd-udev-settle.service \
-        "$systemdsystemunitdir"/systemd-journald.service \
         "$systemdsystemunitdir"/systemd-vconsole-setup.service \
         "$systemdsystemunitdir"/systemd-volatile-root.service \
         "$systemdsystemunitdir"/systemd-sysctl.service \
         "$systemdsystemunitdir"/sysinit.target.wants/systemd-modules-load.service \
-        "$systemdsystemunitdir"/sysinit.target.wants/systemd-journald.service \
         "$systemdsystemunitdir"/sockets.target.wants/systemd-udevd-control.socket \
         "$systemdsystemunitdir"/sockets.target.wants/systemd-udevd-kernel.socket \
-        "$systemdsystemunitdir"/sockets.target.wants/systemd-journald.socket \
-        "$systemdsystemunitdir"/sockets.target.wants/systemd-journald-audit.socket \
-        "$systemdsystemunitdir"/sockets.target.wants/systemd-journald-dev-log.socket \
         "$systemdsystemunitdir"/sysinit.target.wants/systemd-udevd.service \
         "$systemdsystemunitdir"/sysinit.target.wants/systemd-udev-trigger.service \
         "$systemdsystemunitdir"/sysinit.target.wants/kmod-static-nodes.service \
-        "$systemdsystemunitdir"/sysinit.target.wants/systemd-tmpfiles-setup.service \
-        "$systemdsystemunitdir"/sysinit.target.wants/systemd-tmpfiles-setup-dev.service \
-        "$systemdsystemunitdir"/sysinit.target.wants/systemd-tmpfiles-setup-dev-early.service \
         "$systemdsystemunitdir"/sysinit.target.wants/systemd-sysctl.service \
         "$systemdsystemunitdir"/ctrl-alt-del.target \
         "$systemdsystemunitdir"/syslog.socket \
         "$systemdsystemunitdir"/slices.target \
         "$systemdsystemunitdir"/system.slice \
         "$systemdsystemunitdir"/-.slice \
-        "$tmpfilesdir"/systemd.conf \
-        journalctl systemctl \
+        systemctl \
         echo swapoff \
         kmod insmod rmmod modprobe modinfo depmod lsmod \
         mount umount reboot poweroff \
         systemd-run systemd-escape \
-        systemd-cgls systemd-tmpfiles \
+        systemd-cgls \
         /etc/udev/udev.hwdb
 
     inst_multiple -o \
@@ -157,8 +142,6 @@ install() {
 
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
-            /etc/systemd/journald.conf \
-            /etc/systemd/journald.conf.d/*.conf \
             /etc/systemd/system.conf \
             /etc/systemd/system.conf.d/*.conf \
             "$systemdsystemconfdir"/modprobe@.service \
@@ -184,17 +167,14 @@ install() {
         chmod 444 "$initdir/etc/machine-id"
     fi
 
-    # install adm user/group for journald
     inst_multiple nologin
     {
-        grep '^systemd-journal:' "$dracutsysrootdir"/etc/passwd 2> /dev/null
         grep '^adm:' "$dracutsysrootdir"/etc/passwd 2> /dev/null
         # we don't use systemd-networkd, but the user is in systemd.conf tmpfiles snippet
         grep '^systemd-network:' "$dracutsysrootdir"/etc/passwd 2> /dev/null
     } >> "$initdir/etc/passwd"
 
     {
-        grep '^systemd-journal:' "$dracutsysrootdir"/etc/group 2> /dev/null
         grep '^wheel:' "$dracutsysrootdir"/etc/group 2> /dev/null
         grep '^adm:' "$dracutsysrootdir"/etc/group 2> /dev/null
         grep '^utmp:' "$dracutsysrootdir"/etc/group 2> /dev/null
@@ -239,13 +219,6 @@ EOF
     done
 
     mkdir -p "$initdir/etc/systemd"
-    # We must use a volatile journal, and we don't want rate-limiting
-    {
-        echo "[Journal]"
-        echo "Storage=volatile"
-        echo "RateLimitInterval=0"
-        echo "RateLimitBurst=0"
-    } >> "$initdir/etc/systemd/journald.conf"
 
     $SYSTEMCTL -q --root "$initdir" set-default multi-user.target
 
