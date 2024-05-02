@@ -6,6 +6,7 @@ TEST_DESCRIPTION="UEFI boot"
 ovmf_code() {
     for path in \
         "/usr/share/OVMF/OVMF_CODE.fd" \
+        "/usr/share/OVMF/OVMF_CODE_4M.fd" \
         "/usr/share/edk2/x64/OVMF_CODE.fd" \
         "/usr/share/edk2-ovmf/OVMF_CODE.fd" \
         "/usr/share/qemu/ovmf-x86_64-4m.bin"; do
