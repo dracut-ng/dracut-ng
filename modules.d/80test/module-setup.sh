@@ -6,7 +6,7 @@ check() {
 }
 
 depends() {
-    echo "base debug"
+    echo "base debug qemu"
 }
 
 installkernel() {

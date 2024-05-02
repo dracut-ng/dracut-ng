@@ -42,7 +42,16 @@ test_setup() {
     mksquashfs "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/squashfs.img -quiet -no-progress
 
     mkdir -p "$TESTDIR"/ESP/EFI/BOOT
+
     test_dracut \
+        --modules 'rootfs-block' \
+        --kernel-cmdline 'root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root ro rd.skipfsck rootfstype=squashfs' \
+        --drivers 'squashfs' \
+        --uefi \
+        "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
+
+    test_dracut \
+        --hostonly \
         --modules 'rootfs-block' \
         --kernel-cmdline 'root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root ro rd.skipfsck rootfstype=squashfs' \
         --drivers 'squashfs' \
