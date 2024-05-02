@@ -31,9 +31,6 @@ depends() {
             deps+=" tpm2-tss"
         fi
     fi
-    if dracut_module_included "systemd"; then
-        deps+=" systemd-ask-password"
-    fi
     echo "$deps"
     return 0
 }
@@ -162,19 +159,6 @@ install() {
 
     inst_simple "$moddir/crypt-lib.sh" "/lib/dracut-crypt-lib.sh"
     inst_script "$moddir/crypt-run-generator.sh" "/sbin/crypt-run-generator"
-
-    if dracut_module_included "systemd"; then
-        # the cryptsetup targets are already pulled in by 00systemd, but not
-        # the enablement symlinks
-        inst_multiple -o \
-            "$tmpfilesdir"/cryptsetup.conf \
-            "$systemdutildir"/system-generators/systemd-cryptsetup-generator \
-            "$systemdutildir"/systemd-cryptsetup \
-            "$systemdsystemunitdir"/cryptsetup.target \
-            "$systemdsystemunitdir"/sysinit.target.wants/cryptsetup.target \
-            "$systemdsystemunitdir"/remote-cryptsetup.target \
-            "$systemdsystemunitdir"/initrd-root-device.target.wants/remote-cryptsetup.target
-    fi
 
     # Install required libraries.
     _arch=${DRACUT_ARCH:-$(uname -m)}
