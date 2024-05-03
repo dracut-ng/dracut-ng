@@ -57,7 +57,6 @@ test_run() {
 test_setup() {
     "$basedir"/dracut.sh -l --keep --tmpdir "$TESTDIR" \
         -m "test-root" \
-        -i ./test-init.sh /sbin/init \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*

@@ -26,7 +26,7 @@ install() {
     inst_script "${dracutbasedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh"
     inst_script "${dracutbasedir}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh"
 
-    inst_script "$moddir/test-init.sh" "/test-init.sh"
+    inst_script "$moddir/test-init.sh" "/sbin/init"
 
     inst_multiple -o plymouth
 }

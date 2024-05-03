@@ -53,6 +53,7 @@ test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
         -m "test-root systemd" \
+        -i "${PKGLIBDIR}/modules.d/80test-root/test-init.sh" "/sbin/test-init.sh" \
         -i ./test-init.sh /sbin/test-init \
         -I "findmnt" \
         -i ./fstab /etc/fstab \

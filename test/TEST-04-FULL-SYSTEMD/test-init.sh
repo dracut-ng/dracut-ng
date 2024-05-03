@@ -18,4 +18,4 @@ if ! ismounted /usr; then
     echo "**************************FAILED**************************"
 fi
 
-. /test-init.sh
+. /sbin/test-init.sh

@@ -149,7 +149,6 @@ test_setup() {
     rm -rf -- "$TESTDIR"/overlay
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
         -m "test-root" \
-        -i ./client-init.sh /sbin/init \
         -I "ip grep setsid" \
         -i "${basedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${basedir}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
@@ -157,6 +156,7 @@ test_setup() {
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/nfs/rpc_pipefs
+    cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
 
     # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
@@ -189,7 +189,6 @@ test_setup() {
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
         -m "test-root network network-legacy iscsi" \
         -d "iscsi_tcp crc32c ipv6 af_packet" \
-        -i ./server-init.sh /sbin/init \
         -I "ip grep sleep setsid chmod modprobe pidof tgtd tgtadm" \
         -i "${basedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${basedir}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
@@ -202,6 +201,7 @@ test_setup() {
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/dhcpd "$TESTDIR"/overlay/source/etc/iscsi
+    cp ./server-init.sh "$TESTDIR"/overlay/source/sbin/init
 
     # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
