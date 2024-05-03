@@ -54,6 +54,7 @@ test_setup() {
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
         -m "test-root systemd" \
         -i ./test-init.sh /sbin/test-init \
+        -I "findmnt" \
         -i ./fstab /etc/fstab \
         --no-hostonly --no-hostonly-cmdline --nomdadmconf --nohardlink \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
