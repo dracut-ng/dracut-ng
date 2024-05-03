@@ -1,11 +1,12 @@
 #!/bin/bash
 
 check() {
-    if ! require_binaries pgrep pkill memstrack; then
-        dinfo "memstrack is not available"
-        dinfo "If you need to use rd.memdebug>=4, please install memstrack and procps-ng"
-        return 1
-    fi
+    # If you need to use rd.memdebug>=4, please install all the required binary dependencies
+    require_binaries \
+        pgrep \
+        pkill \
+        memstrack \
+        || return 1
 
     return 0
 }
