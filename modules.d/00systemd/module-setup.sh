@@ -23,8 +23,6 @@ installkernel() {
 
 # called by dracut
 install() {
-    local _mods
-
     if [[ $prefix == /run/* ]]; then
         dfatal 'systemd does not work with a prefix, which contains "/run"!!'
         exit 1
@@ -39,7 +37,6 @@ install() {
         "$systemdutildir"/systemd-reply-password \
         "$systemdutildir"/systemd-fsck \
         "$systemdutildir"/systemd-sysctl \
-        "$systemdutildir"/systemd-modules-load \
         "$systemdutildir"/systemd-vconsole-setup \
         "$systemdutildir"/systemd-volatile-root \
         "$systemdutildir"/systemd-sysroot-fstab-check \
@@ -78,9 +75,6 @@ install() {
         "$systemdsystemunitdir"/paths.target \
         "$systemdsystemunitdir"/umount.target \
         "$systemdsystemunitdir"/sys-kernel-config.mount \
-        "$systemdsystemunitdir"/modprobe@.service \
-        "$systemdsystemunitdir"/kmod-static-nodes.service \
-        "$systemdsystemunitdir"/systemd-modules-load.service \
         "$systemdsystemunitdir"/systemd-halt.service \
         "$systemdsystemunitdir"/systemd-poweroff.service \
         "$systemdsystemunitdir"/systemd-reboot.service \
@@ -89,8 +83,6 @@ install() {
         "$systemdsystemunitdir"/systemd-vconsole-setup.service \
         "$systemdsystemunitdir"/systemd-volatile-root.service \
         "$systemdsystemunitdir"/systemd-sysctl.service \
-        "$systemdsystemunitdir"/sysinit.target.wants/systemd-modules-load.service \
-        "$systemdsystemunitdir"/sysinit.target.wants/kmod-static-nodes.service \
         "$systemdsystemunitdir"/sysinit.target.wants/systemd-sysctl.service \
         "$systemdsystemunitdir"/ctrl-alt-del.target \
         "$systemdsystemunitdir"/syslog.socket \
@@ -99,42 +91,17 @@ install() {
         "$systemdsystemunitdir"/-.slice \
         systemctl \
         echo swapoff \
-        kmod insmod rmmod modprobe modinfo depmod lsmod \
         mount umount reboot poweroff \
         systemd-run systemd-escape \
         systemd-cgls
 
     inst_multiple -o \
-        /usr/lib/modules-load.d/*.conf \
         /usr/lib/sysctl.d/*.conf
-
-    modules_load_get() {
-        local _line i
-        for i in "$dracutsysrootdir$1"/*.conf; do
-            [[ -f $i ]] || continue
-            while read -r _line || [ -n "$_line" ]; do
-                case $_line in
-                    \#*) ;;
-
-                    \;*) ;;
-
-                    *)
-                        echo "$_line"
-                        ;;
-                esac
-            done < "$i"
-        done
-    }
-
-    mapfile -t _mods < <(modules_load_get /usr/lib/modules-load.d)
-    [[ ${#_mods[@]} -gt 0 ]] && hostonly='' instmods "${_mods[@]}"
 
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
             /etc/systemd/system.conf \
             /etc/systemd/system.conf.d/*.conf \
-            "$systemdsystemconfdir"/modprobe@.service \
-            "$systemdsystemconfdir/modprobe@.service.d/*.conf" \
             /etc/hosts \
             /etc/hostname \
             /etc/nsswitch.conf \
@@ -142,12 +109,8 @@ install() {
             /etc/machine-info \
             /etc/vconsole.conf \
             /etc/locale.conf \
-            /etc/modules-load.d/*.conf \
             /etc/sysctl.d/*.conf \
             /etc/sysctl.conf
-
-        mapfile -t _mods < <(modules_load_get /etc/modules-load.d)
-        [[ ${#_mods[@]} -gt 0 ]] && hostonly='' instmods "${_mods[@]}"
     fi
 
     if ! [[ -e "$initdir/etc/machine-id" ]]; then
@@ -216,5 +179,4 @@ EOF
         {"tls/$_arch/",tls/,"$_arch/",}"libgcrypt.so*" \
         {"tls/$_arch/",tls/,"$_arch/",}"libkmod.so*" \
         {"tls/$_arch/",tls/,"$_arch/",}"libnss_*"
-
 }
