@@ -6,4 +6,5 @@ if grep -qF ' rd.live.overlay=LABEL=persist ' /proc/cmdline; then
     echo "dracut-autooverlay-success" > /overlay-marker
 fi
 
-. /test-init.sh
+# call the rest of the init
+. /sbin/init

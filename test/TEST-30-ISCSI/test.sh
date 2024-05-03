@@ -136,7 +136,6 @@ test_setup() {
     # Create what will eventually be the client root filesystem onto an overlay
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
         -m "test-root" \
-        -i ./client-init.sh /sbin/init \
         -I "ip grep setsid" \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
@@ -145,6 +144,7 @@ test_setup() {
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/nfs/rpc_pipefs
+    cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
 
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
@@ -176,7 +176,6 @@ test_setup() {
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
         -m "test-root network network-legacy" \
         -d "iscsi_tcp crc32c ipv6" \
-        -i ./server-init.sh /sbin/init \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
         -I "modprobe chmod ip tcpdump setsid pidof tgtd tgtadm /etc/passwd" \
@@ -188,6 +187,7 @@ test_setup() {
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     mkdir -p "$TESTDIR"/overlay/source/var/lib/dhcpd
+    cp ./server-init.sh "$TESTDIR"/overlay/source/sbin/init
 
     # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.

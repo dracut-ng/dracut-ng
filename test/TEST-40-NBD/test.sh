@@ -190,13 +190,13 @@ make_encrypted_root() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
         -m "test-root" \
-        -i ./client-init.sh /sbin/init \
         -I "ip grep" \
         -i "${basedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${basedir}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
+    cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
 
     # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
@@ -228,13 +228,13 @@ make_client_root() {
     rm -fr "$TESTDIR"/overlay
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
         -m "test-root" \
-        -i ./client-init.sh /sbin/init \
         -I "ip" \
         -i "${basedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${basedir}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
+    cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
 
     # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
@@ -280,7 +280,6 @@ EOF
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
         -m "test-root network network-legacy" \
         -d "nfsd sunrpc ipv6 lockd af_packet 8021q ipvlan macvlan" \
-        -i ./server-init.sh /sbin/init \
         -I "ip grep sleep nbd-server chmod modprobe vi pidof" \
         -i "${basedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${basedir}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
@@ -293,6 +292,7 @@ EOF
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/dhcpd "$TESTDIR"/overlay/source/etc/nbd-server
+    cp ./server-init.sh "$TESTDIR"/overlay/source/sbin/init
 
     # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
