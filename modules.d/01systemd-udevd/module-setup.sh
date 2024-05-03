@@ -30,6 +30,7 @@ depends() {
 install() {
 
     inst_multiple -o \
+        /etc/udev/udev.hwdb \
         "$udevdir"/hwdb.bin \
         "$udevdir"/dmi_memory_id \
         "$udevdir"/fido_id \
@@ -72,6 +73,7 @@ install() {
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
+            /etc/udev/udev.conf \
             "$udevconfdir"/hwdb.bin \
             "$udevconfdir"/udev.conf \
             "$udevrulesconfdir/*.rules" \
