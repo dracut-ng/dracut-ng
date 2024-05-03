@@ -4,6 +4,9 @@
 check() {
     [[ $mount_needs ]] && return 1
 
+    # If the binary(s) requirements are not fulfilled the module can't be installed
+    require_binaries "$systemdutildir"/systemd || return 1
+
     return 0
 }
 
