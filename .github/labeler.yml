@@ -78,6 +78,10 @@ systemd-ask-password:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/01systemd-ask-password/*'
 
+systemd-bsod:
+  - changed-files:
+    - any-glob-to-any-file: 'modules.d/01systemd-bsod/*'
+
 systemd-coredump:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/01systemd-coredump/*'
@@ -113,6 +117,10 @@ systemd-modules-load:
 systemd-networkd:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/01systemd-networkd/*'
+
+systemd-network-management:
+  - changed-files:
+    - any-glob-to-any-file: 'modules.d/00systemd-network-management/*'
 
 systemd-pcrphase:
   - changed-files:
@@ -322,6 +330,10 @@ multipath:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/90multipath/*'
 
+numlock:
+  - changed-files:
+    - any-glob-to-any-file: 'modules.d/90numlock/*'
+
 nvdimm:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/90nvdimm/*'
@@ -341,6 +353,10 @@ qemu:
 qemu-net:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/90qemu-net/*'
+
+systemd-cryptsetup:
+  - changed-files:
+    - any-glob-to-any-file: 'modules.d/90systemd-cryptsetup/*'
 
 crypt-gpg:
   - changed-files:
