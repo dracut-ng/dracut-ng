@@ -29,7 +29,7 @@ mksquashfs /source /root/testdir/rootfs.img -quiet
 
 # Copy rootfs.img to the NTFS drive if exists
 if [ -e "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_ntfs" ]; then
-    mkfs.ntfs -F -L dracut_ntfs /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_ntfs
+    mkfs.ntfs -q -F -L dracut_ntfs /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_ntfs
     mkdir -p /root_ntfs
     mount -t ntfs3 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_ntfs /root_ntfs
     mkdir -p /root_ntfs/run /root_ntfs/testdir

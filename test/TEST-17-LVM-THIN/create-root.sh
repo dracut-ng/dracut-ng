@@ -20,7 +20,7 @@ lvm vgcreate dracut /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[123]
 lvm lvcreate --ignoremonitoring -l 100%FREE -T dracut/mythinpool
 lvm lvcreate --ignoremonitoring -V100M -T dracut/mythinpool -n root
 lvm vgchange --ignoremonitoring -ay
-mkfs.ext4 /dev/dracut/root
+mkfs.ext4 -q /dev/dracut/root
 mkdir -p /sysroot
 mount -t ext4 /dev/dracut/root /sysroot
 cp -a -t /sysroot /source/*
