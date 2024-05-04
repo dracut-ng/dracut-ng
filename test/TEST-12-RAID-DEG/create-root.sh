@@ -42,6 +42,6 @@ eval "$(udevadm info --query=property --name=/dev/md0 | while read -r line || [ 
     echo "dracut-root-block-created"
     echo MD_UUID="$MD_UUID"
     echo "ID_FS_UUID=$ID_FS_UUID"
-} | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
+} | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
 sync
 poweroff -f

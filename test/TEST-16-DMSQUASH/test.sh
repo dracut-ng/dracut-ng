@@ -46,7 +46,7 @@ test_run() {
 
     # Run the NTFS test only if mkfs.ntfs is available
     if modprobe --dry-run ntfs3 &> /dev/null && command -v mkfs.ntfs &> /dev/null; then
-        dd if=/dev/zero of="$TESTDIR"/marker.img bs=1MiB count=1
+        dd if=/dev/zero of="$TESTDIR"/marker.img bs=1MiB count=1 status=none
         "$testdir"/run-qemu \
             "${disk_args[@]}" \
             -boot order=d \
