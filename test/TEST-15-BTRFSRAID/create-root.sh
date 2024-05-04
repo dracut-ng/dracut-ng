@@ -12,7 +12,7 @@ udevadm settle
 
 set -e
 
-mkfs.btrfs -draid10 -mraid10 -L root /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid[1234]
+mkfs.btrfs -q -draid10 -mraid10 -L root /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid[1234]
 udevadm settle
 
 btrfs device scan

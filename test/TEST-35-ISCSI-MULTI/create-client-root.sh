@@ -12,7 +12,7 @@ udevadm settle
 
 set -ex
 
-mkfs.ext4 -j -L singleroot -F /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_singleroot
+mkfs.ext4 -q -j -L singleroot -F /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_singleroot
 mkdir -p /sysroot
 mount -t ext4 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_singleroot /sysroot
 cp -a -t /sysroot /source/*
@@ -23,7 +23,7 @@ lvm pvcreate -ff -y /dev/md0
 lvm vgcreate dracut /dev/md0
 lvm lvcreate -l 100%FREE -n root dracut
 lvm vgchange -ay
-mkfs.ext4 -j -L sysroot /dev/dracut/root
+mkfs.ext4 -q -j -L sysroot /dev/dracut/root
 mount -t ext4 /dev/dracut/root /sysroot
 cp -a -t /sysroot /source/*
 umount /sysroot

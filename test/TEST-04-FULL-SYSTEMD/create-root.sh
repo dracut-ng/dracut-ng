@@ -12,8 +12,8 @@ set -e
 
 udevadm settle
 modprobe btrfs || :
-mkfs.btrfs -L dracut /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root
-mkfs.btrfs -L dracutusr /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_usr
+mkfs.btrfs -q -L dracut /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root
+mkfs.btrfs -q -L dracutusr /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_usr
 btrfs device scan /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root
 btrfs device scan /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_usr
 mkdir -p /root
