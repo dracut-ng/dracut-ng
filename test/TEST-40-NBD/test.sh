@@ -298,7 +298,7 @@ EOF
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
+    "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot" \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
         -I "mkfs.ext4" \
@@ -342,12 +342,11 @@ test_setup() {
         -i "/tmp/key" "/etc/key" \
         "$TESTDIR"/initramfs.testing
 
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
+    "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
         -a "test rootfs-block debug kernel-modules network network-legacy" \
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod e1000 drbg" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
-        --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1
 
     rm -rf -- "$TESTDIR"/overlay

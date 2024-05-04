@@ -34,8 +34,8 @@ test_run() {
 
 test_setup() {
     # Create what will eventually be our root filesystem
-    "$DRACUT" --local --no-hostonly --no-early-microcode --nofscks \
-        --tmpdir "$TESTDIR" --keep --modules "test-root" \
+    "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
+        -m "test-root" \
         "$TESTDIR"/tmp-initramfs.root "$KVERSION" || return 1
 
     mkdir -p "$TESTDIR"/dracut.*/initramfs/proc
