@@ -134,12 +134,11 @@ test_check() {
 
 test_setup() {
     # Create what will eventually be the client root filesystem onto an overlay
-    "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
         -m "test-root" \
         -I "ip grep setsid" \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
-        --no-hostonly --no-hostonly-cmdline --nohardlink \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
@@ -173,7 +172,7 @@ test_setup() {
     rm -- "$TESTDIR"/marker.img
 
     # Create what will eventually be the server root filesystem onto an overlay
-    "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
         -m "test-root network network-legacy" \
         -d "iscsi_tcp crc32c ipv6" \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
@@ -182,7 +181,6 @@ test_setup() {
         --install-optional "/etc/netconfig dhcpd /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
         -i "./hosts" "/etc/hosts" \
         -i "./dhcpd.conf" "/etc/dhcpd.conf" \
-        --no-hostonly --no-hostonly-cmdline --nohardlink \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
@@ -193,12 +191,10 @@ test_setup() {
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
+    "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot" \
         -I "mkfs.ext4" \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
-        --nomdadmconf \
-        --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
     rm -rf -- "$TESTDIR"/overlay
 

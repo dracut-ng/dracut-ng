@@ -10,6 +10,13 @@ depends() {
 }
 
 install() {
+    # do not compress, do not strip
+    export compress="cat"
+    export do_strip="no"
+    export do_hardlink="no"
+    export early_microcode="no"
+    export hostonly_cmdline="no"
+
     inst_simple /etc/os-release
 
     inst_multiple mkdir ln dd stty mount poweroff umount setsid sync

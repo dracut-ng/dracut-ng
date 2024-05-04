@@ -28,9 +28,8 @@ test_setup() {
     dd if=/dev/zero of="$DISKIMAGE" bs=1M count=1024
 
     # Create what will eventually be our root filesystem onto an overlay
-    "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
         -m "test-root" \
-        --no-hostonly --no-hostonly-cmdline --nohardlink \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
@@ -38,12 +37,11 @@ test_setup() {
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
+    "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot bash btrfs rootfs-block kernel-modules" \
         -d "piix ide-gd_mod ata_piix btrfs sd_mod" \
         -I "mkfs.btrfs" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
 
     rm -rf -- "$TESTDIR"/overlay
