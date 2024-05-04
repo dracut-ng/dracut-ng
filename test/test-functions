@@ -92,7 +92,7 @@ qemu_add_drive() {
     local bootindex=$6
 
     if [ "${size}" -ne 0 ]; then
-        dd if=/dev/zero of="${file}" bs=1MiB count="${size}"
+        dd if=/dev/zero of="${file}" bs=1MiB count="${size}" status=none
     fi
 
     eval "${2}"'+=(' \
@@ -106,7 +106,7 @@ qemu_add_drive() {
 }
 
 test_marker_reset() {
-    dd if=/dev/zero of="$TESTDIR"/marker.img bs=1MiB count=1
+    dd if=/dev/zero of="$TESTDIR"/marker.img bs=1MiB count=1 status=none
 }
 
 test_marker_check() {

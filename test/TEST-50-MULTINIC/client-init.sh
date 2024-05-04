@@ -32,7 +32,7 @@ done
 {
     echo "OK"
     echo "$IFACES"
-} | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
+} | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
 
 getargbool 0 rd.shell && sh -i
 

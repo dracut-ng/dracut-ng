@@ -45,6 +45,6 @@ cryptsetup luksClose /dev/mapper/dracut_disk3
     for i in /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[123]; do
         udevadm info --query=property --name="$i" | grep -F 'ID_FS_UUID='
     done
-} | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
+} | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
 sync
 poweroff -f

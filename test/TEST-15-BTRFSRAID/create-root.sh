@@ -23,6 +23,6 @@ mount -t btrfs /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid4 /sysroot
 cp -a -t /sysroot /source/*
 umount /sysroot
 
-echo "dracut-root-block-created" | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
+echo "dracut-root-block-created" | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
 sync
 poweroff -f
