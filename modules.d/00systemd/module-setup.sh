@@ -36,7 +36,6 @@ install() {
         "$systemdutildir"/systemd-shutdown \
         "$systemdutildir"/systemd-reply-password \
         "$systemdutildir"/systemd-fsck \
-        "$systemdutildir"/systemd-sysctl \
         "$systemdutildir"/systemd-vconsole-setup \
         "$systemdutildir"/systemd-volatile-root \
         "$systemdutildir"/systemd-sysroot-fstab-check \
@@ -82,8 +81,6 @@ install() {
         "$systemdsystemunitdir"/systemd-fsck@.service \
         "$systemdsystemunitdir"/systemd-vconsole-setup.service \
         "$systemdsystemunitdir"/systemd-volatile-root.service \
-        "$systemdsystemunitdir"/systemd-sysctl.service \
-        "$systemdsystemunitdir"/sysinit.target.wants/systemd-sysctl.service \
         "$systemdsystemunitdir"/ctrl-alt-del.target \
         "$systemdsystemunitdir"/syslog.socket \
         "$systemdsystemunitdir"/slices.target \
@@ -95,9 +92,6 @@ install() {
         systemd-run systemd-escape \
         systemd-cgls
 
-    inst_multiple -o \
-        /usr/lib/sysctl.d/*.conf
-
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
             /etc/systemd/system.conf \
@@ -108,9 +102,7 @@ install() {
             /etc/machine-id \
             /etc/machine-info \
             /etc/vconsole.conf \
-            /etc/locale.conf \
-            /etc/sysctl.d/*.conf \
-            /etc/sysctl.conf
+            /etc/locale.conf
     fi
 
     if ! [[ -e "$initdir/etc/machine-id" ]]; then

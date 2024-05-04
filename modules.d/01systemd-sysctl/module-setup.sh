@@ -10,7 +10,6 @@ check() {
 
     # Return 255 to only include the module, if another module requires it.
     return 255
-
 }
 
 # Module dependency requirements.
@@ -20,13 +19,13 @@ depends() {
     echo systemd-modules-load
     # Return 0 to include the dependent module(s) in the initramfs.
     return 0
-
 }
 
 # Install the required file(s) for the module in the initramfs.
 install() {
 
     inst_multiple -o \
+        /usr/lib/sysctl.d/*.conf \
         "$sysctld/*.conf" \
         "$systemdsystemunitdir"/systemd-sysctl.service \
         "$systemdsystemunitdir"/sysinit.target.wants/systemd-sysctl.service \
@@ -36,6 +35,7 @@ install() {
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
             /etc/sysctl.conf \
+            /etc/sysctl.d/*.conf \
             "$sysctlconfdir/*.conf" \
             "$systemdsystemconfdir"/systemd-sysctl.service \
             "$systemdsystemconfdir/systemd-sysctl.service.d/*.conf"
@@ -43,5 +43,4 @@ install() {
 
     # Enable the systemd type service unit for sysctl.
     $SYSTEMCTL -q --root "$initdir" enable systemd-sysctl.service
-
 }
