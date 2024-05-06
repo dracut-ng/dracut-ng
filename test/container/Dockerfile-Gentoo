@@ -20,7 +20,7 @@ RUN echo 'sys-apps/systemd cryptsetup' >> /etc/portage/package.use/systemd
 # Support thin volumes and build all of LVM2 including daemons and tools like lvchange
 RUN echo 'sys-fs/lvm2 thin lvm' >> /etc/portage/package.use/lvm2
 
-RUN emerge -qv \
+RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n \
     app-admin/rsyslog \
     app-arch/cpio \
     app-crypt/tpm2-tools \
@@ -51,3 +51,5 @@ RUN emerge -qv \
     sys-fs/squashfs-tools \
     sys-kernel/gentoo-kernel-bin \
     && rm -rf /var/cache/* /usr/share/doc/* /usr/share/man/*
+
+RUN emerge --depclean --with-bdeps=n
