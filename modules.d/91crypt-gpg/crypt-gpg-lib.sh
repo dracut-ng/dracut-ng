@@ -41,13 +41,13 @@ gpg_decrypt() {
         echo "allow-loopback-pinentry" >> "$gpghome/gpg-agent.conf"
         GNUPGHOME="$gpghome" gpg-agent --quiet --daemon
         GNUPGHOME="$gpghome" gpg --quiet --no-tty --import < /root/crypt-public-key.gpg
+        GNUPGHOME="$gpghome" gpg-connect-agent 1> /dev/null learn /bye
         local smartcardSerialNumber
         smartcardSerialNumber="$(GNUPGHOME=$gpghome gpg --no-tty --card-status \
             | sed -n -r -e 's|Serial number.*: ([0-9]*)|\1|p' | tr -d '\n')"
         if [ -n "${smartcardSerialNumber}" ]; then
             inputPrompt="PIN (OpenPGP card ${smartcardSerialNumber})"
         fi
-        GNUPGHOME="$gpghome" gpg-connect-agent 1> /dev/null learn /bye
         opts="$opts --pinentry-mode=loopback"
         cmd="GNUPGHOME=$gpghome gpg --card-status --no-tty > /dev/null 2>&1; gpg $opts --decrypt $mntp/$keypath"
     else
