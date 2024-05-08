@@ -50,6 +50,7 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n \
     sys-fs/ntfs3g \
     sys-fs/squashfs-tools \
     sys-kernel/gentoo-kernel-bin \
+    virtual/pkgconfig \
     && rm -rf /var/cache/* /usr/share/doc/* /usr/share/man/*
 
 RUN emerge --depclean --with-bdeps=n
