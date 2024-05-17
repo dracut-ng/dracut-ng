@@ -51,6 +51,7 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --
     pkg-config \
     procps \
     qemu-kvm \
+    rng-tools5 \
     shellcheck \
     squashfs-tools \
     strace \

@@ -46,6 +46,7 @@ RUN apk add --no-cache \
     procps \
     qemu-img \
     qemu-system-x86_64 \
+    rng-tools \
     sed \
     sfdisk \
     squashfs-tools \
