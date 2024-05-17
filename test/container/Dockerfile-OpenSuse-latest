@@ -33,6 +33,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     pigz \
     procps \
     qemu-kvm \
+    rng-tools \
     rpm-build \
     ShellCheck \
     shfmt \

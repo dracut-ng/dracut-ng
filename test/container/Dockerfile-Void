@@ -49,6 +49,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     pigz \
     plymouth \
     qemu \
+    rng-tools \
     shellcheck \
     shfmt \
     squashfs-tools \
