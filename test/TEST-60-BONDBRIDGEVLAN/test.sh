@@ -369,7 +369,7 @@ test_setup() {
     )
     # Make client's dracut image
     test_dracut \
-        -a "debug ${USE_NETWORK} ifcfg" \
+        -a "debug ${USE_NETWORK} ifcfg nfs" \
         "$TESTDIR"/initramfs.testing
 
     (

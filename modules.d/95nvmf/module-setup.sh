@@ -48,7 +48,7 @@ check() {
             return 255
         fi
     }
-    return 0
+    return 255
 }
 
 # called by dracut

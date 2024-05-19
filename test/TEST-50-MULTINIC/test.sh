@@ -343,7 +343,7 @@ test_setup() {
     )
     # Make client's dracut image
     test_dracut \
-        -a "debug watchdog ${USE_NETWORK}" \
+        -a "debug watchdog ${USE_NETWORK} nfs" \
         "$TESTDIR"/initramfs.testing
 
     (

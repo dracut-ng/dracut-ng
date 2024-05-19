@@ -12,7 +12,7 @@ check() {
         return 255
     }
 
-    return 0
+    return 255
 }
 
 # called by dracut

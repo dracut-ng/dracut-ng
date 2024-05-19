@@ -223,7 +223,7 @@ test_setup() {
 
     # Make client's dracut image
     test_dracut \
-        --add "$USE_NETWORK" \
+        --add "$USE_NETWORK iscsi" \
         --include "./client.link" "/etc/systemd/network/01-client.link" \
         --kernel-cmdline "rw rd.auto rd.retry=50" \
         "$TESTDIR"/initramfs.testing

@@ -15,7 +15,7 @@ check() {
         popd > /dev/null || exit
         [[ $_is_iscsi == 0 ]] || return 255
     }
-    return 0
+    return 255
 }
 
 get_ibft_mod() {

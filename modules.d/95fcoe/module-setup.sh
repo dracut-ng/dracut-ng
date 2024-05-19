@@ -11,7 +11,7 @@ check() {
     }
 
     require_binaries dcbtool fipvlan lldpad ip readlink fcoemon fcoeadm tr || return 1
-    return 0
+    return 255
 }
 
 # called by dracut

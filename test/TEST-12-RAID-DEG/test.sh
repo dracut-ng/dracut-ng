@@ -97,7 +97,6 @@ test_setup() {
     chmod 0600 /tmp/key
 
     test_dracut \
-        -o "dbus" \
         -i "./cryptroot-ask.sh" "/sbin/cryptroot-ask" \
         -i "/tmp/mdadm.conf" "/etc/mdadm.conf" \
         -i "/tmp/crypttab" "/etc/crypttab" \

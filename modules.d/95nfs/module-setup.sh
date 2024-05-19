@@ -27,7 +27,7 @@ check() {
         [[ "$(get_nfs_type)" ]] && return 0
         return 255
     }
-    return 0
+    return 255
 }
 
 # called by dracut

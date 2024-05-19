@@ -13,7 +13,7 @@ check() {
     }
     require_binaries nbd-client || return 1
 
-    return 0
+    return 255
 }
 
 # called by dracut

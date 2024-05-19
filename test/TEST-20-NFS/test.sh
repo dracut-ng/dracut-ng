@@ -404,7 +404,7 @@ test_setup() {
 
     # Make client's dracut image
     test_dracut \
-        -a "dmsquash-live watchdog ${USE_NETWORK}" \
+        -a "dmsquash-live watchdog ${USE_NETWORK} nfs" \
         "$TESTDIR"/initramfs.testing
 
     (
