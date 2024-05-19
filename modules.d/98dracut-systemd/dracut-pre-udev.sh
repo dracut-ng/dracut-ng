@@ -13,12 +13,8 @@ make_trace_mem "hook pre-udev" '1:shortmem' '2+:mem' '3+:slab'
 getargs 'rd.break=pre-udev' -d 'rdbreak=pre-udev' && emergency_shell -n pre-udev "Break before pre-udev"
 source_hook pre-udev
 
-_modprobe_d=/etc/modprobe.d
-if [ -d /usr/lib/modprobe.d ]; then
-    _modprobe_d=/usr/lib/modprobe.d
-elif [ -d /lib/modprobe.d ]; then
-    _modprobe_d=/lib/modprobe.d
-elif [ ! -d $_modprobe_d ]; then
+_modprobe_d=/run/modprobe.d
+if [ ! -d $_modprobe_d ]; then
     mkdir -p $_modprobe_d
 fi
 
@@ -30,8 +26,6 @@ for i in $(getargs rd.driver.pre -d rdloaddriver=); do
         done
     )
 done
-
-[ -d /etc/modprobe.d ] || mkdir -p /etc/modprobe.d
 
 for i in $(getargs rd.driver.blacklist -d rdblacklist=); do
     (

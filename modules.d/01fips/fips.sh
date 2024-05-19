@@ -97,7 +97,6 @@ fips_load_crypto() {
     read -d '' -r FIPSMODULES < /etc/fipsmodules
 
     fips_info "Loading and integrity checking all crypto modules"
-    mv /etc/modprobe.d/fips.conf /etc/modprobe.d/fips.conf.bak
     for _module in $FIPSMODULES; do
         if [ "$_module" != "tcrypt" ]; then
             if ! nonfatal_modprobe "${_module}" 2> /tmp/fips.modprobe_err; then
@@ -113,7 +112,10 @@ fips_load_crypto() {
             fi
         fi
     done
-    mv /etc/modprobe.d/fips.conf.bak /etc/modprobe.d/fips.conf
+    if [ -f /etc/fips.conf ]; then
+        mkdir -p /run/modprobe.d
+        cp /etc/fips.conf /run/modprobe.d/fips.conf
+    fi
 
     fips_info "Self testing crypto algorithms"
     modprobe tcrypt || return 1
