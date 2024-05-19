@@ -32,8 +32,9 @@ for lunmask_arg in $(getargs rd.lunmask); do
         IFS="$OLDIFS"
         if [ -d /sys/module/scsi_mod ]; then
             printf "manual" > /sys/module/scsi_mod/parameters/scan
-        elif [ ! -f /etc/modprobe.d/95lunmask.conf ]; then
-            echo "options scsi_mod scan=manual" > /etc/modprobe.d/95lunmask.conf
+        elif [ ! -f /run/modprobe.d/95lunmask.conf ]; then
+            mkdir -p /run/modprobe.d
+            echo "options scsi_mod scan=manual" > /run/modprobe.d/95lunmask.conf
         fi
         create_udev_rule "$1" "$2" "$3"
     )
