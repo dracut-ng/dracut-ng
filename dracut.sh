@@ -2351,9 +2351,9 @@ if [[ $create_early_cpio == yes ]]; then
         if ! (
             umask 077
             cd "$early_cpio_dir/d"
-            find . -print0 | sort -z \
-                | cpio ${CPIO_REPRODUCIBLE:+--reproducible} --null \
-                    ${cpio_owner:+-R "$cpio_owner"} -H newc -o --quiet > "${DRACUT_TMPDIR}/initramfs.img"
+            find . -print0 | sed -e 's,\./,,g' | sort -z \
+                | cpio -o ${CPIO_REPRODUCIBLE:+--reproducible} --null \
+                    ${cpio_owner:+-R "$cpio_owner"} -H newc --quiet > "${DRACUT_TMPDIR}/initramfs.img"
         ); then
             dfatal "Creation of $outfile failed"
             exit 1
@@ -2457,8 +2457,8 @@ else
     if ! (
         umask 077
         cd "$initdir"
-        find . -print0 | sort -z \
-            | cpio ${CPIO_REPRODUCIBLE:+--reproducible} --null ${cpio_owner:+-R "$cpio_owner"} -H newc -o --quiet \
+        find . -print0 | sed -e 's,\./,,g' | sort -z \
+            | cpio -o ${CPIO_REPRODUCIBLE:+--reproducible} --null ${cpio_owner:+-R "$cpio_owner"} -H newc --quiet \
             | $compress >> "${DRACUT_TMPDIR}/initramfs.img"
     ); then
         dfatal "Creation of $outfile failed"
