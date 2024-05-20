@@ -34,7 +34,6 @@ EOF
         "$tdir/initramfs"
 
     "$testdir"/run-qemu \
-        -device i6300esb -watchdog-action poweroff \
         -daemonize -pidfile "$tdir/vm.pid" \
         -serial "file:$tdir/console.out" \
         -append "panic=1 oops=panic softlockup_panic=1 console=ttyS0 rd.shell=1" \

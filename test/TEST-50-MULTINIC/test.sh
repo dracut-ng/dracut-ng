@@ -26,7 +26,6 @@ run_server() {
         -net socket,listen=127.0.0.1:12350 \
         -net nic,macaddr=52:54:01:12:34:56,model=e1000 \
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
-        -device i6300esb -watchdog-action poweroff \
         -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=LABEL=dracut rootfstype=ext4 rw console=ttyS0,115200n81 selinux=0" \
         -initrd "$TESTDIR"/initramfs.server \
         -pidfile "$TESTDIR"/server.pid -daemonize || return 1
@@ -77,7 +76,6 @@ client_test() {
         -netdev hubport,id=n2,hubid=2 \
         -device e1000,netdev=n1,mac=52:54:00:12:34:98 \
         -device e1000,netdev=n2,mac=52:54:00:12:34:99 \
-        -device i6300esb -watchdog-action poweroff \
         -append "$cmdline rd.retry=5 ro init=/sbin/init systemd.log_target=console" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
