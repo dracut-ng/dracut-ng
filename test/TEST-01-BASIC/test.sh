@@ -14,7 +14,6 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -device i6300esb -watchdog-action poweroff \
         -append 'rw "root=LABEL=  rdinit=/bin/sh" rd.retry=3' \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
