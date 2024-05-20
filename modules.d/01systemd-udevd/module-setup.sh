@@ -73,9 +73,7 @@ install() {
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
-            /etc/udev/udev.conf \
             "$udevconfdir"/hwdb.bin \
-            "$udevconfdir"/udev.conf \
             "$udevrulesconfdir/*.rules" \
             "$systemdutilconfdir"/hwdb/hwdb.bin \
             "$systemdsystemconfdir"/systemd-udevd.service \

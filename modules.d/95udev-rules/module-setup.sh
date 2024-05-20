@@ -8,8 +8,6 @@ install() {
     # ultimately, /lib/initramfs/rules.d or somesuch which includes links/copies
     # of the rules we want so that we just copy those in would be best
     inst_multiple udevadm cat uname blkid
-    inst_dir /etc/udev
-    inst_multiple -o /etc/udev/udev.conf
 
     [[ -d ${initdir}/$systemdutildir ]] || mkdir -p "${initdir}/$systemdutildir"
     for _i in "${systemdutildir}"/systemd-udevd "${udevdir}"/udevd /sbin/udevd; do
@@ -77,4 +75,10 @@ install() {
 
     inst_libdir_file "libnss_files*"
 
+    # Install the hosts local user configurations if enabled.
+    if [[ $hostonly ]]; then
+        inst_dir /etc/udev
+        inst_multiple -H -o \
+            /etc/udev/udev.conf
+    fi
 }
