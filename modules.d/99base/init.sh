@@ -137,8 +137,10 @@ getargs 'rd.break=pre-udev' -d 'rdbreak=pre-udev' && emergency_shell -n pre-udev
 source_hook pre-udev
 
 UDEV_LOG=err
-getargbool 0 rd.udev.info -d -y rdudevinfo && UDEV_LOG=info
-getargbool 0 rd.udev.debug -d -y rdudevdebug && UDEV_LOG=debug
+getargbool 0 rd.udev.log_level=info -d rd.udev.log-priority=info -d rd.udev.info -d -y rdudevinfo \
+    && UDEV_LOG=info
+getargbool 0 rd.udev.log_level=debug -d rd.udev.log-priority=debug -d rd.udev.debug -d -y rdudevdebug \
+    && UDEV_LOG=debug
 
 # start up udev and trigger cold plugs
 UDEV_LOG=$UDEV_LOG "$systemdutildir"/systemd-udevd --daemon --resolve-names=never
