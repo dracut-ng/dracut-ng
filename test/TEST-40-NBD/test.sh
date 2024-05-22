@@ -335,7 +335,7 @@ test_setup() {
     echo -n test > /tmp/key
 
     test_dracut \
-        -a "watchdog ${USE_NETWORK}" \
+        -a "${USE_NETWORK}" \
         -i "./cryptroot-ask.sh" "/sbin/cryptroot-ask" \
         -i "./client.link" "/etc/systemd/network/01-client.link" \
         -i "/tmp/crypttab" "/etc/crypttab" \
