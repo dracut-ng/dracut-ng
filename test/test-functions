@@ -36,9 +36,16 @@ test_dracut() {
         "$@" || return 1
 }
 
-command -v test_check &> /dev/null || test_check() {
-    :
-}
+if [ -n "$DRACUT_SKIP_TEST_CHECK" ]; then
+    # always pass the test_check step
+    test_check() {
+        :
+    }
+else
+    command -v test_check &> /dev/null || test_check() {
+        :
+    }
+fi
 
 command -v test_cleanup &> /dev/null || test_cleanup() {
     :
