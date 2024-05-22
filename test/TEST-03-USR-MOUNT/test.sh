@@ -76,7 +76,6 @@ test_setup() {
     fi
 
     test_dracut \
-        -a "watchdog" \
         -d "btrfs" \
         "$TESTDIR"/initramfs.testing
     rm -rf -- "$TESTDIR"/overlay
