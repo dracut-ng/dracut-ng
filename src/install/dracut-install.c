@@ -828,7 +828,7 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
         if (ret == 0) {
                 if (resolvedeps && S_ISREG(sb.st_mode) && (sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
                         log_debug("'%s' already exists, but checking for any deps", fulldstpath);
-                        ret = resolve_deps(fulldstpath + sysrootdirlen);
+                        ret = resolve_deps(fullsrcpath + sysrootdirlen);
                 } else
                         log_debug("'%s' already exists", fulldstpath);
 
