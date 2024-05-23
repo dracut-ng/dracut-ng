@@ -33,7 +33,8 @@ install() {
         "$systemdsystemunitdir"/ldconfig.service \
         "$systemdsystemunitdir/ldconfig.service.d/*.conf" \
         "$systemdsystemunitdir"/sysinit.target.wants/ldconfig.service \
-        ldconfig
+        ldconfig \
+        ldconfig.real
 
     # Install required libraries.
     _arch=${DRACUT_ARCH:-$(uname -m)}
