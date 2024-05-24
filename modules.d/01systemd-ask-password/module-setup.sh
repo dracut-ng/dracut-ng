@@ -19,6 +19,19 @@ check() {
 # Module dependency requirements.
 depends() {
 
+    if [[ $hostonly ]]; then
+        # A password cannot be entered if there is no graphical output during boot,
+        # as is the case in aarch64, where efifb does not work with qemu-system-aarch64:
+        # - virtio-gpu-pci does not expose a linear framebuffer
+        # - virtio-vga is not supported
+        # - ramfb is not enough
+        # Therefore, depend on the drm module if virtio_gpu is loaded on the system.
+        if [[ ${DRACUT_ARCH:-$(uname -m)} == arm* || ${DRACUT_ARCH:-$(uname -m)} == aarch64 ]] \
+            && grep -r -q "virtio:d00000010v" /sys/bus/virtio/devices/*/modalias 2> /dev/null; then
+            echo drm
+        fi
+    fi
+
     # Return 0 to include the dependent module(s) in the initramfs.
     return 0
 
