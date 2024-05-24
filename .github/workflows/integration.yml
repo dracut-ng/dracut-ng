@@ -115,6 +115,7 @@ jobs:
                         "systemd-networkd",
                 ]
                 test: [
+                        "30",
                         "35",
                         "40",
                 ]

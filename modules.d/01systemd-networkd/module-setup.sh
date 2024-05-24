@@ -20,12 +20,11 @@ check() {
 
 # Module dependency requirements.
 depends() {
-
     # This module has external dependency on other module(s).
-    echo kernel-network-modules systemd-sysusers
+    echo kernel-network-modules systemd-sysusers net-lib
+
     # Return 0 to include the dependent module(s) in the initramfs.
     return 0
-
 }
 
 # Install the required file(s) and directories for the module in the initramfs.
