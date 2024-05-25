@@ -30,6 +30,13 @@ depends() {
         if grep -q "tpm2-device=" "$dracutsysrootdir"/etc/crypttab; then
             deps+=" tpm2-tss"
         fi
+    elif [[ ! $hostonly ]]; then
+        for module in fido2 pkcs11 tpm2-tss; do
+            module_check $module > /dev/null 2>&1
+            if [[ $? == 255 ]]; then
+                deps+=" $module"
+            fi
+        done
     fi
     echo "$deps"
     return 0
