@@ -276,7 +276,7 @@ bs = 4096
 EOF
 
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
-        -m "test-root network network-legacy" \
+        -m "test-root network-legacy" \
         -d "nfsd sunrpc ipv6 lockd af_packet 8021q ipvlan macvlan" \
         -I "ip grep sleep nbd-server chmod modprobe vi pidof" \
         -i "${basedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
@@ -340,7 +340,7 @@ test_setup() {
         "$TESTDIR"/initramfs.testing
 
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
-        -a "test rootfs-block debug kernel-modules network network-legacy" \
+        -a "test rootfs-block debug kernel-modules network-legacy" \
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod e1000 drbg" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
