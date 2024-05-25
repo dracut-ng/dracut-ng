@@ -31,7 +31,6 @@ install() {
         59-scsi-sg3_utils.rules \
         60-block.rules \
         60-cdrom_id.rules \
-        60-pcmcia.rules \
         60-persistent-storage.rules \
         64-btrfs.rules \
         70-uaccess.rules \
@@ -67,11 +66,7 @@ install() {
         "${udevdir}"/path_id \
         "${udevdir}"/input_id \
         "${udevdir}"/scsi_id \
-        "${udevdir}"/usb_id \
-        "${udevdir}"/pcmcia-socket-startup \
-        "${udevdir}"/pcmcia-check-broken-cis
-
-    inst_multiple -o /etc/pcmcia/config.opts
+        "${udevdir}"/usb_id
 
     inst_libdir_file "libnss_files*"
 
