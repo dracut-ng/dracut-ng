@@ -34,7 +34,7 @@ test_setup() {
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot bash crypt lvm mdraid kernel-modules" \
-        -I "mkfs.ext4 grep" \
+        -I "grep" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
     rm -rf -- "$TESTDIR"/overlay

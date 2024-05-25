@@ -164,7 +164,7 @@ test_setup() {
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot crypt lvm mdraid" \
-        -I "mkfs.ext4 setsid blockdev" \
+        -I "setsid blockdev" \
         -i ./create-client-root.sh /lib/dracut/hooks/initqueue/01-create-client-root.sh \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
@@ -209,7 +209,6 @@ test_setup() {
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot" \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
-        -I "mkfs.ext4" \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
     rm -rf -- "$TESTDIR"/overlay
 
