@@ -357,7 +357,7 @@ test_setup() {
         export initdir=$TESTDIR/server/overlay
         # shellcheck disable=SC1090
         . "$PKGLIBDIR"/dracut-init.sh
-        inst_multiple sfdisk mkfs.ext4 poweroff cp umount sync dd
+        inst_multiple mkfs.ext4 poweroff cp umount sync dd
         inst_hook initqueue 01 ./create-root.sh
         inst_hook initqueue/finished 01 ./finished-false.sh
     )
