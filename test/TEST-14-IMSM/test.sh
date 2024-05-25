@@ -62,7 +62,7 @@ test_setup() {
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot bash lvm mdraid dmraid kernel-modules" \
         -d "piix ide-gd_mod ata_piix ext4 sd_mod dm-multipath dm-crypt dm-round-robin faulty linear multipath raid0 raid10 raid1 raid456" \
-        -I "mkfs.ext4 grep sfdisk realpath" \
+        -I "grep sfdisk realpath" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
     rm -rf -- "$TESTDIR"/overlay

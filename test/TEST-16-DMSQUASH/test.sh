@@ -93,7 +93,7 @@ test_setup() {
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
         --modules "test-makeroot" \
-        --install "sfdisk mkfs.ext4 mkfs.ntfs mksquashfs" \
+        --install "sfdisk mkfs.ntfs mksquashfs" \
         --drivers "ntfs3" \
         --include ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         --force "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1

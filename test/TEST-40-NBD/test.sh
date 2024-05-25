@@ -205,7 +205,6 @@ make_encrypted_root() {
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot crypt lvm mdraid" \
         -i ./create-encrypted-root.sh /lib/dracut/hooks/initqueue/01-create-encrypted-root.sh \
-        -I "mkfs.ext4" \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
     rm -rf -- "$TESTDIR"/overlay
@@ -242,7 +241,6 @@ make_client_root() {
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot" \
-        -I "mkfs.ext4" \
         -i ./create-client-root.sh /lib/dracut/hooks/initqueue/01-create-client-root.sh \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
@@ -301,7 +299,6 @@ EOF
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot" \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
-        -I "mkfs.ext4" \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1

@@ -21,6 +21,6 @@ install() {
     export early_microcode="no"
     export hostonly_cmdline="no"
 
-    inst_multiple poweroff cp umount sync dd
+    inst_multiple poweroff cp umount sync dd mkfs.ext4
     inst_hook initqueue/finished 01 "$moddir/finished-false.sh"
 }
