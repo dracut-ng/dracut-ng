@@ -14,8 +14,8 @@ RUN echo "USE=\"boot kernel-install -initramfs\"" >> /etc/portage/make.conf
 # Use debian's installkernel
 RUN echo 'sys-kernel/installkernel -systemd' >> /etc/portage/package.use/kernel
 
-# Enable cryptsetup tools (includes unit generator for crypttab)
-RUN echo 'sys-apps/systemd cryptsetup' >> /etc/portage/package.use/systemd
+# Enable ukify and cryptsetup tools (includes unit generator for crypttab)
+RUN echo 'sys-apps/systemd ukify cryptsetup' >> /etc/portage/package.use/systemd
 
 # Support thin volumes and build all of LVM2 including daemons and tools like lvchange
 RUN echo 'sys-fs/lvm2 thin lvm' >> /etc/portage/package.use/lvm2
@@ -24,6 +24,7 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n \
     app-admin/rsyslog \
     app-arch/cpio \
     app-crypt/tpm2-tools \
+    app-crypt/sbsigntools \
     app-emulation/qemu \
     app-misc/jq \
     app-portage/gentoolkit \

@@ -50,6 +50,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     plymouth \
     qemu \
     rng-tools \
+    sbsigntool \
     shellcheck \
     shfmt \
     squashfs-tools \
@@ -58,5 +59,6 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     tcpdump \
     tgt \
     tpm2-tools \
+    ukify \
     xz \
     && rm -rf /var/cache/xbps

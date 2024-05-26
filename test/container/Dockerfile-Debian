@@ -53,6 +53,7 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --
     qemu-kvm \
     rng-tools5 \
     shellcheck \
+    sbsigntool \
     squashfs-tools \
     strace \
     systemd-boot-efi \

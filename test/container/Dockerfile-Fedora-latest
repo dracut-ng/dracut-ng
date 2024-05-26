@@ -62,6 +62,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     systemd-boot-unsigned \
     systemd-networkd \
     systemd-resolved \
+    systemd-ukify \
     tar \
     tcpdump \
     tpm2-tools \
