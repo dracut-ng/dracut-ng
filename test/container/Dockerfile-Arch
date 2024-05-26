@@ -44,6 +44,7 @@ RUN pacman --noconfirm -Syu \
     shfmt \
     squashfs-tools \
     strace \
+    systemd-ukify \
     tcpdump \
     tgt \
     tpm2-tools \

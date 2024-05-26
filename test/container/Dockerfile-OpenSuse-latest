@@ -35,6 +35,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     qemu-kvm \
     rng-tools \
     rpm-build \
+    sbsigntools \
     ShellCheck \
     shfmt \
     squashfs \
