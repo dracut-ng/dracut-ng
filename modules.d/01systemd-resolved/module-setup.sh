@@ -31,6 +31,8 @@ install() {
 
     inst_simple "$moddir/resolved-tmpfile-dracut.conf" "$tmpfilesdir/resolved-tmpfile-dracut.conf"
 
+    inst_sysusers systemd-resolve.conf
+
     inst_multiple -o \
         "$dbussystem"/org.freedesktop.resolve1.conf \
         "$dbussystemservices"/org.freedesktop.resolve1.service \
@@ -40,7 +42,6 @@ install() {
         "$systemdutildir"/systemd-resolved \
         "$systemdsystemunitdir"/systemd-resolved.service \
         "$systemdsystemunitdir/systemd-resolved.service.d/*.conf" \
-        "$sysusers"/systemd-resolve.conf \
         resolvectl
 
     # Enable systemd type unit(s)
@@ -52,7 +53,6 @@ install() {
             "$systemdutilconfdir"/resolved.conf \
             "$systemdutilconfdir/resolved.conf.d/*.conf" \
             "$systemdsystemconfdir"/systemd-resolved.service \
-            "$systemdsystemconfdir/systemd-resolved.service.d/*.conf" \
-            "$sysusersconfdir"/systemd-resolve.conf
+            "$systemdsystemconfdir/systemd-resolved.service.d/*.conf"
     fi
 }

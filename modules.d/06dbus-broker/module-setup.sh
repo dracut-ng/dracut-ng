@@ -41,13 +41,14 @@ install() {
     inst_dir "$dbussystemconfdir"
     inst_dir "$dbussystemservicesconfdir"
 
+    inst_sysusers dbus.conf
+
     inst_multiple -o \
         "$dbus"/session.conf \
         "$dbus"/system.conf \
         "$dbussystem"/org.freedesktop.systemd1.conf \
         "$dbusservicesconfdir"/org.freedesktop.systemd1.service \
         "$dbussystemservices"/org.freedesktop.systemd1.service \
-        "$sysusers"/dbus.conf \
         "$systemdcatalog"/dbus-broker.catalog \
         "$systemdcatalog"/dbus-broker-launch.catalog \
         "$systemdsystemunitdir"/dbus-broker.service \
@@ -75,7 +76,6 @@ install() {
         inst_multiple -H -o \
             "$dbusconfdir"/session.conf \
             "$dbusconfdir"/system.conf \
-            "$sysusersconfdir"/dbus.conf \
             "$systemdsystemconfdir"/dbus.socket \
             "$systemdsystemconfdir"/dbus.socket.d/*.conf \
             "$systemdsystemconfdir"/dbus-broker.service \

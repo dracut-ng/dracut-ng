@@ -31,6 +31,8 @@ install() {
 
     inst_simple "$moddir/initrd.conf" "$systemdutildir/journald.conf.d/initrd.conf"
 
+    inst_sysusers systemd-journal.conf
+
     inst_multiple -o \
         "$systemdutildir"/journald.conf \
         "$systemdutildir/journald.conf.d/*.conf" \
@@ -47,7 +49,6 @@ install() {
         "$systemdsystemunitdir"/sockets.target.wants/systemd-journald-dev-log.socket \
         "$systemdsystemunitdir"/sockets.target.wants/systemd-journald.socket \
         "$systemdsystemunitdir"/sysinit.target.wants/systemd-journald.service \
-        "$sysusers"/systemd-journal.conf \
         journalctl
 
     # Install library file(s)
@@ -66,8 +67,7 @@ install() {
             "$systemdsystemconfdir"/systemd-journald.service \
             "$systemdsystemconfdir/systemd-journald.service.d/*.conf" \
             "$systemdsystemconfdir"/systemd-journal-catalog-update.service \
-            "$systemdsystemconfdir/systemd-journal-catalog-update.service.d/*.conf" \
-            "$sysusersconfdir"/systemd-journal.conf
+            "$systemdsystemconfdir/systemd-journal-catalog-update.service.d/*.conf"
     fi
 
 }
