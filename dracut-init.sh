@@ -709,6 +709,15 @@ inst_libdir_file() {
     [[ ${#_files[@]} -gt 0 ]] && inst_multiple "${_files[@]}"
 }
 
+# install sysusers files
+inst_sysusers() {
+    inst_multiple -o "$sysusers/$*"
+
+    if [[ $hostonly ]]; then
+        inst_multiple -H -o "$sysusersconfdir/$*"
+    fi
+}
+
 # get a command to decompress the given file
 get_decompress_cmd() {
     case "$1" in

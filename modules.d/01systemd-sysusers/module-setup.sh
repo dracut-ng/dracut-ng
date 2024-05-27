@@ -26,9 +26,10 @@ install() {
 
     inst_simple "$moddir/sysusers-dracut.conf" "$systemdsystemunitdir/systemd-sysusers.service.d/sysusers-dracut.conf"
 
+    inst_sysusers basic.conf
+    inst_sysusers systemd.conf
+
     inst_multiple -o \
-        "$sysusers"/basic.conf \
-        "$sysusers"/systemd.conf \
         "$systemdsystemunitdir"/systemd-sysusers.service \
         "$systemdsystemunitdir"/sysinit.target.wants/systemd-sysusers.service \
         systemd-sysusers
@@ -36,8 +37,6 @@ install() {
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
-            "$sysusersconfdir"/basic.conf \
-            "$sysusersconfdir"/systemd.conf \
             "$systemdsystemconfdir"/systemd-sysusers.service \
             "$systemdsystemconfdir/systemd-sysusers.service.d/*.conf"
     fi

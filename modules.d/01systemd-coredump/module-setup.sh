@@ -30,6 +30,8 @@ depends() {
 install() {
 
     inst_dir /var/lib/systemd/coredump
+    inst_sysusers systemd-coredump.conf
+
     inst_multiple -o \
         "$sysctld"/50-coredump.conf \
         "$systemdutildir"/coredump.conf \
@@ -37,7 +39,6 @@ install() {
         "$systemdsystemunitdir"/systemd-coredump.socket \
         "$systemdsystemunitdir"/systemd-coredump@.service \
         "$systemdsystemunitdir"/sockets.target.wants/systemd-coredump.socket \
-        "$sysusers"/systemd-coredump.conf \
         coredumpctl
 
     # Install library file(s)
@@ -56,7 +57,6 @@ install() {
             "$systemdsystemconfdir/systemd-coredump.socket.d/*.conf" \
             "$systemdsystemconfdir"/systemd-coredump@.service \
             "$systemdsystemconfdir/systemd-coredump@.service.d/*.conf" \
-            "$systemdsystemconfdir"/sockets.target.wants/systemd-coredump.socket \
-            "$sysusersconfdir"/systemd-coredump.conf
+            "$systemdsystemconfdir"/sockets.target.wants/systemd-coredump.socket
     fi
 }

@@ -32,6 +32,8 @@ install() {
     # Enable this if networkd ( not the module ) is disabled at build time and you want to use timesyncd
     # inst_simple "$moddir/timesyncd-tmpfile-dracut.conf" "$tmpfilesdir/timesyncd-tmpfile-dracut.conf"
 
+    inst_sysusers systemd-timesync.conf
+
     inst_multiple -o \
         "$dbussystem"/org.freedesktop.timesync1.conf \
         "$dbussystemservices"/org.freedesktop.timesync1.service \
@@ -42,8 +44,7 @@ install() {
         "$systemdsystemunitdir"/systemd-timesyncd.service \
         "$systemdsystemunitdir/systemd-timesyncd.service.d/*.conf" \
         "$systemdsystemunitdir"/systemd-time-wait-sync.service \
-        "$systemdsystemunitdir/systemd-time-wait-sync.service.d/*.conf" \
-        "$sysusers"/systemd-timesync.conf
+        "$systemdsystemunitdir/systemd-time-wait-sync.service.d/*.conf"
 
     # Enable systemd type unit(s)
     for i in \
@@ -61,7 +62,6 @@ install() {
             "$systemdsystemconfdir"/systemd-timesyncd.service \
             "$systemdsystemconfdir/systemd-timesyncd.service.d/*.conf" \
             "$systemdsystemconfdir"/systemd-time-wait-sync.service \
-            "$systemdsystemconfdir/systemd-time-wait-sync.service.d/*.conf" \
-            "$sysusersconfdir"/systemd-timesync.conf
+            "$systemdsystemconfdir/systemd-time-wait-sync.service.d/*.conf"
     fi
 }

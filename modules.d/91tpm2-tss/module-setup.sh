@@ -30,9 +30,9 @@ installkernel() {
 
 # Install the required file(s) and directories for the module in the initramfs.
 install() {
+    inst_sysusers tpm2-tss.conf
 
     inst_multiple -o \
-        "$sysusers"/tpm2-tss.conf \
         "$tmpfilesdir"/tpm2-tss-fapi.conf \
         "$udevrulesdir"/60-tpm-udev.rules \
         "$systemdutildir"/system-generators/systemd-tpm2-generator \

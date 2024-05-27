@@ -31,6 +31,8 @@ depends() {
 # Install the required file(s) and directories for the module in the initramfs.
 install() {
 
+    inst_sysusers systemd-network.conf
+
     inst_multiple -o \
         "$tmpfilesdir"/systemd-network.conf \
         "$dbussystem"/org.freedesktop.network1.conf \
@@ -55,7 +57,6 @@ install() {
         "$systemdsystemunitdir"/systemd-networkd-wait-online.service \
         "$systemdsystemunitdir"/systemd-networkd-wait-online@.service \
         "$systemdsystemunitdir"/systemd-network-generator.service \
-        "$sysusers"/systemd-network.conf \
         ip
 
     # Enable systemd type units
@@ -82,7 +83,6 @@ install() {
             "$systemdsystemconfdir"/systemd-networkd-wait-online.service \
             "$systemdsystemconfdir/systemd-networkd-wait-online.service.d/*.conf" \
             "$systemdsystemconfdir"/systemd-networkd-wait-online@.service \
-            "$systemdsystemconfdir/systemd-networkd-wait-online@.service.d/*.conf" \
-            "$sysusersconfdir"/systemd-network.conf
+            "$systemdsystemconfdir/systemd-networkd-wait-online@.service.d/*.conf"
     fi
 }
