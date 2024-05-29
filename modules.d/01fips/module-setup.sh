@@ -30,7 +30,7 @@ installkernel() {
         _fipsmodules+="ecb cbc ctr xts gcm ccm authenc hmac cmac ofb cts "
 
         # Compression algs:
-        _fipsmodules+="deflate lzo zlib "
+        _fipsmodules+="deflate lzo "
 
         # PRNG algs:
         _fipsmodules+="ansi_cprng "
