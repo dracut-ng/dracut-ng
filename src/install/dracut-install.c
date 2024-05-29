@@ -1868,6 +1868,7 @@ static int install_modules(int argc, char **argv)
         int modinst = 0;
 
         ctx = kmod_new(kerneldir, NULL);
+        kmod_load_resources(ctx);
         abskpath = kmod_get_dirname(ctx);
 
         p = strstr(abskpath, "/lib/modules/");
