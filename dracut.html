@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>dracut 101</title><style type="text/css">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>dracut 102</title><style type="text/css">
 
 body, h1, h2, h3, h4, h5, h6, pre, li, div {
 	line-height: 1.29em;
@@ -1117,7 +1117,7 @@ table tr.even td {
 	color: #3c6eb4;
 }
 
-</style><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /></head><body><div xml:lang="en" class="book" lang="en"><div class="titlepage"><div><div><h1 class="title"><a id="id1337"></a>dracut 101</h1></div><div><div class="author"><h3 class="author"><span class="firstname">Harald</span> <span class="surname">Hoyer</span></h3><code class="email">&lt;<a class="email" href="mailto:harald@profian.com">harald@profian.com</a>&gt;</code></div></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="part"><a href="#_introduction">I. Introduction</a></span></dt><dd><dl><dt><span class="chapter"><a href="#_definition">1. Definition</a></span></dt><dt><span class="chapter"><a href="#_rationale">2. Rationale</a></span></dt><dt><span class="chapter"><a href="#_implementation">3. Implementation</a></span></dt><dt><span class="chapter"><a href="#_mount_preparations">4. Mount preparations</a></span></dt><dt><span class="chapter"><a href="#_dracut_on_shutdown">5. Dracut on shutdown</a></span></dt></dl></dd><dt><span class="part"><a href="#_user_manual">II. User Manual</a></span></dt><dd><dl><dt><span class="chapter"><a href="#_dracut_8">6. DRACUT(8)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name">NAME</a></span></dt><dt><span class="section"><a href="#_synopsis">SYNOPSIS</a></span></dt><dt><span class="section"><a href="#_description">DESCRIPTION</a></span></dt><dt><span class="section"><a href="#_usage">USAGE</a></span></dt><dd><dl><dt><span class="section"><a href="#_inspecting_the_contents">Inspecting the Contents</a></span></dt><dt><span class="section"><a href="#_adding_dracut_modules">Adding dracut Modules</a></span></dt><dt><span class="section"><a href="#_omitting_dracut_modules">Omitting dracut Modules</a></span></dt><dt><span class="section"><a href="#_adding_kernel_modules">Adding Kernel Modules</a></span></dt><dt><span class="section"><a href="#_boot_parameters">Boot parameters</a></span></dt><dt><span class="section"><a href="#Injecting">Injecting custom Files</a></span></dt><dt><span class="section"><a href="#NetworkBoot">Network Boot</a></span></dt></dl></dd><dt><span class="section"><a href="#_troubleshooting">Troubleshooting</a></span></dt><dd><dl><dt><span class="section"><a href="#identifying-your-problem-area">Identifying your problem area</a></span></dt><dt><span class="section"><a href="#information-to-include-in-your-report">Information to include in your report</a></span></dt><dt><span class="section"><a href="#debugging-dracut">Debugging dracut</a></span></dt></dl></dd><dt><span class="section"><a href="#_options">OPTIONS</a></span></dt><dt><span class="section"><a href="#_environment">ENVIRONMENT</a></span></dt><dt><span class="section"><a href="#_files">FILES</a></span></dt><dd><dl><dt><span class="section"><a href="#_configuration_in_the_initramfs">Configuration in the initramfs</a></span></dt></dl></dd><dt><span class="section"><a href="#_availability">AVAILABILITY</a></span></dt><dt><span class="section"><a href="#_authors">AUTHORS</a></span></dt><dt><span class="section"><a href="#_see_also">SEE ALSO</a></span></dt></dl></dd><dt><span class="chapter"><a href="#dracutconf5">7. DRACUT.CONF(5)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_2">NAME</a></span></dt><dt><span class="section"><a href="#_synopsis_2">SYNOPSIS</a></span></dt><dt><span class="section"><a href="#_description_2">Description</a></span></dt><dt><span class="section"><a href="#_files_2">Files</a></span></dt><dt><span class="section"><a href="#_author">AUTHOR</a></span></dt><dt><span class="section"><a href="#_see_also_2">See Also</a></span></dt></dl></dd><dt><span class="chapter"><a href="#dracutcmdline7">8. DRACUT.CMDLINE(7)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_3">NAME</a></span></dt><dt><span class="section"><a href="#_description_3">DESCRIPTION</a></span></dt><dd><dl><dt><span class="section"><a href="#_standard">Standard</a></span></dt><dt><span class="section"><a href="#_iso_scan_filename">iso-scan/filename</a></span></dt><dt><span class="section"><a href="#_misc">Misc</a></span></dt><dt><span class="section"><a href="#dracutkerneldebug">Debug</a></span></dt><dt><span class="section"><a href="#_i18n">I18N</a></span></dt><dt><span class="section"><a href="#_lvm">LVM</a></span></dt><dt><span class="section"><a href="#_crypto_luks">crypto LUKS</a></span></dt><dt><span class="section"><a href="#_crypto_luks_key_on_removable_device_support">crypto LUKS - key on removable device support</a></span></dt><dt><span class="section"><a href="#_md_raid">MD RAID</a></span></dt><dt><span class="section"><a href="#_dm_raid">DM RAID</a></span></dt><dt><span class="section"><a href="#_multipath">MULTIPATH</a></span></dt><dt><span class="section"><a href="#_fips">FIPS</a></span></dt><dt><span class="section"><a href="#_network">Network</a></span></dt><dt><span class="section"><a href="#_nfs">NFS</a></span></dt><dt><span class="section"><a href="#_cifs">CIFS</a></span></dt><dt><span class="section"><a href="#_iscsi">iSCSI</a></span></dt><dt><span class="section"><a href="#_fcoe">FCoE</a></span></dt><dt><span class="section"><a href="#_nvmf">NVMf</a></span></dt><dt><span class="section"><a href="#_nbd">NBD</a></span></dt><dt><span class="section"><a href="#_virtiofs">VIRTIOFS</a></span></dt><dt><span class="section"><a href="#_dasd">DASD</a></span></dt><dt><span class="section"><a href="#_zfcp">ZFCP</a></span></dt><dt><span class="section"><a href="#_znet">ZNET</a></span></dt><dt><span class="section"><a href="#_booting_live_images">Booting live images</a></span></dt><dt><span class="section"><a href="#_zipl">ZIPL</a></span></dt><dt><span class="section"><a href="#_cio_ignore">CIO_IGNORE</a></span></dt><dt><span class="section"><a href="#_plymouth_boot_splash">Plymouth Boot Splash</a></span></dt><dt><span class="section"><a href="#_kernel_keys">Kernel keys</a></span></dt><dt><span class="section"><a href="#_deprecated_renamed_options">Deprecated, renamed Options</a></span></dt><dt><span class="section"><a href="#_configuration_in_the_initramfs_2">Configuration in the Initramfs</a></span></dt></dl></dd><dt><span class="section"><a href="#_author_2">AUTHOR</a></span></dt><dt><span class="section"><a href="#_see_also_3">SEE ALSO</a></span></dt></dl></dd><dt><span class="chapter"><a href="#lsinitrd1">9. LSINITRD(1)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_4">NAME</a></span></dt><dt><span class="section"><a href="#_synopsis_3">SYNOPSIS</a></span></dt><dt><span class="section"><a href="#_description_4">DESCRIPTION</a></span></dt><dt><span class="section"><a href="#_options_2">OPTIONS</a></span></dt><dt><span class="section"><a href="#_availability_2">AVAILABILITY</a></span></dt><dt><span class="section"><a href="#_authors_2">AUTHORS</a></span></dt><dt><span class="section"><a href="#_see_also_4">SEE ALSO</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_developer_manual">10. Developer Manual</a></span></dt><dt><span class="chapter"><a href="#dracutmodules7">11. DRACUT.MODULES(7)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_5">NAME</a></span></dt><dt><span class="section"><a href="#_description_5">DESCRIPTION</a></span></dt><dt><span class="section"><a href="#stages">Boot Process Stages</a></span></dt><dd><dl><dt><span class="section"><a href="#_hook_cmdline">Hook: cmdline</a></span></dt><dt><span class="section"><a href="#_hook_pre_udev">Hook: pre-udev</a></span></dt><dt><span class="section"><a href="#_start_udev">Start Udev</a></span></dt><dt><span class="section"><a href="#_hook_pre_trigger">Hook: pre-trigger</a></span></dt><dt><span class="section"><a href="#_trigger_udev">Trigger Udev</a></span></dt><dt><span class="section"><a href="#_main_loop">Main Loop</a></span></dt><dt><span class="section"><a href="#_hook_pre_mount">Hook: pre-mount</a></span></dt><dt><span class="section"><a href="#_hook_mount">Hook: mount</a></span></dt><dt><span class="section"><a href="#_hook_pre_pivot">Hook: pre-pivot</a></span></dt><dt><span class="section"><a href="#_hook_cleanup">Hook: cleanup</a></span></dt><dt><span class="section"><a href="#_cleanup_and_switch_root">Cleanup and switch_root</a></span></dt></dl></dd><dt><span class="section"><a href="#_network_infrastructure">Network Infrastructure</a></span></dt><dt><span class="section"><a href="#_writing_a_module">Writing a Module</a></span></dt><dd><dl><dt><span class="section"><a href="#_module_setup_sh_check">module-setup.sh: check()</a></span></dt><dt><span class="section"><a href="#_module_setup_sh_depends">module-setup.sh: depends()</a></span></dt><dt><span class="section"><a href="#_module_setup_sh_cmdline">module-setup.sh: cmdline()</a></span></dt><dt><span class="section"><a href="#_module_setup_sh_install">module-setup.sh: install()</a></span></dt><dt><span class="section"><a href="#_module_setup_sh_installkernel">module-setup.sh: installkernel()</a></span></dt><dt><span class="section"><a href="#_anchor_id_creation_xreflabel_creation_creation_functions">Creation Functions</a></span></dt><dt><span class="section"><a href="#_initramfs_functions">Initramfs Functions</a></span></dt><dt><span class="section"><a href="#_network_modules">Network Modules</a></span></dt></dl></dd><dt><span class="section"><a href="#_author_3">AUTHOR</a></span></dt><dt><span class="section"><a href="#_see_also_5">SEE ALSO</a></span></dt></dl></dd><dt><span class="chapter"><a href="#dracutbootup7">12. DRACUT.BOOTUP(7)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_6">NAME</a></span></dt><dt><span class="section"><a href="#_description_6">DESCRIPTION</a></span></dt><dt><span class="section"><a href="#_author_4">AUTHOR</a></span></dt><dt><span class="section"><a href="#_see_also_6">SEE ALSO</a></span></dt></dl></dd><dt><span class="appendix"><a href="#_license">A. License</a></span></dt></dl></dd></dl></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a id="_introduction"></a>Part I. Introduction</h1></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="chapter"><a href="#_definition">1. Definition</a></span></dt><dt><span class="chapter"><a href="#_rationale">2. Rationale</a></span></dt><dt><span class="chapter"><a href="#_implementation">3. Implementation</a></span></dt><dt><span class="chapter"><a href="#_mount_preparations">4. Mount preparations</a></span></dt><dt><span class="chapter"><a href="#_dracut_on_shutdown">5. Dracut on shutdown</a></span></dt></dl></div><p>This section is a modified version of
+</style><meta name="generator" content="DocBook XSL Stylesheets Vsnapshot" /></head><body><div xml:lang="en" class="book" lang="en"><div class="titlepage"><div><div><h1 class="title"><a id="idm1"></a>dracut 102</h1></div><div><div class="author"><h3 class="author"><span class="firstname">Harald</span> <span class="surname">Hoyer</span></h3><code class="email">&lt;<a class="email" href="mailto:harald@profian.com">harald@profian.com</a>&gt;</code></div></div></div><hr /></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="part"><a href="#_introduction">I. Introduction</a></span></dt><dd><dl><dt><span class="chapter"><a href="#_definition">1. Definition</a></span></dt><dt><span class="chapter"><a href="#_rationale">2. Rationale</a></span></dt><dt><span class="chapter"><a href="#_implementation">3. Implementation</a></span></dt><dt><span class="chapter"><a href="#_mount_preparations">4. Mount preparations</a></span></dt><dt><span class="chapter"><a href="#_dracut_on_shutdown">5. Dracut on shutdown</a></span></dt></dl></dd><dt><span class="part"><a href="#_user_manual">II. User Manual</a></span></dt><dd><dl><dt><span class="chapter"><a href="#_dracut_8">6. DRACUT(8)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name">NAME</a></span></dt><dt><span class="section"><a href="#_synopsis">SYNOPSIS</a></span></dt><dt><span class="section"><a href="#_description">DESCRIPTION</a></span></dt><dt><span class="section"><a href="#_usage">USAGE</a></span></dt><dd><dl><dt><span class="section"><a href="#_inspecting_the_contents">Inspecting the Contents</a></span></dt><dt><span class="section"><a href="#_adding_dracut_modules">Adding dracut Modules</a></span></dt><dt><span class="section"><a href="#_omitting_dracut_modules">Omitting dracut Modules</a></span></dt><dt><span class="section"><a href="#_adding_kernel_modules">Adding Kernel Modules</a></span></dt><dt><span class="section"><a href="#_boot_parameters">Boot parameters</a></span></dt><dt><span class="section"><a href="#Injecting">Injecting custom Files</a></span></dt><dt><span class="section"><a href="#NetworkBoot">Network Boot</a></span></dt></dl></dd><dt><span class="section"><a href="#_troubleshooting">Troubleshooting</a></span></dt><dd><dl><dt><span class="section"><a href="#identifying-your-problem-area">Identifying your problem area</a></span></dt><dt><span class="section"><a href="#information-to-include-in-your-report">Information to include in your report</a></span></dt><dt><span class="section"><a href="#debugging-dracut">Debugging dracut</a></span></dt></dl></dd><dt><span class="section"><a href="#_options">OPTIONS</a></span></dt><dt><span class="section"><a href="#_environment">ENVIRONMENT</a></span></dt><dt><span class="section"><a href="#_files">FILES</a></span></dt><dd><dl><dt><span class="section"><a href="#_configuration_in_the_initramfs">Configuration in the initramfs</a></span></dt></dl></dd><dt><span class="section"><a href="#_availability">AVAILABILITY</a></span></dt><dt><span class="section"><a href="#_authors">AUTHORS</a></span></dt><dt><span class="section"><a href="#_see_also">SEE ALSO</a></span></dt></dl></dd><dt><span class="chapter"><a href="#dracutconf5">7. DRACUT.CONF(5)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_2">NAME</a></span></dt><dt><span class="section"><a href="#_synopsis_2">SYNOPSIS</a></span></dt><dt><span class="section"><a href="#_description_2">Description</a></span></dt><dt><span class="section"><a href="#_files_2">Files</a></span></dt><dt><span class="section"><a href="#_author">AUTHOR</a></span></dt><dt><span class="section"><a href="#_see_also_2">See Also</a></span></dt></dl></dd><dt><span class="chapter"><a href="#dracutcmdline7">8. DRACUT.CMDLINE(7)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_3">NAME</a></span></dt><dt><span class="section"><a href="#_description_3">DESCRIPTION</a></span></dt><dd><dl><dt><span class="section"><a href="#_standard">Standard</a></span></dt><dt><span class="section"><a href="#_iso_scan_filename">iso-scan/filename</a></span></dt><dt><span class="section"><a href="#_misc">Misc</a></span></dt><dt><span class="section"><a href="#dracutkerneldebug">Debug</a></span></dt><dt><span class="section"><a href="#_i18n">I18N</a></span></dt><dt><span class="section"><a href="#_lvm">LVM</a></span></dt><dt><span class="section"><a href="#_crypto_luks">crypto LUKS</a></span></dt><dt><span class="section"><a href="#_crypto_luks_key_on_removable_device_support">crypto LUKS - key on removable device support</a></span></dt><dt><span class="section"><a href="#_md_raid">MD RAID</a></span></dt><dt><span class="section"><a href="#_dm_raid">DM RAID</a></span></dt><dt><span class="section"><a href="#_multipath">MULTIPATH</a></span></dt><dt><span class="section"><a href="#_fips">FIPS</a></span></dt><dt><span class="section"><a href="#_network">Network</a></span></dt><dt><span class="section"><a href="#_nfs">NFS</a></span></dt><dt><span class="section"><a href="#_cifs">CIFS</a></span></dt><dt><span class="section"><a href="#_iscsi">iSCSI</a></span></dt><dt><span class="section"><a href="#_fcoe">FCoE</a></span></dt><dt><span class="section"><a href="#_nvmf">NVMf</a></span></dt><dt><span class="section"><a href="#_nbd">NBD</a></span></dt><dt><span class="section"><a href="#_virtiofs">VIRTIOFS</a></span></dt><dt><span class="section"><a href="#_dasd">DASD</a></span></dt><dt><span class="section"><a href="#_zfcp">ZFCP</a></span></dt><dt><span class="section"><a href="#_znet">ZNET</a></span></dt><dt><span class="section"><a href="#_booting_live_images">Booting live images</a></span></dt><dt><span class="section"><a href="#_zipl">ZIPL</a></span></dt><dt><span class="section"><a href="#_cio_ignore">CIO_IGNORE</a></span></dt><dt><span class="section"><a href="#_plymouth_boot_splash">Plymouth Boot Splash</a></span></dt><dt><span class="section"><a href="#_kernel_keys">Kernel keys</a></span></dt><dt><span class="section"><a href="#_deprecated_renamed_options">Deprecated, renamed Options</a></span></dt><dt><span class="section"><a href="#_configuration_in_the_initramfs_2">Configuration in the Initramfs</a></span></dt></dl></dd><dt><span class="section"><a href="#_author_2">AUTHOR</a></span></dt><dt><span class="section"><a href="#_see_also_3">SEE ALSO</a></span></dt></dl></dd><dt><span class="chapter"><a href="#lsinitrd1">9. LSINITRD(1)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_4">NAME</a></span></dt><dt><span class="section"><a href="#_synopsis_3">SYNOPSIS</a></span></dt><dt><span class="section"><a href="#_description_4">DESCRIPTION</a></span></dt><dt><span class="section"><a href="#_options_2">OPTIONS</a></span></dt><dt><span class="section"><a href="#_availability_2">AVAILABILITY</a></span></dt><dt><span class="section"><a href="#_authors_2">AUTHORS</a></span></dt><dt><span class="section"><a href="#_see_also_4">SEE ALSO</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_developer_manual">10. Developer Manual</a></span></dt><dt><span class="chapter"><a href="#dracutmodules7">11. DRACUT.MODULES(7)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_5">NAME</a></span></dt><dt><span class="section"><a href="#_description_5">DESCRIPTION</a></span></dt><dt><span class="section"><a href="#stages">Boot Process Stages</a></span></dt><dd><dl><dt><span class="section"><a href="#_hook_cmdline">Hook: cmdline</a></span></dt><dt><span class="section"><a href="#_hook_pre_udev">Hook: pre-udev</a></span></dt><dt><span class="section"><a href="#_start_udev">Start Udev</a></span></dt><dt><span class="section"><a href="#_hook_pre_trigger">Hook: pre-trigger</a></span></dt><dt><span class="section"><a href="#_trigger_udev">Trigger Udev</a></span></dt><dt><span class="section"><a href="#_main_loop">Main Loop</a></span></dt><dt><span class="section"><a href="#_hook_pre_mount">Hook: pre-mount</a></span></dt><dt><span class="section"><a href="#_hook_mount">Hook: mount</a></span></dt><dt><span class="section"><a href="#_hook_pre_pivot">Hook: pre-pivot</a></span></dt><dt><span class="section"><a href="#_hook_cleanup">Hook: cleanup</a></span></dt><dt><span class="section"><a href="#_cleanup_and_switch_root">Cleanup and switch_root</a></span></dt></dl></dd><dt><span class="section"><a href="#_network_infrastructure">Network Infrastructure</a></span></dt><dt><span class="section"><a href="#_writing_a_module">Writing a Module</a></span></dt><dd><dl><dt><span class="section"><a href="#_module_setup_sh_check">module-setup.sh: check()</a></span></dt><dt><span class="section"><a href="#_module_setup_sh_depends">module-setup.sh: depends()</a></span></dt><dt><span class="section"><a href="#_module_setup_sh_cmdline">module-setup.sh: cmdline()</a></span></dt><dt><span class="section"><a href="#_module_setup_sh_install">module-setup.sh: install()</a></span></dt><dt><span class="section"><a href="#_module_setup_sh_installkernel">module-setup.sh: installkernel()</a></span></dt><dt><span class="section"><a href="#_anchor_id_creation_xreflabel_creation_creation_functions">Creation Functions</a></span></dt><dt><span class="section"><a href="#_initramfs_functions">Initramfs Functions</a></span></dt><dt><span class="section"><a href="#_network_modules">Network Modules</a></span></dt></dl></dd><dt><span class="section"><a href="#_author_3">AUTHOR</a></span></dt><dt><span class="section"><a href="#_see_also_5">SEE ALSO</a></span></dt></dl></dd><dt><span class="chapter"><a href="#dracutbootup7">12. DRACUT.BOOTUP(7)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_6">NAME</a></span></dt><dt><span class="section"><a href="#_description_6">DESCRIPTION</a></span></dt><dt><span class="section"><a href="#_author_4">AUTHOR</a></span></dt><dt><span class="section"><a href="#_see_also_6">SEE ALSO</a></span></dt></dl></dd><dt><span class="appendix"><a href="#_license">A. License</a></span></dt></dl></dd></dl></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a id="_introduction"></a>Part I. Introduction</h1></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="chapter"><a href="#_definition">1. Definition</a></span></dt><dt><span class="chapter"><a href="#_rationale">2. Rationale</a></span></dt><dt><span class="chapter"><a href="#_implementation">3. Implementation</a></span></dt><dt><span class="chapter"><a href="#_mount_preparations">4. Mount preparations</a></span></dt><dt><span class="chapter"><a href="#_dracut_on_shutdown">5. Dracut on shutdown</a></span></dt></dl></div><p>This section is a modified version of
 <a class="ulink" href="http://en.wikipedia.org/wiki/Initrd" target="_top">http://en.wikipedia.org/wiki/Initrd</a> which is licensed under the
 Creative Commons Attribution/Share-Alike License.</p><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a id="_definition"></a>Chapter 1. Definition</h2></div></div></div><p>An <span class="emphasis"><em>initial ramdisk</em></span> is a temporary file system used in the boot process of the
 Linux kernel. <span class="emphasis"><em>initrd</em></span> and <span class="emphasis"><em>initramfs</em></span> refer to slightly different schemes for
@@ -1232,13 +1232,8 @@ shutdown will try to unmount every /oldroot mount and calls the various
   shutdown hooks from the dracut modules
 </li></ul></div><p>This ensures, that all devices are disassembled and unmounted cleanly.</p></div></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a id="_user_manual"></a>Part II. User Manual</h1></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="chapter"><a href="#_dracut_8">6. DRACUT(8)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name">NAME</a></span></dt><dt><span class="section"><a href="#_synopsis">SYNOPSIS</a></span></dt><dt><span class="section"><a href="#_description">DESCRIPTION</a></span></dt><dt><span class="section"><a href="#_usage">USAGE</a></span></dt><dd><dl><dt><span class="section"><a href="#_inspecting_the_contents">Inspecting the Contents</a></span></dt><dt><span class="section"><a href="#_adding_dracut_modules">Adding dracut Modules</a></span></dt><dt><span class="section"><a href="#_omitting_dracut_modules">Omitting dracut Modules</a></span></dt><dt><span class="section"><a href="#_adding_kernel_modules">Adding Kernel Modules</a></span></dt><dt><span class="section"><a href="#_boot_parameters">Boot parameters</a></span></dt><dt><span class="section"><a href="#Injecting">Injecting custom Files</a></span></dt><dt><span class="section"><a href="#NetworkBoot">Network Boot</a></span></dt></dl></dd><dt><span class="section"><a href="#_troubleshooting">Troubleshooting</a></span></dt><dd><dl><dt><span class="section"><a href="#identifying-your-problem-area">Identifying your problem area</a></span></dt><dt><span class="section"><a href="#information-to-include-in-your-report">Information to include in your report</a></span></dt><dt><span class="section"><a href="#debugging-dracut">Debugging dracut</a></span></dt></dl></dd><dt><span class="section"><a href="#_options">OPTIONS</a></span></dt><dt><span class="section"><a href="#_environment">ENVIRONMENT</a></span></dt><dt><span class="section"><a href="#_files">FILES</a></span></dt><dd><dl><dt><span class="section"><a href="#_configuration_in_the_initramfs">Configuration in the initramfs</a></span></dt></dl></dd><dt><span class="section"><a href="#_availability">AVAILABILITY</a></span></dt><dt><span class="section"><a href="#_authors">AUTHORS</a></span></dt><dt><span class="section"><a href="#_see_also">SEE ALSO</a></span></dt></dl></dd><dt><span class="chapter"><a href="#dracutconf5">7. DRACUT.CONF(5)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_2">NAME</a></span></dt><dt><span class="section"><a href="#_synopsis_2">SYNOPSIS</a></span></dt><dt><span class="section"><a href="#_description_2">Description</a></span></dt><dt><span class="section"><a href="#_files_2">Files</a></span></dt><dt><span class="section"><a href="#_author">AUTHOR</a></span></dt><dt><span class="section"><a href="#_see_also_2">See Also</a></span></dt></dl></dd><dt><span class="chapter"><a href="#dracutcmdline7">8. DRACUT.CMDLINE(7)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_3">NAME</a></span></dt><dt><span class="section"><a href="#_description_3">DESCRIPTION</a></span></dt><dd><dl><dt><span class="section"><a href="#_standard">Standard</a></span></dt><dt><span class="section"><a href="#_iso_scan_filename">iso-scan/filename</a></span></dt><dt><span class="section"><a href="#_misc">Misc</a></span></dt><dt><span class="section"><a href="#dracutkerneldebug">Debug</a></span></dt><dt><span class="section"><a href="#_i18n">I18N</a></span></dt><dt><span class="section"><a href="#_lvm">LVM</a></span></dt><dt><span class="section"><a href="#_crypto_luks">crypto LUKS</a></span></dt><dt><span class="section"><a href="#_crypto_luks_key_on_removable_device_support">crypto LUKS - key on removable device support</a></span></dt><dt><span class="section"><a href="#_md_raid">MD RAID</a></span></dt><dt><span class="section"><a href="#_dm_raid">DM RAID</a></span></dt><dt><span class="section"><a href="#_multipath">MULTIPATH</a></span></dt><dt><span class="section"><a href="#_fips">FIPS</a></span></dt><dt><span class="section"><a href="#_network">Network</a></span></dt><dt><span class="section"><a href="#_nfs">NFS</a></span></dt><dt><span class="section"><a href="#_cifs">CIFS</a></span></dt><dt><span class="section"><a href="#_iscsi">iSCSI</a></span></dt><dt><span class="section"><a href="#_fcoe">FCoE</a></span></dt><dt><span class="section"><a href="#_nvmf">NVMf</a></span></dt><dt><span class="section"><a href="#_nbd">NBD</a></span></dt><dt><span class="section"><a href="#_virtiofs">VIRTIOFS</a></span></dt><dt><span class="section"><a href="#_dasd">DASD</a></span></dt><dt><span class="section"><a href="#_zfcp">ZFCP</a></span></dt><dt><span class="section"><a href="#_znet">ZNET</a></span></dt><dt><span class="section"><a href="#_booting_live_images">Booting live images</a></span></dt><dt><span class="section"><a href="#_zipl">ZIPL</a></span></dt><dt><span class="section"><a href="#_cio_ignore">CIO_IGNORE</a></span></dt><dt><span class="section"><a href="#_plymouth_boot_splash">Plymouth Boot Splash</a></span></dt><dt><span class="section"><a href="#_kernel_keys">Kernel keys</a></span></dt><dt><span class="section"><a href="#_deprecated_renamed_options">Deprecated, renamed Options</a></span></dt><dt><span class="section"><a href="#_configuration_in_the_initramfs_2">Configuration in the Initramfs</a></span></dt></dl></dd><dt><span class="section"><a href="#_author_2">AUTHOR</a></span></dt><dt><span class="section"><a href="#_see_also_3">SEE ALSO</a></span></dt></dl></dd><dt><span class="chapter"><a href="#lsinitrd1">9. LSINITRD(1)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_4">NAME</a></span></dt><dt><span class="section"><a href="#_synopsis_3">SYNOPSIS</a></span></dt><dt><span class="section"><a href="#_description_4">DESCRIPTION</a></span></dt><dt><span class="section"><a href="#_options_2">OPTIONS</a></span></dt><dt><span class="section"><a href="#_availability_2">AVAILABILITY</a></span></dt><dt><span class="section"><a href="#_authors_2">AUTHORS</a></span></dt><dt><span class="section"><a href="#_see_also_4">SEE ALSO</a></span></dt></dl></dd><dt><span class="chapter"><a href="#_developer_manual">10. Developer Manual</a></span></dt><dt><span class="chapter"><a href="#dracutmodules7">11. DRACUT.MODULES(7)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_5">NAME</a></span></dt><dt><span class="section"><a href="#_description_5">DESCRIPTION</a></span></dt><dt><span class="section"><a href="#stages">Boot Process Stages</a></span></dt><dd><dl><dt><span class="section"><a href="#_hook_cmdline">Hook: cmdline</a></span></dt><dt><span class="section"><a href="#_hook_pre_udev">Hook: pre-udev</a></span></dt><dt><span class="section"><a href="#_start_udev">Start Udev</a></span></dt><dt><span class="section"><a href="#_hook_pre_trigger">Hook: pre-trigger</a></span></dt><dt><span class="section"><a href="#_trigger_udev">Trigger Udev</a></span></dt><dt><span class="section"><a href="#_main_loop">Main Loop</a></span></dt><dt><span class="section"><a href="#_hook_pre_mount">Hook: pre-mount</a></span></dt><dt><span class="section"><a href="#_hook_mount">Hook: mount</a></span></dt><dt><span class="section"><a href="#_hook_pre_pivot">Hook: pre-pivot</a></span></dt><dt><span class="section"><a href="#_hook_cleanup">Hook: cleanup</a></span></dt><dt><span class="section"><a href="#_cleanup_and_switch_root">Cleanup and switch_root</a></span></dt></dl></dd><dt><span class="section"><a href="#_network_infrastructure">Network Infrastructure</a></span></dt><dt><span class="section"><a href="#_writing_a_module">Writing a Module</a></span></dt><dd><dl><dt><span class="section"><a href="#_module_setup_sh_check">module-setup.sh: check()</a></span></dt><dt><span class="section"><a href="#_module_setup_sh_depends">module-setup.sh: depends()</a></span></dt><dt><span class="section"><a href="#_module_setup_sh_cmdline">module-setup.sh: cmdline()</a></span></dt><dt><span class="section"><a href="#_module_setup_sh_install">module-setup.sh: install()</a></span></dt><dt><span class="section"><a href="#_module_setup_sh_installkernel">module-setup.sh: installkernel()</a></span></dt><dt><span class="section"><a href="#_anchor_id_creation_xreflabel_creation_creation_functions">Creation Functions</a></span></dt><dt><span class="section"><a href="#_initramfs_functions">Initramfs Functions</a></span></dt><dt><span class="section"><a href="#_network_modules">Network Modules</a></span></dt></dl></dd><dt><span class="section"><a href="#_author_3">AUTHOR</a></span></dt><dt><span class="section"><a href="#_see_also_5">SEE ALSO</a></span></dt></dl></dd><dt><span class="chapter"><a href="#dracutbootup7">12. DRACUT.BOOTUP(7)</a></span></dt><dd><dl><dt><span class="section"><a href="#_name_6">NAME</a></span></dt><dt><span class="section"><a href="#_description_6">DESCRIPTION</a></span></dt><dt><span class="section"><a href="#_author_4">AUTHOR</a></span></dt><dt><span class="section"><a href="#_see_also_6">SEE ALSO</a></span></dt></dl></dd><dt><span class="appendix"><a href="#_license">A. License</a></span></dt></dl></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a id="_dracut_8"></a>Chapter 6. DRACUT(8)</h2></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="section"><a href="#_name">NAME</a></span></dt><dt><span class="section"><a href="#_synopsis">SYNOPSIS</a></span></dt><dt><span class="section"><a href="#_description">DESCRIPTION</a></span></dt><dt><span class="section"><a href="#_usage">USAGE</a></span></dt><dd><dl><dt><span class="section"><a href="#_inspecting_the_contents">Inspecting the Contents</a></span></dt><dt><span class="section"><a href="#_adding_dracut_modules">Adding dracut Modules</a></span></dt><dt><span class="section"><a href="#_omitting_dracut_modules">Omitting dracut Modules</a></span></dt><dt><span class="section"><a href="#_adding_kernel_modules">Adding Kernel Modules</a></span></dt><dt><span class="section"><a href="#_boot_parameters">Boot parameters</a></span></dt><dt><span class="section"><a href="#Injecting">Injecting custom Files</a></span></dt><dt><span class="section"><a href="#NetworkBoot">Network Boot</a></span></dt></dl></dd><dt><span class="section"><a href="#_troubleshooting">Troubleshooting</a></span></dt><dd><dl><dt><span class="section"><a href="#identifying-your-problem-area">Identifying your problem area</a></span></dt><dt><span class="section"><a href="#information-to-include-in-your-report">Information to include in your report</a></span></dt><dt><span class="section"><a href="#debugging-dracut">Debugging dracut</a></span></dt></dl></dd><dt><span class="section"><a href="#_options">OPTIONS</a></span></dt><dt><span class="section"><a href="#_environment">ENVIRONMENT</a></span></dt><dt><span class="section"><a href="#_files">FILES</a></span></dt><dd><dl><dt><span class="section"><a href="#_configuration_in_the_initramfs">Configuration in the initramfs</a></span></dt></dl></dd><dt><span class="section"><a href="#_availability">AVAILABILITY</a></span></dt><dt><span class="section"><a href="#_authors">AUTHORS</a></span></dt><dt><span class="section"><a href="#_see_also">SEE ALSO</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_name"></a>NAME</h2></div></div></div><p>dracut - low-level tool for generating an initramfs/initrd image</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_synopsis"></a>SYNOPSIS</h2></div></div></div><p><span class="strong"><strong>dracut</strong></span> [<span class="emphasis"><em>OPTION…</em></span>] [<span class="emphasis"><em>&lt;image&gt;</em></span> [<span class="emphasis"><em>&lt;kernel version&gt;</em></span>]]</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_description"></a>DESCRIPTION</h2></div></div></div><p>Create an initramfs &lt;image&gt; for the kernel with the version &lt;kernel version&gt;.
 If &lt;kernel version&gt; is omitted, then the version of the actual running
-kernel is used. If &lt;image&gt; is omitted or empty, depending on bootloader
-specification, the default location can be
-<span class="emphasis"><em>/efi/&lt;machine-id&gt;/&lt;kernel-version&gt;/initrd</em></span>,
-<span class="emphasis"><em>/boot/&lt;machine-id&gt;/&lt;kernel-version&gt;/initrd</em></span>,
-<span class="emphasis"><em>/boot/efi/&lt;machine-id&gt;/&lt;kernel-version&gt;/initrd</em></span>,
-<span class="emphasis"><em>/lib/modules/&lt;kernel-version&gt;/initrd</em></span> or
-<span class="emphasis"><em>/boot/initramfs-&lt;kernel-version&gt;.img</em></span>.</p><p>dracut creates an initial image used by the kernel for preloading the block
+kernel is used. If &lt;image&gt; is omitted or empty, the default location will be
+determined by the local configuration or Linux distribution policy.</p><p>dracut creates an initial image used by the kernel for preloading the block
 device modules (such as IDE, SCSI or RAID) which are needed to access the root
 filesystem, mounting the root filesystem and booting into the real system.</p><p>At boot time, the kernel unpacks that archive into RAM disk, mounts and uses it
 as initial root file system. All finding of the root device happens in this
@@ -1249,13 +1244,10 @@ Additional debugging info can be produced by adding <span class="strong"><strong
 command line. <span class="emphasis"><em>/run/initramfs/rdsosreport.txt</em></span> contains all logs and the output
 of some tools. It should be attached to any report about dracut problems.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_usage"></a>USAGE</h2></div></div></div><p>To create a initramfs image, the most simple command is:</p><pre class="screen"># dracut</pre><p>This will generate a general purpose initramfs image, with all possible
 functionality resulting of the combination of the installed dracut modules and
-system tools. The image, depending on bootloader specification, can be
-<span class="emphasis"><em>/efi/</em></span><code class="literal">&lt;machine-id&gt;</code><span class="emphasis"><em>/</em></span><code class="literal">&lt;kernel-version&gt;</code><span class="emphasis"><em>/initrd</em></span>,
-<span class="emphasis"><em>/boot/</em></span><code class="literal">&lt;machine-id&gt;</code><span class="emphasis"><em>/</em></span><code class="literal">&lt;kernel-version&gt;</code><span class="emphasis"><em>/initrd</em></span>,
-<span class="emphasis"><em>/boot/efi/</em></span><code class="literal">&lt;machine-id&gt;</code><span class="emphasis"><em>/</em></span><code class="literal">&lt;kernel-version&gt;</code><span class="emphasis"><em>/initrd</em></span>,
-<span class="emphasis"><em>/lib/modules/</em></span><code class="literal">&lt;kernel-version&gt;</code><span class="emphasis"><em>/initrd</em></span> or
-<span class="emphasis"><em>/boot/initramfs-</em></span><code class="literal">&lt;kernel-version&gt;</code><span class="emphasis"><em>.img</em></span> and contains the kernel modules of
-the currently active kernel with version <span class="emphasis"><em><code class="literal">&lt;kernel-version&gt;</code></em></span>.</p><p>If the initramfs image already exists, dracut will display an error message, and
+system tools. The image contains the kernel modules of
+the currently active kernel with version <span class="emphasis"><em><code class="literal">&lt;kernel-version&gt;</code></em></span>.
+The default location of the image is determined by the local configuration
+or Linux distribution policy.</p><p>If the initramfs image already exists, dracut will display an error message, and
 to overwrite the existing image, you have to use the --force option.</p><pre class="screen"># dracut --force</pre><p>If you want to specify another filename for the resulting image you would issue
 a command like:</p><pre class="screen"># dracut foobar.img</pre><p>To generate an image for a specific kernel version, the command would be:</p><pre class="screen"># dracut foobar.img 2.6.40-1.rc5.f20</pre><p>A shortcut to generate the image at the default location for a specific kernel
 version is:</p><pre class="screen"># dracut --kver 2.6.40-1.rc5.f20</pre><p>If you want to create lighter, smaller initramfs images, you may want to specify
@@ -1286,7 +1278,9 @@ boot from a changed root partition, without the need to recompile the initramfs
 image. So, you could completely change your root partition (move it inside a md
 raid with encryption and LVM on top), as long as you specify the correct
 filesystem LABEL or UUID on the kernel command line for your root device, dracut
-will find it and boot from it.</p><p>The kernel command line can also be provided by the dhcp server with the
+will find it and boot from it.</p><p>Generic initrd’s are larger, but should be able to automatically boot any
+bootable configuration with appropriate boot flags (root device, network
+configuration information, etc.)</p><p>The kernel command line can also be provided by the dhcp server with the
 root-path option. See <a class="xref" href="#NetworkBoot" title="Network Boot">the section called “Network Boot”</a>.</p><p>For a full reference of all kernel command line parameters,
 see <span class="strong"><strong>dracut.cmdline</strong></span>(7).</p><p>To get a quick start for the suitable kernel command line on your system,
 use the <span class="emphasis"><em>--print-cmdline</em></span> option:</p><pre class="screen"># dracut --print-cmdline
@@ -2459,6 +2453,11 @@ provide a valid <span class="emphasis"><em>/etc/fstab</em></span>.</p></div><div
 </span></dt><dd>
    If set to <span class="emphasis"><em>yes</em></span>, try to execute tasks in parallel (currently only supported
    for <span class="emphasis"><em>--regenerate-all</em></span>).
+</dd><dt><span class="term">
+<span class="strong"><strong>initrdname=</strong></span>"<span class="emphasis"><em>&lt;filepattern&gt;</em></span>"
+</span></dt><dd>
+    Specifies the file name for the generated initramfs if it is not set otherwise.
+    file pattern and only one file with this pattern should exists in the
 </dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_files_2"></a>Files</h2></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
 <span class="emphasis"><em>/etc/dracut.conf</em></span>
 </span></dt><dd>
@@ -2669,13 +2668,9 @@ It should be attached to any report about dracut problems.</p><div class="variab
     drop to a shell before the defined breakpoint starts.
     This parameter can be specified multiple times.
 </dd><dt><span class="term">
-<span class="strong"><strong>rd.udev.info</strong></span>
+<span class="strong"><strong>rd.udev.log_level=</strong></span><span class="emphasis"><em>{err|info|debug}</em></span>
 </span></dt><dd>
-    set udev to loglevel info
-</dd><dt><span class="term">
-<span class="strong"><strong>rd.udev.debug</strong></span>
-</span></dt><dd>
-    set udev to loglevel debug
+    set udev log level. The default is <span class="emphasis"><em>err</em></span>.
 </dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_i18n"></a>I18N</h3></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
 <span class="strong"><strong>rd.vconsole.keymap=</strong></span><span class="emphasis"><em>&lt;keymap base file name&gt;</em></span>
 </span></dt><dd><p class="simpara">
@@ -3356,20 +3351,33 @@ See <a class="ulink" href="https://gitlab.com/virtio-fs/virtiofsd" target="_top"
 </p><pre class="screen">root=virtiofs:host rw</pre><p>
 </p></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_dasd"></a>DASD</h3></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
 <span class="strong"><strong>rd.dasd=</strong></span>….
-</span></dt><dd>
-    same syntax as the kernel module parameter (s390 only)
-</dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_zfcp"></a>ZFCP</h3></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+</span></dt><dd><p class="simpara">
+    same syntax as the kernel module parameter (s390 only).
+    For more details on the syntax see the IBM book
+    "Linux on IBM Z and IBM LinuxONE - Device Drivers, Features, and Commands"
+    <a class="ulink" href="https://www.ibm.com/docs/en/linux-on-systems?topic=overview-device-drivers-features-commands" target="_top">https://www.ibm.com/docs/en/linux-on-systems?topic=overview-device-drivers-features-commands</a>.
+    This parameter can be specified multiple times.
+</p><p class="simpara">NOTE:
+    This parameter is no longer handled by dracut itself but with the exact
+    same syntax by
+    <a class="ulink" href="https://github.com/ibm-s390-linux/s390-tools/tree/master/zdev/dracut/95zdev" target="_top">https://github.com/ibm-s390-linux/s390-tools/tree/master/zdev/dracut/95zdev</a>.</p></dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_zfcp"></a>ZFCP</h3></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
 <span class="strong"><strong>rd.zfcp=</strong></span><span class="emphasis"><em>&lt;zfcp adaptor device bus ID&gt;</em></span>,<span class="emphasis"><em>&lt;WWPN&gt;</em></span>,<span class="emphasis"><em>&lt;FCPLUN&gt;</em></span>
-</span></dt><dd>
+</span></dt><dd><p class="simpara">
     rd.zfcp can be specified multiple times on the kernel command
     line.
-</dd><dt><span class="term">
+</p><p class="simpara">NOTE:
+    This parameter is no longer handled by dracut itself but with the exact
+    same syntax by
+    <a class="ulink" href="https://github.com/ibm-s390-linux/s390-tools/tree/master/zdev/dracut/95zdev" target="_top">https://github.com/ibm-s390-linux/s390-tools/tree/master/zdev/dracut/95zdev</a>.</p></dd><dt><span class="term">
 <span class="strong"><strong>rd.zfcp=</strong></span><span class="emphasis"><em>&lt;zfcp adaptor device bus ID&gt;</em></span>
 </span></dt><dd><p class="simpara">
     If NPIV is enabled and the <span class="emphasis"><em>allow_lun_scan</em></span> parameter to the zfcp
-    module is set to <span class="emphasis"><em>Y</em></span> then the zfcp adaptor will be initiating a
+    module is set to <span class="emphasis"><em>Y</em></span> then the zfcp driver will be initiating a
     scan internally and the &lt;WWPN&gt; and &lt;FCPLUN&gt; parameters can be omitted.
-</p><p><strong>Example. </strong>
+</p><p class="simpara">NOTE:
+    This parameter is no longer handled by dracut itself but with the exact
+    same syntax by
+    <a class="ulink" href="https://github.com/ibm-s390-linux/s390-tools/tree/master/zdev/dracut/95zdev" target="_top">https://github.com/ibm-s390-linux/s390-tools/tree/master/zdev/dracut/95zdev</a>.</p><p><strong>Example. </strong>
 </p><pre class="screen">rd.zfcp=0.0.4000,0x5005076300C213e9,0x5022000000000000
 rd.zfcp=0.0.4000</pre><p>
 </p></dd><dt><span class="term">
@@ -3379,9 +3387,12 @@ rd.zfcp=0.0.4000</pre><p>
 </dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_znet"></a>ZNET</h3></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
 <span class="strong"><strong>rd.znet=</strong></span><span class="emphasis"><em>&lt;nettype&gt;</em></span>,<span class="emphasis"><em>&lt;subchannels&gt;</em></span>,<span class="emphasis"><em>&lt;options&gt;</em></span>
 </span></dt><dd>
-    The whole parameter is appended to /etc/ccw.conf, which is used on
-    RHEL/Fedora with ccw_init, which is called from udev for certain
-    devices on z-series.
+    Activates a channel-attached network interface on s390 architecture.
+    &lt;nettype&gt; is one of: qeth, lcs, ctc.
+    &lt;subchannels&gt; is a comma-separated list of ccw device bus-IDs.
+    The list consists of 3 entries with nettype qeth, and 2 for other nettype.
+    &lt;options&gt; is a comma-separated list of &lt;name&gt;=&lt;value&gt; pairs,
+    where &lt;name&gt; refers to a device sysfs attribute to which &lt;value&gt; gets written.
     rd.znet can be specified multiple times on the kernel command line.
 </dd><dt><span class="term">
 <span class="strong"><strong>rd.znet_ifname=</strong></span><span class="emphasis"><em>&lt;ifname&gt;</em></span>:<span class="emphasis"><em>&lt;subchannels&gt;</em></span>
@@ -3393,37 +3404,60 @@ rd.zfcp=0.0.4000</pre><p>
 </p><pre class="screen">rd.znet=qeth,0.0.0600,0.0.0601,0.0.0602,layer2=1,portname=foo
 rd.znet=ctc,0.0.0600,0.0.0601,protocol=bar</pre><p>
 </p></dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_booting_live_images"></a>Booting live images</h3></div></div></div><p>Dracut offers multiple options for live booted images:</p><div class="informalexample"><div class="variablelist"><dl class="variablelist"><dt><span class="term">
-SquashFS with read-only filesystem image
+SquashFS (read-only) base filesystem image
 </span></dt><dd><p class="simpara">
-The system will boot with a
-read-only filesystem from the SquashFS and apply a writable Device-mapper
-snapshot or an OverlayFS overlay mount for the read-only base filesystem.  This
-method ensures a relatively fast boot and lower RAM usage. Users <span class="strong"><strong>must be
-careful</strong></span> to avoid writing too many blocks to a snapshot volume.  Once the
-blocks of the snapshot overlay are exhausted, the root filesystem becomes
-read-only and may cause application failures.  The snapshot overlay file is
-marked <span class="emphasis"><em>Overflow</em></span>, and a difficult recovery is required to repair and enlarge
-the overlay offline.  Non-persistent overlays are sparse files in RAM that only
-consume content space as required blocks are allocated.  They default to an
-apparent size of 32 GiB in RAM.  The size can be adjusted with the
-<span class="strong"><strong>rd.live.overlay.size=</strong></span> kernel command line option.
-</p><p class="simpara">The filesystem structure is traditionally expected to be:</p><pre class="screen">squashfs.img          |  SquashFS from LiveCD .iso
+Note — There are 3 separate overlay types available:
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Device-mapper snapshots (the original offering),
+</li><li class="listitem">
+Device-mapper thin provisioning snapshots (see <span class="strong"><strong><span class="emphasis"><em>rd.live.overlay.thin</em></span></strong></span>,
+a later offering), and
+</li><li class="listitem">
+OverlayFS based overlay mounts (a more recent offering).
+</li></ul></div><p class="simpara">Using one of these technologies, the system will provide a writable overlay for
+the base, read-only SquashFS root filesystem. These methods enable a relatively
+fast boot and lower RAM usage.</p><p class="simpara">With the original Device-mapper snapshot overlay, users <span class="strong"><strong>must be careful</strong></span> to
+avoid writing too many blocks to the snapshot device.  Once the blocks of the
+snapshot overlay are exhausted, the whole root filesystem becomes read-only
+leading to application failures.  The snapshot overlay device is marked
+<span class="emphasis"><em>Overflow</em></span>, and a difficult recovery is required to repair and enlarge the
+overlay offline.</p><p class="simpara">When <span class="strong"><strong><span class="emphasis"><em>rd.live.overlay=</em></span></strong></span> is not specified for persistent overlay storage, or
+the specified file is not found or writable, a Device-mapper snapshot based
+non-persistent or temporary overlay is automatically created as a sparse file
+in RAM of the initramfs.  This file will only consume content space as required
+blocks are allocated. This snapshot based overlay defaults to an apparent size
+of 32 GiB in RAM, and can be adjusted with the <span class="strong"><strong><span class="emphasis"><em>rd.live.overlay.size=</em></span></strong></span> kernel
+command line option.  This file is hidden (and appears deleted) when the boot
+process switches out of the initramfs to the main root filesystem but its loop
+device remains connected to the Device-mapper snapshot.</p><p class="simpara">Even with large Device-mapper overlay files for write space, the available root
+filesystem capacity is limited by the total allocated size of the base root
+filesystem, which often provide only a small number of gigabytes of free space.</p><p class="simpara">This shortage could be remedied by building the root filesystem with more
+allocated free space, or the OverlayFS based overlay mount method can be used.</p><p class="simpara">When the <span class="strong"><strong><span class="emphasis"><em>rd.live.overlay.overlayfs</em></span></strong></span> option is specified or when
+<span class="strong"><strong><span class="emphasis"><em>rd.live.overlay=</em></span></strong></span> points to an appropriate directory with a sister at
+<code class="literal">/../ovlwork</code>, then an OverlayFS based overlay mount is employed.  Such a
+persistent OverlayFS overlay can extend the available root filesystem storage
+up to the capacity of the LiveOS disk device.</p><p class="simpara">For non-persistent OverlayFS overlays, the <code class="literal">/run/overlayfs</code> directory in the
+<code class="literal">/run</code> tmpfs is used for temporary storage.  This filesystem is typically sized
+to one half of the RAM total in the system.
+The command: <code class="literal">mount -o remount,size=&lt;nbytes&gt; /run</code> will resize this virtual
+filesystem after booting.</p><p class="simpara">The internal SquashFS structure is traditionally expected to be:</p><pre class="screen">squashfs.img          |  SquashFS from LiveCD .iso
    !(mount)
    /LiveOS
-       |- rootfs.img  |  Filesystem image to mount read-only
+       |- rootfs.img  |  Usually a ext4 filesystem image to mount read-only
             !(mount)
-            /bin      |  Live filesystem
+            /bin      |  Base Live root filesystem
             /boot     |
             /dev      |
-            ...       |</pre><p class="simpara">For OverlayFS mount overlays, the filesystem structure may also be a direct
+            ...       |</pre><p class="simpara">For OverlayFS mount overlays, the internal SquashFS structure may be a direct
 compression of the root filesystem:</p><pre class="screen">squashfs.img          |  SquashFS from LiveCD .iso
    !(mount)
-   /bin               |  Live filesystem
+   /bin               |  Base Live root filesystem
    /boot              |
    /dev               |
    ...                |</pre><p class="simpara">Dracut uses one of the overlay methods of live booting by default.  No
-additional command line options are required other than <span class="strong"><strong>root=live:&lt;URL&gt;</strong></span> to
-specify the location of your squashed filesystem.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+additional command line options are required other than
+<span class="strong"><strong>root=</strong></span>live:<span class="emphasis"><em>&lt;path to blockdevice&gt;</em></span> or <span class="strong"><strong>root=</strong></span>live:<span class="emphasis"><em>&lt;URL&gt;</em></span> to specify
+the location of your squashed root filesystem.</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 The compressed SquashFS image can be copied during boot to RAM at
 <code class="literal">/run/initramfs/squashed.img</code> by using the <span class="strong"><strong>rd.live.ram=1</strong></span> option.
 </li><li class="listitem">
@@ -3511,20 +3545,28 @@ when the image resides on, e.g., a DVD which needs to be ejected later on.
 </dd><dt><span class="term">
 <span class="strong"><strong>rd.live.overlay={</strong></span><span class="emphasis"><em>&lt;devspec&gt;</em></span>[:<span class="emphasis"><em>{&lt;pathspec&gt;|auto}</em></span>]|<span class="emphasis"><em>none</em></span>}
 </span></dt><dd><p class="simpara">
-Manage the usage of a permanent overlay.
+Manage the usage of a persistent overlay.
 </p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-<span class="emphasis"><em>&lt;devspec&gt;</em></span> specifies the path to a device with a mountable filesystem.
+<span class="strong"><strong><span class="emphasis"><em>&lt;devspec&gt;</em></span></strong></span> specifies the path to a device with a mountable filesystem.
 </li><li class="listitem"><p class="simpara">
-<span class="emphasis"><em>&lt;pathspec&gt;</em></span> is the path to a file within that filesystem, which shall be
-used to persist the changes made to the device specified by the
-<span class="strong"><strong>root=live:<span class="emphasis"><em>&lt;url&gt;</em></span></strong></span> option.
-</p><p class="simpara">The default <span class="emphasis"><em>pathspec</em></span>, when <span class="emphasis"><em>auto</em></span> or no <span class="emphasis"><em>:&lt;pathspec&gt;</em></span> is given, is
-<code class="literal">/&lt;rd.live.dir&gt;/overlay-&lt;label&gt;-&lt;uuid&gt;</code>, where <span class="emphasis"><em>&lt;label&gt;</em></span> is the
-device LABEL, and <span class="emphasis"><em>&lt;uuid&gt;</em></span> is the device UUID.
-* <span class="emphasis"><em>none</em></span> (the word itself) specifies that no overlay will be used, such as when
-an uncompressed, writable live root filesystem is available.</p><p class="simpara">If a persistent overlay <span class="emphasis"><em>is detected</em></span> at the standard LiveOS path,
-and rd.live.overlay.overlayfs is not set to 1, the overlay type (either
-Device-mapper or OverlayFS) will be detected and it will be used.</p></li></ul></div><p><strong>Examples. </strong>
+<span class="strong"><strong><span class="emphasis"><em>&lt;pathspec&gt;</em></span></strong></span> is a path within the <span class="strong"><strong><span class="emphasis"><em>&lt;devspec&gt;</em></span></strong></span> filesystem to either
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+a file (that is loop mounted for a Device-mapper overlay) or
+</li><li class="listitem">
+a directory (that is symbolically linked to <code class="literal">/run/overlayfs</code> for a OverlayFS
+mount overlay). (A required sister directory <code class="literal">/&lt;pathspec&gt;/../ovlwork</code> is
+automatically made.)
+</li></ul></div></li><li class="listitem">
+<span class="strong"><strong><span class="emphasis"><em>none</em></span></strong></span> (the word itself) specifies that no overlay will be used, such as
+when an uncompressed, writable live root filesystem is available.
+</li></ul></div><p class="simpara">The above method shall be used to persist the changes made to the root
+filesystem specified within the
+<span class="strong"><strong>root=</strong></span>live:<span class="emphasis"><em>&lt;path to blockdevice&gt;</em></span> or <span class="strong"><strong>root=</strong></span>live:<span class="emphasis"><em>&lt;url&gt;</em></span> device.</p><p class="simpara">The default <span class="strong"><strong><span class="emphasis"><em>pathspec</em></span></strong></span>, when <span class="strong"><strong>:auto</strong></span> or
+no <span class="strong"><strong>:<span class="emphasis"><em>&lt;pathspec&gt;</em></span></strong></span> is given, is <code class="literal">/&lt;rd.live.dir&gt;/overlay-&lt;label&gt;-&lt;uuid&gt;</code>,
+where <span class="emphasis"><em>&lt;label&gt;</em></span> and <span class="emphasis"><em>&lt;uuid&gt;</em></span> are the LABEL and UUID of the filesystem specified
+by the <span class="strong"><strong>root=</strong></span>live:<span class="emphasis"><em>&lt;path|url&gt;</em></span> device.</p><p class="simpara">If a persistent overlay <span class="emphasis"><em>is detected</em></span> at the standard LiveOS path,
+and <span class="strong"><strong><span class="emphasis"><em>rd.live.overlay.overlayfs</em></span></strong></span> is not set to 1, the overlay type (either
+Device-mapper or OverlayFS) will be detected and it will be used.</p><p><strong>Examples. </strong>
 </p><pre class="screen">rd.live.overlay=/dev/sdb1:/persistent-overlay.img
 rd.live.overlay=UUID=99440c1f-8daa-41bf-b965-b7240a8996f4</pre><p>
 </p></dd><dt><span class="term">
@@ -3539,17 +3581,21 @@ Specifies a non-persistent Device-mapper overlay size in MiB.  The default is
 <span class="emphasis"><em>32768</em></span>.
 </dd><dt><span class="term">
 <span class="strong"><strong>rd.live.overlay.readonly=</strong></span>1
-</span></dt><dd>
-This is used to boot with a normally read-write persistent overlay in a
-read-only mode.  With this option, either an additional, non-persistent,
-writable snapshot overlay will be stacked over a read-only snapshot,
-<code class="literal">/dev/mapper/live‑ro</code>, of the base filesystem with the persistent overlay, or a
-read-only loop device, in the case of a writable <span class="emphasis"><em>rootfs.img</em></span>, or an OverlayFS
-mount will use the persistent overlay directory linked at <code class="literal">/run/overlayfs‑r</code> as
-an additional lower layer along with the base root filesystem and apply a
-transient, writable upper directory overlay, in order to complete the booted
-root filesystem.
-</dd><dt><span class="term">
+</span></dt><dd><p class="simpara">
+This is used to boot in a read-only mode with a normally read-write persistent
+overlay.  With this option,
+</p><div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Device-mapper overlays will have an additional, non-persistent, writable
+snapshot overlay stacked over a read-only snapshot (<code class="literal">/dev/mapper/live‑ro</code>)
+of the base root filesystem and the persistent overlay, or
+</li><li class="listitem">
+for writable <code class="literal">rootfs.img</code> images, the above over a read-only loop device, or
+</li><li class="listitem">
+an OverlayFS mount will link the persistent overlay directory at
+<code class="literal">/run/overlayfs‑r</code> as an additional read-only lower layer stacked over the base
+root filesystem, and <code class="literal">/run/overlayfs</code> becomes the temporary, writable, upper
+directory overlay, to complete the bootable root filesystem.
+</li></ul></div></dd><dt><span class="term">
 <span class="strong"><strong>rd.live.overlay.reset=</strong></span>1
 </span></dt><dd>
 Specifies that a persistent overlay should be reset on boot.  All previous root
@@ -3569,15 +3615,15 @@ Enables the use of the <span class="strong"><strong>OverlayFS</strong></span> ke
 copy-on-write union directory for the root filesystem.  OverlayFS overlays are
 directories of the files that have changed on the read-only base (lower)
 filesystem.  The root filesystem is provided through a special overlay type
-mount that merges the lower and upper directories.  If an OverlayFS upper
-directory is not present on the boot device, a tmpfs directory will be created
-at <code class="literal">/run/overlayfs</code> to provide temporary storage.  Persistent storage can be
-provided on vfat or msdos formatted devices by supplying the OverlayFS upper
-directory within an embedded filesystem that supports the creation of trusted.*
-extended attributes and provides a valid d_type in readdir responses, such as
-with ext4 and xfs.  On non-vfat-formatted devices, a persistent OverlayFS
-overlay can extend the available root filesystem storage up to the capacity of
-the LiveOS disk device.
+mount that merges at least two directories, designated the lower and the upper.
+If an OverlayFS upper directory is not present on the boot device, a tmpfs
+directory will be created at <code class="literal">/run/overlayfs</code> to provide temporary storage.
+Persistent storage can be provided on vfat or msdos formatted devices by
+supplying the OverlayFS upper directory within an embedded filesystem that
+supports the creation of trusted.* extended attributes and provides a valid
+d_type in readdir responses, such as with btrfs, ext4, f2fs, &amp; xfs.  On
+non-vfat-formatted devices, a persistent OverlayFS overlay can extend the
+available root filesystem storage up to the capacity of the LiveOS disk device.
 </p><p class="simpara">The <span class="strong"><strong>rd.live.overlay.readonly</strong></span> option, which allows a persistent overlayfs to
 be mounted read-only through a higher level transient overlay directory, has
 been implemented through the multiple lower layers feature of OverlayFS.</p></dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_zipl"></a>ZIPL</h3></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
@@ -3637,8 +3683,7 @@ been implemented through the multiple lower layers feature of OverlayFS.</p></dd
     Set the path name of the eCryptfs key.
 </p><p><strong>Example. </strong>
 </p><pre class="screen">ecryptfskey=/etc/keys/ecryptfs-trusted.blob</pre><p>
-</p></dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_deprecated_renamed_options"></a>Deprecated, renamed Options</h3></div></div></div><p>Here is a list of options, which were used in dracut prior to version 008, and
-their new replacement.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+</p></dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_deprecated_renamed_options"></a>Deprecated, renamed Options</h3></div></div></div><p>Here is a list of options and their new replacement.</p><div class="variablelist"><dl class="variablelist"><dt><span class="term">
 rdbreak
 </span></dt><dd>
 rd.break
@@ -3837,11 +3882,19 @@ rd.splash
 </dd><dt><span class="term">
 rdudevdebug
 </span></dt><dd>
-rd.udev.debug
+rd.udev.udev_log=debug
 </dd><dt><span class="term">
 rdudevinfo
 </span></dt><dd>
+rd.udev.udev_log=info
+</dd><dt><span class="term">
+rd.udev.debug
+</span></dt><dd>
+rd.udev.udev_log=debug
+</dd><dt><span class="term">
 rd.udev.info
+</span></dt><dd>
+rd.udev.udev_log=info
 </dd><dt><span class="term">
 rd_NO_ZFCPCONF
 </span></dt><dd>
@@ -3898,11 +3951,8 @@ vconsole.keymap.ext
 </span></dt><dd>
     Can contain additional command line options.
 </dd></dl></div></div></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_author_2"></a>AUTHOR</h2></div></div></div><p>Harald Hoyer</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_see_also_3"></a>SEE ALSO</h2></div></div></div><p><span class="strong"><strong>dracut</strong></span>(8) <span class="strong"><strong>dracut.conf</strong></span>(5)</p></div></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a id="lsinitrd1"></a>Chapter 9. LSINITRD(1)</h2></div></div></div><div class="toc"><p><strong>Table of Contents</strong></p><dl class="toc"><dt><span class="section"><a href="#_name_4">NAME</a></span></dt><dt><span class="section"><a href="#_synopsis_3">SYNOPSIS</a></span></dt><dt><span class="section"><a href="#_description_4">DESCRIPTION</a></span></dt><dt><span class="section"><a href="#_options_2">OPTIONS</a></span></dt><dt><span class="section"><a href="#_availability_2">AVAILABILITY</a></span></dt><dt><span class="section"><a href="#_authors_2">AUTHORS</a></span></dt><dt><span class="section"><a href="#_see_also_4">SEE ALSO</a></span></dt></dl></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_name_4"></a>NAME</h2></div></div></div><p>lsinitrd - tool to show the contents of an initramfs image</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_synopsis_3"></a>SYNOPSIS</h2></div></div></div><p><span class="strong"><strong>lsinitrd</strong></span> [<span class="emphasis"><em>OPTION…</em></span>] [&lt;image&gt; [&lt;filename&gt; [&lt;filename&gt; […] ]]]</p><p><span class="strong"><strong>lsinitrd</strong></span> [<span class="emphasis"><em>OPTION…</em></span>] -k &lt;kernel version&gt;</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_description_4"></a>DESCRIPTION</h2></div></div></div><p>lsinitrd shows the contents of an initramfs image. if &lt;image&gt; is omitted, then
-lsinitrd uses the default image <span class="emphasis"><em>/efi/&lt;machine-id&gt;/&lt;kernel-version&gt;/initrd</em></span>,
-<span class="emphasis"><em>/boot/&lt;machine-id&gt;/&lt;kernel-version&gt;/initrd</em></span>,
-<span class="emphasis"><em>/boot/efi/&lt;machine-id&gt;/&lt;kernel-version&gt;/initrd</em></span>,
-<span class="emphasis"><em>/lib/modules/&lt;kernel-version&gt;/initrd</em></span> or
-<span class="emphasis"><em>/boot/initramfs-&lt;kernel-version&gt;.img</em></span>.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_options_2"></a>OPTIONS</h2></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
+lsinitrd determines the default location based on the local configuration
+or Linux distribution policy.</p></div><div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a id="_options_2"></a>OPTIONS</h2></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
 <span class="strong"><strong>-h, --help</strong></span>
 </span></dt><dd>
     print a help message and exit.
@@ -3998,7 +4048,7 @@ priority number 20 called <span class="emphasis"><em>parse-insmodpost.sh</em></s
 inst_simple "$moddir/insmodpost.sh" /sbin/insmodpost.sh</pre><p>The <span class="emphasis"><em>parse-instmodpost.sh</em></span> parses the kernel command line for a argument
 rd.driver.post, blacklists the module from being autoloaded and installs the
 hook <span class="emphasis"><em>insmodpost.sh</em></span> in the <span class="emphasis"><em>initqueue/settled</em></span>.</p><p><span class="emphasis"><em>parse-insmodpost.sh</em></span>:</p><pre class="screen">for p in $(getargs rd.driver.post=); do
-    echo "blacklist $p" &gt;&gt; /etc/modprobe.d/initramfsblacklist.conf
+    echo "blacklist $p" &gt;&gt; /run/modprobe.d/initramfsblacklist.conf
     _do_insmodpost=1
 done
 

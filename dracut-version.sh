@@ -1,3 +1,3 @@
 #!/bin/sh
 # shellcheck disable=SC2034
-DRACUT_VERSION=101
+DRACUT_VERSION=102
