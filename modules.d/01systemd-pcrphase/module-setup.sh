@@ -4,7 +4,6 @@
 
 # Prerequisite check(s) for module.
 check() {
-
     # If the binary(s) requirements are not fulfilled the module can't be installed.
     # systemd-255 renamed the binary, check for old and new location.
     if ! require_binaries "$systemdutildir"/systemd-pcrphase \
@@ -12,23 +11,24 @@ check() {
         return 1
     fi
 
-    return 0
+    if [[ $hostonly ]]; then
+        return 255
+    fi
 
+    return 0
 }
 
 # Module dependency requirements.
 depends() {
-
     # This module has external dependency on other module(s).
     echo systemd tpm2-tss
+
     # Return 0 to include the dependent module(s) in the initramfs.
     return 0
-
 }
 
 # Install the required file(s) and directories for the module in the initramfs.
 install() {
-
     inst_multiple -o \
         "$systemdutildir"/systemd-pcrphase \
         "$systemdutildir"/systemd-pcrextend \
@@ -43,5 +43,4 @@ install() {
             "$systemdsystemconfdir/systemd-pcrphase-initrd.service.d/*.conf" \
             "$systemdsystemconfdir"/initrd.target.wants/systemd-pcrphase-initrd.service
     fi
-
 }
