@@ -2843,8 +2843,8 @@ it, e.g. <code class="literal">rd.luks.name=cccc=mykeys</code>, otherwise it get
 when not needed anymore.</p></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
 <span class="strong"><strong>rd.luks.key.tout=0</strong></span>
 </span></dt><dd>
-    specify how many times dracut will try to read the keys specified in in
-    rd.luk.key. This gives a chance to the removable device containing the key
+    specify how many times dracut will try to read the keys specified in
+    rd.luks.key. This gives a chance to the removable device containing the key
     to initialise.
 </dd></dl></div></div><div class="section"><div class="titlepage"><div><div><h3 class="title"><a id="_md_raid"></a>MD RAID</h3></div></div></div><div class="variablelist"><dl class="variablelist"><dt><span class="term">
 <span class="strong"><strong>rd.md=0</strong></span>
@@ -3999,7 +3999,7 @@ arguments and sets up the directory, in which everything is installed. It then
 executes all check, install, installkernel scripts found in the modules, which
 are to be processed. After everything is installed, the install directory is
 archived and compressed to the final initramfs image. All helper functions used
-by check, install and installkernel are found in in the file <span class="emphasis"><em>dracut-functions</em></span>.
+by check, install and installkernel are found in the file <span class="emphasis"><em>dracut-functions</em></span>.
 These shell functions are available to all module installer (install,
 installkernel) scripts, without the need to source <span class="emphasis"><em>dracut-functions</em></span>.</p><p>A module can check the preconditions for install and installkernel with the
 check script. Also dependencies can be expressed with check. If a module passed
