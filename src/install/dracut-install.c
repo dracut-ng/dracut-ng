@@ -612,10 +612,16 @@ static int resolve_deps(const char *src)
         log_debug("%s %s", ldd, fullsrcpath);
         pid_t ldd_pid;
         if ((ldd_pid = fork()) == 0) {
+                _cleanup_strv_free_ char **cmdline = strv_split(ldd, WHITESPACE);
+
+                if (cmdline == NULL || strv_extend(&cmdline, fullsrcpath) < 0)
+                        /* consider as a hard error, see waitpid() below */
+                        _exit(126);
+
                 dup2(fds[1], 1);
                 dup2(fds[1], 2);
                 putenv("LC_ALL=C");
-                execlp(ldd, ldd, fullsrcpath, (char *)NULL);
+                execvp(cmdline[0], cmdline);
                 _exit(errno == ENOENT ? 127 : 126);
         }
         close(fds[1]);
