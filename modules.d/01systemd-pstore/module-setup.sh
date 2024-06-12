@@ -34,6 +34,8 @@ install() {
     inst_dir /var/lib/systemd/pstore
     inst_multiple -o \
         "$tmpfilesdir/systemd-pstore.conf" \
+        "$systemdutildir"/pstore.conf \
+        "$systemdutildir/pstore.conf.d/*.conf" \
         "$systemdutildir"/systemd-pstore \
         "$systemdsystemunitdir"/systemd-pstore.service \
         "$systemdsystemunitdir/systemd-pstore.service.d/*.conf"
