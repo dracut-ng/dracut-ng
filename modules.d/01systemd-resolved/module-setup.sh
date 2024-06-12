@@ -50,6 +50,7 @@ install() {
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
+            "$systemdutilconfdir"/resolv.conf \
             "$systemdutilconfdir"/resolved.conf \
             "$systemdutilconfdir/resolved.conf.d/*.conf" \
             "$systemdsystemconfdir"/systemd-resolved.service \
