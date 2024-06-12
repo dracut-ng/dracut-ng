@@ -55,7 +55,7 @@ test_run() {
 }
 
 test_setup() {
-    "$basedir"/dracut.sh -N -l --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
         -m "test-root" \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
