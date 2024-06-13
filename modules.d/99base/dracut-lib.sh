@@ -266,7 +266,7 @@ getargnum() {
     _b=$(getarg "$1") || _b=${_b:-"$_default"}
     if [ -n "$_b" ]; then
         isdigit "$_b" && _b=$((_b)) \
-            && [ $_b -ge "$_min" ] && [ $_b -le "$_max" ] && echo $_b && return
+            && [ "$_b" -ge "$_min" ] && [ "$_b" -le "$_max" ] && echo "$_b" && return
     fi
     echo "$_default"
 }
