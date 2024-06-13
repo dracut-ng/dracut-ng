@@ -1,7 +1,3 @@
-# SC2039: In POSIX sh, 'local' is undefined.
-# https://github.com/koalaman/shellcheck/wiki/SC2039
-disable=SC2039
-
 # SC2166: Prefer [ p ] || [ q ] as [ p -o q ] is not well defined.
 # https://github.com/koalaman/shellcheck/wiki/SC2166
 disable=SC2166
