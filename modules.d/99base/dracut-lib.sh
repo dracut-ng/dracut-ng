@@ -37,7 +37,7 @@ strstr() {
 # matches; as it would match anything, it's not an interesting case.
 strglob() {
     # shellcheck disable=SC2295
-    [ -n "$1" -a -z "${1##$2}" ]
+    [ -n "$1" ] && [ -z "${1##$2}" ]
 }
 
 # returns OK if $1 contains (anywhere) a match of glob pattern $2
@@ -45,7 +45,7 @@ strglob() {
 # matches; as it would match anything, it's not an interesting case.
 strglobin() {
     # shellcheck disable=SC2295
-    [ -n "$1" -a -z "${1##*$2*}" ]
+    [ -n "$1" ] && [ -z "${1##*$2*}" ]
 }
 
 # returns OK if $1 contains literal string $2 at the beginning, and isn't empty
@@ -354,14 +354,14 @@ splitsep() {
     shift 2
     local tmp
 
-    while [ -n "$str" -a "$#" -gt 1 ]; do
+    while [ -n "$str" ] && [ "$#" -gt 1 ]; do
         tmp="${str%%"$sep"*}"
         eval "$1='${tmp}'"
         str="${str#"$tmp"}"
         str="${str#"$sep"}"
         shift
     done
-    [ -n "$str" -a -n "$1" ] && eval "$1='$str'"
+    [ -n "$str" ] && [ -n "$1" ] && eval "$1='$str'"
     debug_on
     return 0
 }

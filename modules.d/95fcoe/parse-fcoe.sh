@@ -72,7 +72,7 @@ parse_fcoe_opts() {
             ;;
     esac
 
-    if [ "$fcoe_dcb" != "nodcb" -a "$fcoe_dcb" != "dcb" ]; then
+    if [ "$fcoe_dcb" != "nodcb" ] && [ "$fcoe_dcb" != "dcb" ]; then
         warn "Invalid FCoE DCB option: $fcoe_dcb"
     fi
 
@@ -81,7 +81,7 @@ parse_fcoe_opts() {
         return 0
     fi
 
-    if [ -z "$fcoe_interface" -a -z "$fcoe_mac" ]; then
+    if [ -z "$fcoe_interface" ] && [ -z "$fcoe_mac" ]; then
         warn "fcoe: Neither interface nor MAC specified for fcoe=$fcoe"
         return 1
     fi

@@ -68,7 +68,7 @@ mount_root() {
     [ -f "$NEWROOT"/.autofsck ] && rm -f -- "$NEWROOT"/.autofsck 2> /dev/null
 }
 
-if [ -n "$root" -a -z "${root%%virtfs:*}" ]; then
+if [ -n "$root" ] && [ -z "${root%%virtfs:*}" ]; then
     mount_root
 fi
 :

@@ -98,7 +98,7 @@ mount_root() {
     # printf '%s %s %s %s 1 1 \n' "$esc_root" "$NEWROOT" "$rootfs" "$rflags" >/etc/fstab
 
     if ! getargbool 0 ro && fsck_able "$rootfs" \
-        && [ "$rootfsck" != "0" -a -z "$fastboot" ] \
+        && [ "$rootfsck" != "0" ] && [ -z "$fastboot" ] \
         && ! strstr "${rflags}" _netdev \
         && ! getargbool 0 rd.skipfsck; then
         umount "$NEWROOT"
@@ -121,6 +121,6 @@ mount_root() {
     fi
 }
 
-if [ -n "$root" -a -z "${root%%block:*}" ]; then
+if [ -n "$root" ] && [ -z "${root%%block:*}" ]; then
     mount_root
 fi

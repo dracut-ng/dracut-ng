@@ -3,7 +3,7 @@
 # 	rootfstype=virtiofs root=<tag>
 # 	root=virtiofs:<tag>
 
-if [ "${fstype}" = "virtiofs" -o "${root%%:*}" = "virtiofs" ]; then
+if [ "${fstype}" = "virtiofs" ] || [ "${root%%:*}" = "virtiofs" ]; then
     # shellcheck disable=SC2034
     rootok=1
 fi

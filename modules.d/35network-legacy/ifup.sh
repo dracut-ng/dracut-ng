@@ -301,7 +301,7 @@ if [ -z "$NO_BOND_MASTER" ]; then
                 key=${arg%%=*}
                 value=${arg##*=}
                 # %{value:0:1} is replaced with non-bash specific construct
-                if [ "${key}" = "arp_ip_target" -a "${#value}" != "0" -a "+${value%%+*}" != "+" ]; then
+                if [ "${key}" = "arp_ip_target" ] && [ "${#value}" != "0" ] && [ "+${value%%+*}" != "+" ]; then
                     OLDIFS=$IFS
                     IFS=','
                     for arp_ip in $value; do
@@ -421,7 +421,7 @@ fi
 
 # disable manual ifup while netroot is set for simplifying our logic
 # in netroot case we prefer netroot to bringup $netif automatically
-[ -n "$2" -a "$2" = "-m" ] && [ -z "$netroot" ] && manualup="$2"
+[ -n "$2" ] && [ "$2" = "-m" ] && [ -z "$netroot" ] && manualup="$2"
 
 if [ -n "$manualup" ]; then
     : > "/tmp/net.$netif.manualup"
@@ -536,12 +536,12 @@ if [ -z "$NO_AUTO_DHCP" ] && [ ! -e "/tmp/net.${netif}.up" ]; then
         # No ip lines, no bootdev -> default to dhcp
         ip=$(getarg ip)
 
-        if getargs 'ip=dhcp6' > /dev/null || [ -z "$ip" -a "$netroot" = "dhcp6" ]; then
+        if getargs 'ip=dhcp6' > /dev/null || [ -z "$ip" ] && [ "$netroot" = "dhcp6" ]; then
             load_ipv6
             do_dhcp -6
             ret=$?
         fi
-        if getargs 'ip=dhcp' > /dev/null || [ -z "$ip" -a "$netroot" != "dhcp6" ]; then
+        if getargs 'ip=dhcp' > /dev/null || [ -z "$ip" ] && [ "$netroot" != "dhcp6" ]; then
             do_dhcp -4
             ret=$?
         fi

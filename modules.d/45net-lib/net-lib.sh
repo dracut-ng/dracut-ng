@@ -319,7 +319,7 @@ ibft_to_cmdline() {
                         gw="[${gw}]"
                     fi
                 fi
-                if [ -n "$ip" ] && [ -n "$mask" -o -n "$prefix" ]; then
+                if [ -n "$ip" ] && [ -n "$mask" ] || [ -n "$prefix" ]; then
                     echo "ip=$ip::$gw:$mask:$hostname:$dev:none${dns1:+:$dns1}${dns2:+:$dns2}"
                 else
                     warn "${iface} does not contain a valid iBFT configuration"
@@ -517,7 +517,7 @@ ip_to_var() {
         return 0
     fi
 
-    if [ "$2" = "dhcp" -o "$2" = "on" -o "$2" = "any" -o "$2" = "dhcp6" -o "$2" = "auto6" -o "$2" = "either6" ]; then
+    if [ "$2" = "dhcp" ] || [ "$2" = "on" ] || [ "$2" = "any" ] || [ "$2" = "dhcp6" ] || [ "$2" = "auto6" ] || [ "$2" = "either6" ]; then
         # format: ip=<interface>:{dhcp|on|any|dhcp6|auto6}[:[<mtu>][:<macaddr>]]
         [ -n "$1" ] && dev="$1"
         [ -n "$2" ] && autoconf="$2"
@@ -546,16 +546,16 @@ ip_to_var() {
             ;;
         [0-9]*)
             mtu="$8"
-            if [ -n "${9}" -a -z "${10}" ]; then
+            if [ -n "${9}" ] && [ -z "${10}" ]; then
                 macaddr="${9}"
-            elif [ -n "${9}" -a -n "${10}" -a -n "${11}" -a -n "${12}" -a -n "${13}" -a -n "${14}" ]; then
+            elif [ -n "${9}" ] && [ -n "${10}" ] && [ -n "${11}" ] && [ -n "${12}" ] && [ -n "${13}" ] && [ -n "${14}" ]; then
                 macaddr="${9}:${10}:${11}:${12}:${13}:${14}"
             fi
             ;;
         *)
-            if [ -n "${9}" -a -z "${10}" ]; then
+            if [ -n "${9}" ] && [ -z "${10}" ]; then
                 macaddr="${9}"
-            elif [ -n "${9}" -a -n "${10}" -a -n "${11}" -a -n "${12}" -a -n "${13}" -a -n "${14}" ]; then
+            elif [ -n "${9}" ] && [ -n "${10}" ] && [ -n "${11}" ] && [ -n "${12}" ] && [ -n "${13}" ] && [ -n "${14}" ]; then
                 macaddr="${9}:${10}:${11}:${12}:${13}:${14}"
             fi
             ;;

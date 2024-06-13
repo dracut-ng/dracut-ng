@@ -12,12 +12,12 @@ if [ "$capsmode" = "1" ]; then
     info "Loading CAPS_MODULES $CAPS_MODULES"
     for i in $CAPS_MODULES; do modprobe "$i" 2>&1 > /dev/null | vinfo; done
 
-    if [ "$CAPS_MODULES_DISABLED" = "1" -a -e /proc/sys/kernel/modules_disabled ]; then
+    if [ "$CAPS_MODULES_DISABLED" = "1" ] && [ -e /proc/sys/kernel/modules_disabled ]; then
         info "Disabling module loading."
         echo "$CAPS_MODULES_DISABLED" > /proc/sys/kernel/modules_disabled
     fi
 
-    if [ "$CAPS_KEXEC_DISABLED" = "1" -a -e /proc/sys/kernel/kexec_disabled ]; then
+    if [ "$CAPS_KEXEC_DISABLED" = "1" ] && [ -e /proc/sys/kernel/kexec_disabled ]; then
         info "Disabling kexec."
         echo "$CAPS_KEXEC_DISABLED" > /proc/sys/kernel/kexec_disabled
     fi

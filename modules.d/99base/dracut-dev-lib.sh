@@ -30,7 +30,7 @@ dev_unit_name() {
         return $?
     fi
 
-    if [ "$dev" = "/" -o -z "$dev" ]; then
+    if [ "$dev" = "/" ] || [ -z "$dev" ]; then
         printf -- "-"
         return 0
     fi

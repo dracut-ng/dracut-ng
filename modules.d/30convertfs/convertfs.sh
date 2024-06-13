@@ -21,13 +21,13 @@ while [[ $ROOT != "${ROOT%/}" ]]; do
     ROOT=${ROOT%/}
 done
 
-if [ ! -L "$ROOT"/var/run -a -e "$ROOT"/var/run ]; then
+if [ ! -L "$ROOT"/var/run ] && [ -e "$ROOT"/var/run ]; then
     echo "Converting /var/run to symlink"
     mv -f "$ROOT"/var/run "$ROOT"/var/run.runmove~
     ln -sfn ../run "$ROOT"/var/run
 fi
 
-if [ ! -L "$ROOT"/var/lock -a -e "$ROOT"/var/lock ]; then
+if [ ! -L "$ROOT"/var/lock ] && [ -e "$ROOT"/var/lock ]; then
     echo "Converting /var/lock to symlink"
     mv -f "$ROOT"/var/lock "$ROOT"/var/lock.lockmove~
     ln -sfn ../run/lock "$ROOT"/var/lock

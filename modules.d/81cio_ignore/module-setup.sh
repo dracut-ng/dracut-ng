@@ -6,7 +6,7 @@
 check() {
     # do not add this module by default
     local arch=${DRACUT_ARCH:-$(uname -m)}
-    [ "$arch" = "s390" -o "$arch" = "s390x" ] || return 1
+    [ "$arch" = "s390" ] || [ "$arch" = "s390x" ] || return 1
     return 0
 }
 
@@ -15,7 +15,7 @@ cmdline() {
 
     if [ -e /boot/zipl/active_devices.txt ]; then
         while read -r dev _; do
-            [ "$dev" = "#" -o "$dev" = "" ] && continue
+            [ "$dev" = "#" ] || [ "$dev" = "" ] && continue
             if [ -z "$cio_accept" ]; then
                 cio_accept="$dev"
             else

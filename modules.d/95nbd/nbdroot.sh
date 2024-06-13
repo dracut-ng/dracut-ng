@@ -60,7 +60,7 @@ while [ -n "$nbdopts" ]; do
     if [ -z "$f" ]; then
         break
     fi
-    if [ -z "${f%bs=*}" -o -z "${f%timeout=*}" ]; then
+    if [ -z "${f%bs=*}" ] || [ -z "${f%timeout=*}" ]; then
         preopts="$preopts $f"
         continue
     fi
@@ -75,7 +75,7 @@ while [ -n "$nbdflags" ]; do
     if [ -z "$f" ]; then
         break
     fi
-    if [ "$f" = "ro" -o "$f" = "rw" ]; then
+    if [ "$f" = "ro" ] || [ "$f" = "rw" ]; then
         nbdrw=$f
         continue
     fi
@@ -96,7 +96,7 @@ done
 
 # If we didn't get a root= on the command line, then we need to
 # add the udev rules for mounting the nbd0 device
-if [ "$root" = "block:/dev/root" -o "$root" = "dhcp" ]; then
+if [ "$root" = "block:/dev/root" ] || [ "$root" = "dhcp" ]; then
     printf 'KERNEL=="nbd0", ENV{DEVTYPE}!="partition", ENV{ID_FS_TYPE}=="?*", SYMLINK+="root"\n' > /etc/udev/rules.d/99-nbd-root.rules
     udevadm control --reload
     wait_for_dev -n /dev/root
