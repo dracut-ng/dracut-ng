@@ -27,8 +27,3 @@ disable=SC3043
 # https://github.com/koalaman/shellcheck/wiki/SC3013
 # ... but dash supports it
 disable=SC3013
-
-# SC3045: In POSIX sh, read -p is undefined.
-# https://github.com/koalaman/shellcheck/wiki/SC3045
-# ... but dash supports it
-disable=SC3045
