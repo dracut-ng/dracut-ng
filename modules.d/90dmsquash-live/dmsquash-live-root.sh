@@ -166,8 +166,8 @@ do_live_overlay() {
         else
             mount -n -t auto "$devspec" /run/initramfs/overlayfs || :
         fi
-        if [ -f /run/initramfs/overlayfs$pathspec ] && [ -w /run/initramfs/overlayfs$pathspec ]; then
-            OVERLAY_LOOPDEV=$(losetup -f --show ${readonly_overlay:+-r} /run/initramfs/overlayfs$pathspec)
+        if [ -f "/run/initramfs/overlayfs$pathspec" ] && [ -w "/run/initramfs/overlayfs$pathspec" ]; then
+            OVERLAY_LOOPDEV=$(losetup -f --show ${readonly_overlay:+-r} "/run/initramfs/overlayfs$pathspec")
             over=$OVERLAY_LOOPDEV
             umount -l /run/initramfs/overlayfs || :
             oltype=$(det_img_fs "$OVERLAY_LOOPDEV")
@@ -194,10 +194,10 @@ do_live_overlay() {
                     setup="yes"
                 fi
             fi
-        elif [ -d /run/initramfs/overlayfs$pathspec ] \
-            && [ -d /run/initramfs/overlayfs$pathspec/../ovlwork ]; then
-            ln -s /run/initramfs/overlayfs$pathspec /run/overlayfs${readonly_overlay:+-r}
-            ln -s /run/initramfs/overlayfs$pathspec/../ovlwork /run/ovlwork${readonly_overlay:+-r}
+        elif [ -d "/run/initramfs/overlayfs$pathspec" ] \
+            && [ -d "/run/initramfs/overlayfs$pathspec/../ovlwork" ]; then
+            ln -s "/run/initramfs/overlayfs$pathspec" /run/overlayfs${readonly_overlay:+-r}
+            ln -s "/run/initramfs/overlayfs$pathspec/../ovlwork" /run/ovlwork${readonly_overlay:+-r}
             if [ -z "$overlayfs" ] && [ -n "$DRACUT_SYSTEMD" ]; then
                 reloadsysrootmountunit=":>/xor_overlayfs;"
             fi
@@ -319,22 +319,22 @@ do_live_overlay() {
 # end do_live_overlay()
 
 # we might have an embedded fs image on squashfs (compressed live)
-if [ -e /run/initramfs/live/${live_dir}/${squash_image} ]; then
+if [ -e "/run/initramfs/live/${live_dir}/${squash_image}" ]; then
     SQUASHED="/run/initramfs/live/${live_dir}/${squash_image}"
 fi
 if [ -e "$SQUASHED" ]; then
     if [ -n "$live_ram" ]; then
-        imgsize=$(($(stat -c %s -- $SQUASHED) / (1024 * 1024)))
+        imgsize=$(($(stat -c %s -- "$SQUASHED") / (1024 * 1024)))
         check_live_ram $imgsize
         echo 'Copying live image to RAM...' > /dev/kmsg
         echo ' (this may take a minute)' > /dev/kmsg
-        dd if=$SQUASHED of=/run/initramfs/squashed.img bs=512 2> /dev/null
+        dd "if=$SQUASHED" of=/run/initramfs/squashed.img bs=512 2> /dev/null
         echo 'Done copying live image to RAM.' > /dev/kmsg
         SQUASHED="/run/initramfs/squashed.img"
     fi
 
     SQUASHED_LOOPDEV=$(losetup -f)
-    losetup -r "$SQUASHED_LOOPDEV" $SQUASHED
+    losetup -r "$SQUASHED_LOOPDEV" "$SQUASHED"
     mkdir -m 0755 -p /run/initramfs/squashfs
     mount -n -t squashfs -o ro "$SQUASHED_LOOPDEV" /run/initramfs/squashfs
 
@@ -356,15 +356,15 @@ if [ -e "$SQUASHED" ]; then
     fi
 else
     # we might have an embedded fs image to use as rootfs (uncompressed live)
-    if [ -e /run/initramfs/live/${live_dir}/rootfs.img ]; then
+    if [ -e "/run/initramfs/live/${live_dir}/rootfs.img" ]; then
         FSIMG="/run/initramfs/live/${live_dir}/rootfs.img"
-    elif [ -e /run/initramfs/live/${live_dir}/ext3fs.img ]; then
+    elif [ -e "/run/initramfs/live/${live_dir}/ext3fs.img" ]; then
         FSIMG="/run/initramfs/live/${live_dir}/ext3fs.img"
     fi
     if [ -n "$live_ram" ]; then
         echo 'Copying live image to RAM...' > /dev/kmsg
         echo ' (this may take a minute or so)' > /dev/kmsg
-        dd if=$FSIMG of=/run/initramfs/rootfs.img bs=512 2> /dev/null
+        dd "if=$FSIMG" of=/run/initramfs/rootfs.img bs=512 2> /dev/null
         echo 'Done copying live image to RAM.' > /dev/kmsg
         FSIMG='/run/initramfs/rootfs.img'
     fi
@@ -376,9 +376,9 @@ if [ -n "$FSIMG" ]; then
         echo "Unpacking live filesystem (may take some time)" > /dev/kmsg
         mkdir -m 0755 -p /run/initramfs/fsimg/
         if [ -n "$SQUASHED" ]; then
-            cp -v $FSIMG /run/initramfs/fsimg/rootfs.img
+            cp -v "$FSIMG" /run/initramfs/fsimg/rootfs.img
         else
-            unpack_archive $FSIMG /run/initramfs/fsimg/
+            unpack_archive "$FSIMG" /run/initramfs/fsimg/
         fi
         FSIMG=/run/initramfs/fsimg/rootfs.img
     fi
@@ -397,7 +397,7 @@ if [ -n "$FSIMG" ]; then
     if [ "$FSIMG" = "$SQUASHED" ]; then
         BASE_LOOPDEV=$SQUASHED_LOOPDEV
     else
-        BASE_LOOPDEV=$(losetup -f --show ${readonly_base:+-r} $FSIMG)
+        BASE_LOOPDEV=$(losetup -f --show ${readonly_base:+-r} "$FSIMG")
         sz=$(blockdev --getsz "$BASE_LOOPDEV")
     fi
     if [ "$setup" = rw ]; then
@@ -422,7 +422,7 @@ fi
 if [ -n "$overlayfs" ]; then
     if [ -n "$FSIMG" ]; then
         mkdir -m 0755 -p /run/rootfsbase
-        mount -r $FSIMG /run/rootfsbase
+        mount -r "$FSIMG" /run/rootfsbase
     else
         ln -sf /run/initramfs/live /run/rootfsbase
     fi
