@@ -94,10 +94,8 @@ fips_load_crypto() {
     local _module
     local _found
 
-    read -d '' -r FIPSMODULES < /etc/fipsmodules
-
     fips_info "Loading and integrity checking all crypto modules"
-    for _module in $FIPSMODULES; do
+    while read -r _module; do
         if [ "$_module" != "tcrypt" ]; then
             if ! nonfatal_modprobe "${_module}" 2> /tmp/fips.modprobe_err; then
                 # check if kernel provides generic algo
@@ -111,7 +109,7 @@ fips_load_crypto() {
                 [ "$_found" = "0" ] && cat /tmp/fips.modprobe_err >&2 && return 1
             fi
         fi
-    done
+    done < /etc/fipsmodules
     if [ -f /etc/fips.conf ]; then
         mkdir -p /run/modprobe.d
         cp /etc/fips.conf /run/modprobe.d/fips.conf
