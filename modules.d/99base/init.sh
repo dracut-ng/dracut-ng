@@ -109,6 +109,8 @@ source_conf /etc/conf.d
 
 if getarg "rd.cmdline=ask"; then
     echo "Enter additional kernel command line parameter (end with ctrl-d or .)"
+    # In POSIX sh, read -p is undefined, but dash supports it
+    # shellcheck disable=SC3045
     while read -r -p "> " ${BASH:+-e} line || [ -n "$line" ]; do
         [ "$line" = "." ] && break
         echo "$line" >> /etc/cmdline.d/99-cmdline-ask.conf
