@@ -22,9 +22,9 @@ install() {
     inst_multiple mkdir ln dd stty mount poweroff umount setsid sync
 
     for _terminfodir in /lib/terminfo /etc/terminfo /usr/share/terminfo; do
-        [ -f ${_terminfodir}/l/linux ] && break
+        [ -f "${_terminfodir}/l/linux" ] && break
     done
-    inst_multiple -o ${_terminfodir}/l/linux
+    inst_multiple -o "${_terminfodir}/l/linux"
 
     inst_binary "${dracutbasedir}/dracut-util" "/usr/bin/dracut-util"
     ln -s dracut-util "${initdir}/usr/bin/dracut-getarg"
