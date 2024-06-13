@@ -1002,8 +1002,8 @@ export_n() {
     local var
     local val
     for var in "$@"; do
-        eval val=\$$var
-        unset $var
+        eval "val=\$$var"
+        unset "$var"
         [ -n "$val" ] && eval "$var=\"$val\""
     done
 }
