@@ -1378,8 +1378,8 @@ unset omit_drivers_corrected
 
 # prepare args for logging
 for ((i = 0; i < ${#dracut_args[@]}; i++)); do
-    [[ ${dracut_args[$i]} == *\ * ]] \
-        && dracut_args[$i]="\"${dracut_args[$i]}\""
+    [[ ${dracut_args[i]} == *\ * ]] \
+        && dracut_args[i]="\"${dracut_args[i]}\""
     #" keep vim happy
 done
 
