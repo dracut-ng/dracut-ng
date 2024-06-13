@@ -143,7 +143,11 @@ while (($# > 0)); do
             else
                 echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_SUCCESS" "[STARTED]" "$COLOR_NORMAL"
             fi
-            if [[ $V == "1" ]]; then
+            if [[ $V == "1" || $V == "2" ]]; then
+                tee_command="tee"
+                if [[ $V == "2" ]]; then
+                    tee_command="$basedir/logtee"
+                fi
                 set -o pipefail
                 (
                     test_setup && test_run
@@ -155,20 +159,7 @@ while (($# > 0)); do
                     rm -fr -- "$TESTDIR"
                     rm -f -- .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
                     exit $ret
-                ) < /dev/null 2>&1 | tee "test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
-            elif [[ $V == "2" ]]; then
-                set -o pipefail
-                (
-                    test_setup && test_run
-                    ret=$?
-                    test_cleanup
-                    if ((ret != 0)) && [[ -f "$TESTDIR"/server.log ]]; then
-                        mv "$TESTDIR"/server.log ./server${TEST_RUN_ID:+-$TEST_RUN_ID}.log
-                    fi
-                    rm -fr -- "$TESTDIR"
-                    rm -f -- .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
-                    exit $ret
-                ) < /dev/null 2>&1 | "$basedir/logtee" "test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
+                ) < /dev/null 2>&1 | "$tee_command" "test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
             else
                 (
                     test_setup && test_run
