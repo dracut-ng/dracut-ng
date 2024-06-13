@@ -19,7 +19,7 @@ fi
 echo "made it to the rootfs! Powering down."
 
 while read -r dev _ fstype opts rest || [ -n "$dev" ]; do
-    [ "$fstype" != "nfs" -a "$fstype" != "nfs4" ] && continue
+    [ "$fstype" != "nfs" ] && [ "$fstype" != "nfs4" ] && continue
     echo "nfs-OK $dev $fstype $opts" | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
     break
 done < /proc/mounts
@@ -31,7 +31,7 @@ if grep -qF 'rd.live.overlay' /proc/cmdline; then
     fi
 fi
 
-if [ "$fstype" = "nfs" -o "$fstype" = "nfs4" ]; then
+if [ "$fstype" = "nfs" ] || [ "$fstype" = "nfs4" ]; then
 
     serverip=${dev%:*}
     path=${dev#*:}

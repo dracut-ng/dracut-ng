@@ -18,7 +18,7 @@ rd_load_policy() {
     fi
 
     # Attempt to load SELinux Policy
-    if [ -x "$NEWROOT/usr/sbin/load_policy" -o -x "$NEWROOT/sbin/load_policy" ]; then
+    if [ -x "$NEWROOT/usr/sbin/load_policy" ] || [ -x "$NEWROOT/sbin/load_policy" ]; then
         local ret=0
         local out
         info "Loading SELinux policy"
@@ -41,7 +41,7 @@ rd_load_policy() {
             return 0
         fi
 
-        if [ $ret -eq 0 -o $ret -eq 2 ]; then
+        if [ $ret -eq 0 ] || [ $ret -eq 2 ]; then
             # If machine requires a relabel, force to permissive mode
             [ -e "$NEWROOT"/.autorelabel ] && LANG=C /usr/sbin/setenforce 0
             mount --rbind /dev "$NEWROOT/dev"
@@ -51,14 +51,14 @@ rd_load_policy() {
         fi
 
         warn "Initial SELinux policy load failed."
-        if [ $ret -eq 3 -o $permissive -eq 0 ]; then
+        if [ $ret -eq 3 ] || [ $permissive -eq 0 ]; then
             warn "Machine in enforcing mode."
             warn "Not continuing"
             emergency_shell -n selinux
             exit 1
         fi
         return 0
-    elif [ $permissive -eq 0 -a "$SELINUX" != "disabled" ]; then
+    elif [ $permissive -eq 0 ] && [ "$SELINUX" != "disabled" ]; then
         warn "Machine in enforcing mode and cannot execute load_policy."
         warn "To disable selinux, add selinux=0 to the kernel command line."
         warn "Not continuing"

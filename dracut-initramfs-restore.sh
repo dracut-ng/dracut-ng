@@ -83,7 +83,7 @@ if [[ -d squash ]]; then
 fi
 
 if grep -q -w selinux /sys/kernel/security/lsm 2> /dev/null \
-    && [ -e /etc/selinux/config -a -x /usr/sbin/setfiles ]; then
+    && [ -e /etc/selinux/config ] && [ -x /usr/sbin/setfiles ]; then
     . /etc/selinux/config
     if [[ $SELINUX != "disabled" && -n $SELINUXTYPE ]]; then
         /usr/sbin/setfiles -v -r /run/initramfs /etc/selinux/"${SELINUXTYPE}"/contexts/files/file_contexts /run/initramfs > /dev/null

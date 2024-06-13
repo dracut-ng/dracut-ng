@@ -2,7 +2,7 @@
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
-[ -s /.resume -a -b "$resume" ] && {
+[ -s /.resume ] && [ -b "$resume" ] && {
     # First try user level resume; it offers splash etc
     case "$splash" in
         quiet)

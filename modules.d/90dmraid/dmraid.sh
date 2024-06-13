@@ -15,7 +15,7 @@ if [ -n "$DM_RAIDS" ] || getargbool 0 rd.auto; then
     info "Scanning for dmraid devices $DM_RAIDS"
     SETS=$(dmraid -c -s)
 
-    if [ "$SETS" = "no raid disks" -o "$SETS" = "no raid sets" ]; then
+    if [ "$SETS" = "no raid disks" ] || [ "$SETS" = "no raid sets" ]; then
         return
     fi
 

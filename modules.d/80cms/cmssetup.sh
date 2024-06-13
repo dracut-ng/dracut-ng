@@ -158,7 +158,7 @@ processcmsfile() {
 [[ $CMSCONFFILE ]] || CMSCONFFILE=$(getarg "CMSCONFFILE=")
 
 # Parse configuration
-if [ -n "$CMSDASD" -a -n "$CMSCONFFILE" ]; then
+if [ -n "$CMSDASD" ] && [ -n "$CMSCONFFILE" ]; then
     if readcmsfile "$CMSDASD" "$CMSCONFFILE"; then
         ln -s /run/initramfs/"$CMSCONFFILE" /tmp/"$CMSCONFFILE"
         ln -s /run/initramfs/"$CMSCONFFILE" /tmp/cms.conf

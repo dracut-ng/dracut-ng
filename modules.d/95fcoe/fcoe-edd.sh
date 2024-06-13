@@ -34,7 +34,7 @@ for disk in /sys/firmware/edd/int13_*; do
     fi
     for nic in "${disk}"/pci_dev/net/*; do
         [ -d "$nic" ] || continue
-        if [ -n "${dev_port}" -a -e "${nic}/dev_port" ]; then
+        if [ -n "${dev_port}" ] && [ -e "${nic}/dev_port" ]; then
             if [ "$(cat "${nic}"/dev_port)" -ne "${dev_port}" ]; then
                 continue
             fi

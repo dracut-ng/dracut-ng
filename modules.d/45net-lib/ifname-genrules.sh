@@ -17,7 +17,7 @@ command -v parse_ifname_opts > /dev/null || . /lib/net-lib.sh
         if [ -f /tmp/ifname-"$ifname_if" ]; then
             read -r oldmac < /tmp/ifname-"$ifname_if"
         fi
-        if [ -n "$oldif" -a -n "$oldmac" -a "$oldif" = "$ifname_if" -a "$oldmac" = "$ifname_mac" ]; then
+        if [ -n "$oldif" ] && [ -n "$oldmac" ] && [ "$oldif" = "$ifname_if" ] && [ "$oldmac" = "$ifname_mac" ]; then
             # skip same ifname= declaration
             continue
         fi

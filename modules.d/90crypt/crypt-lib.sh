@@ -148,7 +148,7 @@ test_dev() {
     local mount_point
 
     mount_point=$(mkuniqdir /mnt testdev)
-    [ -n "$dev" -a -n "$*" ] || return 1
+    [ -n "$dev" ] && [ -n "$*" ] || return 1
     [ -d "$mount_point" ] || die 'Mount point does not exist!'
 
     if mount -r "$dev" "$mount_point" > /dev/null 2>&1; then
@@ -175,7 +175,7 @@ test_dev() {
 #   match_dev UUID=123 /dev/dm-1
 # Returns true if /dev/dm-1 UUID starts with "123".
 match_dev() {
-    [ -z "$1" -o "$1" = '*' ] && return 0
+    [ -z "$1" ] || [ "$1" = '*' ] && return 0
     local devlist
     local dev
 
@@ -206,7 +206,7 @@ getkey() {
     local key_dev
     local key_path
 
-    [ -z "$keys_file" -o -z "$for_dev" ] && die 'getkey: wrong usage!'
+    [ -z "$keys_file" ] || [ -z "$for_dev" ] && die 'getkey: wrong usage!'
     [ -f "$keys_file" ] || return 1
 
     while IFS=: read -r luks_dev key_dev key_path _ || [ -n "$luks_dev" ]; do

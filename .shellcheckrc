@@ -1,7 +1,3 @@
-# SC2166: Prefer [ p ] || [ q ] as [ p -o q ] is not well defined.
-# https://github.com/koalaman/shellcheck/wiki/SC2166
-disable=SC2166
-
 # SC2154: Variable is referenced but not assigned
 # https://github.com/koalaman/shellcheck/wiki/SC2154
 disable=SC2154

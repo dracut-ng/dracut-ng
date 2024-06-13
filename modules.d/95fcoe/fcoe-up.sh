@@ -11,7 +11,7 @@ type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
 type ip_to_var > /dev/null 2>&1 || . /lib/net-lib.sh
 
 # Huh? Missing arguments ??
-[ -z "$1" -o -z "$2" ] && exit 1
+[ -z "$1" ] || [ -z "$2" ] && exit 1
 
 netif=$1
 dcb=$2

@@ -101,7 +101,7 @@ fips_load_crypto() {
                 # check if kernel provides generic algo
                 _found=0
                 while read -r _k _ _v || [ -n "$_k" ]; do
-                    [ "$_k" != "name" -a "$_k" != "driver" ] && continue
+                    [ "$_k" != "name" ] && [ "$_k" != "driver" ] && continue
                     [ "$_v" != "$_module" ] && continue
                     _found=1
                     break

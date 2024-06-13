@@ -47,7 +47,7 @@ while [ "$i" -le "$RETRIES" ]; do
         imgfile=
     fi
 
-    if [ -n "$imgfile" -a -s "$imgfile" ]; then
+    if [ -n "$imgfile" ] && [ -s "$imgfile" ]; then
         break
     else
         if [ $i -ge "$RETRIES" ]; then

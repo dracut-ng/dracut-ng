@@ -67,7 +67,7 @@ if [ ! -f "$livedev" ]; then
     check_dev=$(get_check_dev "$livedev")
     # CD/DVD media check
     [ -b "$check_dev" ] && fs=$(det_fs "$check_dev")
-    if [ "$fs" = "iso9660" -o "$fs" = "udf" ]; then
+    if [ "$fs" = "iso9660" ] || [ "$fs" = "udf" ]; then
         check="yes"
     fi
     getarg rd.live.check -d check || check=""
@@ -148,7 +148,7 @@ do_live_overlay() {
         pathspec=${overlay##*:}
     fi
 
-    if [ -z "$pathspec" -o "$pathspec" = "auto" ]; then
+    if [ -z "$pathspec" ] || [ "$pathspec" = "auto" ]; then
         pathspec="/${live_dir}/overlay-$l-$u"
     elif ! str_starts "$pathspec" "/"; then
         pathspec=/"${pathspec}"
@@ -156,7 +156,7 @@ do_live_overlay() {
     devspec=${overlay%%:*}
 
     # need to know where to look for the overlay
-    if [ -z "$setup" -a -n "$devspec" -a -n "$pathspec" -a -n "$overlay" ]; then
+    if [ -z "$setup" ] && [ -n "$devspec" ] && [ -n "$pathspec" ] && [ -n "$overlay" ]; then
         mkdir -m 0755 -p /run/initramfs/overlayfs
         if ismounted "$devspec"; then
             devmnt=$(findmnt -e -v -n -o 'TARGET' --source "$devspec")
@@ -166,7 +166,7 @@ do_live_overlay() {
         else
             mount -n -t auto "$devspec" /run/initramfs/overlayfs || :
         fi
-        if [ -f /run/initramfs/overlayfs$pathspec -a -w /run/initramfs/overlayfs$pathspec ]; then
+        if [ -f /run/initramfs/overlayfs$pathspec ] && [ -w /run/initramfs/overlayfs$pathspec ]; then
             OVERLAY_LOOPDEV=$(losetup -f --show ${readonly_overlay:+-r} /run/initramfs/overlayfs$pathspec)
             over=$OVERLAY_LOOPDEV
             umount -l /run/initramfs/overlayfs || :
@@ -218,10 +218,10 @@ do_live_overlay() {
         fi
     fi
 
-    if [ -z "$setup" -o -n "$readonly_overlay" ]; then
+    if [ -z "$setup" ] || [ -n "$readonly_overlay" ]; then
         if [ -n "$setup" ]; then
             warn "Using temporary overlay."
-        elif [ -n "$devspec" -a -n "$pathspec" ]; then
+        elif [ -n "$devspec" ] && [ -n "$pathspec" ]; then
             [ -z "$m" ] \
                 && m='   Unable to find a persistent overlay; using a temporary one.'
             m="$m"'
@@ -265,7 +265,7 @@ do_live_overlay() {
             fi
         else
             dd if=/dev/null of=/overlay bs=1024 count=1 seek=$((overlay_size * 1024)) 2> /dev/null
-            if [ -n "$setup" -a -n "$readonly_overlay" ]; then
+            if [ -n "$setup" ] && [ -n "$readonly_overlay" ]; then
                 RO_OVERLAY_LOOPDEV=$(losetup -f --show /overlay)
                 over=$RO_OVERLAY_LOOPDEV
             else
@@ -384,9 +384,9 @@ if [ -n "$FSIMG" ]; then
     fi
     # For writable DM images...
     readonly_base=1
-    if [ -z "$SQUASHED" -a -n "$live_ram" -a -z "$overlayfs" ] \
+    if [ -z "$SQUASHED" ] && [ -n "$live_ram" ] && [ -z "$overlayfs" ] \
         || [ -n "$writable_fsimg" ] \
-        || [ "$overlay" = none -o "$overlay" = None -o "$overlay" = NONE ]; then
+        || [ "$overlay" = none ] || [ "$overlay" = None ] || [ "$overlay" = NONE ]; then
         if [ -z "$readonly_overlay" ]; then
             unset readonly_base
             setup=rw

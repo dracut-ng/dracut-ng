@@ -23,7 +23,7 @@ fi
 
 if [ -f ${MNT}/active_devices.txt ]; then
     while read -r dev _ || [[ $dev ]]; do
-        [ "$dev" = "#" -o "$dev" = "" ] && continue
+        [ "$dev" = "#" ] || [ "$dev" = "" ] && continue
         cio_ignore -r "$dev"
     done < ${MNT}/active_devices.txt
 fi

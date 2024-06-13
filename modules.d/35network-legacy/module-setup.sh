@@ -71,7 +71,7 @@ install() {
         (
             # shellcheck disable=SC1090
             . "$i"
-            if ! [ "${ONBOOT}" = "no" -o "${ONBOOT}" = "NO" ] \
+            if ! [ "${ONBOOT}" = "no" ] || [ "${ONBOOT}" = "NO" ] \
                 && [ -n "${TEAM_MASTER}${TEAM_CONFIG}${TEAM_PORT_CONFIG}" ]; then
                 if [ -n "$TEAM_CONFIG" ] && [ -n "$DEVICE" ]; then
                     mkdir -p "$initdir"/etc/teamd

@@ -40,7 +40,7 @@ cmdline_rootfs() {
         return
     fi
 
-    if [ -n "$_block" -a -b "$_dev" ]; then
+    if [ -n "$_block" ] && [ -b "$_dev" ]; then
         printf " root=%s" "$(shorten_persistent_dev "$(get_persistent_dev "$_dev")")"
     fi
     _fstype="$(find_mp_fstype /)"

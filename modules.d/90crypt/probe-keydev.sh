@@ -6,7 +6,7 @@ real_keydev="$1"
 keypath="$2"
 luksdev="$3"
 
-[ -z "$real_keydev" -o -z "$keypath" ] && die 'probe-keydev: wrong usage!'
+[ -z "$real_keydev" ] || [ -z "$keypath" ] && die 'probe-keydev: wrong usage!'
 [ -z "$luksdev" ] && luksdev='*'
 
 info "Probing $real_keydev for $keypath..."

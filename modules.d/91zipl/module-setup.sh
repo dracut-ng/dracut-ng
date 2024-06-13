@@ -12,7 +12,7 @@ get_boot_zipl_dev() {
 check() {
     local _arch=${DRACUT_ARCH:-$(uname -m)}
     # Only for systems on s390 using indirect booting via userland grub
-    [ "$_arch" = "s390" -o "$_arch" = "s390x" ] || return 1
+    [ "$_arch" = "s390" ] || [ "$_arch" = "s390x" ] || return 1
     # /boot/zipl contains a first stage kernel used to launch grub in initrd
     [ -d /boot/zipl ] || return 1
     return 0

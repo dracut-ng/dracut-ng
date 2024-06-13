@@ -18,10 +18,10 @@ if type plymouthd > /dev/null 2>&1 && [ -z "$DRACUT_SYSTEMD" ]; then
         mkdir -m 0755 /run/plymouth
         read -r consoledev rest < /sys/class/tty/console/active
         consoledev=${consoledev:-tty0}
-        [ -x /lib/udev/console_init -a -e "/dev/$consoledev" ] && /lib/udev/console_init "/dev/$consoledev"
+        [ -x /lib/udev/console_init ] && [ -e "/dev/$consoledev" ] && /lib/udev/console_init "/dev/$consoledev"
         plymouthd --attach-to-session --pid-file /run/plymouth/pid
         plymouth --show-splash 2>&1 | vinfo
         # reset tty after plymouth messed with it
-        [ -x /lib/udev/console_init -a -e "/dev/$consoledev" ] && /lib/udev/console_init "/dev/$consoledev"
+        [ -x /lib/udev/console_init ] && [ -e "/dev/$consoledev" ] && /lib/udev/console_init "/dev/$consoledev"
     fi
 fi
