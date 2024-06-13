@@ -4,13 +4,6 @@
 
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 ARCH="${ARCH-$(uname -m)}"
-
-case "$ARCH" in
-    amd64 | i?86 | x86_64)
-        QEMU_CPU="IvyBridge-v2"
-        ;;
-esac
-
 QEMU_CPU="${QEMU_CPU:-max}"
 
 [[ -x /usr/bin/qemu ]] && BIN=/usr/bin/qemu && ARGS=(-cpu "$QEMU_CPU")
