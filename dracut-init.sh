@@ -35,7 +35,7 @@ if ! [[ $dracutbasedir ]]; then
     dracutbasedir=${BASH_SOURCE[0]%/*}
     [[ $dracutbasedir == dracut-functions* ]] && dracutbasedir="."
     [[ $dracutbasedir ]] || dracutbasedir="."
-    dracutbasedir="$(readlink -f $dracutbasedir)"
+    dracutbasedir="$(readlink -f "$dracutbasedir")"
 fi
 
 if ! is_func dinfo > /dev/null 2>&1; then
