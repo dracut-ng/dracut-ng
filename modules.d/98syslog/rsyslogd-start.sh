@@ -41,7 +41,7 @@ rsyslog_config() {
 if [ "$type" = "rsyslogd" ]; then
     template=/etc/templates/rsyslog.conf
     if [ -n "$server" ]; then
-        rsyslog_config "$server" "$template" "$filters" > $conf
+        rsyslog_config "$server" "$template" "$filters" > "$conf"
         rsyslogd -c3
     fi
 fi
