@@ -2117,8 +2117,8 @@ if [[ $do_strip == yes ]]; then
     strip_cmd=$(command -v eu-strip)
     [ -z "$strip_cmd" ] && strip_cmd="strip"
 
-    for p in $strip_cmd xargs find; do
-        if ! type -P $p > /dev/null; then
+    for p in "$strip_cmd" xargs find; do
+        if ! type -P "$p" > /dev/null; then
             dinfo "Could not find '$p'. Not stripping the initramfs."
             do_strip=no
         fi
@@ -2269,14 +2269,14 @@ if [[ $do_strip == yes ]] && ! [[ $DRACUT_FIPS_MODE ]]; then
     dinfo "*** Stripping files ***"
     find "$initdir" -type f \
         -executable -not -path '*/lib/modules/*.ko*' -print0 \
-        | xargs -r -0 $strip_cmd "${strip_args[@]}" 2> /dev/null
+        | xargs -r -0 "$strip_cmd" "${strip_args[@]}" 2> /dev/null
 
     # strip kernel modules, but do not touch signed modules
     find "$initdir" -type f -path '*/lib/modules/*.ko' -print0 \
         | while read -r -d $'\0' f || [ -n "$f" ]; do
             SIG=$(tail -c 28 "$f" | tr -d '\000')
             [[ $SIG == '~Module signature appended~' ]] || { printf "%s\000" "$f"; }
-        done | xargs -r -0 $strip_cmd "${strip_args[@]}"
+        done | xargs -r -0 "$strip_cmd" "${strip_args[@]}"
     dinfo "*** Stripping files done ***"
 fi
 
