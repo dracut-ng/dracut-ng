@@ -23,4 +23,4 @@ if [ -f /sys"$DEVPATH"/scsi_target_id ]; then
     read -r TARGET < /sys"$DEVPATH"/scsi_target_id
 fi
 [ -z "$TARGET" ] && exit 1
-echo "$CHANNEL" "$TARGET" $LUN > /sys/class/scsi_host/host"$HOST"/scan
+echo "$CHANNEL $TARGET $LUN" > /sys/class/scsi_host/host"$HOST"/scan
