@@ -38,8 +38,7 @@ echo "made it to the rootfs!"
 
 if getargbool 0 rd.shell; then
     strstr "$(setsid --help)" "control" && CTTY="-c"
-    # shellcheck disable=SC2086
-    setsid $CTTY sh -i
+    setsid ${CTTY:+"${CTTY}"} sh -i
 fi
 
 echo "Powering down."

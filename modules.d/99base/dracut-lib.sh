@@ -945,7 +945,7 @@ _emergency_shell() {
         fi
         [ -c "$_ctty" ] || _ctty=/dev/tty1
         case "$(/usr/bin/setsid --help 2>&1)" in *--ctty*) CTTY="--ctty" ;; esac
-        setsid $CTTY /bin/sh -i -l 0<> $_ctty 1<> $_ctty 2<> $_ctty
+        setsid ${CTTY:+"${CTTY}"} /bin/sh -i -l 0<> $_ctty 1<> $_ctty 2<> $_ctty
     fi
 }
 
