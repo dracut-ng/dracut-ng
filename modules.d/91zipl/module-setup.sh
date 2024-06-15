@@ -36,7 +36,7 @@ installkernel() {
                     ID_FS_TYPE=ext4
                     ;;
             esac
-            instmods ${ID_FS_TYPE}
+            instmods "${ID_FS_TYPE}"
         fi
     fi
 }
