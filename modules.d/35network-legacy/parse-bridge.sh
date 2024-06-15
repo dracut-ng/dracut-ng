@@ -45,5 +45,5 @@ for bridge in $(getargs bridge=); do
     {
         echo "bridgename=$bridgename"
         echo "bridgeslaves=\"$bridgeslaves\""
-    } > /tmp/bridge.${bridgename}.info
+    } > "/tmp/bridge.${bridgename}.info"
 done
