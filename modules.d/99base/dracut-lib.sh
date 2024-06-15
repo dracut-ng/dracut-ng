@@ -937,15 +937,15 @@ _emergency_shell() {
         _ctty="$(RD_DEBUG='' getarg rd.ctty=)" && _ctty="/dev/${_ctty##*/}"
         if [ -z "$_ctty" ]; then
             _ctty=console
-            while [ -f /sys/class/tty/$_ctty/active ]; do
-                read -r _ctty < /sys/class/tty/$_ctty/active
+            while [ -f "/sys/class/tty/$_ctty/active" ]; do
+                read -r _ctty < "/sys/class/tty/$_ctty/active"
                 _ctty=${_ctty##* } # last one in the list
             done
             _ctty=/dev/$_ctty
         fi
         [ -c "$_ctty" ] || _ctty=/dev/tty1
         case "$(/usr/bin/setsid --help 2>&1)" in *--ctty*) CTTY="--ctty" ;; esac
-        setsid ${CTTY:+"${CTTY}"} /bin/sh -i -l 0<> $_ctty 1<> $_ctty 2<> $_ctty
+        setsid ${CTTY:+"${CTTY}"} /bin/sh -i -l 0<> "$_ctty" 1<> "$_ctty" 2<> "$_ctty"
     fi
 }
 
