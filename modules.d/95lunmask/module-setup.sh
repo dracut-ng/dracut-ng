@@ -4,6 +4,7 @@
 
 # called by dracut
 cmdline() {
+    # shellcheck disable=SC2317  # called later by for_each_host_dev_and_slaves
     get_lunmask() {
         local _dev=$1
         local _devpath _sdev _lun _rport _end_device _classdev _wwpn _sas_address
