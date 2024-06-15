@@ -327,7 +327,7 @@ _do_dlog() {
 
     if ((lvl <= sysloglvl)); then
         if [[ "$_dlogfd" ]]; then
-            printf -- "<%s>%s\n" "$(($(_dlvl2syslvl "$lvl") & 7))" "$msg" >&$_dlogfd
+            printf -- "<%s>%s\n" "$(($(_dlvl2syslvl "$lvl") & 7))" "$msg" >&"$_dlogfd"
         else
             logger -t "dracut[$$]" -p "$(_lvl2syspri "$lvl")" -- "$msg"
         fi
