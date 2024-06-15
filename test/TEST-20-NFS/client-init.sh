@@ -13,7 +13,7 @@ stty sane
 if getargbool 0 rd.shell; then
     [ -c /dev/watchdog ] && printf 'V' > /dev/watchdog
     strstr "$(setsid --help)" "control" && CTTY="-c"
-    setsid $CTTY sh -i
+    setsid ${CTTY:+"${CTTY}"} sh -i
 fi
 
 echo "made it to the rootfs! Powering down."

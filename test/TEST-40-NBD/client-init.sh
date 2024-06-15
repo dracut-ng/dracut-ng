@@ -20,7 +20,7 @@ echo "made it to the rootfs! Powering down."
 
 if getargbool 0 rd.shell; then
     strstr "$(setsid --help)" "control" && CTTY="-c"
-    setsid $CTTY sh -i
+    setsid ${CTTY:+"${CTTY}"} sh -i
 fi
 
 mount -n -o remount,ro /
