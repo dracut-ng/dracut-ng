@@ -5,6 +5,7 @@ installkernel() {
     local _blockfuncs='ahci_platform_get_resources|ata_scsi_ioctl|scsi_add_host|blk_cleanup_queue|register_mtd_blktrans|scsi_esp_register|register_virtio_device|usb_stor_disconnect|mmc_add_host|sdhci_add_host|scsi_add_host_with_dma|blk_alloc_disk|blk_mq_alloc_disk|blk_mq_alloc_request|blk_mq_destroy_queue|blk_cleanup_disk'
     local -A _hostonly_drvs
 
+    # shellcheck disable=SC2317  # called later by for_each_host_dev_and_slaves
     record_block_dev_drv() {
 
         for _mod in $(get_dev_module /dev/block/"$1"); do
