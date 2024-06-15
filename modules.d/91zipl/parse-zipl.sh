@@ -42,7 +42,7 @@ if [ -n "$zipl_arg" ]; then
     if [ "$zipl_env" ]; then
         {
             printf 'ACTION=="add|change", SUBSYSTEM=="block", %s=="%s", ENV{SYSTEMD_READY}!="0", RUN+="/sbin/initqueue --settled --onetime --unique --name install_zipl_cmdline /sbin/install_zipl_cmdline.sh %s"\n' \
-                ${zipl_env} "${zipl_val}" "${zipl_arg}"
+                "${zipl_env}" "${zipl_val}" "${zipl_arg}"
             echo "[ -f /tmp/install.zipl.cmdline-done ]" > "$hookdir"/initqueue/finished/wait-zipl-conf.sh
         } >> /etc/udev/rules.d/99zipl-conf.rules
         cat /etc/udev/rules.d/99zipl-conf.rules
