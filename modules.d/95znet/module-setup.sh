@@ -45,14 +45,12 @@ install() {
         # shellcheck disable=SC2155
         local _nullglob=$(shopt -p nullglob)
         shopt -u nullglob
-        # shellcheck disable=SC2086
         readarray -t _array < <(
-            ls -1 $initdir/etc/udev/rules.d/41-*.rules 2> /dev/null
+            ls -1 "$initdir"/etc/udev/rules.d/41-*.rules 2> /dev/null
         )
         [[ ${#_array[@]} -gt 0 ]] && mark_hostonly "${_array[@]#$initdir}"
-        # shellcheck disable=SC2086
         readarray -t _array < <(
-            ls -1 $initdir/etc/modprobe.d/s390x-*.conf 2> /dev/null
+            ls -1 "$initdir"/etc/modprobe.d/s390x-*.conf 2> /dev/null
         )
         [[ ${#_array[@]} -gt 0 ]] && mark_hostonly "${_array[@]#$initdir}"
         $_nullglob
