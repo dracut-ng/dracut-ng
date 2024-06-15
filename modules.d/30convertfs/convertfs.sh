@@ -114,7 +114,7 @@ for dir in bin sbin lib lib64; do
     echo "Merge the copy with \`$ROOT/$dir'."
     [[ -d "$ROOT/usr/${dir}.usrmove-new" ]] \
         || mkdir -p "$ROOT/usr/${dir}.usrmove-new"
-    cp -axT $CP_HARDLINK --backup --suffix=.usrmove~ "$ROOT/$dir" "$ROOT/usr/${dir}.usrmove-new"
+    cp -axT ${CP_HARDLINK:+"$CP_HARDLINK"} --backup --suffix=.usrmove~ "$ROOT/$dir" "$ROOT/usr/${dir}.usrmove-new"
     echo "Clean up duplicates in \`$ROOT/usr/$dir'."
     # delete all symlinks that have been backed up
     find "$ROOT/usr/${dir}.usrmove-new" -type l -name '*.usrmove~' -delete || :
