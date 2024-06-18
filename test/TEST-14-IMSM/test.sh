@@ -60,7 +60,7 @@ test_setup() {
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
-        -m "test-makeroot bash lvm mdraid dmraid kernel-modules" \
+        -a "test-makeroot bash lvm mdraid dmraid kernel-modules" \
         -d "piix ide-gd_mod ata_piix ext4 sd_mod dm-multipath dm-crypt dm-round-robin faulty linear multipath raid0 raid10 raid1 raid456" \
         -I "grep sfdisk realpath" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \

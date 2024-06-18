@@ -22,7 +22,7 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=/dev/dracut/root rw rd.auto rd.retry=20 rootwait $LUKSARGS" \
+        -append "root=/dev/dracut/root ro rd.auto rd.retry=20 rootwait $LUKSARGS" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check || return 1
     echo "CLIENT TEST END: [OK]"
@@ -63,8 +63,8 @@ test_setup() {
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
-        -m "test-makeroot bash crypt lvm mdraid kernel-modules" \
-        -I "grep" \
+        -a "test-makeroot bash crypt lvm mdraid kernel-modules" \
+        -I "grep cryptsetup" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
     rm -rf -- "$TESTDIR"/overlay
