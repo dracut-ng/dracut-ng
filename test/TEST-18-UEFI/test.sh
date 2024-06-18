@@ -44,7 +44,7 @@ test_setup() {
     mkdir -p "$TESTDIR"/ESP/EFI/BOOT
 
     test_dracut \
-        --modules 'rootfs-block' \
+        --add 'rootfs-block' \
         --kernel-cmdline 'root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root ro rd.skipfsck rootfstype=squashfs' \
         --drivers 'squashfs' \
         --uefi \
@@ -52,7 +52,7 @@ test_setup() {
 
     test_dracut \
         --hostonly \
-        --modules 'rootfs-block' \
+        --add 'rootfs-block' \
         --kernel-cmdline 'root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root ro rd.skipfsck rootfstype=squashfs' \
         --drivers 'squashfs' \
         --uefi \
