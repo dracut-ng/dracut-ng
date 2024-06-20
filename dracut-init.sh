@@ -610,7 +610,7 @@ prepare_udev_rules() {
                     printf '%sIMPORT{builtin}="blkid"\n' "${line%%IMPORT BLKID}"
                 else
                     # shellcheck disable=SC2016
-                    printf '%sIMPORT{program}="/sbin/blkid -o udev -p $tempnode"\n' "${line%%IMPORT BLKID}"
+                    printf '%sIMPORT{program}="/sbin/blkid -o udev -p $devnode"\n' "${line%%IMPORT BLKID}"
                 fi
             else
                 echo "$line"

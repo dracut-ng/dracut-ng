@@ -72,7 +72,7 @@ if ! getarg noresume; then
             if [ -x /usr/sbin/resume ]; then
                 printf -- '%s' 'SUBSYSTEM=="block", ACTION=="add|change", ENV{ID_FS_TYPE}=="suspend|swsuspend|swsupend",'
                 # shellcheck disable=SC2016
-                printf -- ' RUN+="/sbin/initqueue --finished --unique --name 00resume /usr/sbin/resume %s $tempnode"\n' "$a_splash"
+                printf -- ' RUN+="/sbin/initqueue --finished --unique --name 00resume /usr/sbin/resume %s $devnode"\n' "$a_splash"
             fi
             printf -- '%s' 'SUBSYSTEM=="block", ACTION=="add|change", ENV{ID_FS_TYPE}=="suspend|swsuspend|swsupend",'
             printf -- '%s\n' ' RUN+="/sbin/initqueue --finished --unique --name 00resume echo %M:%m > /sys/power/resume"'
