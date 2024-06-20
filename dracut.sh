@@ -311,24 +311,6 @@ push_host_devs() {
     done
 }
 
-# Little helper function for reading args from the commandline.
-# it automatically handles -a b and -a=b variants, and returns 1 if
-# we need to shift $3.
-read_arg() {
-    # $1 = arg name
-    # $2 = arg value
-    # $3 = arg parameter
-    local rematch='^[^=]*=(.*)$'
-    if [[ $2 =~ $rematch ]]; then
-        read -r "$1" <<< "${BASH_REMATCH[1]}"
-    else
-        read -r "$1" <<< "$3"
-        # There is no way to shift our callers args, so
-        # return 1 to indicate they should do it instead.
-        return 1
-    fi
-}
-
 check_conf_file() {
     if grep -H -e '^[^#]*[+]=\("[^ ]\|.*[^ ]"\)' "$@"; then
         printf '\ndracut[W]: <key>+=" <values> ": <values> should have surrounding white spaces!\n' >&2
