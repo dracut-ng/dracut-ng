@@ -80,7 +80,7 @@ client_test() {
         "${disk_args[@]}" \
         -net nic,macaddr="$mac",model=e1000 \
         -net socket,connect=127.0.0.1:12340 \
-        -append "$cmdline rd.auto ro" \
+        -append "$cmdline rd.auto ro console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.testing
 
     # shellcheck disable=SC2181
