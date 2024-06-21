@@ -109,14 +109,22 @@ jobs:
             matrix:
                 container: [
                         "arch",
+                        "gentoo",
                 ]
                 network: [
                         "systemd-networkd",
                 ]
                 test: [
+                        "20",
+                        "30",
                         "35",
                         "40",
                 ]
+                exclude:
+                  - container: "arch"
+                    test: "20"
+                  - container: "gentoo"
+                    test: "40"
             fail-fast: false
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
