@@ -92,6 +92,7 @@ client_test() {
         -netdev hubport,id=n5,hubid=1 -device virtio-net-pci,mac=52:54:00:12:34:05,netdev=n5 \
         -hda "$TESTDIR"/client.img \
         -append "
+        $TEST_KERNEL_CMDLINE
         ifname=net1:52:54:00:12:34:01
         ifname=net2:52:54:00:12:34:02
         ifname=net3:52:54:00:12:34:03

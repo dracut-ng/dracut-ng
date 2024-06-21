@@ -62,7 +62,7 @@ run_client() {
         -net nic,macaddr=52:54:00:12:34:01,model=e1000 \
         -net socket,connect=127.0.0.1:12330 \
         -acpitable file=ibft.table \
-        -append "$*" \
+        -append "$TEST_KERNEL_CMDLINE $*" \
         -initrd "$TESTDIR"/initramfs.testing
 
     # shellcheck disable=SC2181

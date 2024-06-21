@@ -21,7 +21,7 @@ test_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -boot order=d \
-        -append "rd.live.overlay.overlayfs=1 root=live:/dev/disk/by-label/dracut" \
+        -append "$TEST_KERNEL_CMDLINE rd.live.overlay.overlayfs=1 root=live:/dev/disk/by-label/dracut" \
         -initrd "$TESTDIR"/initramfs.testing
 
     test_marker_check || return 1
@@ -30,7 +30,7 @@ test_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -boot order=d \
-        -append "rd.live.image rd.live.overlay.overlayfs=1 root=LABEL=dracut" \
+        -append "$TEST_KERNEL_CMDLINE rd.live.image rd.live.overlay.overlayfs=1 root=LABEL=dracut" \
         -initrd "$TESTDIR"/initramfs.testing
 
     test_marker_check || return 1
@@ -39,7 +39,7 @@ test_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -boot order=d \
-        -append "rd.live.image rd.live.overlay.overlayfs=1 rd.live.dir=testdir root=LABEL=dracut" \
+        -append "$TEST_KERNEL_CMDLINE rd.live.image rd.live.overlay.overlayfs=1 rd.live.dir=testdir root=LABEL=dracut" \
         -initrd "$TESTDIR"/initramfs.testing
 
     test_marker_check || return 1
@@ -50,7 +50,7 @@ test_run() {
         "$testdir"/run-qemu \
             "${disk_args[@]}" \
             -boot order=d \
-            -append "rd.live.image rd.live.overlay.overlayfs=1 rd.live.dir=testdir root=LABEL=dracut_ntfs quiet rd.info rd.shell=0" \
+            -append "$TEST_KERNEL_CMDLINE rd.live.image rd.live.overlay.overlayfs=1 rd.live.dir=testdir root=LABEL=dracut_ntfs" \
             -initrd "$TESTDIR"/initramfs.testing
 
         test_marker_check || return 1

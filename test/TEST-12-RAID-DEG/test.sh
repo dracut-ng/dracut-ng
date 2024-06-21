@@ -21,7 +21,7 @@ client_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$* systemd.log_target=kmsg root=LABEL=root rw log_buf_len=2M systemd.mask=systemd-vconsole-setup" \
+        -append "$TEST_KERNEL_CMDLINE $* systemd.log_target=kmsg root=LABEL=root rw log_buf_len=2M systemd.mask=systemd-vconsole-setup" \
         -initrd "$TESTDIR"/initramfs.testing
 
     if ! test_marker_check; then
