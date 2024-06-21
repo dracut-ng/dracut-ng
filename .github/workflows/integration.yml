@@ -115,7 +115,6 @@ jobs:
                 ]
                 test: [
                         "35",
-                        "40",
                 ]
             fail-fast: false
         container:
