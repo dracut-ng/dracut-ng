@@ -84,7 +84,7 @@ client_test() {
         -initrd "$TESTDIR"/initramfs.testing
 
     # shellcheck disable=SC2181
-    if [[ $? -ne 0 ]] || ! test_marker_check nbd-OK "$TESTDIR"/marker.img; then
+    if [[ $? -ne 0 ]] || ! test_marker_check nbd-OK; then
         echo "CLIENT TEST END: $test_name [FAILED - BAD EXIT]"
         return 1
     fi
