@@ -120,7 +120,9 @@ test_run() {
         return 1
     fi
     client_run
+    local res="$?"
     kill_server
+    return "$res"
 }
 
 client_run() {
