@@ -72,15 +72,6 @@ if [[ ! -e $testfile ]]; then
 fi
 rm -f -- "$testfile"
 
-find_mount() {
-    local dev wanted_dev
-    wanted_dev="$(readlink -e -q "$1")"
-    while read -r dev _ || [ -n "$dev" ]; do
-        [ "$dev" = "$wanted_dev" ] && echo "$dev" && return 0
-    done < /proc/mounts
-    return 1
-}
-
 # clean up after ourselves no matter how we die.
 # shellcheck disable=SC2317  # called via EXIT trap
 cleanup() {
