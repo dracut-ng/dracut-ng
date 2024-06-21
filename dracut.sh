@@ -2140,9 +2140,13 @@ if [[ $early_microcode == yes ]]; then
                 if [[ $hostonly ]]; then
                     _src=$(get_ucode_file)
                     [[ $_src ]] || break
-                    [[ -r $_fwdir/$_fw/$_src ]] || _src="${_src}.early"
-                    [[ -r $_fwdir/$_fw/$_src ]] || _src="${_src}.initramfs"
-                    [[ -r $_fwdir/$_fw/$_src ]] || break
+                    [[ -r $_fwdir/$_fw/$_src ]] || _src_early_postfix="${_src}.early"
+                    [[ ! -d $_fwdir/$_fw/$_src_early_postfix && -r $_fwdir/$_fw/$_src_early_postfix ]] && _src=$_src_early_postfix || _src_initramfs_postfix="${_src}.initramfs"
+                    [[ ! -d $_fwdir/$_fw/$_src_initramfs_postfix && -r $_fwdir/$_fw/$_src_initramfs_postfix ]] && _src=$_src_initramfs_postfix || _src_early_initramfs_postfix="${_src}.early.initramfs"
+                    [[ ! -d $_fwdir/$_fw/$_src_early_initramfs_postfix && -r $_fwdir/$_fw/$_src_early_initramfs_postfix ]] && _src=$_src_early_initramfs_postfix
+
+                    [[ -r $_fwdir/$_fw/$_src ]] || dinfo "ERROR: Could not locate suitable microcode file. No CPU microcode update will be applied at boot!"
+                    [[ ! -r $_fwdir/$_fw/$_src ]] && break
                 fi
 
                 for i in $_fwdir/$_fw/$_src; do
