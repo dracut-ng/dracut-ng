@@ -82,6 +82,7 @@ find_mount() {
 }
 
 # clean up after ourselves no matter how we die.
+# shellcheck disable=SC2317  # called via EXIT trap
 cleanup() {
     echo "Something failed. Move back to the original state"
     for dir in "$ROOT/bin" "$ROOT/sbin" "$ROOT/lib" "$ROOT/lib64" \
