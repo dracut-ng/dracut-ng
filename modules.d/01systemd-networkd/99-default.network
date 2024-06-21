@@ -1,0 +1,13 @@
+[Match]
+Kind=!*
+Type=!loopback
+
+[Network]
+DHCP=yes
+
+[DHCPv4]
+ClientIdentifier=mac
+RequestOptions=17
+
+[DHCPv6]
+RequestOptions=59 60

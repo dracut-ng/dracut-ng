@@ -57,7 +57,16 @@ install() {
         "$systemdsystemunitdir"/systemd-networkd-wait-online.service \
         "$systemdsystemunitdir"/systemd-networkd-wait-online@.service \
         "$systemdsystemunitdir"/systemd-network-generator.service \
-        ip
+        ip sed grep
+
+    inst_simple "$moddir"/99-wait-online-dracut.conf \
+        "$systemdsystemunitdir"/systemd-networkd-wait-online.service.d/99-dracut.conf
+
+    inst_simple "$moddir"/99-default.network \
+        "$systemdnetworkconfdir"/99-default.network
+
+    inst_hook cmdline 99 "$moddir"/networkd-config.sh
+    inst_hook initqueue/settled 99 "$moddir"/networkd-run.sh
 
     # Enable systemd type units
     for i in \
