@@ -91,14 +91,17 @@ test_run() {
         . dracut-dev-lib.sh
         . dracut-lib.sh
 
+        # shellcheck disable=SC2317  # overwrites debug_off from dracut-lib.sh
         debug_off() {
             :
         }
 
+        # shellcheck disable=SC2317  # overwrites debug_on from dracut-lib.sh
         debug_on() {
             :
         }
 
+        # shellcheck disable=SC2317  # called later by getarg in dracut-lib.sh
         getcmdline() {
             echo "rdbreak=cmdline rd.lvm rd.auto=0 rd.auto rd.retry=10"
         }
@@ -108,6 +111,7 @@ test_run() {
         getargbool 1 rd.lvm -d -n rd_NO_LVM || ret=$((ret + 1))
         getargbool 0 rd.auto || ret=$((ret + 1))
 
+        # shellcheck disable=SC2317  # called later by getarg in dracut-lib.sh
         getcmdline() {
             echo "rd.break=cmdlined rd.lvm=0 rd.auto rd.auto=1 rd.auto=0"
         }
@@ -115,6 +119,7 @@ test_run() {
         getargbool 1 rd.lvm -d -n rd_NO_LVM && ret=$((ret + 1))
         getargbool 0 rd.auto && ret=$((ret + 1))
 
+        # shellcheck disable=SC2317  # called later by getarg in dracut-lib.sh
         getcmdline() {
             echo "ip=a ip=b ip=dhcp6"
         }
@@ -126,6 +131,7 @@ test_run() {
             [[ ${args[$i]} == "${RESULT[$i]}" ]] || ret=$((ret + 1))
         done
 
+        # shellcheck disable=SC2317  # called later by getarg in dracut-lib.sh
         getcmdline() {
             echo "bridge bridge=val"
         }
@@ -136,6 +142,7 @@ test_run() {
             [[ ${args[$i]} == "${RESULT[$i]}" ]] || ret=$((ret + 1))
         done
 
+        # shellcheck disable=SC2317  # called later by getarg in dracut-lib.sh
         getcmdline() {
             echo "rd.break rd.md.uuid=bf96e457:230c9ad4:1f3e59d6:745cf942 rd.md.uuid=bf96e457:230c9ad4:1f3e59d6:745cf943 rd.shell"
         }
