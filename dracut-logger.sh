@@ -179,33 +179,40 @@ dlog_init() {
 
     if ((stdloglvl < 6)) && ((kmsgloglvl < 6)) && ((fileloglvl < 6)) && ((sysloglvl < 6)); then
         unset dtrace
+        # shellcheck disable=SC2317  # exposed via API
         dtrace() { :; }
     fi
 
     if ((stdloglvl < 5)) && ((kmsgloglvl < 5)) && ((fileloglvl < 5)) && ((sysloglvl < 5)); then
         unset ddebug
+        # shellcheck disable=SC2317  # exposed via API
         ddebug() { :; }
     fi
 
     if ((stdloglvl < 4)) && ((kmsgloglvl < 4)) && ((fileloglvl < 4)) && ((sysloglvl < 4)); then
         unset dinfo
+        # shellcheck disable=SC2317  # exposed via API
         dinfo() { :; }
     fi
 
     if ((stdloglvl < 3)) && ((kmsgloglvl < 3)) && ((fileloglvl < 3)) && ((sysloglvl < 3)); then
         unset dwarn
+        # shellcheck disable=SC2317  # exposed via API
         dwarn() { :; }
         unset dwarning
+        # shellcheck disable=SC2317  # exposed via API
         dwarning() { :; }
     fi
 
     if ((stdloglvl < 2)) && ((kmsgloglvl < 2)) && ((fileloglvl < 2)) && ((sysloglvl < 2)); then
         unset derror
+        # shellcheck disable=SC2317  # exposed via API
         derror() { :; }
     fi
 
     if ((stdloglvl < 1)) && ((kmsgloglvl < 1)) && ((fileloglvl < 1)) && ((sysloglvl < 1)); then
         unset dfatal
+        # shellcheck disable=SC2317  # exposed via API
         dfatal() { :; }
     fi
 
