@@ -27,7 +27,7 @@ client_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "systemd.unit=testsuite.target systemd.mask=systemd-firstboot systemd.mask=systemd-vconsole-setup rd.multipath=0 root=LABEL=dracut $client_opts rd.retry=3 $DEBUGOUT" \
+        -append "$TEST_KERNEL_CMDLINE systemd.unit=testsuite.target systemd.mask=systemd-firstboot systemd.mask=systemd-vconsole-setup rd.multipath=0 root=LABEL=dracut $client_opts rd.retry=3 $DEBUGOUT" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     if ! test_marker_check; then

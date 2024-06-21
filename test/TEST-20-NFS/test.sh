@@ -66,7 +66,7 @@ client_test() {
         "${disk_args[@]}" \
         -net nic,macaddr="$mac",model=e1000 \
         -net socket,connect=127.0.0.1:12320 \
-        -append "$cmdline ro" \
+        -append "$TEST_KERNEL_CMDLINE $cmdline ro" \
         -initrd "$TESTDIR"/initramfs.testing
 
     # shellcheck disable=SC2181

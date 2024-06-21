@@ -76,7 +76,7 @@ client_test() {
         -netdev hubport,id=n2,hubid=2 \
         -device e1000,netdev=n1,mac=52:54:00:12:34:98 \
         -device e1000,netdev=n2,mac=52:54:00:12:34:99 \
-        -append "$cmdline rd.retry=5 ro init=/sbin/init systemd.log_target=console" \
+        -append "$TEST_KERNEL_CMDLINE $cmdline rd.retry=5 ro init=/sbin/init systemd.log_target=console" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     {

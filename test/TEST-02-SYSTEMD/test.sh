@@ -17,7 +17,7 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=LABEL=dracut rw systemd.log_target=console rd.retry=3 init=/sbin/init" \
+        -append "$TEST_KERNEL_CMDLINE root=LABEL=dracut rw systemd.log_target=console rd.retry=3 init=/sbin/init" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     test_marker_check || return 1
