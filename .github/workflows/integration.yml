@@ -121,8 +121,6 @@ jobs:
                         "40",
                 ]
                 exclude:
-                  - container: "arch"
-                    test: "20"
                   - container: "gentoo"
                     test: "40"
             fail-fast: false

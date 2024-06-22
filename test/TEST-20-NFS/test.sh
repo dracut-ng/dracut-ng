@@ -366,7 +366,7 @@ test_setup() {
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -l -i "$TESTDIR"/server/overlay / \
-        -m "bash rootfs-block kernel-modules qemu" \
+        -a "bash rootfs-block kernel-modules qemu" \
         -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
@@ -416,7 +416,7 @@ test_setup() {
     )
     # Make server's dracut image
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -m "bash rootfs-block debug kernel-modules watchdog qemu network-legacy" \
+        -a "bash rootfs-block debug kernel-modules watchdog qemu network-legacy" \
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod e1000 i6300esb" \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1
