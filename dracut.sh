@@ -122,7 +122,8 @@ Creates initial ramdisk images for preloading modules
   --early-microcode     Combine early microcode with ramdisk.
   --no-early-microcode  Do not combine early microcode with ramdisk.
   --kernel-cmdline [PARAMETERS]
-                        Specify default kernel command line parameters.
+                        Specify default kernel command line parameters. Despite
+                         its name, this command only sets initrd parameters.
   --strip               Strip binaries in the initramfs.
   --aggressive-strip     Strip more than just debug symbol and sections,
                          for a smaller initramfs build. The --strip option must
