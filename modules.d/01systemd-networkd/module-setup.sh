@@ -63,7 +63,7 @@ install() {
         "$systemdsystemunitdir"/systemd-networkd-wait-online.service.d/99-dracut.conf
 
     inst_simple "$moddir"/99-default.network \
-        "$systemdnetworkconfdir"/99-default.network
+        "$systemdnetworkconfdir"/99-dracut-default.network
 
     inst_hook cmdline 99 "$moddir"/networkd-config.sh
     inst_hook initqueue/settled 99 "$moddir"/networkd-run.sh
