@@ -18,6 +18,9 @@ for f in /run/systemd/network/*.network; do
         echo "[DHCPv6]"
         echo "RequestOptions=59 60"
     } >> "$f"
+
+    # Remove the default network if at least one was generated
+    rm -f "$systemdnetworkconfdir"/99-dracut-default.network
 done
 
 # Just in case networkd was already running

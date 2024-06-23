@@ -2025,6 +2025,7 @@ if [[ $kernel_only != yes ]]; then
                 printf "%s\n" "systemdutildir=\"$systemdutildir\""
                 printf "%s\n" "systemdsystemunitdir=\"$systemdsystemunitdir\""
                 printf "%s\n" "systemdsystemconfdir=\"$systemdsystemconfdir\""
+                printf "%s\n" "systemdnetworkconfdir=\"$systemdnetworkconfdir\""
             } > "${initdir}"/etc/conf.d/systemd.conf
         fi
     fi
