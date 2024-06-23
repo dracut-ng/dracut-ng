@@ -53,6 +53,8 @@ install() {
         "$systemdsystemunitdir"/dbus.service \
         "$systemdsystemunitdir"/dbus.socket \
         "$systemdsystemunitdir"/dbus.target.wants \
+        "$systemdsystemunitdir"/multi-user.target.wants/dbus.service \
+        "$systemdsystemunitdir"/sockets.target.wants/dbus.socket \
         busctl dbus-send dbus-daemon
 
     # Adjusting dependencies for initramfs in the dbus service unit.
