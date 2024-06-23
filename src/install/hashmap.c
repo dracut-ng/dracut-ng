@@ -273,20 +273,32 @@ int hashmap_replace(Hashmap *h, const void *key, void *value)
         return hashmap_put(h, key, value);
 }
 
-void *hashmap_get(Hashmap *h, const void *key)
+int hashmap_get_exists(Hashmap *h, const void *key, void **value)
 {
         unsigned int hash;
         struct hashmap_entry *e;
 
+        *value = NULL;
+
         if (!h)
-                return NULL;
+                return 0;
 
         hash = h->hash_func(key) % NBUCKETS;
 
         if (!(e = hash_scan(h, hash, key)))
-                return NULL;
+                return 0;
 
-        return e->value;
+        *value = e->value;
+        return 1;
+}
+
+void *hashmap_get(Hashmap *h, const void *key)
+{
+        void *ret;
+
+        hashmap_get_exists(h, key, &ret);
+
+        return ret;
 }
 
 void *hashmap_remove(Hashmap *h, const void *key)
