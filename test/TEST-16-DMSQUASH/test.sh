@@ -128,14 +128,16 @@ SUBSYSTEM=="block", ENV{ID_FS_TYPE}=="ntfs", ENV{ID_FS_TYPE}="ntfs3"
 EOF
 
     test_dracut \
-        --modules "dash dmsquash-live qemu" \
+        --add "dash dmsquash-live qemu" \
+        --omit "systemd" \
         --drivers "ntfs3" \
         --install "mkfs.ext4" \
         --include /tmp/ntfs3.rules /lib/udev/rules.d/ntfs3.rules \
         "$TESTDIR"/initramfs.testing
 
     test_dracut \
-        --modules "dmsquash-live-autooverlay qemu" \
+        --add "dmsquash-live-autooverlay qemu" \
+        --omit "systemd" \
         --install "mkfs.ext4" \
         "$TESTDIR"/initramfs.testing-autooverlay
 
