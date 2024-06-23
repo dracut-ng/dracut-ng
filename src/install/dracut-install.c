@@ -84,6 +84,7 @@ static Hashmap *items_failed = NULL;
 static Hashmap *modules_loaded = NULL;
 static Hashmap *modules_suppliers = NULL;
 static Hashmap *processed_suppliers = NULL;
+static Hashmap *modalias_to_kmod = NULL;
 static regex_t mod_filter_path;
 static regex_t mod_filter_nopath;
 static regex_t mod_filter_symbol;
@@ -1523,12 +1524,24 @@ static int find_kmod_module_from_sysfs_node(struct kmod_ctx *ctx, const char *sy
         ssize_t len = read(modalias_file, alias, sizeof(alias));
         alias[len - 1] = '\0';
 
-        return kmod_module_new_from_lookup(ctx, alias, modules);
+        void *list;
+
+        if (hashmap_get_exists(modalias_to_kmod, alias, &list) == 1) {
+                *modules = list;
+                return 0;
+        }
+
+        int ret = kmod_module_new_from_lookup(ctx, alias, modules);
+        if (!ret) {
+                hashmap_put(modalias_to_kmod, strdup(alias), *modules);
+        }
+
+        return ret;
 }
 
 static int find_modules_from_sysfs_node(struct kmod_ctx *ctx, const char *sysfs_node, Hashmap *modules)
 {
-        _cleanup_kmod_module_unref_list_ struct kmod_list *list = NULL;
+        struct kmod_list *list = NULL;
         struct kmod_list *l = NULL;
 
         if (find_kmod_module_from_sysfs_node(ctx, sysfs_node, strlen(sysfs_node), &list) >= 0) {
@@ -1585,7 +1598,7 @@ static void find_suppliers(struct kmod_ctx *ctx)
 
         for (FTSENT *ftsent = fts_read(fts); ftsent != NULL; ftsent = fts_read(fts)) {
                 if (strcmp(ftsent->fts_name, "modalias") == 0) {
-                        _cleanup_kmod_module_unref_list_ struct kmod_list *list = NULL;
+                        struct kmod_list *list = NULL;
                         struct kmod_list *l;
 
                         if (find_kmod_module_from_sysfs_node(ctx, ftsent->fts_parent->fts_path, ftsent->fts_parent->fts_pathlen, &list) < 0)
@@ -2197,6 +2210,7 @@ int main(int argc, char **argv)
         items = hashmap_new(string_hash_func, string_compare_func);
         items_failed = hashmap_new(string_hash_func, string_compare_func);
         processed_suppliers = hashmap_new(string_hash_func, string_compare_func);
+        modalias_to_kmod = hashmap_new(string_hash_func, string_compare_func);
 
         if (!items || !items_failed || !processed_suppliers || !modules_loaded) {
                 log_error("Out of memory");
@@ -2270,11 +2284,17 @@ finish2:
         while ((i = hashmap_steal_first(processed_suppliers)))
                 item_free(i);
 
+        /*
+         * Note: modalias_to_kmod's values are freed implicitly by the kmod context destruction
+         * in kmod_unref().
+         */
+
         hashmap_free(items);
         hashmap_free(items_failed);
         hashmap_free(modules_loaded);
         hashmap_free(modules_suppliers);
         hashmap_free(processed_suppliers);
+        hashmap_free(modalias_to_kmod);
 
         if (arg_mod_filter_path)
                 regfree(&mod_filter_path);
