@@ -142,6 +142,7 @@ jobs:
         strategy:
             matrix:
                 container: [
+                        "arch",
                         "debian",
                         "fedora",
                         "gentoo",
