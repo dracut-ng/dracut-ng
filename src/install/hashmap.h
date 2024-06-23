@@ -51,6 +51,7 @@ int hashmap_ensure_allocated(Hashmap **h, hash_func_t hash_func, compare_func_t 
 int hashmap_put(Hashmap *h, const void *key, void *value);
 int hashmap_replace(Hashmap *h, const void *key, void *value);
 void *hashmap_get(Hashmap *h, const void *key);
+int hashmap_get_exists(Hashmap *h, const void *key, void **value);
 void *hashmap_remove(Hashmap *h, const void *key);
 void *hashmap_remove_value(Hashmap *h, const void *key, void *value);
 int hashmap_remove_and_put(Hashmap *h, const void *old_key, const void *new_key, void *value);
