@@ -16,10 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-dwarning() {
-    echo "Warning: $*" >&2
-}
-
 dinfo() {
     [[ $beverbose ]] && echo "$@" >&2
 }
