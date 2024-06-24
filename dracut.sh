@@ -2140,9 +2140,13 @@ if [[ $early_microcode == yes ]]; then
                 if [[ $hostonly ]]; then
                     _src=$(get_ucode_file)
                     [[ $_src ]] || break
-                    [[ -r $_fwdir/$_fw/$_src ]] || _src="${_src}.early"
-                    [[ -r $_fwdir/$_fw/$_src ]] || _src="${_src}.initramfs"
-                    [[ -r $_fwdir/$_fw/$_src ]] || break
+                    if [[ -r "$_fwdir/$_fw/${_src}.early" ]]; then
+                        _src="${_src}.early"
+                    elif [[ -r "$_fwdir/$_fw/${_src}.initramfs" ]]; then
+                        _src="${_src}.initramfs"
+                    else
+                        [[ -r $_fwdir/$_fw/$_src ]] || break
+                    fi
                 fi
 
                 for i in $_fwdir/$_fw/$_src; do
