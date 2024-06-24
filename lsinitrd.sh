@@ -134,16 +134,19 @@ else
         image="/lib/modules/${KERNEL_VERSION}/initrd"
     elif [[ -f /lib/modules/${KERNEL_VERSION}/initramfs.img ]]; then
         image="/lib/modules/${KERNEL_VERSION}/initramfs.img"
-    elif [[ -f /boot/initramfs-${KERNEL_VERSION}.img ]]; then
-        image="/boot/initramfs-${KERNEL_VERSION}.img"
-    elif [[ $MACHINE_ID ]] \
-        && mountpoint -q /efi; then
-        image="/efi/${MACHINE_ID}/${KERNEL_VERSION}/initrd"
-    elif [[ $MACHINE_ID ]] \
-        && mountpoint -q /boot/efi; then
-        image="/boot/efi/${MACHINE_ID}/${KERNEL_VERSION}/initrd"
     else
-        image=""
+        files=("/boot/initr*${KERNEL_VERSION}*")
+        if [ "${#files[@]}" -ge 1 ] && [ -e "${files[0]}" ]; then
+            image="${files[0]}"
+        elif [[ $MACHINE_ID ]] \
+            && mountpoint -q /efi; then
+            image="/efi/${MACHINE_ID}/${KERNEL_VERSION}/initrd"
+        elif [[ $MACHINE_ID ]] \
+            && mountpoint -q /boot/efi; then
+            image="/boot/efi/${MACHINE_ID}/${KERNEL_VERSION}/initrd"
+        else
+            image=""
+        fi
     fi
 fi
 
