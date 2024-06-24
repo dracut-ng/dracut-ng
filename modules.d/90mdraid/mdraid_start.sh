@@ -32,11 +32,14 @@ _md_force_run() {
     local _md
     local _UUID
     local _MD_UUID
+    local _LEFT_UUID
+    local _uuid
 
     _MD_UUID=$(getargs rd.md.uuid -d rd_MD_UUID=)
     [ -n "$_MD_UUID" ] || getargbool 0 rd.auto || return
 
     if [ -n "$_MD_UUID" ]; then
+        _LEFT_UUID=$(str_replace "$_MD_UUID" "-" ":")
         _MD_UUID=$(str_replace "$_MD_UUID" "-" "")
         _MD_UUID=$(str_replace "$_MD_UUID" ":" "")
 
@@ -51,6 +54,9 @@ _md_force_run() {
             )
 
             [ -z "$_UUID" ] && continue
+            # remove the UUID already assembled from the list
+            _LEFT_UUID=$(str_replace "$_LEFT_UUID" "$_UUID" "")
+
             _UUID=$(str_replace "$_UUID" ":" "")
 
             # check if we should handle this device
@@ -63,6 +69,14 @@ _md_force_run() {
         for _md in /dev/md[0-9_]*; do
             [ -b "$_md" ] || continue
             _md_start "${_md}"
+        done
+    fi
+
+    # try to assemble all the left md devices that should be assembled
+    # probably failed because of timing issue in the first beginning
+    if [ -n "$_LEFT_UUID" ]; then
+        for _uuid in ${_LEFT_UUID}; do
+            mdadm --assemble --scan --uuid="$_uuid"
         done
     fi
 }
