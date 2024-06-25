@@ -32,7 +32,7 @@ jobs:
 
       - name: Release
         if: ${{ env.new_version }}
-        uses: softprops/action-gh-release@v2.0.5
+        uses: softprops/action-gh-release@v2.0.6
         with:
           tag_name: ${{ env.new_version }}
           name: dracut-${{ env.new_version }}
