@@ -39,6 +39,8 @@ install() {
         "$systemdutildir"/systemd-hostnamed \
         "$systemdsystemunitdir"/systemd-hostnamed.service \
         "$systemdsystemunitdir/systemd-hostnamed.service.d/*.conf" \
+        "$systemdsystemunitdir"/systemd-hostnamed.socket \
+        "$systemdsystemunitdir/systemd-hostnamed.socket.d/*.conf" \
         "$systemdsystemunitdir"/dbus-org.freedesktop.hostname1.service \
         hostnamectl
 
@@ -47,6 +49,8 @@ install() {
         inst_multiple -H -o \
             /etc/hostname \
             "$systemdsystemconfdir"/systemd-hostnamed.service \
-            "$systemdsystemconfdir/systemd-hostnamed.service.d/*.conf"
+            "$systemdsystemconfdir/systemd-hostnamed.service.d/*.conf" \
+            "$systemdsystemconfdir"/systemd-hostnamed.socket \
+            "$systemdsystemconfdir/systemd-hostnamed.socket.d/*.conf"
     fi
 }
