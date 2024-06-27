@@ -56,4 +56,3 @@ if __name__ == '__main__':
     sorted_x = sorted(e.iteritems(), key=operator.itemgetter(1), reverse=True)
     for x in sorted_x:
         print x[0], x[1]
-
