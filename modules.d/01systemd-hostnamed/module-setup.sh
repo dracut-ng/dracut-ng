@@ -41,6 +41,7 @@ install() {
         "$systemdsystemunitdir/systemd-hostnamed.service.d/*.conf" \
         "$systemdsystemunitdir"/systemd-hostnamed.socket \
         "$systemdsystemunitdir/systemd-hostnamed.socket.d/*.conf" \
+        "$systemdsystemunitdir"/sockets.target.wants/systemd-hostnamed.socket \
         "$systemdsystemunitdir"/dbus-org.freedesktop.hostname1.service \
         hostnamectl
 
@@ -51,6 +52,7 @@ install() {
             "$systemdsystemconfdir"/systemd-hostnamed.service \
             "$systemdsystemconfdir/systemd-hostnamed.service.d/*.conf" \
             "$systemdsystemconfdir"/systemd-hostnamed.socket \
+            "$systemdsystemconfdir"/sockets.target.wants/systemd-hostnamed.socket \
             "$systemdsystemconfdir/systemd-hostnamed.socket.d/*.conf"
     fi
 }
