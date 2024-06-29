@@ -23,7 +23,7 @@ for i in /sys/class/net/*; do
 done
 
 for i in /run/initramfs/net.*.did-setup; do
-    # booting with network-legacy module
+    # booting with network module
     [ -f "$i" ] || continue
     strglobin "$i" ":*:*:*:*:" && continue
     i=${i%.did-setup}
