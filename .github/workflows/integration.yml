@@ -40,7 +40,7 @@ jobs:
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
                 run: ./tools/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     network:
-        name: ${{ matrix.test }} on ${{ matrix.container }} using ${{ matrix.network }}
+        name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-latest
         timeout-minutes: 45
         concurrency:
@@ -50,9 +50,6 @@ jobs:
             matrix:
                 container: [
                         "fedora",
-                ]
-                network: [
-                        "network",
                 ]
                 test: [
                         "20",
@@ -68,7 +65,7 @@ jobs:
             -   name: "Checkout Repository"
                 uses: actions/checkout@v4
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-                run: USE_NETWORK=${{ matrix.network }} ./tools/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+                run: ./tools/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     network-legacy:
         name: ${{ matrix.test }} on ${{ matrix.container }} using ${{ matrix.network }}
         runs-on: ubuntu-latest
