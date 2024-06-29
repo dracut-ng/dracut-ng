@@ -12,7 +12,7 @@ export TESTDIR
 
 KVERSION=${KVERSION-$(uname -r)}
 
-[ -z "$USE_NETWORK" ] && USE_NETWORK="network-legacy"
+[ -z "$USE_NETWORK" ] && USE_NETWORK="network"
 
 if [[ -z $basedir ]]; then basedir="$(realpath ../..)"; fi
 
