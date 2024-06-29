@@ -110,6 +110,7 @@ jobs:
                 container: [
                         "arch",
                         "gentoo",
+                        "ubuntu",
                 ]
                 network: [
                         "systemd-networkd",
