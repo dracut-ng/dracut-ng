@@ -50,6 +50,7 @@ jobs:
             matrix:
                 container: [
                         "fedora",
+                        "gentoo",
                 ]
                 network: [
                         "network",
