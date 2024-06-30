@@ -29,16 +29,36 @@ install() {
         55-scsi-sg3_id.rules \
         58-scsi-sg3_symlink.rules \
         59-scsi-sg3_utils.rules \
+        60-autosuspend.rules \
         60-block.rules \
         60-cdrom_id.rules \
+        60-drm.rules \
+        60-evdev.rules \
+        60-fido-id.rules \
+        60-input-id.rules \
+        60-persistent-alsa.rules \
+        60-persistent-input.rules \
+        60-persistent-storage-tape.rules \
         60-persistent-storage.rules \
+        60-persistent-v4l.rules \
+        60-sensor.rules \
+        60-serial.rules \
         64-btrfs.rules \
+        70-joystick.rules \
+        70-memory.rules \
+        70-mouse.rules \
+        70-touchpad.rules \
         70-uaccess.rules \
         71-seat.rules \
         73-seat-late.rules \
         75-net-description.rules \
-        80-drivers.rules 95-udev-late.rules \
-        80-net-name-slot.rules 80-net-setup-link.rules \
+        75-probe_mtd.rules \
+        78-sound-card.rules \
+        80-drivers.rules \
+        80-net-name-slot.rules \
+        80-net-setup-link.rules \
+        81-net-dhcp.rules \
+        95-udev-late.rules \
         "$moddir/59-persistent-storage.rules" \
         "$moddir/61-persistent-storage.rules"
 
@@ -58,15 +78,22 @@ install() {
     } >> "$initdir/etc/group"
 
     inst_multiple -o \
+        /etc/udev/udev.hwdb \
         "${udevdir}"/ata_id \
         "${udevdir}"/cdrom_id \
         "${udevdir}"/create_floppy_devices \
+        "${udevdir}"/dmi_memory_id \
+        "${udevdir}"/fido_id \
         "${udevdir}"/fw_unit_symlinks.sh \
         "${udevdir}"/hid2hci \
-        "${udevdir}"/path_id \
+        "${udevdir}"/hwdb.bin \
         "${udevdir}"/input_id \
+        "${udevdir}"/mtd_probe \
+        "${udevdir}"/mtp-probe \
+        "${udevdir}"/path_id \
         "${udevdir}"/scsi_id \
-        "${udevdir}"/usb_id
+        "${udevdir}"/usb_id \
+        "${udevdir}"/v4l_id
 
     inst_libdir_file "libnss_files*"
 
@@ -74,6 +101,8 @@ install() {
     if [[ $hostonly ]]; then
         inst_dir /etc/udev
         inst_multiple -H -o \
-            /etc/udev/udev.conf
+            /etc/udev/udev.conf \
+            "$udevconfdir"/hwdb.bin \
+            "$udevrulesconfdir/*.rules"
     fi
 }
