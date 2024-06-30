@@ -30,7 +30,6 @@ depends() {
 install() {
 
     inst_multiple -o \
-        /etc/udev/udev.hwdb \
         "$udevrulesdir"/99-systemd.rules \
         "$systemdutildir"/systemd-udevd \
         "$systemdsystemunitdir"/systemd-udevd.service \
@@ -49,7 +48,6 @@ install() {
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
-            "$systemdutilconfdir"/hwdb/hwdb.bin \
             "$systemdsystemconfdir"/systemd-udevd.service \
             "$systemdsystemconfdir/systemd-udevd.service.d/*.conf" \
             "$systemdsystemconfdir"/systemd-udev-trigger.service \
@@ -64,6 +62,11 @@ install() {
             "$systemdsystemconfdir"/sockets.target.wants/systemd-udevd-kernel.socket \
             "$systemdsystemconfdir"/sysinit.target.wants/systemd-udevd.service \
             "$systemdsystemconfdir"/sysinit.target.wants/systemd-udev-trigger.service
+
+        if dracut_module_included "hwdb"; then
+            inst_multiple -H -o \
+                "$systemdutilconfdir"/hwdb/hwdb.bin
+        fi
     fi
 
     # Install required libraries.
