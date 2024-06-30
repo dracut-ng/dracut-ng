@@ -78,7 +78,6 @@ install() {
     } >> "$initdir/etc/group"
 
     inst_multiple -o \
-        /etc/udev/udev.hwdb \
         "${udevdir}"/ata_id \
         "${udevdir}"/cdrom_id \
         "${udevdir}"/create_floppy_devices \
@@ -86,7 +85,6 @@ install() {
         "${udevdir}"/fido_id \
         "${udevdir}"/fw_unit_symlinks.sh \
         "${udevdir}"/hid2hci \
-        "${udevdir}"/hwdb.bin \
         "${udevdir}"/input_id \
         "${udevdir}"/mtd_probe \
         "${udevdir}"/mtp-probe \
@@ -102,7 +100,6 @@ install() {
         inst_dir /etc/udev
         inst_multiple -H -o \
             /etc/udev/udev.conf \
-            "$udevconfdir"/hwdb.bin \
             "$udevrulesconfdir/*.rules"
     fi
 }
