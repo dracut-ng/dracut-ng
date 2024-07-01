@@ -1282,11 +1282,13 @@ if [[ -f $dracutbasedir/dracut-version.sh ]]; then
 fi
 
 if systemd-detect-virt -c &> /dev/null; then
-    export DRACUT_NO_MKNOD=1 DRACUT_NO_XATTR=1
+    export DRACUT_NO_MKNOD=1
     if [[ $hostonly ]]; then
         printf "%s\n" "dracut[W]: Running in hostonly mode in a container!" >&2
     fi
 fi
+
+export DRACUT_NO_XATTR=${DRACUT_NO_XATTR:-1}
 
 if [[ -f $dracutbasedir/dracut-init.sh ]]; then
     # shellcheck source=./dracut-init.sh
