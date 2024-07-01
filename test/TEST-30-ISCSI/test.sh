@@ -173,7 +173,7 @@ test_setup() {
 
     # Create what will eventually be the server root filesystem onto an overlay
     "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
-        -m "test-root network" \
+        -m "test-root ${USE_NETWORK}" \
         -d "iscsi_tcp crc32c ipv6" \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
@@ -213,7 +213,7 @@ test_setup() {
 
     # Make server's dracut image
     "$DRACUT" -l \
-        -a "dash rootfs-block test kernel-modules network" \
+        -a "dash rootfs-block test kernel-modules ${USE_NETWORK}" \
         -d "piix ide-gd_mod ata_piix ext4 sd_mod e1000 drbg virtio_pci virtio_scsi" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i ./wait-if-server.sh /lib/dracut/hooks/pre-mount/99-wait-if-server.sh \

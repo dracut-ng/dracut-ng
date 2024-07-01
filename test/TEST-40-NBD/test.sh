@@ -278,7 +278,7 @@ bs = 4096
 EOF
 
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
-        -m "test-root network" \
+        -a "test-root ${USE_NETWORK}" \
         -d "nfsd sunrpc ipv6 lockd af_packet 8021q ipvlan macvlan" \
         -I "ip grep sleep nbd-server chmod modprobe vi pidof" \
         -i "${basedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
@@ -299,7 +299,7 @@ EOF
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
-        -a "test-makeroot" \
+        -a "test-makeroot ${USE_NETWORK}" \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
@@ -342,7 +342,7 @@ test_setup() {
         "$TESTDIR"/initramfs.testing
 
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
-        -a "test rootfs-block debug kernel-modules network" \
+        -a "test rootfs-block debug kernel-modules ${USE_NETWORK}" \
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod e1000 drbg" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
