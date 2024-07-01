@@ -87,6 +87,7 @@ jobs:
         strategy:
             matrix:
                 container: [
+                        "debian",
                         "opensuse",
                 ]
                 network: [
@@ -117,6 +118,7 @@ jobs:
             matrix:
                 container: [
                         "arch",
+                        "debian",
                         "ubuntu",
                 ]
                 network: [
