@@ -49,14 +49,25 @@ jobs:
         strategy:
             matrix:
                 container: [
+                        "arch",
                         "fedora",
+                        "gentoo",
+                        "opensuse",
+                        "ubuntu",
                 ]
                 test: [
                         "20",
+                        "30",
+                        "35",
                         "40",
                         "50",
                         "60",
                 ]
+                exclude:
+                  - test: "40"
+                include:
+                  - container: "fedora"
+                    test: "40"
             fail-fast: false
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
@@ -76,6 +87,7 @@ jobs:
         strategy:
             matrix:
                 container: [
+                        "debian",
                         "opensuse",
                 ]
                 network: [
@@ -106,7 +118,7 @@ jobs:
             matrix:
                 container: [
                         "arch",
-                        "gentoo",
+                        "debian",
                         "ubuntu",
                 ]
                 network: [
@@ -116,11 +128,7 @@ jobs:
                         "20",
                         "30",
                         "35",
-                        "40",
                 ]
-                exclude:
-                  - container: "gentoo"
-                    test: "40"
             fail-fast: false
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}

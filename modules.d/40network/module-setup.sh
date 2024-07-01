@@ -17,12 +17,12 @@ depends() {
     done
 
     if [ -z "$network_handler" ]; then
-        if check_module "connman"; then
-            network_handler="connman"
-        elif check_module "network-manager"; then
+        if check_module "network-manager"; then
             network_handler="network-manager"
         elif check_module "systemd-networkd"; then
             network_handler="systemd-networkd"
+        elif check_module "connman"; then
+            network_handler="connman"
         else
             network_handler="network-legacy"
         fi
