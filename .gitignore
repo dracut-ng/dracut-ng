@@ -1,3 +1,4 @@
+*~
 /Makefile.inc
 /man/dracut.8
 /man/dracut-catimages.8
@@ -25,3 +26,4 @@ test*.img
 /src/util/util
 /dracut-util
 .idea/
+build/

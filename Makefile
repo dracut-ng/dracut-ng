@@ -111,7 +111,7 @@ ifeq ($(enable_dracut_cpio),yes)
 all: dracut-cpio
 endif
 
-doc: $(manpages) dracut.html
+doc: $(manpages)
 
 ifneq ($(enable_documentation),no)
 all: doc
@@ -121,25 +121,19 @@ endif
 	@rm -f -- "$@"
 	xsltproc -o "$@" -nonet http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl $<
 
-%.xml: %.asc
+%.xml: %.adoc
 	@rm -f -- "$@"
 	asciidoc -a "version=$(DRACUT_FULL_VERSION)" -d manpage -b docbook -o "$@" $<
 
-dracut.8: man/dracut.8.asc \
-	man/dracut.usage.asc
+.PHONY: doc_site
+doc_site: $(manpages) doc_site/modules/ROOT/nav.adoc doc_site/modules/ROOT/pages/index.adoc
+	cd doc_site/modules/ROOT/pages/man/; for i in $(manpages) man/dracut.usage; do ln -sf ../../../../../$${i}.adoc $(basename $i); done
+	npx antora --attribute "mainversion=$(DRACUT_MAIN_VERSION)" \
+	--attribute "version=${DRACUT_FULL_VERSION}" \
+	antora-playbook.yml
 
-dracut.html: man/dracut.asc $(manpages) docs/dracut.css man/dracut.usage.asc
-	@rm -f -- dracut.xml
-	asciidoc -a "mainversion=$(DRACUT_MAIN_VERSION)" \
-		-a "version=$(DRACUT_FULL_VERSION)" \
-		-a numbered \
-		-d book -b docbook -o dracut.xml man/dracut.asc
-	@rm -f -- dracut.html
-	xsltproc -o dracut.html --xinclude -nonet \
-		--stringparam custom.css.source docs/dracut.css \
-		--stringparam generate.css.header 1 \
-		http://docbook.sourceforge.net/release/xsl/current/xhtml/docbook.xsl dracut.xml
-	@rm -f -- dracut.xml
+dracut.8: man/dracut.8.adoc \
+	man/dracut.usage.adoc
 
 dracut.pc: Makefile.inc Makefile
 	@echo "Name: dracut" > dracut.pc
@@ -231,6 +225,7 @@ clean:
 	$(RM) $(manpages)
 	$(RM) dracut.pc
 	$(RM) dracut-cpio src/dracut-cpio/target/release/dracut-cpio*
+	$(RM) -rf build/ doc_site/modules/ROOT/pages/man/*
 	$(MAKE) -C test clean
 
 syncheck:
