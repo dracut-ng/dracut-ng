@@ -49,7 +49,7 @@ run_server() {
         -device virtio-net-pci,netdev=n3,mac=52:54:01:12:34:59 \
         -hda "$TESTDIR"/server.ext4 \
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
-        -append "panic=1 oops=panic softlockup_panic=1 root=LABEL=dracut rootfstype=ext4 rw console=ttyS0,115200n81 selinux=0" \
+        -append "panic=1 oops=panic softlockup_panic=1 root=LABEL=dracut rootfstype=ext4 rw console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.server \
         -pidfile "$TESTDIR"/server.pid -daemonize || return 1
     chmod 644 -- "$TESTDIR"/server.pid || return 1
@@ -349,7 +349,7 @@ test_setup() {
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=/dev/dracut/root rw rootfstype=ext4 quiet console=ttyS0,115200n81 selinux=0" \
+        -append "root=/dev/dracut/root rw rootfstype=ext4 quiet console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.makeroot || return 1
     test_marker_check dracut-root-block-created || return 1
     rm -- "$TESTDIR"/marker.img

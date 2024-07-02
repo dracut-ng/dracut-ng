@@ -19,7 +19,7 @@ if [[ -z $basedir ]]; then basedir="$(realpath ../..)"; fi
 DRACUT=${DRACUT-${basedir}/dracut.sh}
 PKGLIBDIR=${PKGLIBDIR-$basedir}
 
-TEST_KERNEL_CMDLINE+=" panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot quiet selinux=0 console=ttyS0,115200n81 $DEBUGFAIL "
+TEST_KERNEL_CMDLINE+=" panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot quiet console=ttyS0,115200n81 $DEBUGFAIL "
 
 test_dracut() {
     TEST_DRACUT_ARGS+=" --local --no-hostonly --no-hostonly-cmdline --no-early-microcode --add test --force --kver $KVERSION"
