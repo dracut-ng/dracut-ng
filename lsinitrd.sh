@@ -100,7 +100,7 @@ done
 
 find_initrd_for_kernel_version() {
     local kernel_version="$1"
-    local machine_id
+    local base_path initrd machine_id
 
     if [[ -d /efi/Default ]] || [[ -d /boot/Default ]] || [[ -d /boot/efi/Default ]]; then
         machine_id="Default"
@@ -111,30 +111,22 @@ find_initrd_for_kernel_version() {
         machine_id="Default"
     fi
 
-    if [[ -d /efi/loader/entries || -L /efi/loader/entries ]] \
-        && [[ $machine_id ]] \
-        && [[ -d /efi/${machine_id} || -L /efi/${machine_id} ]]; then
-        echo "/efi/${machine_id}/${kernel_version}/initrd"
-    elif [[ -d /boot/loader/entries || -L /boot/loader/entries ]] \
-        && [[ $machine_id ]] \
-        && [[ -d /boot/${machine_id} || -L /boot/${machine_id} ]]; then
-        echo "/boot/${machine_id}/${kernel_version}/initrd"
-    elif [[ -d /boot/efi/loader/entries || -L /boot/efi/loader/entries ]] \
-        && [[ $machine_id ]] \
-        && [[ -d /boot/efi/${machine_id} || -L /boot/efi/${machine_id} ]]; then
-        echo "/boot/efi/${machine_id}/${kernel_version}/initrd"
-    elif [[ -f /lib/modules/${kernel_version}/initrd ]]; then
+    if [ -n "$machine_id" ]; then
+        for base_path in /efi /boot /boot/efi; do
+            initrd="${base_path}/${machine_id}/${kernel_version}/initrd"
+            if [ -f "$initrd" ]; then
+                echo "$initrd"
+                return
+            fi
+        done
+    fi
+
+    if [[ -f /lib/modules/${kernel_version}/initrd ]]; then
         echo "/lib/modules/${kernel_version}/initrd"
     elif [[ -f /lib/modules/${kernel_version}/initramfs.img ]]; then
         echo "/lib/modules/${kernel_version}/initramfs.img"
     elif [[ -f /boot/initramfs-${kernel_version}.img ]]; then
         echo "/boot/initramfs-${kernel_version}.img"
-    elif [[ $machine_id ]] \
-        && mountpoint -q /efi; then
-        echo "/efi/${machine_id}/${kernel_version}/initrd"
-    elif [[ $machine_id ]] \
-        && mountpoint -q /boot/efi; then
-        echo "/boot/efi/${machine_id}/${kernel_version}/initrd"
     fi
 }
 
