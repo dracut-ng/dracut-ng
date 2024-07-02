@@ -1,0 +1,2 @@
+# turn on Linux Integrity Measurement Architecture (IMA) modules
+add_dracutmodules+=" integrity "
