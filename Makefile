@@ -108,7 +108,7 @@ ifeq ($(enable_dracut_cpio),yes)
 all: dracut-cpio
 endif
 
-doc: $(manpages) dracut.html
+doc: $(manpages)
 
 ifneq ($(enable_documentation),no)
 all: doc
@@ -122,21 +122,28 @@ endif
 	@rm -f -- "$@"
 	asciidoc -a "version=$(DRACUT_FULL_VERSION)" -d manpage -b docbook -o "$@" $<
 
+# If ANOTRA_BIN not set, default to look for "npx" to run "npx antora".  If we
+# end up with undefined ANTORA_BIN (i.e. not set and npx not found), we'll give
+# a sane error when building docs below.
+ifeq ($(ANTORA_BIN),)
+NPX := $(shell command -v npx 2> /dev/null)
+ifneq ($(NPX),)
+ANTORA_BIN := "$(NPX) antora"
+endif
+endif
+.PHONY: doc_site
+doc_site: $(manpages) doc_site/modules/ROOT/nav.adoc doc_site/modules/ROOT/pages/index.adoc
+ifndef ANTORA_BIN
+	$(error Antora not found, install nodejs or set ANTORA_BIN to make doc site)
+endif
+	mkdir -p doc_site/modules/ROOT/pages/man
+	cd doc_site/modules/ROOT/pages/man/; for i in $(manpages) man/dracut.usage; do ln -sf ../../../../../$${i}.adoc $(basename $i); done
+	$(shell echo $(ANTORA_BIN)) --attribute "mainversion=$(DRACUT_MAIN_VERSION)" \
+	  --attribute "version=${DRACUT_FULL_VERSION}" \
+	  antora-playbook.yml
+
 dracut.8: man/dracut.8.adoc \
 	man/dracut.usage.adoc
-
-dracut.html: man/dracut.adoc $(manpages) docs/dracut.css man/dracut.usage.adoc
-	@rm -f -- dracut.xml
-	asciidoc -a "mainversion=$(DRACUT_MAIN_VERSION)" \
-		-a "version=$(DRACUT_FULL_VERSION)" \
-		-a numbered \
-		-d book -b docbook -o dracut.xml man/dracut.adoc
-	@rm -f -- dracut.html
-	xsltproc -o dracut.html --xinclude -nonet \
-		--stringparam custom.css.source docs/dracut.css \
-		--stringparam generate.css.header 1 \
-		http://docbook.sourceforge.net/release/xsl/current/xhtml/docbook.xsl dracut.xml
-	@rm -f -- dracut.xml
 
 dracut.pc: Makefile.inc Makefile
 	@echo "Name: dracut" > dracut.pc
@@ -233,6 +240,7 @@ clean:
 	$(RM) $(manpages)
 	$(RM) dracut.pc
 	$(RM) dracut-cpio src/dracut-cpio/target/release/dracut-cpio*
+	$(RM) -rf build/ doc_site/modules/ROOT/pages/man/*
 	$(MAKE) -C test clean
 
 syncheck:
