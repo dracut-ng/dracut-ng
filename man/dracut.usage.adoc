@@ -42,7 +42,7 @@ root filesystem, without recreating the initramfs image.
 It is recommended to keep a copy of a general purpose image (and corresponding
 kernel) as a fallback to rescue your system.
 
-=== Inspecting the Contents
+== Inspecting the Contents
 To see the contents of the image created by dracut, you can use the lsinitrd
 tool.
 ----
@@ -55,7 +55,7 @@ To display the contents of a file in the initramfs also use the lsinitrd tool:
 include ld.so.conf.d/*.conf
 ----
 
-=== Adding dracut Modules
+== Adding dracut Modules
 Some dracut modules are turned off by default and have to be activated manually.
 You can do this by adding the dracut modules to the configuration file
 _/etc/dracut.conf_ or _/etc/dracut.conf.d/myconf.conf_. See *dracut.conf*(5).
@@ -70,7 +70,7 @@ To see a list of available dracut modules, use the --list-modules option:
 # dracut --list-modules
 ----
 
-=== Omitting dracut Modules
+== Omitting dracut Modules
 Sometimes you don't want a dracut module to be included for reasons of speed,
 size or functionality. To do this, either specify the omit_dracutmodules
 variable in the _dracut.conf_ or _/etc/dracut.conf.d/myconf.conf_ configuration
@@ -80,7 +80,7 @@ on the command line:
 # dracut -o "multipath lvm" no-multipath-lvm.img
 ----
 
-=== Adding Kernel Modules
+== Adding Kernel Modules
 If you need a special kernel module in the initramfs, which is not
 automatically picked up by dracut, you have the use the --add-drivers option
 on the command line or  the drivers variable in  the _/etc/dracut.conf_
@@ -89,7 +89,7 @@ or _/etc/dracut.conf.d/myconf.conf_ configuration file (see *dracut.conf*(5)):
 # dracut --add-drivers mymod initramfs-with-mymod.img
 ----
 
-=== Boot parameters
+== Boot parameters
 An initramfs generated without the "hostonly" mode, does not contain any system
 configuration files (except for some special exceptions), so the configuration
 has to be done on the kernel command line. With this flexibility, you can easily
@@ -116,7 +116,7 @@ use the __--print-cmdline__ option:
  root=UUID=8b8b6f91-95c7-4da2-831b-171e12179081 rootflags=rw,relatime,discard,data=ordered rootfstype=ext4
 ----
 
-==== Specifying the root Device
+=== Specifying the root Device
 This is the only option dracut really needs to boot from your root partition.
 Because your root partition can live in various environments, there are a lot of
 formats for the root= option. The most basic one is root=_++<path to device
@@ -151,7 +151,7 @@ or
 
 If your root partition is on the network see <<NetworkBoot>>.
 
-==== Keyboard Settings
+=== Keyboard Settings
 If you have to input passwords for encrypted disk volumes, you might want to set
 the keyboard layout and specify a display font.
 
@@ -163,7 +163,7 @@ rd.vconsole.font=eurlatgr rd.vconsole.keymap=de-latin1-nodeadkeys rd.locale.LANG
 Setting these options can override the setting stored on your system, if you use
 a modern init system, like systemd.
 
-==== Blacklisting Kernel Modules
+=== Blacklisting Kernel Modules
 Sometimes it is required to prevent the automatic kernel module loading of a
 specific kernel module. To do this, just add rd.driver.blacklist=_++<kernel
 module name>++_, with _++<kernel module name>++_ not containing the _.ko_
@@ -174,7 +174,7 @@ rd.driver.blacklist=mptsas rd.driver.blacklist=nouveau
 
 The option can be specified multiple times on the kernel command line.
 
-==== Speeding up the Boot Process
+=== Speeding up the Boot Process
 If you want to speed up the boot process, you can specify as much information
 for dracut on the kernel command as possible. For example, you can tell dracut,
 that you root partition is not on a LVM volume or not on a raid partition, or
@@ -193,7 +193,7 @@ process, but then you would lose the possibility to turn it on on demand.
 
 
 [[Injecting]]
-=== Injecting custom Files
+== Injecting custom Files
 To add your own files to the initramfs image, you have several possibilities.
 
 The --include option let you specify a source path and a target path.
@@ -241,7 +241,7 @@ specified multiple times.
 
 
 [[NetworkBoot]]
-=== Network Boot
+== Network Boot
 
 If your root partition is on a network drive, you have to have the network
 dracut modules installed to create a network aware initramfs image.
@@ -254,7 +254,7 @@ centralized boot configuration on your TFTP/DHCP server. If you can't pass a
 kernel command line, then you can inject _/etc/cmdline.d/mycmdline.conf_, with a
 method described in <<Injecting>>.
 
-==== Reducing the Image Size
+=== Reducing the Image Size
 
 To reduce the size of the initramfs, you should create it with by omitting all
 dracut modules, which you know, you don't need to boot the machine.
@@ -286,7 +286,7 @@ If the boot process does not succeed, you have several options to debug the
 situation.
 
 [[identifying-your-problem-area]]
-=== Identifying your problem area
+== Identifying your problem area
 . Remove ''rhgb'' and ''quiet'' from the kernel command line
 . Add ''rd.shell'' to the kernel command line. This will present a shell should
 dracut be unable to locate your root device
@@ -300,10 +300,10 @@ If you want to save that output, simply mount /boot by hand or insert an USB
 stick and mount that. Then you can store the output for later inspection.
 
 [[information-to-include-in-your-report]]
-=== Information to include in your report
+== Information to include in your report
 
 [[all-bug-reports]]
-==== All bug reports
+=== All bug reports
 In all cases, the following should be mentioned and attached to your bug report:
 
 * The exact kernel command-line used. Typically from the bootloader
@@ -316,7 +316,7 @@ the file /run/initramfs/rdsosreport.txt.
 all files in _/etc/dracut.conf.d/*.conf_
 
 [[network-root-device-related-problems]]
-==== Network root device related problems
+=== Network root device related problems
 This section details information to include when experiencing problems on a
 system whose root device is located on a network attached volume (e.g. iSCSI,
 NFS or NBD). As well as the information from <<all-bug-reports>>, include the
@@ -331,11 +331,11 @@ following information:
 ----
 
 [[debugging-dracut]]
-=== Debugging dracut
+== Debugging dracut
 
 
 [[configure-a-serial-console]]
-==== Configure a serial console
+=== Configure a serial console
 
 Successfully debugging dracut will require some form of console
 logging during the system boot.  This section documents configuring a
@@ -386,7 +386,7 @@ will put it out on the console when it reaches the kernel buffer by doing
 --
 
 [[using-the-dracut-shell]]
-==== Using the dracut shell
+=== Using the dracut shell
 
 dracut offers a shell for interactive debugging in the event dracut fails to
 locate your root filesystem. To enable the shell:
@@ -422,7 +422,7 @@ Dropping to debug shell.
 (see <<all-bug-reports>>).
 
 [[accessing-the-root-volume-from-the-dracut-shell]]
-==== Accessing the root volume from the dracut shell
+=== Accessing the root volume from the dracut shell
 From the dracut debug shell, you can manually perform the task of locating and
 preparing your root volume for boot. The required steps will depend on how your
 root volume is configured. Common scenarios include:
@@ -497,12 +497,12 @@ the dracut shell
 ----
 
 [[additional-dracut-boot-parameters]]
-==== Additional dracut boot parameters
+=== Additional dracut boot parameters
 For more debugging options, see *dracut.cmdline*(7).
 
 
 [[debugging-dracut-on-shutdown]]
-==== Debugging dracut on shutdown
+=== Debugging dracut on shutdown
 
 To debug the shutdown sequence on systemd systems, you can _rd.break_
 on _pre-shutdown_ or _shutdown_.

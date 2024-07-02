@@ -29,8 +29,7 @@ subdirectory, and use functionality provided by dracut-functions to do their
 work.
 
 Documentation:
- - [Introduction](man/dracut.adoc)
- - [User Manual](man/dracut.usage.adoc)
+ - https://dracut-ng.github.io/
 
 Currently dracut-ng is developed on [github.com](https://github.com/dracut-ng/dracut-ng).
 
