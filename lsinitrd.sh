@@ -100,7 +100,7 @@ done
 
 find_initrd_for_kernel_version() {
     local kernel_version="$1"
-    local base_path initrd machine_id
+    local base_path files initrd machine_id
 
     if [[ -d /efi/Default ]] || [[ -d /boot/Default ]] || [[ -d /boot/efi/Default ]]; then
         machine_id="Default"
@@ -127,6 +127,11 @@ find_initrd_for_kernel_version() {
         echo "/lib/modules/${kernel_version}/initramfs.img"
     elif [[ -f /boot/initramfs-${kernel_version}.img ]]; then
         echo "/boot/initramfs-${kernel_version}.img"
+    else
+        files=(/boot/initr*"${kernel_version}"*)
+        if [ "${#files[@]}" -ge 1 ] && [ -e "${files[0]}" ]; then
+            echo "${files[0]}"
+        fi
     fi
 }
 
