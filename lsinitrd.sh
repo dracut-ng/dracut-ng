@@ -98,6 +98,46 @@ done
 
 [[ $KERNEL_VERSION ]] || KERNEL_VERSION="$(uname -r)"
 
+find_initrd_for_kernel_version() {
+    local kernel_version="$1"
+    local machine_id
+
+    if [[ -d /efi/Default ]] || [[ -d /boot/Default ]] || [[ -d /boot/efi/Default ]]; then
+        machine_id="Default"
+    elif [[ -s /etc/machine-id ]]; then
+        read -r machine_id < /etc/machine-id
+        [[ $machine_id == "uninitialized" ]] && machine_id="Default"
+    else
+        machine_id="Default"
+    fi
+
+    if [[ -d /efi/loader/entries || -L /efi/loader/entries ]] \
+        && [[ $machine_id ]] \
+        && [[ -d /efi/${machine_id} || -L /efi/${machine_id} ]]; then
+        echo "/efi/${machine_id}/${kernel_version}/initrd"
+    elif [[ -d /boot/loader/entries || -L /boot/loader/entries ]] \
+        && [[ $machine_id ]] \
+        && [[ -d /boot/${machine_id} || -L /boot/${machine_id} ]]; then
+        echo "/boot/${machine_id}/${kernel_version}/initrd"
+    elif [[ -d /boot/efi/loader/entries || -L /boot/efi/loader/entries ]] \
+        && [[ $machine_id ]] \
+        && [[ -d /boot/efi/${machine_id} || -L /boot/efi/${machine_id} ]]; then
+        echo "/boot/efi/${machine_id}/${kernel_version}/initrd"
+    elif [[ -f /lib/modules/${kernel_version}/initrd ]]; then
+        echo "/lib/modules/${kernel_version}/initrd"
+    elif [[ -f /lib/modules/${kernel_version}/initramfs.img ]]; then
+        echo "/lib/modules/${kernel_version}/initramfs.img"
+    elif [[ -f /boot/initramfs-${kernel_version}.img ]]; then
+        echo "/boot/initramfs-${kernel_version}.img"
+    elif [[ $machine_id ]] \
+        && mountpoint -q /efi; then
+        echo "/efi/${machine_id}/${kernel_version}/initrd"
+    elif [[ $machine_id ]] \
+        && mountpoint -q /boot/efi; then
+        echo "/boot/efi/${machine_id}/${kernel_version}/initrd"
+    fi
+}
+
 if [[ $1 ]]; then
     image="$1"
     if ! [[ -f $image ]]; then
@@ -109,42 +149,7 @@ if [[ $1 ]]; then
         exit 1
     fi
 else
-    if [[ -d /efi/Default ]] || [[ -d /boot/Default ]] || [[ -d /boot/efi/Default ]]; then
-        MACHINE_ID="Default"
-    elif [[ -s /etc/machine-id ]]; then
-        read -r MACHINE_ID < /etc/machine-id
-        [[ $MACHINE_ID == "uninitialized" ]] && MACHINE_ID="Default"
-    else
-        MACHINE_ID="Default"
-    fi
-
-    if [[ -d /efi/loader/entries || -L /efi/loader/entries ]] \
-        && [[ $MACHINE_ID ]] \
-        && [[ -d /efi/${MACHINE_ID} || -L /efi/${MACHINE_ID} ]]; then
-        image="/efi/${MACHINE_ID}/${KERNEL_VERSION}/initrd"
-    elif [[ -d /boot/loader/entries || -L /boot/loader/entries ]] \
-        && [[ $MACHINE_ID ]] \
-        && [[ -d /boot/${MACHINE_ID} || -L /boot/${MACHINE_ID} ]]; then
-        image="/boot/${MACHINE_ID}/${KERNEL_VERSION}/initrd"
-    elif [[ -d /boot/efi/loader/entries || -L /boot/efi/loader/entries ]] \
-        && [[ $MACHINE_ID ]] \
-        && [[ -d /boot/efi/${MACHINE_ID} || -L /boot/efi/${MACHINE_ID} ]]; then
-        image="/boot/efi/${MACHINE_ID}/${KERNEL_VERSION}/initrd"
-    elif [[ -f /lib/modules/${KERNEL_VERSION}/initrd ]]; then
-        image="/lib/modules/${KERNEL_VERSION}/initrd"
-    elif [[ -f /lib/modules/${KERNEL_VERSION}/initramfs.img ]]; then
-        image="/lib/modules/${KERNEL_VERSION}/initramfs.img"
-    elif [[ -f /boot/initramfs-${KERNEL_VERSION}.img ]]; then
-        image="/boot/initramfs-${KERNEL_VERSION}.img"
-    elif [[ $MACHINE_ID ]] \
-        && mountpoint -q /efi; then
-        image="/efi/${MACHINE_ID}/${KERNEL_VERSION}/initrd"
-    elif [[ $MACHINE_ID ]] \
-        && mountpoint -q /boot/efi; then
-        image="/boot/efi/${MACHINE_ID}/${KERNEL_VERSION}/initrd"
-    else
-        image=""
-    fi
+    image=$(find_initrd_for_kernel_version "$KERNEL_VERSION")
 fi
 
 shift
