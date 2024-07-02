@@ -1,0 +1,2 @@
+# disable xattr
+export DRACUT_NO_XATTR=1
