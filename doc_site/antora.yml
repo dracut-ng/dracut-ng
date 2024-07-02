@@ -1,0 +1,5 @@
+name: ROOT
+title: dracut-ng
+version: ~
+nav:
+  - modules/ROOT/nav.adoc

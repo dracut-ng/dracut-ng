@@ -272,3 +272,12 @@ $ make clean setup run
 $ make run
 ```
 to run the test without doing the setup.
+
+### Documentation
+
+To build the documentation site run `make doc_site`.  This will be built and
+published by CI on commit.
+
+The documentation site is based on [Antora](https://antora.org/).  By default
+it will build via `npx` (install `nodejs`) or if you have Antora installed in
+some other way, you can set `ANTORA_BIN`.

@@ -1,0 +1,24 @@
+.Dracut
+
+.User Manual
+
+* xref:man/dracut.8.adoc[]
+* xref:man/dracut.conf.5.adoc[]
+* xref:man/dracut.cmdline.7.adoc[]
+* xref:man/lsinitrd.1.adoc[]
+
+.Developer Manual
+
+* xref:man/dracut.modules.7.adoc[]
+* xref:man/dracut.bootup.7.adoc[]
+
+.Systemd Services
+
+* xref:man/dracut-cmdline.service.8.adoc[]
+* xref:man/dracut-initqueue.service.8.adoc[]
+* xref:man/dracut-mount.service.8.adoc[]
+* xref:man/dracut-pre-mount.service.8.adoc[]
+* xref:man/dracut-pre-pivot.service.8.adoc[]
+* xref:man/dracut-pre-trigger.service.8.adoc[]
+* xref:man/dracut-pre-udev.service.8.adoc[]
+* xref:man/dracut-shutdown.service.8.adoc[]

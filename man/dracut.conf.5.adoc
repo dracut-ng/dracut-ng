@@ -323,9 +323,9 @@ Logging levels:
 
 *initrdname=*"_<filepattern>_"::
     Specifies the file name for the generated initramfs if it is not set otherwise.
-    The initrdname configuration option is required to match the _initr*${kernel}*_
+    The initrdname configuration option is required to match the _initr*$\{kernel\}*_
     file pattern and only one file with this pattern should exists in the
-    directory where initramfs is loaded from. Defaults to _initramfs-${kernel}.img_.
+    directory where initramfs is loaded from. Defaults to _initramfs-$\{kernel\}.img_.
 
 Files
 -----
