@@ -30,7 +30,6 @@ else
             cd /lib/modules
             ls -1 | tail -1
         )" \
-        DRACUT_NO_XATTR=1 \
         TEST_RUN_ID="$RUN_ID" \
         ${TESTS:+TESTS="$TESTS"} \
         -k V=1 \
