@@ -64,9 +64,9 @@ jobs:
                         "60",
                 ]
                 exclude:
-                  - test: "40"
-                include:
-                  - container: "fedora"
+                  - container: "gentoo"
+                    test: "40"
+                  - container: "ubuntu"
                     test: "40"
             fail-fast: false
         container:

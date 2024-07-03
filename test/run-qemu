@@ -36,7 +36,7 @@ case "$ARCH" in
 esac
 
 # Provide rng device sourcing the hosts /dev/urandom and other standard parameters
-ARGS+=(-smp 2 -m 1024 -nodefaults -vga none -display none -no-reboot -watchdog-action poweroff -device virtio-rng-pci)
+ARGS+=(-smp 2 -m 2048 -nodefaults -vga none -display none -no-reboot -watchdog-action poweroff -device virtio-rng-pci)
 
 if ! [[ $* == *-daemonize* ]] && ! [[ $* == *-daemonize* ]]; then
     ARGS+=(-serial stdio)
