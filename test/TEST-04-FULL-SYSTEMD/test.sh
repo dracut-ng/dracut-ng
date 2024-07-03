@@ -146,7 +146,7 @@ EOF
     [ -e /etc/machine-info ] && EXTRA_MACHINE+=" /etc/machine-info"
 
     test_dracut \
-        -a "systemd i18n qemu" \
+        -m "dracut-systemd i18n systemd-ac-power systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup " \
         -d "btrfs" \
         ${EXTRA_MACHINE:+-I "$EXTRA_MACHINE"} \
         "$TESTDIR"/initramfs.testing
