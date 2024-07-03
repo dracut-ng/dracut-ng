@@ -43,7 +43,7 @@ of some tools. It should be attached to any report about dracut problems.
 USAGE
 -----
 
-include::dracut.usage.asc[]
+include::dracut.usage.adoc[]
 
 OPTIONS
 -------
