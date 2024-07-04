@@ -247,7 +247,6 @@ test_setup() {
         instmods nfsd sunrpc ipv6 lockd af_packet 8021q bonding
         inst_simple /etc/os-release
         inst ./server-init.sh /sbin/init
-        inst ./hosts /etc/hosts
         inst ./exports /etc/exports
         inst ./dhcpd.conf /etc/dhcpd.conf
         inst_multiple -o {,/usr}/etc/nsswitch.conf {,/usr}/etc/rpc {,/usr}/etc/protocols
