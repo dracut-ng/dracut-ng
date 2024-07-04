@@ -56,6 +56,7 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     squashfs-tools \
     strace \
     systemd-boot-efi \
+    systemd-coredump \
     systemd-ukify \
     tcpdump \
     tgt \
