@@ -158,7 +158,9 @@ EOF
         emergency.target \
         rescue.target; do
         [[ -f "$systemdsystemunitdir"/$i ]] || continue
-        $SYSTEMCTL -q --root "$initdir" add-wants "$i" systemd-vconsole-setup.service
+        if [ -e "$systemdsystemunitdir"/systemd-vconsole-setup.service ]; then
+            $SYSTEMCTL -q --root "$initdir" add-wants "$i" systemd-vconsole-setup.service
+        fi
     done
 
     mkdir -p "$initdir/etc/systemd"
