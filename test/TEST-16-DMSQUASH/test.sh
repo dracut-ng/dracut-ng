@@ -21,7 +21,7 @@ test_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -boot order=d \
-        -append "$TEST_KERNEL_CMDLINE rd.live.overlay.overlayfs=1 root=live:/dev/disk/by-label/dracut" \
+        -append "$TEST_KERNEL_CMDLINE rd.live.overlay.overlayfs=1 root=live:/dev/disk/by-label/dracut console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.testing
 
     test_marker_check || return 1
@@ -30,7 +30,7 @@ test_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -boot order=d \
-        -append "$TEST_KERNEL_CMDLINE rd.live.image rd.live.overlay.overlayfs=1 root=LABEL=dracut" \
+        -append "$TEST_KERNEL_CMDLINE rd.live.image rd.live.overlay.overlayfs=1 root=LABEL=dracut console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.testing
 
     test_marker_check || return 1
@@ -39,7 +39,7 @@ test_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -boot order=d \
-        -append "$TEST_KERNEL_CMDLINE rd.live.image rd.live.overlay.overlayfs=1 rd.live.dir=testdir root=LABEL=dracut" \
+        -append "$TEST_KERNEL_CMDLINE rd.live.image rd.live.overlay.overlayfs=1 rd.live.dir=testdir root=LABEL=dracut console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.testing
 
     test_marker_check || return 1
@@ -50,7 +50,7 @@ test_run() {
         "$testdir"/run-qemu \
             "${disk_args[@]}" \
             -boot order=d \
-            -append "$TEST_KERNEL_CMDLINE rd.live.image rd.live.overlay.overlayfs=1 rd.live.dir=testdir root=LABEL=dracut_ntfs" \
+            -append "$TEST_KERNEL_CMDLINE rd.live.image rd.live.overlay.overlayfs=1 rd.live.dir=testdir root=LABEL=dracut_ntfs console=ttyS0,115200n81" \
             -initrd "$TESTDIR"/initramfs.testing
 
         test_marker_check || return 1
@@ -63,7 +63,7 @@ test_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -boot order=d \
-        -append "init=/sbin/init-persist rd.live.image rd.live.overlay.overlayfs=1 rd.live.overlay=LABEL=persist rd.live.dir=testdir root=LABEL=dracut console=ttyS0,115200n81 quiet rd.info rd.shell=0 panic=1 oops=panic softlockup_panic=1 $DEBUGFAIL" \
+        -append "init=/sbin/init-persist rd.live.image rd.live.overlay.overlayfs=1 rd.live.overlay=LABEL=persist rd.live.dir=testdir root=LABEL=dracut console=ttyS0,115200n81 quiet rd.info rd.shell=0 panic=1 oops=panic softlockup_panic=1 console=ttyS0,115200n81 $DEBUGFAIL" \
         -initrd "$TESTDIR"/initramfs.testing-autooverlay
 
     rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')

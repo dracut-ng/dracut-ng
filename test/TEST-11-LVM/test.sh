@@ -17,7 +17,7 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rw rd.auto=1 rd.retry=3" \
+        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rw rd.auto=1 rd.retry=3 console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     test_marker_check || return 1
