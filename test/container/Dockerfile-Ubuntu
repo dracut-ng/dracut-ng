@@ -26,7 +26,6 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     git \
     iputils-arping \
     iputils-ping \
-    isc-dhcp-client \
     isc-dhcp-server \
     iscsiuio \
     kmod \
