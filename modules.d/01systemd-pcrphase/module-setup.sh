@@ -21,7 +21,17 @@ check() {
 # Module dependency requirements.
 depends() {
     # This module has external dependency on other module(s).
-    echo systemd tpm2-tss
+
+    local deps
+    deps="systemd"
+
+    # optional dependencies
+    module="tpm2-tss"
+    module_check $module > /dev/null 2>&1
+    if [[ $? == 255 ]]; then
+        deps+=" $module"
+    fi
+    echo "$deps"
 
     # Return 0 to include the dependent module(s) in the initramfs.
     return 0
