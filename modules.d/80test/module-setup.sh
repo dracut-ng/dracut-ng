@@ -28,6 +28,7 @@ install() {
     export do_hardlink="no"
     export early_microcode="no"
     export hostonly_cmdline="no"
+    export hostonly_l="yes"
 
     inst poweroff
     inst_hook shutdown-emergency 000 "$moddir/hard-off.sh"
