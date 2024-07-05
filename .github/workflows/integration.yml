@@ -51,11 +51,13 @@ jobs:
             fail-fast: false
             matrix:
                 container: [
+                        "alpine",
                         "arch",
                         "debian",
                         "fedora",
                         "gentoo",
                         "ubuntu",
+                        "void",
                 ]
                 test: [
                         "02",
