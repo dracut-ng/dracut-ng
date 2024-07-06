@@ -60,7 +60,6 @@ test_setup() {
         -m "test-root systemd-ldconfig" \
         -i "${PKGLIBDIR}/modules.d/80test-root/test-init.sh" "/sbin/test-init.sh" \
         -i ./test-init.sh /sbin/test-init \
-        -I "findmnt" \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
 
     mkdir -p "$TESTDIR"/overlay/source && cp -a "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.* && export initdir=$TESTDIR/overlay/source
