@@ -932,7 +932,7 @@ check_mount() {
             && force_add_dracutmodules+=" $_moddep "
         # if a module we depend on fail, fail also
         if ! check_module "$_moddep"; then
-            derror "Module '$_mod' depends on '$_moddep', which can't be installed"
+            derror "Module '$_mod' depends on module '$_moddep', which can't be installed"
             return 1
         fi
     done
@@ -1007,7 +1007,7 @@ check_module() {
             && force_add_dracutmodules+=" $_moddep "
         # if a module we depend on fail, fail also
         if ! check_module "$_moddep"; then
-            derror "Module '$_mod' depends on '$_moddep', which can't be installed"
+            derror "Module '$_mod' depends on module '$_moddep', which can't be installed"
             return 1
         fi
     done
