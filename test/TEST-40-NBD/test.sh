@@ -279,7 +279,6 @@ EOF
 
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
         -a "test-root ${USE_NETWORK}" \
-        -d "nfsd sunrpc ipv6 lockd af_packet 8021q ipvlan macvlan" \
         -I "ip grep sleep nbd-server chmod modprobe vi pidof" \
         -i "${basedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${basedir}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
@@ -307,7 +306,7 @@ EOF
     declare -a disk_args=()
     declare -i disk_index=0
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/server.img root 240
+    qemu_add_drive disk_index disk_args "$TESTDIR"/server.img root 480
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
