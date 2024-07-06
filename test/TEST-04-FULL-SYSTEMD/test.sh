@@ -22,6 +22,7 @@ client_run() {
     declare -i disk_index=0
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
     qemu_add_drive disk_index disk_args "$TESTDIR"/root.btrfs root
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root_crypt.btrfs root_crypt
     qemu_add_drive disk_index disk_args "$TESTDIR"/usr.btrfs usr
 
     test_marker_reset
@@ -35,13 +36,17 @@ client_run() {
         return 1
     fi
     echo "CLIENT TEST END: $test_name [OK]"
-
 }
 
 test_run() {
     client_run "no option specified" || return 1
     client_run "readonly root" "ro" || return 1
     client_run "writeable root" "rw" || return 1
+
+    # shellcheck source=$TESTDIR/luks.uuid
+    . "$TESTDIR"/luks.uuid
+
+    client_run "encrypted root" "root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID" || return 1
     return 0
 }
 
@@ -118,7 +123,7 @@ EOF
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
         -a "test-makeroot bash btrfs" \
-        -I "mkfs.btrfs" \
+        -I "mkfs.btrfs cryptsetup" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
     rm -rf -- "$TESTDIR"/overlay/*
@@ -129,6 +134,7 @@ EOF
     declare -i disk_index=0
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
     qemu_add_drive disk_index disk_args "$TESTDIR"/root.btrfs root 160
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root_crypt.btrfs root_crypt 160
     qemu_add_drive disk_index disk_args "$TESTDIR"/usr.btrfs usr 160
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
@@ -145,9 +151,17 @@ EOF
     [ -e /etc/machine-id ] && EXTRA_MACHINE="/etc/machine-id"
     [ -e /etc/machine-info ] && EXTRA_MACHINE+=" /etc/machine-info"
 
+    grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
+    # shellcheck source=$TESTDIR/luks.uuid
+    . "$TESTDIR"/luks.uuid
+    echo "luks-$ID_FS_UUID /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_crypt /etc/key" > /tmp/crypttab
+    echo -n test > /tmp/key
+
     test_dracut \
         -m "dracut-systemd i18n systemd-ac-power systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup " \
         -d "btrfs" \
+        -i "/tmp/key" "/etc/key" \
+        -i "/tmp/crypttab" "/etc/crypttab" \
         ${EXTRA_MACHINE:+-I "$EXTRA_MACHINE"} \
         "$TESTDIR"/initramfs.testing
 
