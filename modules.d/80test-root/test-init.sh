@@ -29,8 +29,6 @@ fi
 
 export TERM=linux
 export PS1='initramfs-test:\w\$ '
-[ -f /etc/mtab ] || ln -sfn /proc/mounts /etc/mtab
-[ -f /etc/fstab ] || ln -sfn /proc/mounts /etc/fstab
 stty sane
 echo "made it to the rootfs!"
 
@@ -42,7 +40,6 @@ if getargbool 0 rd.shell; then
 fi
 
 echo "Powering down."
-mount -n -o remount,ro /
 if [ -d /run/initramfs/etc ]; then
     echo " rd.debug=0 " >> /run/initramfs/etc/cmdline
 fi
