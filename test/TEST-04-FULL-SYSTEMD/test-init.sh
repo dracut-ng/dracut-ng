@@ -5,7 +5,7 @@ export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 command -v plymouth > /dev/null 2>&1 && plymouth --quit
 exec > /dev/console 2>&1
 
-systemctl --failed --no-legend --no-pager > /failed
+systemctl --failed --no-legend --no-pager > /run/failed
 
 ismounted() {
     findmnt "$1" > /dev/null 2>&1
@@ -14,7 +14,7 @@ ismounted() {
 if ! ismounted /usr; then
     echo "**************************FAILED**************************"
     echo "/usr not mounted!!"
-    cat /proc/mounts >> /failed
+    cat /proc/mounts >> /run/failed
     echo "**************************FAILED**************************"
 fi
 
