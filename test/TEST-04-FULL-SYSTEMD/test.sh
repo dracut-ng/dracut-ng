@@ -156,7 +156,7 @@ EOF
     echo -n test > /tmp/key
 
     test_dracut \
-        -m "dracut-systemd i18n systemd-ac-power systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup " \
+        -m "dracut-systemd i18n systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup" \
         -d "btrfs" \
         -i "/tmp/key" "/etc/key" \
         -i "/tmp/crypttab" "/etc/crypttab" \
