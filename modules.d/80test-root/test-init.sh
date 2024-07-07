@@ -18,9 +18,9 @@ grep -q '^tmpfs /run tmpfs' /proc/self/mounts \
 
 exec > /dev/console 2>&1
 
-if [ -s /failed ]; then
+if [ -s /run/failed ]; then
     echo "**************************FAILED**************************"
-    cat /failed
+    cat /run/failed
     echo "**************************FAILED**************************"
 else
     echo "dracut-root-block-success" | dd oflag=direct,dsync status=none of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
