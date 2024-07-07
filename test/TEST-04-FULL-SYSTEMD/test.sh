@@ -10,7 +10,6 @@ test_check() {
 # Uncomment this to debug failures
 #DEBUGFAIL="rd.shell rd.break"
 #DEBUGOUT="quiet systemd.log_level=debug systemd.log_target=console loglevel=77  rd.info rd.debug"
-DEBUGOUT="loglevel=0 "
 client_run() {
     local test_name="$1"
     shift
