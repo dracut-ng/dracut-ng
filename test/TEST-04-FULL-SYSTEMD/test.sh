@@ -46,7 +46,7 @@ test_run() {
     # shellcheck source=$TESTDIR/luks.uuid
     . "$TESTDIR"/luks.uuid
 
-    client_run "encrypted root" "root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID" || return 1
+    client_run "encrypted root" "root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID rd.luks.key=/etc/key" || return 1
     return 0
 }
 
@@ -147,16 +147,12 @@ EOF
     fi
 
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
-    # shellcheck source=$TESTDIR/luks.uuid
-    . "$TESTDIR"/luks.uuid
-    echo "luks-$ID_FS_UUID /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_crypt /etc/key" > /tmp/crypttab
     echo -n test > /tmp/key
 
     test_dracut \
         -m "dracut-systemd i18n systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup" \
         -d "btrfs" \
         -i "/tmp/key" "/etc/key" \
-        -i "/tmp/crypttab" "/etc/crypttab" \
         "$TESTDIR"/initramfs.testing
 
     rm -rf -- "$TESTDIR"/overlay
