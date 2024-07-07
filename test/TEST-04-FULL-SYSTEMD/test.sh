@@ -140,11 +140,7 @@ EOF
         "${disk_args[@]}" \
         -append "root=/dev/fakeroot rw rootfstype=btrfs quiet console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.makeroot || return 1
-
-    if ! test_marker_check dracut-root-block-created; then
-        echo "Could not create root filesystem"
-        return 1
-    fi
+    test_marker_check dracut-root-block-created || return 1
 
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
     echo -n test > /tmp/key
