@@ -146,8 +146,7 @@ EOF
     echo -n test > /tmp/key
 
     test_dracut \
-        -m "dracut-systemd i18n systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup" \
-        -d "btrfs" \
+        -m "btrfs dracut-systemd i18n systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup" \
         -i "/tmp/key" "/etc/key" \
         "$TESTDIR"/initramfs.testing
 
