@@ -146,9 +146,6 @@ EOF
         return 1
     fi
 
-    [ -e /etc/machine-id ] && EXTRA_MACHINE="/etc/machine-id"
-    [ -e /etc/machine-info ] && EXTRA_MACHINE+=" /etc/machine-info"
-
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
     # shellcheck source=$TESTDIR/luks.uuid
     . "$TESTDIR"/luks.uuid
@@ -160,7 +157,6 @@ EOF
         -d "btrfs" \
         -i "/tmp/key" "/etc/key" \
         -i "/tmp/crypttab" "/etc/crypttab" \
-        ${EXTRA_MACHINE:+-I "$EXTRA_MACHINE"} \
         "$TESTDIR"/initramfs.testing
 
     rm -rf -- "$TESTDIR"/overlay
