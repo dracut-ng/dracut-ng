@@ -35,8 +35,7 @@ check() {
     require_binaries kpartx || return 1
 
     if [[ $_any_mpath_dev != 0 ]] && [[ ! -f /etc/multipath.conf ]]; then
-        dwarn "multipath: including module with no multipath devices and empty" \
-            "configuration, the root disk may be unintentionally multipathed."
+        return 1
     fi
 
     return 0
