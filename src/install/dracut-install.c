@@ -1652,7 +1652,9 @@ static int install_dependent_module(struct kmod_ctx *ctx, struct kmod_module *mo
                 _cleanup_kmod_module_unref_list_ struct kmod_list *modlist = NULL;
                 _cleanup_kmod_module_unref_list_ struct kmod_list *modpre = NULL;
                 _cleanup_kmod_module_unref_list_ struct kmod_list *modpost = NULL;
+#ifdef CONFIG_WEAKDEP
                 _cleanup_kmod_module_unref_list_ struct kmod_list *modweak = NULL;
+#endif
                 log_debug("dracut_install '%s' '%s' OK", path, &path[kerneldirlen]);
                 install_firmware(mod);
                 modlist = kmod_module_get_dependencies(mod);
@@ -1666,11 +1668,13 @@ static int install_dependent_module(struct kmod_ctx *ctx, struct kmod_module *mo
                                 *err = *err ? : r;
                         }
                 }
+#ifdef CONFIG_WEAKDEP
                 if (*err == 0) {
                         *err = kmod_module_get_weakdeps(mod, &modweak);
                         if (*err == 0)
                                 *err = install_dependent_modules(ctx, modweak, NULL);
                 }
+#endif
         } else {
                 log_error("dracut_install '%s' '%s' ERROR", path, &path[kerneldirlen]);
         }
@@ -1729,7 +1733,9 @@ static int install_module(struct kmod_ctx *ctx, struct kmod_module *mod)
         _cleanup_kmod_module_unref_list_ struct kmod_list *modlist = NULL;
         _cleanup_kmod_module_unref_list_ struct kmod_list *modpre = NULL;
         _cleanup_kmod_module_unref_list_ struct kmod_list *modpost = NULL;
+#ifdef CONFIG_WEAKDEP
         _cleanup_kmod_module_unref_list_ struct kmod_list *modweak = NULL;
+#endif
         const char *path = NULL;
         const char *name = NULL;
 
@@ -1787,11 +1793,13 @@ static int install_module(struct kmod_ctx *ctx, struct kmod_module *mod)
                         ret = ret ? : r;
                 }
         }
+#ifdef CONFIG_WEAKDEP
         if (ret == 0) {
                 ret = kmod_module_get_weakdeps(mod, &modweak);
                 if (ret == 0)
                         ret = install_dependent_modules(ctx, modweak, NULL);
         }
+#endif
 
         return ret;
 }

@@ -144,6 +144,27 @@ if test "$enable_dracut_cpio" = "yes"; then
     fi
 fi
 
+cat << EOF > weakdep_test.c
+#include <stddef.h>
+#include <libkmod.h>
+
+int main(void) {
+  struct kmod_module *mod = NULL;
+  struct kmod_list *modweak = NULL;
+
+  return kmod_module_get_weakdeps(mod, &modweak);
+}
+EOF
+
+# shellcheck disable=SC2086,SC2046
+${CC} $CFLAGS $LDFLAGS weakdep_test.c $(${PKG_CONFIG} --libs libkmod) > /dev/null 2>&1
+ret=$?
+rm -f weakdep_test.c a.out
+
+if test $ret -eq 0; then
+    KMOD_CFLAGS_EXTRA+=" -DCONFIG_WEAKDEP"
+fi
+
 cat > Makefile.inc.$$ << EOF
 prefix ?= ${prefix}
 libdir ?= ${libdir:-${prefix}/lib}
@@ -154,7 +175,7 @@ mandir ?= ${mandir:-${prefix}/share/man}
 enable_documentation ?= ${enable_documentation:-yes}
 enable_dracut_cpio ?= ${enable_dracut_cpio}
 bindir ?= ${bindir:-${prefix}/bin}
-KMOD_CFLAGS ?= $(${PKG_CONFIG} --cflags " libkmod >= 23 ")
+KMOD_CFLAGS ?= $(${PKG_CONFIG} --cflags " libkmod >= 23 ") ${KMOD_CFLAGS_EXTRA}
 KMOD_LIBS ?= $(${PKG_CONFIG} --libs " libkmod >= 23 ")
 FTS_LIBS ?= ${FTS_LIBS}
 EOF
