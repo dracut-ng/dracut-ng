@@ -49,7 +49,9 @@ test_run() {
     # shellcheck source=$TESTDIR/luks.uuid
     . "$TESTDIR"/luks.uuid
 
-    client_run "encrypted root" "root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID rd.luks.key=/etc/key" || return 1
+    # luks
+    client_run "encrypted root with rd.luks.uuid" "root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID rd.luks.key=/etc/key" || return 1
+    client_run "encrypted root with rd.luks.name" "root=/dev/mapper/crypt rd.luks.name=$ID_FS_UUID=crypt rd.luks.key=/etc/key" || return 1
     return 0
 }
 
