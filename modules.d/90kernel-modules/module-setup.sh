@@ -81,6 +81,7 @@ installkernel() {
                 "=drivers/mmc/host" \
                 "=drivers/nvmem" \
                 "=drivers/phy" \
+                "=drivers/platform/chrome" \
                 "=drivers/power" \
                 "=drivers/regulator" \
                 "=drivers/reset" \
