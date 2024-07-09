@@ -9,7 +9,7 @@ RUN echo "EMERGE_DEFAULT_OPTS=\"-j$(nproc) -l$(nproc)\"" >> /etc/portage/make.co
 RUN echo "FEATURES=\"getbinpkg binpkg-ignore-signature parallel-fetch parallel-install pkgdir-index-trusted\"" >> /etc/portage/make.conf
 
 # systemd-boot, no need to install intramfs with kernel
-RUN echo "USE=\"boot kernel-install -initramfs\"" >> /etc/portage/make.conf
+RUN echo "USE=\"boot kernel-install pkcs7 pkcs11 tpm -initramfs\"" >> /etc/portage/make.conf
 
 # Use debian's installkernel
 RUN echo 'sys-kernel/installkernel -systemd' >> /etc/portage/package.use/kernel
