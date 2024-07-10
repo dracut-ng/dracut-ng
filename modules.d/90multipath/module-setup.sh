@@ -23,6 +23,10 @@ majmin_to_mpath_dev() {
 check() {
     local _any_mpath_dev
 
+    # if there's no multipath binary, no go.
+    require_binaries multipath || return 1
+    require_binaries kpartx || return 1
+
     for_each_host_dev_and_slaves is_mpath
     _any_mpath_dev=$?
 
@@ -30,12 +34,8 @@ check() {
         [[ $_any_mpath_dev == 0 ]] || return 255
     }
 
-    # if there's no multipath binary, no go.
-    require_binaries multipath || return 1
-    require_binaries kpartx || return 1
-
     if [[ $_any_mpath_dev != 0 ]] && [[ ! -f /etc/multipath.conf ]]; then
-        return 1
+        return 255
     fi
 
     return 0
