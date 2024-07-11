@@ -34,10 +34,6 @@ check() {
         [[ $_any_mpath_dev == 0 ]] || return 255
     }
 
-    if [[ $_any_mpath_dev != 0 ]] && [[ ! -f /etc/multipath.conf ]]; then
-        return 255
-    fi
-
     return 0
 }
 
