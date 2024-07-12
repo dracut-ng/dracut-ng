@@ -27,6 +27,18 @@ cp -a -t /root /source/*
 echo "Creating squashfs"
 mksquashfs /source /root/testdir/rootfs.img -quiet
 
+# Write the erofs compressed filesystem to the partition
+if [ -e "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_erofs" ]; then
+    sfdisk /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_erofs << EOF
+2048,161792
+EOF
+
+    udevadm settle
+
+    echo "Creating erofs"
+    mkfs.erofs /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_erofs-part1 /source
+fi
+
 # Copy rootfs.img to the NTFS drive if exists
 if [ -e "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_ntfs" ]; then
     mkfs.ntfs -q -F -L dracut_ntfs /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_ntfs
