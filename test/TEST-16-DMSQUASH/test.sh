@@ -12,6 +12,11 @@ test_run() {
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
     qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root
 
+    # erofs drive
+    if modprobe erofs &> /dev/null && command -v mkfs.erofs &> /dev/null; then
+        qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs
+    fi
+
     # NTFS drive
     if modprobe --dry-run ntfs3 &> /dev/null && command -v mkfs.ntfs &> /dev/null; then
         qemu_add_drive disk_index disk_args "$TESTDIR"/root_ntfs.img root_ntfs
@@ -25,6 +30,18 @@ test_run() {
         -initrd "$TESTDIR"/initramfs.testing
 
     test_marker_check || return 1
+
+    # Run the erofs test only if mkfs.ntfs is available
+    if modprobe erofs &> /dev/null && command -v mkfs.erofs &> /dev/null; then
+        test_marker_reset
+        "$testdir"/run-qemu \
+            "${disk_args[@]}" \
+            -boot order=d \
+            -append "$TEST_KERNEL_CMDLINE rd.live.overlay.overlayfs=1 root=live:/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_erofs-part1" \
+            -initrd "$TESTDIR"/initramfs.testing
+
+        test_marker_check || return 1
+    fi
 
     test_marker_reset
     "$testdir"/run-qemu \
@@ -93,7 +110,7 @@ test_setup() {
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
         --add "test-makeroot" \
-        --install "sfdisk mkfs.ntfs mksquashfs" \
+        --install "sfdisk mkfs.ntfs mksquashfs mkfs.erofs" \
         --drivers "ntfs3" \
         --include ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         --force "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
@@ -104,6 +121,11 @@ test_setup() {
     declare -i disk_index=0
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
     qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 160
+
+    # erofs drive
+    if modprobe erofs &> /dev/null && command -v mkfs.erofs &> /dev/null; then
+        qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs 160
+    fi
 
     # NTFS drive
     if modprobe --dry-run ntfs3 &> /dev/null && command -v mkfs.ntfs &> /dev/null; then
