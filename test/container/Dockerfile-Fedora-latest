@@ -19,6 +19,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     dhcp-server \
     dmraid \
     e2fsprogs \
+    erofs-utils \
     f2fs-tools \
     fcoe-utils \
     fuse3 \

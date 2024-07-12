@@ -16,6 +16,7 @@ RUN pacman --noconfirm -Syu \
     dhcp \
     dmraid \
     elfutils \
+    erofs-utils \
     f2fs-tools \
     git \
     glibc \
