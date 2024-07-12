@@ -90,8 +90,6 @@ test_setup() {
     echo "$MD_UUID" > "$TESTDIR"/mduuid
 
     test_dracut \
-        -a "dmraid" \
-        -o "systemd" \
         "$TESTDIR"/initramfs.testing
 }
 
