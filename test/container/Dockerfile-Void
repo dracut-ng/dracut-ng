@@ -23,6 +23,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     e2fsprogs \
     edk2-ovmf \
     elfutils \
+    erofs-utils \
     eudev \
     f2fs-tools \
     git \
