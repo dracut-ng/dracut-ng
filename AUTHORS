@@ -10,6 +10,7 @@ Kairui Song <kasong@redhat.com>
 Will Woods <wwoods@redhat.com>
 Philippe Seewer <philippe.seewer@bfh.ch>
 Warren Togami <wtogami@redhat.com>
+Benjamin Drung <benjamin.drung@canonical.com>
 Dave Young <dyoung@redhat.com>
 Martin Wilck <mwilck@suse.de>
 Jeremy Katz <katzj@redhat.com>
@@ -25,26 +26,25 @@ Frederick Grose <fgrose@sugarlabs.org>
 Alexander Tsoy <alexander@tsoy.me>
 Beniamino Galvani <bgalvani@redhat.com>
 наб <nabijaczleweli@nabijaczleweli.xyz>
-Benjamin Drung <benjamin.drung@canonical.com>
 Jonathan Lebon <jonathan@jlebon.com>
 Steffen Maier <maier@linux.ibm.com>
 WANG Chao <chaowang@redhat.com>
+David Tardon <dtardon@redhat.com>
 Yu Watanabe <watanabe.yu+github@gmail.com>
 Andrey Borzenkov <arvidjaar@gmail.com>
 David Disseldorp <ddiss@suse.de>
-David Tardon <dtardon@redhat.com>
 Frantisek Sumsal <frantisek@sumsal.cz>
+Pavel Valena <pvalena@redhat.com>
 Peter Robinson <pbrobinson@fedoraproject.org>
 Thomas Blume <thomas.blume@suse.com>
+Brian C. Lane <bcl@redhat.com>
 Hans de Goede <hdegoede@redhat.com>
-Pavel Valena <pvalena@redhat.com>
 Peter Jones <pjones@redhat.com>
 Andreas Thienemann <andreas@bawue.net>
+Andrew Ammerlaan <andrewammerlaan@gentoo.org>
 Marcos Mello <marcosfrm@gmail.com>
 Renaud Métrich <rmetrich@redhat.com>
 Tomasz Paweł Gajc <tpgxyz@gmail.com>
-Andrew Ammerlaan <andrewammerlaan@gentoo.org>
-Brian C. Lane <bcl@redhat.com>
 Fabian Vogt <fvogt@suse.com>
 Nicolas Chauvet <kwizart@gmail.com>
 Zoltán Böszörményi <zboszor@pr.hu>
@@ -70,8 +70,10 @@ Ondrej Mosnacek <omosnace@redhat.com>
 Tao Liu <ltao@redhat.com>
 Baoquan He <bhe@redhat.com>
 Brendan Germain <brendan.germain@nasdaqomx.com>
+BtbN <timo@rothenpieler.org>
 Jonas Witschel <diabonas@gmx.de>
 Leho Kraav <leho@kraav.com>
+Lidong Zhong <lidong.zhong@suse.com>
 Moritz Maxeiner <moritz@ucworks.org>
 Nathan Rini <nate@ucar.edu>
 Radek Vykydal <rvykydal@redhat.com>
@@ -81,13 +83,13 @@ Adam Williamson <awilliam@redhat.com>
 Fabian Deutsch <fabiand@fedoraproject.org>
 Jan Macku <jamacku@redhat.com>
 Kamil Rytarowski <n54@gmx.com>
-Lidong Zhong <lidong.zhong@suse.com>
 Marc Grimme <grimme@atix.de>
 NeilBrown <neilb@suse.de>
 Peter Rajnoha <prajnoha@redhat.com>
 Thorsten Behrens <tbehrens@suse.com>
 q66 <daniel@octaforge.org>
 Chao Wang <chaowang@redhat.com>
+Cornelius Hoffmann <coding@hoffmn.de>
 Frederic Crozat <fcrozat@suse.com>
 James Lee <jlee@thestaticvoid.com>
 Jesse Keating <jkeating@redhat.com>
@@ -101,6 +103,7 @@ Stefan Reimer <it@startux.de>
 Takashi Iwai <tiwai@suse.de>
 Tony Asleson <tasleson@redhat.com>
 Zoltán Böszörményi <zboszor@gmail.com>
+Alper Nebi Yasak <alpernebiyasak@gmail.com>
 Anton Blanchard <anton@samba.org>
 Bill Nottingham <notting@redhat.com>
 Chapman Flack <g2@anastigmatix.net>
@@ -145,9 +148,9 @@ Antony Messerli <amesserl@rackspace.com>
 Benjamin Marzinski <bmarzins@redhat.com>
 Chao Fan <cfan@redhat.com>
 Coiby Xu <coxu@redhat.com>
-Cornelius Hoffmann <coding@hoffmn.de>
 Daniel Cordero <dracut@0xdc.io>
 Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Daniel McIlvaney <damcilva@microsoft.com>
 Daniel Schaal <farbing@web.de>
 Daniel Winzen <daniel@danwin1210.de>
 Denis Silakov <dsilakov@virtuozzo.com>
@@ -160,10 +163,12 @@ German Maglione <gmaglione@redhat.com>
 Guido Trentalancia <guido@trentalancia.net>
 Hari Bathini <hbathini@linux.ibm.com>
 Hari Bathini <hbathini@linux.vnet.ibm.com>
+Hector Martin <marcan@marcan.st>
 Ian Dall <ian@beware.dropbear.id.au>
 Imran Haider <imran1008@gmail.com>
 James Buren <ryuo@frugalware.org>
 Joey Boggs <jboggs@redhat.com>
+Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
 José María Fernández <josemariafg@gmail.com>
 Julian Wolf <juwolf@suse.com>
 Kamil Szczęk <kamil@szczek.dev>
@@ -232,6 +237,7 @@ Brandon Sloane <btsloane@verizon.net>
 Brian Harring <ferringb@gmail.com>
 Bruno E. O. Meneguele <bmeneg@redhat.com>
 Bryn M. Reeves <bmr@redhat.com>
+Cameron Baird <cameronbaird@microsoft.com>
 Canek Peláez Valdés <caneko@gmail.com>
 Carlo Caione <carlo@endlessm.com>
 Chad Dupuis <chad.dupuis@cavium.com>
@@ -242,7 +248,6 @@ Cong Wang <amwang@redhat.com>
 Conrad Hoffmann <ch@bitfehler.net>
 Daan De Meyer <daan.j.demeyer@gmail.com>
 Dan Fuhry <dfuhry@datto.com>
-Daniel McIlvaney <damcilva@microsoft.com>
 Daniel P. Berrangé <berrange@redhat.com>
 Dave Jones <davej@redhat.com>
 David Cassany <dcassany@suse.com>
@@ -277,7 +282,9 @@ Hendrik Brueckner <brueckner@linux.ibm.com>
 Hermann Gausterer <git-dracut-2012@mrq1.org>
 Hiroaki Mizuguchi <hiroaki-m@iij.ad.jp>
 Hongxu Jia <hongxu.jia@windriver.com>
+Huaxin Lu <luhuaxin1@huawei.com>
 Hui Wang <john.wanghui@huawei.com>
+Ian Wienand <iwienand@redhat.com>
 Icenowy Zheng <uwu@icenowy.me>
 Ignaz Forster <iforster@suse.com>
 Ihno Krumreich <ihno@suse.com>
@@ -309,6 +316,7 @@ Lennart Poettering <lennart@poettering.net>
 Lennert Buytenhek <buytenh@wantstofly.org>
 Lev Veyde <lveyde@redhat.com>
 Lianbo Jiang <lijiang@redhat.com>
+Louis Sautier <sautier.louis@gmail.com>
 Luca BRUNO <luca.bruno@coreos.com>
 Lucas C. Villa Real <lucasvr@gmail.com>
 Major Hayden <major@mhtx.net>
@@ -337,6 +345,7 @@ Olivier Blin <dev@blino.org>
 Ondrej Dubaj <odubaj@redhat.com>
 P J P <ppandit@redhat.com>
 Paolo Bonzini <pbonzini@redhat.com>
+Paul Charlton <techguru@byiq.com>
 Paul Robins <exp@users.noreply.github.com>
 Pavel Zhukov <pzhukov@redhat.com>
 Pawel Wieczorkiewicz <pwieczorkiewicz@suse.de>
@@ -369,6 +378,7 @@ Thierry Vignaud <thierry.vignaud@gmail.com>
 Thilo Bangert <thilo.bangert@gmx.net>
 Thomas Abraham <tabraham@suse.com>
 Thomas Haller <thaller@redhat.com>
+Timo Rothenpieler <timo@rothenpieler.org>
 Tobias Geerinckx <tobias.geerinckx@gmail.com>
 Tobias Klauser <tklauser@distanz.ch>
 Tom Gundersen <teg@jklm.no>
