@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# clog might be installed in the user home
+export PATH="$PATH:~/.cargo/bin"
+
 # CONTRIBUTORS
 make CONTRIBUTORS > _CONTRIBUTORS
 if [ ! -s _CONTRIBUTORS ]; then
@@ -28,7 +31,7 @@ cat _CONTRIBUTORS >> CONTRIBUTORS.md
 make AUTHORS
 
 # Update the contributors list in NEWS.md
-cargo install clog-cli
+cargo install clog-cli --version 0.9.3
 head -2 NEWS.md > NEWS_header.md
 tail +2 NEWS.md > NEWS_body.md
 printf "dracut-ng-%s\n=============\n" "$NEW_VERSION" > NEWS_header_new.md
@@ -61,7 +64,7 @@ if [ -z "$(git config --get user.email)" ]; then
 fi
 
 # Check in AUTHORS and NEWS.md
-git commit -m "docs: update NEWS.md and AUTHORS" NEWS.md AUTHORS dracut-version.sh dracut.html
+git commit -m "docs: update NEWS.md and AUTHORS for release $NEW_VERSION" NEWS.md AUTHORS dracut-version.sh dracut.html
 
 # git push can fail due to insufficient permissions
 if ! git push -u origin release; then
