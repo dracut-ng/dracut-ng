@@ -37,7 +37,7 @@ test_run() {
         "$testdir"/run-qemu \
             "${disk_args[@]}" \
             -boot order=d \
-            -append "$TEST_KERNEL_CMDLINE rd.live.overlay.overlayfs=1 root=live:/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_erofs-part1" \
+            -append "$TEST_KERNEL_CMDLINE rd.live.overlay.overlayfs=1 root=live:/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_erofs" \
             -initrd "$TESTDIR"/initramfs.testing
 
         test_marker_check || return 1
