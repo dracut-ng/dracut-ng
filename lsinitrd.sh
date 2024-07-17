@@ -347,7 +347,7 @@ case $bin in
                 echo "Early CPIO image"
                 list_files
             fi
-            if [[ -d "$dracutbasedir/src/skipcpio" ]]; then
+            if [[ -f "$dracutbasedir/src/skipcpio/skipcpio" ]]; then
                 SKIP="$dracutbasedir/src/skipcpio/skipcpio"
             else
                 SKIP="$dracutbasedir/skipcpio"
