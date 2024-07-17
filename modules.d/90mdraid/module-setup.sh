@@ -65,7 +65,6 @@ cmdline() {
 
 # called by dracut
 install() {
-    local rule rule_path
     inst_multiple cat expr
     inst_multiple -o mdmon
     inst "$(command -v partx)" /sbin/partx
@@ -77,21 +76,16 @@ install() {
         [[ $_raidconf ]] && printf "%s\n" "$_raidconf" >> "${initdir}/etc/cmdline.d/90mdraid.conf"
     fi
 
-    # <mdadm-3.3 udev rule
-    inst_rules 64-md-raid.rules
-    # >=mdadm-3.3 udev rules
     inst_rules 63-md-raid-arrays.rules 64-md-raid-assembly.rules
     # remove incremental assembly from stock rules, so they don't shadow
     # 65-md-inc*.rules and its fine-grained controls, or cause other problems
     # when we explicitly don't want certain components to be incrementally
     # assembled
-    for rule in 64-md-raid.rules 64-md-raid-assembly.rules; do
-        rule_path="${initdir}${udevdir}/rules.d/${rule}"
-        # shellcheck disable=SC2016
-        [ -f "${rule_path}" ] && sed -i -r \
-            -e '/(RUN|IMPORT\{program\})\+?="[[:alpha:]/]*mdadm[[:blank:]]+(--incremental|-I)[[:blank:]]+(--export )?(\$env\{DEVNAME\}|\$tempnode|\$devnode)/d' \
-            "${rule_path}"
-    done
+    # shellcheck disable=SC2016
+    if [ -f "${initdir}${udevdir}/rules.d/64-md-raid-assembly.rules" ]; then
+        sed -i -r -e '/(RUN|IMPORT\{program\})\+?="[[:alpha:]/]*mdadm[[:blank:]]+(--incremental|-I)[[:blank:]]+(--export )?(\$env\{DEVNAME\}|\$devnode)/d' \
+            "${initdir}${udevdir}/rules.d/64-md-raid-assembly.rules"
+    fi
 
     inst_rules "$moddir/65-md-incremental-imsm.rules"
 
