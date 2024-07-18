@@ -6,11 +6,6 @@ check() {
 }
 
 # called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
 installkernel() {
     # Include wired net drivers, excluding wireless
     local _arch=${DRACUT_ARCH:-$(uname -m)}

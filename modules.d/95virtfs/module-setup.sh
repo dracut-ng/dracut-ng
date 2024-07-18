@@ -15,11 +15,6 @@ check() {
 }
 
 # called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
 installkernel() {
     instmods 9p 9pnet_virtio virtio_pci
 }

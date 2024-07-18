@@ -8,11 +8,6 @@ check() {
 }
 
 # called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
 install() {
     inst_multiple biosdevname
     inst_rules 71-biosdevname.rules

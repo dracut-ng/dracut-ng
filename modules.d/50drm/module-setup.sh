@@ -6,11 +6,6 @@ check() {
 }
 
 # called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
 installkernel() {
     # Include KMS capable drm drivers
 
