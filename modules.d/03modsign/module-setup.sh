@@ -20,11 +20,6 @@ check() {
 }
 
 # called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
 install() {
     inst_dir /lib/modules/keys
     inst_binary keyctl

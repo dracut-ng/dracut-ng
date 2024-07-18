@@ -7,11 +7,6 @@ check() {
 }
 
 # called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
 install() {
     inst_multiple -o ps grep more cat rm strace free showmount \
         ping netstat rpcinfo vi scp ping6 ssh \

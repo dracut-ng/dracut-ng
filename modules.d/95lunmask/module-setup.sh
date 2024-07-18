@@ -55,11 +55,6 @@ check() {
 }
 
 # called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
 install() {
     inst_script "$moddir/fc_transport_scan_lun.sh" /usr/lib/udev/fc_transport_scan_lun.sh
     inst_script "$moddir/sas_transport_scan_lun.sh" /usr/lib/udev/sas_transport_scan_lun.sh

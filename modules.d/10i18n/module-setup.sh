@@ -10,11 +10,6 @@ check() {
 }
 
 # called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
 install() {
     declare -A KEYMAPS
 

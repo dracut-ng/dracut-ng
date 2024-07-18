@@ -11,11 +11,6 @@ check() {
 }
 
 # called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
 installkernel() {
     # Directories to search for NVDIMM "providers" (firmware drivers)
     # These modules call "nvdimm_bus_register()".

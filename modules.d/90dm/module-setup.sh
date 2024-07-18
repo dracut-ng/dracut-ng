@@ -7,11 +7,6 @@ check() {
 }
 
 # called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
 installkernel() {
     instmods '=drivers/md' dm_mod dm-cache dm-cache-mq dm-cache-cleaner
 }
