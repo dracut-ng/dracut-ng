@@ -37,24 +37,7 @@ installkernel() {
 
 # called by dracut
 install() {
-    if ! inst_rules 64-btrfs.rules; then
-        inst_rules "$moddir/80-btrfs.rules"
-        case "$(btrfs --help)" in
-            *device\ ready*)
-                inst_script "$moddir/btrfs_device_ready.sh" /sbin/btrfs_finished
-                ;;
-            *)
-                inst_script "$moddir/btrfs_finished.sh" /sbin/btrfs_finished
-                ;;
-        esac
-    else
-        inst_rules 64-btrfs-dm.rules
-    fi
-
-    if ! dracut_module_included "systemd"; then
-        inst_hook initqueue/timeout 10 "$moddir/btrfs_timeout.sh"
-    fi
-
-    inst_multiple -o btrfsck btrfs-zero-log
+    inst_rules 64-btrfs-dm.rules
+    inst_multiple -o btrfsck
     inst "$(command -v btrfs)" /sbin/btrfs
 }
