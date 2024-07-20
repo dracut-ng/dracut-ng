@@ -12,15 +12,14 @@ test_run() {
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
     qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root
 
+    # shellcheck source=$TESTDIR/fs
+    . "$TESTDIR"/fs
+
     # erofs drive
-    if modprobe erofs &> /dev/null && command -v mkfs.erofs &> /dev/null; then
-        qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs
-    fi
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs
 
     # NTFS drive
-    if modprobe --dry-run ntfs3 &> /dev/null && command -v mkfs.ntfs &> /dev/null; then
-        qemu_add_drive disk_index disk_args "$TESTDIR"/root_ntfs.img root_ntfs
-    fi
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root_ntfs.img root_ntfs
 
     test_marker_reset
     "$testdir"/run-qemu \
@@ -32,7 +31,7 @@ test_run() {
     test_marker_check || return 1
 
     # Run the erofs test only if mkfs.ntfs is available
-    if modprobe erofs &> /dev/null && command -v mkfs.erofs &> /dev/null; then
+    if [[ "$EROFS" ]]; then
         test_marker_reset
         "$testdir"/run-qemu \
             "${disk_args[@]}" \
@@ -62,7 +61,7 @@ test_run() {
     test_marker_check || return 1
 
     # Run the NTFS test only if mkfs.ntfs is available
-    if modprobe --dry-run ntfs3 &> /dev/null && command -v mkfs.ntfs &> /dev/null; then
+    if [[ "$NTFS" ]]; then
         dd if=/dev/zero of="$TESTDIR"/marker.img bs=1MiB count=1 status=none
         "$testdir"/run-qemu \
             "${disk_args[@]}" \
@@ -111,7 +110,7 @@ test_setup() {
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
         --add "test-makeroot" \
         --install "sfdisk mkfs.ntfs mksquashfs mkfs.erofs" \
-        --drivers "ntfs3" \
+        --drivers "ntfs3 erofs" \
         --include ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         --force "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
     rm -rf -- "$TESTDIR"/overlay
@@ -123,15 +122,11 @@ test_setup() {
     qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 160
 
     # erofs drive
-    if modprobe erofs &> /dev/null && command -v mkfs.erofs &> /dev/null; then
-        qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs 160
-    fi
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs 160
 
     # NTFS drive
-    if modprobe --dry-run ntfs3 &> /dev/null && command -v mkfs.ntfs &> /dev/null; then
-        dd if=/dev/zero of="$TESTDIR"/root_ntfs.img bs=1MiB count=160
-        qemu_add_drive disk_index disk_args "$TESTDIR"/root_ntfs.img root_ntfs
-    fi
+    dd if=/dev/zero of="$TESTDIR"/root_ntfs.img bs=1MiB count=160
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root_ntfs.img root_ntfs
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
@@ -143,6 +138,10 @@ test_setup() {
         echo "Could not create root filesystem"
         return 1
     fi
+
+    # grab the list of supported filesystem kernel modules
+    grep -F -a -m 1 EROFS "$TESTDIR"/marker.img >> "$TESTDIR"/fs
+    grep -F -a -m 1 NTFS "$TESTDIR"/marker.img >> "$TESTDIR"/fs
 
     # mount NTFS with ntfs3 driver inside the generated initramfs
     cat > /tmp/ntfs3.rules << 'EOF'

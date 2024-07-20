@@ -28,13 +28,15 @@ echo "Creating squashfs"
 mksquashfs /source /root/testdir/rootfs.img -quiet
 
 # Write the erofs compressed filesystem to the partition
-if [ -e "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_erofs" ]; then
+if modprobe erofs && command -v mkfs.erofs; then
+    EROFS=Y
     echo "Creating erofs"
     mkfs.erofs /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_erofs /source
 fi
 
 # Copy rootfs.img to the NTFS drive if exists
-if [ -e "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_ntfs" ]; then
+if modprobe ntfs3 && command -v mkfs.ntfs; then
+    NTFS=Y
     mkfs.ntfs -q -F -L dracut_ntfs /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_ntfs
     mkdir -p /root_ntfs
     mount -t ntfs3 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_ntfs /root_ntfs
@@ -43,5 +45,10 @@ if [ -e "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_ntfs" ]; then
 fi
 
 umount /root
-echo "dracut-root-block-created" | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
+
+{
+    echo "dracut-root-block-created"
+    echo "EROFS=$EROFS"
+    echo "NTFS=$NTFS"
+} | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
 poweroff -f
