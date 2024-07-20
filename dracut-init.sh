@@ -578,48 +578,6 @@ build_ld_cache() {
     fi
 }
 
-prepare_udev_rules() {
-    dwarn "prepare_udev_rules: deprecated and will be removed"
-
-    if [ -z "$UDEVVERSION" ]; then
-        UDEVVERSION=$(udevadm --version)
-        export UDEVVERSION
-    fi
-
-    if [ -z "$UDEVVERSION" ]; then
-        derror "Failed to detect udev version!"
-        return 1
-    fi
-    if [ -z "${UDEVVERSION##*[!0-9]*}" ]; then
-        derror "udevadm --version did not report an integer, udev version cannot be determined!"
-        return 1
-    fi
-
-    for f in "$@"; do
-        f="${initdir}/etc/udev/rules.d/$f"
-        [ -e "$f" ] || continue
-        while read -r line || [ -n "$line" ]; do
-            if [ "${line%%IMPORT PATH_ID}" != "$line" ]; then
-                if ((UDEVVERSION >= 174)); then
-                    printf '%sIMPORT{builtin}="path_id"\n' "${line%%IMPORT PATH_ID}"
-                else
-                    printf '%sIMPORT{program}="path_id %%p"\n' "${line%%IMPORT PATH_ID}"
-                fi
-            elif [ "${line%%IMPORT BLKID}" != "$line" ]; then
-                if ((UDEVVERSION >= 176)); then
-                    printf '%sIMPORT{builtin}="blkid"\n' "${line%%IMPORT BLKID}"
-                else
-                    # shellcheck disable=SC2016
-                    printf '%sIMPORT{program}="/sbin/blkid -o udev -p $devnode"\n' "${line%%IMPORT BLKID}"
-                fi
-            else
-                echo "$line"
-            fi
-        done < "${f}" > "${f}.new"
-        mv "${f}.new" "$f"
-    done
-}
-
 # install function specialized for hooks
 # $1 = type of hook, $2 = hook priority (lower runs first), $3 = hook
 # All hooks should be POSIX/SuS compliant, they will be sourced by init.
