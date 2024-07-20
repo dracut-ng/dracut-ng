@@ -1,0 +1,3 @@
+# ensure networking is not included in the generated initrd
+# all networking dracut modules either depend on net-lib or systemd-networkd
+omit_dracutmodules+=" net-lib systemd-networkd "
