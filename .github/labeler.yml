@@ -554,6 +554,10 @@ pcmcia:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/90pcmcia/*'
 
+shell-interpreter:
+  - changed-files:
+    - any-glob-to-any-file: 'modules.d/00shell-interpreter/*'
+
 test:
   - changed-files:
     - any-glob-to-any-file: ['test/*', 'test/**/*', 'modules.d/80test*', 'modules.d/80test*/*']
