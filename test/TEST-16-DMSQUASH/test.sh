@@ -149,7 +149,7 @@ SUBSYSTEM=="block", ENV{ID_FS_TYPE}=="ntfs", ENV{ID_FS_TYPE}="ntfs3"
 EOF
 
     test_dracut \
-        --add "dash dmsquash-live qemu" \
+        --add "dmsquash-live qemu" \
         --omit "systemd" \
         --drivers "ntfs3" \
         --install "mkfs.ext4" \

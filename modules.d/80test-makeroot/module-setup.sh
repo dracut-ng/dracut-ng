@@ -6,7 +6,7 @@ check() {
 }
 
 depends() {
-    echo "dash rootfs-block kernel-modules qemu"
+    echo "rootfs-block kernel-modules qemu"
 }
 
 installkernel() {

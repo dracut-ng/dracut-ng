@@ -232,7 +232,7 @@ test_setup() {
 
     # Make server's dracut image
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -a "test dash rootfs-block debug kernel-modules ${USE_NETWORK}" \
+        -a "test rootfs-block debug kernel-modules ${USE_NETWORK}" \
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod e1000 drbg" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
