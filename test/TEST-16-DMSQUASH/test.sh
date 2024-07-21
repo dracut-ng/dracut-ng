@@ -108,7 +108,7 @@ test_setup() {
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
-        --add "test-makeroot" \
+        --module "test-makeroot" \
         --install "sfdisk mkfs.ntfs mksquashfs mkfs.erofs" \
         --drivers "ntfs3 erofs" \
         --include ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
