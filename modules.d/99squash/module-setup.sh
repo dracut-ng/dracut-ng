@@ -12,26 +12,13 @@ depends() {
     return 0
 }
 
-installpost() {
+squash_install() {
     local _busybox
     _busybox=$(find_binary busybox)
 
-    # Move everything under $initdir except $squash_dir
-    # itself into squash image
-    for i in "$initdir"/*; do
-        [[ $squash_dir == "$i"/* ]] || mv "$i" "$squash_dir"/
-    done
-
     # Create mount points for squash loader
     mkdir -p "$initdir"/squash/
-    mkdir -p "$squash_dir"/squash/
-
-    # Copy dracut spec files out side of the squash image
-    # so dracut rebuild and lsinitrd can work
-    for file in "$squash_dir"/usr/lib/dracut/*; do
-        [[ -f $file ]] || continue
-        DRACUT_RESOLVE_DEPS=1 dracutsysrootdir="$squash_dir" inst "${file#"$squash_dir"}"
-    done
+    mkdir -p "$squashdir"/squash/
 
     # Install required modules and binaries for the squash image init script.
     if [[ $_busybox ]]; then
@@ -61,8 +48,47 @@ installpost() {
     build_ld_cache
 }
 
+squash_installpost() {
+    local _img="$squashdir"/squash-root.img
+    local _comp _file
+
+    # shellcheck disable=SC2086
+    if [[ $squash_compress ]]; then
+        if ! mksquashfs /dev/null "$DRACUT_TMPDIR"/.squash-test.img -no-progress -comp $squash_compress &> /dev/null; then
+            dwarn "mksquashfs doesn't support compressor '$squash_compress', failing back to default compressor."
+        else
+            _comp="$squash_compress"
+        fi
+    fi
+
+    # shellcheck disable=SC2086
+    if ! mksquashfs "$initdir" "$_img" \
+        -no-xattrs -no-exports -noappend -no-recovery -always-use-fragments \
+        -no-progress ${_comp:+-comp $_comp} \
+        -e "$squashdir" 1> /dev/null; then
+        dfatal "Failed making squash image"
+        exit 1
+    fi
+
+    # Rescue the dracut spec files so dracut rebuild and lsinitrd can work
+    for _file in "$initdir"/usr/lib/dracut/*; do
+        [[ -f $_file ]] || continue
+        DRACUT_RESOLVE_DEPS=1 dstdir=$squashdir inst "$_file" "${_file#"$initdir"}"
+    done
+
+    # Remove everything that got squashed into the image
+    for _file in "$initdir"/*; do
+        [[ $_file == "$squashdir" ]] && continue
+        rm -rf "$_file"
+    done
+    mv "$squashdir"/* "$initdir"
+}
+
 install() {
+
     if [[ $DRACUT_SQUASH_POST_INST ]]; then
-        installpost
+        squash_installpost
+    else
+        dstdir="$squashdir" squash_install
     fi
 }
