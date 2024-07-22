@@ -8,11 +8,6 @@ check() {
 }
 
 # called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
 install() {
     local _i _path _busybox
     local _progs=()
