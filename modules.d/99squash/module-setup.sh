@@ -1,15 +1,40 @@
 #!/bin/bash
 
 check() {
-    require_binaries mksquashfs unsquashfs || return 1
-    require_kernel_modules squashfs loop overlay || return 1
+    require_kernel_modules loop overlay || return 1
 
     return 255
 }
 
 depends() {
-    echo "systemd-initrd"
+    local _handler
+
+    _handler=$(squash_get_handler) || return 1
+
+    echo "systemd-initrd $_handler"
     return 0
+}
+
+squash_get_handler() {
+    local _module _handler
+
+    for _module in squash-squashfs; do
+        if dracut_module_included "$_module"; then
+            _handler="$_module"
+            break
+        fi
+    done
+
+    if [ -z "$_handler" ]; then
+        if check_module "squash-squashfs"; then
+            _handler="squash-squashfs"
+        else
+            dfatal "No valid handler for found"
+            return 1
+        fi
+    fi
+
+    echo "$_handler"
 }
 
 squash_install() {
@@ -36,7 +61,7 @@ squash_install() {
         [[ $DRACUT_FIPS_MODE ]] && inst_libdir_file -o "libssl.so*"
     fi
 
-    hostonly="" instmods "loop" "squashfs" "overlay"
+    hostonly="" instmods "loop" "overlay"
     dracut_kernel_post
 
     # Install squash image init script.
@@ -49,26 +74,9 @@ squash_install() {
 }
 
 squash_installpost() {
-    local _img="$squashdir"/squash-root.img
-    local _comp _file
+    local _file
 
-    # shellcheck disable=SC2086
-    if [[ $squash_compress ]]; then
-        if ! mksquashfs /dev/null "$DRACUT_TMPDIR"/.squash-test.img -no-progress -comp $squash_compress &> /dev/null; then
-            dwarn "mksquashfs doesn't support compressor '$squash_compress', failing back to default compressor."
-        else
-            _comp="$squash_compress"
-        fi
-    fi
-
-    # shellcheck disable=SC2086
-    if ! mksquashfs "$initdir" "$_img" \
-        -no-xattrs -no-exports -noappend -no-recovery -always-use-fragments \
-        -no-progress ${_comp:+-comp $_comp} \
-        -e "$squashdir" 1> /dev/null; then
-        dfatal "Failed making squash image"
-        exit 1
-    fi
+    DRACUT_SQUASH_POST_INST=1 module_install "$(squash_get_handler)"
 
     # Rescue the dracut spec files so dracut rebuild and lsinitrd can work
     for _file in "$initdir"/usr/lib/dracut/*; do
