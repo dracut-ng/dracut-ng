@@ -13,15 +13,23 @@ grep -q '^devtmpfs /dev devtmpfs' /proc/self/mounts \
 grep -q '^tmpfs /run tmpfs' /proc/self/mounts \
     || (mkdir -p /run && mount -t tmpfs -o mode=755,noexec,nosuid,strictatime tmpfs /run)
 
+if [ -e /erofs-root.img ]; then
+    _fs=erofs
+    _img=erofs-root.img
+else
+    _fs=squashfs
+    _img=squashfs-root.img
+fi
+
 # Load required modules
 modprobe loop
-modprobe squashfs
+modprobe "$_fs"
 modprobe overlay
 
 # Mount the squash image
 mount -t ramfs ramfs /squash
 mkdir -p /squash/root /squash/overlay/upper /squash/overlay/work
-mount -t squashfs -o ro,loop /squashfs-root.img /squash/root
+mount -t "$_fs" -o ro,loop /"$_img" /squash/root
 
 # Setup new root overlay
 mkdir /newroot
