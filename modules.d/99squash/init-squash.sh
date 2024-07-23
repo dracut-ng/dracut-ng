@@ -21,7 +21,7 @@ modprobe overlay
 # Mount the squash image
 mount -t ramfs ramfs /squash
 mkdir -p /squash/root /squash/overlay/upper /squash/overlay/work
-mount -t squashfs -o ro,loop /squash-root.img /squash/root
+mount -t squashfs -o ro,loop /squashfs-root.img /squash/root
 
 # Setup new root overlay
 mkdir /newroot
