@@ -18,7 +18,7 @@ depends() {
 squash_get_handler() {
     local _module _handler
 
-    for _module in squash-squashfs; do
+    for _module in squash-squashfs squash-erofs; do
         if dracut_module_included "$_module"; then
             _handler="$_module"
             break
@@ -28,6 +28,8 @@ squash_get_handler() {
     if [ -z "$_handler" ]; then
         if check_module "squash-squashfs"; then
             _handler="squash-squashfs"
+        elif check_module "squash-erofs"; then
+            _handler="squash-erofs"
         else
             dfatal "No valid handler for found"
             return 1
