@@ -174,10 +174,47 @@ dracutlibdirs() {
     done
 }
 
+SQUASH_TMPFILE=""
+SQUASH_EXTRACT="$TMPDIR/squash-extract"
+
+extract_squash_img() {
+    local _img _tmp
+
+    [[ $SQUASH_TMPDIR == none ]] && return 1
+    [[ -s $SQUASH_TMPFILE ]] && return 0
+
+    # Before dracut 104 the image was named squash-root.img. Keep the old name
+    # so newer versions of lsinitrd can inspect initrds build with older dracut
+    # versions.
+    for _img in squash-root.img squashfs-root.img erofs-root.img; do
+        _tmp="$TMPDIR/$_img"
+        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout -- \
+            $_img > "$_tmp" 2> /dev/null
+        [[ -s $_tmp ]] || continue
+
+        SQUASH_TMPFILE="$_tmp"
+
+        # fsck.erofs doesn't allow extracting single files or listing the
+        # content of the image. So always extract the full image.
+        if [[ $_img == erofs-root.img ]]; then
+            mkdir -p "$SQUASH_EXTRACT"
+            fsck.erofs --extract="$SQUASH_EXTRACT/erofs-root" --overwrite "$SQUASH_TMPFILE" 2> /dev/null
+            ((ret += $?))
+        fi
+
+        break
+    done
+
+    if [[ -z $SQUASH_TMPFILE ]]; then
+        SQUASH_TMPFILE=none
+        return 1
+    fi
+
+    return 0
+}
+
 extract_files() {
-    SQUASH_IMG="squash-root.img"
-    SQUASH_TMPFILE="$TMPDIR/initrd.root.sqsh"
-    SQUASH_EXTRACT="$TMPDIR/squash-extract"
+    local nofileinfo
 
     ((${#filenames[@]} == 1)) && nofileinfo=1
     for f in "${!filenames[@]}"; do
@@ -185,18 +222,24 @@ extract_files() {
         [[ $nofileinfo ]] || echo "========================================================================"
         # shellcheck disable=SC2001
         [[ $f == *"\\x"* ]] && f=$(echo "$f" | sed 's/\\x.\{2\}/????/g')
-        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout "$f" 2> /dev/null
-        ((ret += $?))
-        if [[ -z ${f/#squashfs-root*/} ]]; then
-            if [[ ! -s $SQUASH_TMPFILE ]]; then
-                $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout -- \
-                    $SQUASH_IMG > "$SQUASH_TMPFILE" 2> /dev/null
-            fi
-            unsquashfs -force -d "$SQUASH_EXTRACT" -no-progress "$SQUASH_TMPFILE" "${f#squashfs-root/}" > /dev/null 2>&1
-            ((ret += $?))
-            cat "$SQUASH_EXTRACT/${f#squashfs-root/}" 2> /dev/null
-            rm "$SQUASH_EXTRACT/${f#squashfs-root/}" 2> /dev/null
-        fi
+
+        case $f in
+            squashfs-root/*)
+                extract_squash_img
+                unsquashfs -force -d "$SQUASH_EXTRACT" -no-progress "$SQUASH_TMPFILE" "${f#squashfs-root/}" &> /dev/null
+                ((ret += $?))
+                cat "$SQUASH_EXTRACT/${f#squashfs-root/}" 2> /dev/null
+                ;;
+            erofs-root/*)
+                extract_squash_img
+                cat "$SQUASH_EXTRACT/$f" 2> /dev/null
+                ;;
+            *)
+                $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout "$f" 2> /dev/null
+                ((ret += $?))
+                ;;
+        esac
+
         [[ $nofileinfo ]] || echo "========================================================================"
         [[ $nofileinfo ]] || echo
     done
@@ -222,66 +265,82 @@ list_files() {
 }
 
 list_squash_content() {
-    SQUASH_IMG="squash-root.img"
-    SQUASH_TMPFILE="$TMPDIR/initrd.root.sqsh"
+    extract_squash_img || return 0
 
-    $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout -- \
-        $SQUASH_IMG > "$SQUASH_TMPFILE" 2> /dev/null
-    if [[ -s $SQUASH_TMPFILE ]]; then
-        echo "Squashed content ($SQUASH_IMG):"
-        echo "========================================================================"
-        unsquashfs -d "squashfs-root" -ll "$SQUASH_TMPFILE" | tail -n +4
-        echo "========================================================================"
-    fi
+    echo "Squashed content (${SQUASH_TMPFILE##*/}):"
+    echo "========================================================================"
+    case $SQUASH_TMPFILE in
+        */squash-root.img | */squashfs-root.img)
+            unsquashfs -ll "$SQUASH_TMPFILE" | tail -n +4
+            ;;
+        */erofs-root.img)
+            (
+                cd "$SQUASH_EXTRACT" || return 1
+                find erofs-root/ -ls
+            )
+            ;;
+    esac
+    echo "========================================================================"
 }
 
 list_cmdline() {
-    # depends on list_squash_content() having run before
-    SQUASH_IMG="squash-root.img"
-    SQUASH_TMPFILE="$TMPDIR/initrd.root.sqsh"
-    SQUASH_EXTRACT="$TMPDIR/squash-extract"
 
     echo "dracut cmdline:"
     # shellcheck disable=SC2046
     $CAT "$image" | cpio --extract --verbose --quiet --to-stdout -- \
         etc/cmdline.d/\*.conf 2> /dev/null
     ((ret += $?))
-    if [[ -s $SQUASH_TMPFILE ]]; then
-        unsquashfs -force -d "$SQUASH_EXTRACT" -no-progress "$SQUASH_TMPFILE" etc/cmdline.d/\*.conf > /dev/null 2>&1
-        ((ret += $?))
-        cat "$SQUASH_EXTRACT"/etc/cmdline.d/*.conf 2> /dev/null
-        rm "$SQUASH_EXTRACT"/etc/cmdline.d/*.conf 2> /dev/null
-    fi
+
+    extract_squash_img || return 0
+    case $SQUASH_TMPFILE in
+        */squash-root.img | */squashfs-root.img)
+            unsquashfs -force -d "$SQUASH_EXTRACT" -no-progress "$SQUASH_TMPFILE" etc/cmdline.d/\*.conf &> /dev/null
+            ((ret += $?))
+            cat "$SQUASH_EXTRACT"/etc/cmdline.d/*.conf 2> /dev/null
+            ;;
+        */erofs-root.img)
+            cat "$SQUASH_EXTRACT"/erofs-root/etc/cmdline.d/*.conf 2> /dev/null
+            ;;
+    esac
+
 }
 
 unpack_files() {
-    SQUASH_IMG="squash-root.img"
-    SQUASH_TMPFILE="$TMPDIR/initrd.root.sqsh"
-
     if ((${#filenames[@]} > 0)); then
         for f in "${!filenames[@]}"; do
             # shellcheck disable=SC2001
             [[ $f == *"\\x"* ]] && f=$(echo "$f" | sed 's/\\x.\{2\}/????/g')
-            $CAT "$image" 2> /dev/null | cpio -id --quiet $verbose "$f"
-            ((ret += $?))
-            if [[ -z ${f/#squashfs-root*/} ]]; then
-                if [[ ! -s $SQUASH_TMPFILE ]]; then
-                    $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout -- \
-                        $SQUASH_IMG > "$SQUASH_TMPFILE" 2> /dev/null
-                fi
-                unsquashfs -force -d "squashfs-root" -no-progress "$SQUASH_TMPFILE" "${f#squashfs-root/}" > /dev/null
-                ((ret += $?))
-            fi
+            case $f in
+                squashfs-root/*)
+                    extract_squash_img || continue
+                    unsquashfs -force -d "squashfs-root" -no-progress "$SQUASH_TMPFILE" "${f#squashfs-root/}" > /dev/null
+                    ((ret += $?))
+                    ;;
+                erofs-root/*)
+                    extract_squash_img || continue
+                    mkdir -p "${f%/*}"
+                    cp -rf "$SQUASH_EXTRACT/$f" "$f"
+                    ;;
+                *)
+                    $CAT "$image" 2> /dev/null | cpio -id --quiet $verbose "$f"
+                    ((ret += $?))
+                    ;;
+            esac
         done
     else
         $CAT "$image" 2> /dev/null | cpio -id --quiet $verbose
         ((ret += $?))
-        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout -- \
-            $SQUASH_IMG > "$SQUASH_TMPFILE" 2> /dev/null
-        if [[ -s $SQUASH_TMPFILE ]]; then
-            unsquashfs -d "squashfs-root" -no-progress "$SQUASH_TMPFILE" > /dev/null
-            ((ret += $?))
-        fi
+
+        extract_squash_img || return 0
+        case $SQUASH_TMPFILE in
+            */squash-root.img | */squashfs-root.img)
+                unsquashfs -d "squashfs-root" -no-progress "$SQUASH_TMPFILE" > /dev/null
+                ((ret += $?))
+                ;;
+            */erofs-root.img)
+                cp -rf "$SQUASH_EXTRACT/erofs-root" .
+                ;;
+        esac
     fi
 }
 
