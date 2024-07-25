@@ -53,3 +53,8 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     wget \
     xz \
     && dnf -y update && dnf clean all
+
+# configuration in the package is not compatible
+# with the upstream CI, lets remove it
+RUN \
+  rm -rf /usr/lib/dracut/dracut.conf.d

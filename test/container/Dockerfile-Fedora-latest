@@ -70,3 +70,9 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     wget \
     xz \
     && dnf -y update && dnf clean all
+
+# discard configurations that enforce an out-of-tree dracut module
+# which would break test automation
+# since this is a distro specific change, lets do it in the container
+RUN \
+  rm -rf /usr/lib/dracut/dracut.conf.d/50-nss-softokn.conf
