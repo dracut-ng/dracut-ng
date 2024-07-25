@@ -52,4 +52,4 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     util-linux-systemd \
     wget \
     xz \
-    && rpm -e --nodeps dracut && dnf -y update && dnf clean all
+    && dnf -y update && dnf clean all
