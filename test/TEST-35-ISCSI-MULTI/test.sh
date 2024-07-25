@@ -226,6 +226,7 @@ test_setup() {
 
     # Make client's dracut image
     test_dracut \
+        --no-hostonly --no-hostonly-cmdline \
         --add "$USE_NETWORK" \
         -i "./client.link" "/etc/systemd/network/01-client.link" \
         "$TESTDIR"/initramfs.testing
