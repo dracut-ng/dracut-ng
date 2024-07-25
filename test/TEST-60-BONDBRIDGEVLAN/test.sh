@@ -367,6 +367,7 @@ test_setup() {
     )
     # Make client's dracut image
     test_dracut \
+        --no-hostonly --no-hostonly-cmdline \
         -a "debug ${USE_NETWORK} ifcfg" \
         "$TESTDIR"/initramfs.testing
 

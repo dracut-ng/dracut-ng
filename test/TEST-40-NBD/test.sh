@@ -332,6 +332,7 @@ test_setup() {
     echo -n test > /tmp/key
 
     test_dracut \
+        --no-hostonly --no-hostonly-cmdline \
         -a "${USE_NETWORK}" \
         -i "./cryptroot-ask.sh" "/sbin/cryptroot-ask" \
         -i "./client.link" "/etc/systemd/network/01-client.link" \
