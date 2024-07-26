@@ -1154,6 +1154,9 @@ static int parse_argv(int argc, char *argv[])
                 case 'r':
                         sysrootdir = optarg;
                         sysrootdirlen = strlen(sysrootdir);
+                        /* ignore trailing '/' */
+                        if (sysrootdir[sysrootdirlen-1] == '/')
+                                sysrootdirlen--;
                         break;
                 case 'p':
                         if (regcomp(&mod_filter_path, optarg, REG_NOSUB | REG_EXTENDED) != 0) {
