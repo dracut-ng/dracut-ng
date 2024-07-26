@@ -885,7 +885,10 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
         if (ret == 0) {
                 if (resolvedeps && S_ISREG(sb.st_mode) && (sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
                         log_debug("'%s' already exists, but checking for any deps", fulldstpath);
-                        ret = resolve_deps(fullsrcpath + sysrootdirlen);
+                        if (sysrootdirlen && (strncmp(fulldstpath, sysrootdir, sysrootdirlen) == 0))
+                                ret = resolve_deps(fulldstpath + sysrootdirlen);
+                        else
+                                ret = resolve_deps(fullsrcpath);
                 } else
                         log_debug("'%s' already exists", fulldstpath);
 
@@ -982,8 +985,13 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                 }
 
                 if (src_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) {
-                        if (resolvedeps)
-                                ret += resolve_deps(fullsrcpath + sysrootdirlen);
+                        if (resolvedeps) {
+                                /* ensure fullsrcpath contains sysrootdir */
+                                if (sysrootdirlen && (strncmp(fullsrcpath, sysrootdir, sysrootdirlen) == 0))
+                                        ret += resolve_deps(fullsrcpath + sysrootdirlen);
+                                else
+                                        ret += resolve_deps(fullsrcpath);
+                        }
                         if (arg_hmac) {
                                 /* copy .hmac files also */
                                 hmac_install(src, dst, NULL);
