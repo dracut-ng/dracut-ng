@@ -98,6 +98,7 @@ test_setup() {
     chmod 0600 /tmp/key
 
     test_dracut \
+        --no-hostonly \
         -i "./cryptroot-ask.sh" "/sbin/cryptroot-ask" \
         -i "/tmp/crypttab" "/etc/crypttab" \
         -i "/tmp/key" "/etc/key" \
