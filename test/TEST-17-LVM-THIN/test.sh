@@ -57,7 +57,7 @@ test_setup() {
     test_marker_check dracut-root-block-created || return 1
 
     test_dracut \
-        --no-hostonly \
+        -a "lvm mdraid" \
         -I lvs \
         "$TESTDIR"/initramfs.testing
 }
