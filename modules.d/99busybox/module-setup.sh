@@ -10,6 +10,7 @@ check() {
 # called by dracut
 install() {
     local _i _path _busybox
+    local _dstdir="${dstdir:-"$initdir"}"
     local _progs=()
     _busybox=$(find_binary busybox)
     inst "$_busybox" /usr/bin/busybox
@@ -26,7 +27,7 @@ install() {
         [ -z "$_path" ] && continue
 
         # do not remove existing destination files
-        [ -e "${initdir}/$_path" ] && continue
+        [ -e "${_dstdir}/$_path" ] && continue
 
         ln_r /usr/bin/busybox "$_path"
     done
