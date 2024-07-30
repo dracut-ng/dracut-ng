@@ -81,9 +81,15 @@ else
     exit 1
 fi
 
-if [[ -d squash ]]; then
-    if ! unsquashfs -no-xattrs -f -d . squash-root.img > /dev/null; then
+if [[ -f squashfs-root.img ]]; then
+    if ! unsquashfs -no-xattrs -f -d . squashfs-root.img > /dev/null; then
         echo "Squash module is enabled for this initramfs but failed to unpack squash-root.img" >&2
+        rm -f -- /run/initramfs/shutdown
+        exit 1
+    fi
+elif [[ -f erofs-root.img ]]; then
+    if ! fsck.erofs --extract=. --overwrite erofs-root.img > /dev/null; then
+        echo "Squash module is enabled for this initramfs but failed to unpack erofs-root.img" >&2
         rm -f -- /run/initramfs/shutdown
         exit 1
     fi
