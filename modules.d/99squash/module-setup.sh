@@ -40,12 +40,15 @@ squash_get_handler() {
 }
 
 squash_install() {
-    local _busybox
+    local _busybox _dir
     _busybox=$(find_binary busybox)
 
-    # Create mount points for squash loader
-    mkdir -p "$initdir"/squash/
-    mkdir -p "$squashdir"/squash/
+    # Create mount points for squash loader and basic directories
+    mkdir -p "$initdir"/squash
+    for _dir in squash usr/bin usr/sbin usr/lib; do
+        mkdir -p "$squashdir/$_dir"
+        [[ $_dir == usr/* ]] && ln_r "/$_dir" "${_dir#usr}"
+    done
 
     # Install required modules and binaries for the squash image init script.
     if [[ $_busybox ]]; then
@@ -67,8 +70,6 @@ squash_install() {
     dracut_kernel_post
 
     # Install squash image init script.
-    ln_r /usr/bin /bin
-    ln_r /usr/sbin /sbin
     inst_simple "$moddir"/init-squash.sh /init
 
     # make sure that library links are correct and up to date for squash loader
