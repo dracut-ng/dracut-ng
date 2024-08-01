@@ -1334,6 +1334,11 @@ if ! [[ $print_cmdline ]]; then
     rm -fr -- "${initdir:?}"/*
 fi
 
+if ! check_kernel_config CONFIG_BLK_DEV_INITRD; then
+    echo "This kernel doesn't support initramfs, skipping generation"
+    exit 0
+fi
+
 dracutfunctions=$dracutbasedir/dracut-functions.sh
 export dracutfunctions
 
