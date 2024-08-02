@@ -10,7 +10,7 @@ depends() {
 }
 
 installkernel() {
-    instmods \
+    hostonly='' instmods \
         ata_piix \
         ext4 \
         i6300esb \
