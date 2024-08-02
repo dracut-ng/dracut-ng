@@ -732,6 +732,11 @@ fs_get_option() {
 check_kernel_config() {
     local _config_opt="$1"
     local _config_file
+
+    # If $no_kernel is set, $kernel will point to the running kernel.
+    # Avoid reading the current kernel config by mistake.
+    [[ $no_kernel == yes ]] && return 0
+
     [[ -f $dracutsysrootdir/boot/config-$kernel ]] \
         && _config_file="/boot/config-$kernel"
     [[ -f $dracutsysrootdir/lib/modules/$kernel/config ]] \
