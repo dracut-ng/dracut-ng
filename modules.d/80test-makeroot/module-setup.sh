@@ -10,7 +10,7 @@ depends() {
 }
 
 installkernel() {
-    instmods piix ide-gd_mod ata_piix ext4 sd_mod
+    hostonly='' instmods piix ide-gd_mod ata_piix ext4 sd_mod
 }
 
 install() {
