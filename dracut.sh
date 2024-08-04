@@ -1185,6 +1185,43 @@ if [[ $_no_compress_l == "$DRACUT_COMPRESS_CAT" ]]; then
     compress="$DRACUT_COMPRESS_CAT"
 fi
 
+check_kernel_compress_support() {
+    local kern_compress_config
+    case $1 in
+        "$DRACUT_COMPRESS_LBZIP2" | "$DRACUT_COMPRESS_BZIP2" | lbzip2 | bzip2 | */lbzip2 | */bzip2)
+            kern_compress_config=CONFIG_RD_BZIP2
+            ;;
+        "$DRACUT_COMPRESS_LZMA" | lzma | */lzma)
+            kern_compress_config=CONFIG_RD_LZMA
+            ;;
+        "$DRACUT_COMPRESS_XZ" | xz | */xz)
+            kern_compress_config=CONFIG_RD_XZ
+            ;;
+        "$DRACUT_COMPRESS_PIGZ" | "$DRACUT_COMPRESS_GZIP" | pigz | gzip | */pigz | */gzip)
+            kern_compress_config=CONFIG_RD_GZIP
+            ;;
+        "$DRACUT_COMPRESS_LZOP" | lzop | */lzop)
+            kern_compress_config=CONFIG_RD_LZO
+            ;;
+        "$DRACUT_COMPRESS_ZSTD" | zstd | */zstd)
+            kern_compress_config=CONFIG_RD_ZSTD
+            ;;
+        "$DRACUT_COMPRESS_LZ4" | lz4 | */lz4)
+            kern_compress_config=CONFIG_RD_LZ4
+            ;;
+        "$DRACUT_COMPRESS_CAT" | cat | */cat)
+            return 0
+            ;;
+        *)
+            derror "unknown kernel config option for compressor $1"
+            return 0
+            ;;
+    esac
+
+    check_kernel_config $kern_compress_config
+    return $?
+}
+
 [[ $hostonly == yes ]] && hostonly="-h"
 [[ $hostonly != "-h" ]] && unset hostonly
 
@@ -2336,20 +2373,12 @@ if [[ $create_early_cpio == yes ]]; then
     fi
 fi
 
-if check_kernel_config CONFIG_RD_ZSTD; then
-    DRACUT_KERNEL_RD_ZSTD=yes
-else
-    DRACUT_KERNEL_RD_ZSTD=
-fi
-
-if [[ $compress == $DRACUT_COMPRESS_ZSTD* && ! $DRACUT_KERNEL_RD_ZSTD ]]; then
-    dwarn "Kernel has no zstd support compiled in."
-    compress=
-fi
-
 if [[ $compress && $compress != cat ]]; then
     if ! command -v "${compress%% *}" &> /dev/null; then
         derror "Cannot execute compression command '$compress', falling back to default"
+        compress=
+    elif ! check_kernel_compress_support "${compress%% *}"; then
+        derror "The target kernel does not support '$compress', falling back to default"
         compress=
     fi
 fi
@@ -2357,8 +2386,8 @@ fi
 if ! [[ $compress ]]; then
     # check all known compressors, if none specified
     for i in $DRACUT_COMPRESS_ZSTD $DRACUT_COMPRESS_PIGZ $DRACUT_COMPRESS_GZIP $DRACUT_COMPRESS_LZ4 $DRACUT_COMPRESS_LZOP $DRACUT_COMPRESS_LZMA $DRACUT_COMPRESS_XZ $DRACUT_COMPRESS_LBZIP2 $DRACUT_COMPRESS_BZIP2 $DRACUT_COMPRESS_CAT; do
-        [[ $i != "$DRACUT_COMPRESS_ZSTD" || $DRACUT_KERNEL_RD_ZSTD ]] || continue
         command -v "$i" &> /dev/null || continue
+        check_kernel_compress_support "$i" || continue
         compress="$i"
         break
     done
