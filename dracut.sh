@@ -1138,7 +1138,9 @@ if ! [[ $outfile ]]; then
             outfile="$dracutsysrootdir/boot/efi/${MACHINE_ID}/${kernel}/initrd"
         elif [[ -f "$dracutsysrootdir"/lib/modules/${kernel}/initrd ]]; then
             outfile="$dracutsysrootdir/lib/modules/${kernel}/initrd"
-        elif [[ -e $dracutsysrootdir/boot/vmlinuz-${kernel} || -e $dracutsysrootdir/boot/vmlinux-${kernel} ]]; then
+        elif [[ -e $dracutsysrootdir/boot/vmlinuz-${kernel} ||
+            -e $dracutsysrootdir/boot/vmlinux-${kernel} ||
+            -e $dracutsysrootdir/boot/kernel-${kernel} ]]; then
             outfile="$dracutsysrootdir/boot/$initrdname"
         elif [[ -z $dracutsysrootdir ]] \
             && [[ $MACHINE_ID ]] \
