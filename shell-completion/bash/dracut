@@ -47,14 +47,14 @@ _dracut() {
             --kernel-cmdline --sshkey --persistent-policy --install-optional
             --loginstall --uefi-stub --kernel-image --squash-compressor
             --sysroot --hostonly-mode --hostonly-nics --include --logfile
-            --uefi-splash-image --sbat
+            --uefi-splash-image --sbat --add-confdir
             '
     )
 
     # shellcheck disable=SC2086
     if __contains_word "$prev" ${OPTS[ARG]}; then
         case $prev in
-            --kmoddir | -k | --fwdir | --confdir | --tmpdir | -r | --sysroot)
+            --kmoddir | -k | --fwdir | --confdir | --add-confdir | --tmpdir | -r | --sysroot)
                 comps=$(compgen -d -- "$cur")
                 compopt -o filenames
                 ;;
