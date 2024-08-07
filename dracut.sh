@@ -157,6 +157,9 @@ Creates initial ramdisk images for preloading modules
                          Default: /etc/dracut.conf
   --confdir [DIR]       Specify configuration directory to use *.conf files
                          from. Default: /etc/dracut.conf.d
+  --add-confdir [DIR]   Add an extra configuration directory to use *.conf
+                         files from. If the directory is not existed, will
+                         look for subdirectory under confdir.
   --tmpdir [DIR]        Temporary directory to be used instead of default
                          ${TMPDIR:-/var/tmp}.
   -r, --sysroot [DIR]   Specify sysroot directory to collect files from.
@@ -385,6 +388,7 @@ rearrange_params() {
             --long kmoddir: \
             --long conf: \
             --long confdir: \
+            --long add-confdir: \
             --long tmpdir: \
             --long sysroot: \
             --long stdlog: \
@@ -661,6 +665,11 @@ while :; do
             PARMS_TO_STORE+=" '$2'"
             shift
             ;;
+        --add-confdir)
+            add_confdir="$2"
+            PARMS_TO_STORE+=" '$2'"
+            shift
+            ;;
         --tmpdir)
             tmpdir_l="$2"
             PARMS_TO_STORE+=" '$2'"
@@ -914,6 +923,20 @@ elif [[ ! -d $confdir ]]; then
     exit 1
 fi
 
+if [[ -n $add_confdir ]]; then
+    if [[ -d $add_confdir ]]; then
+        :
+    # Check if it exists under $confdir.
+    elif [[ -d $confdir/$add_confdir ]]; then
+        add_confdir="$confdir/$add_confdir"
+    elif [[ -d $dracutbasdir/dracut.conf.d/$add_confdir ]]; then
+        add_confdir="$dracutbasdir/dracut.conf.d/$add_confdir"
+    else
+        printf "%s\n" "dracut[F]: Configuration directory '$add_confdir' not found." >&2
+        exit 1
+    fi
+fi
+
 # source our config file
 if [[ -f $conffile ]]; then
     check_conf_file "$conffile"
@@ -922,7 +945,7 @@ if [[ -f $conffile ]]; then
 fi
 
 # source our config dir
-for f in $(dropindirs_sort ".conf" "$confdir" "$dracutbasedir/dracut.conf.d"); do
+for f in $(dropindirs_sort ".conf" "$confdir" "$add_confdir" "$dracutbasedir/dracut.conf.d"); do
     check_conf_file "$f"
     # shellcheck disable=SC1090
     [[ -e $f ]] && . "$f"
