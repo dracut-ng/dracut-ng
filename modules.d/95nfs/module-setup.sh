@@ -125,8 +125,21 @@ install() {
 
     # Rather than copy the passwd file in, just set a user for rpcbind
     # We'll save the state and restart the daemon from the root anyway
-    grep -E '^(nfsnobody|_rpc|rpc|rpcuser):' "$dracutsysrootdir"/etc/passwd >> "$initdir/etc/passwd"
-    grep -E '^nogroup:|^rpc:|^nobody:' "$dracutsysrootdir"/etc/group >> "$initdir/etc/group"
+
+    local _confdir
+    local _filepath
+    for _confdir in etc usr/lib; do
+
+      _filepath="${dracutsysrootdir}/${_confdir}/passwd"
+
+      [[ -r "${_filepath}" ]] \
+        && grep -E '^(nfsnobody|_rpc|rpc|rpcuser):' "${_filepath}" >> "$initdir/${_confdir}/passwd"
+
+      _filepath="${dracutsysrootdir}/${_confdir}/group"
+
+      [[ -r "${_filepath}" ]] \
+        && grep -E '^(nogroup|rpc|nobody):' "${_filepath}" >> "$initdir/${_confdir}/group"
+    done
 
     dracut_need_initqueue
 }
