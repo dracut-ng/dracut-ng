@@ -90,7 +90,7 @@ test_setup() {
     echo "$MD_UUID" > "$TESTDIR"/mduuid
 
     test_dracut \
-        --no-hostonly \
+        -a "lvm mdraid dmraid" \
         "$TESTDIR"/initramfs.testing
 }
 

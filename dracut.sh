@@ -1138,7 +1138,9 @@ if ! [[ $outfile ]]; then
             outfile="$dracutsysrootdir/boot/efi/${MACHINE_ID}/${kernel}/initrd"
         elif [[ -f "$dracutsysrootdir"/lib/modules/${kernel}/initrd ]]; then
             outfile="$dracutsysrootdir/lib/modules/${kernel}/initrd"
-        elif [[ -e $dracutsysrootdir/boot/vmlinuz-${kernel} || -e $dracutsysrootdir/boot/vmlinux-${kernel} ]]; then
+        elif [[ -e $dracutsysrootdir/boot/vmlinuz-${kernel} ||
+            -e $dracutsysrootdir/boot/vmlinux-${kernel} ||
+            -e $dracutsysrootdir/boot/kernel-${kernel} ]]; then
             outfile="$dracutsysrootdir/boot/$initrdname"
         elif [[ -z $dracutsysrootdir ]] \
             && [[ $MACHINE_ID ]] \
@@ -1260,6 +1262,7 @@ trap '
 trap 'exit 1;' SIGINT
 
 readonly initdir="${DRACUT_TMPDIR}/initramfs"
+readonly squashdir="$initdir/squash_root"
 mkdir -p "$initdir"
 
 if [[ $early_microcode == yes ]] || { [[ $acpi_override == yes ]] && [[ -d $acpi_table_dir ]]; }; then
@@ -1787,7 +1790,8 @@ export initdir dracutbasedir \
     host_fs_types host_devs swap_devs sshkey add_fstab \
     DRACUT_VERSION \
     prefix filesystems drivers \
-    hostonly_cmdline loginstall
+    hostonly_cmdline loginstall \
+    squashdir squash_compress
 
 mods_to_load=""
 # check all our modules to see if they should be sourced.
@@ -1891,6 +1895,8 @@ if [[ $kernel_only != yes ]]; then
         [[ -c ${initdir}/dev/urandom ]] || mknod "${initdir}"/dev/urandom c 1 9
     fi
 fi
+
+dracut_module_included "squash" && mkdir -p "$squashdir"
 
 _isize=0 #initramfs size
 modules_loaded=" "
@@ -2243,14 +2249,6 @@ if [[ $kernel_only != yes ]]; then
     build_ld_cache
 fi
 
-if dracut_module_included "squash"; then
-    readonly squash_dir="$initdir/squash/root"
-    readonly squash_img="$initdir/squash-root.img"
-    mkdir -p "$squash_dir"
-    dinfo "*** Install squash loader ***"
-    DRACUT_SQUASH_POST_INST=1 module_install "squash"
-fi
-
 if [[ $do_strip == yes ]] && ! [[ $DRACUT_FIPS_MODE ]]; then
     # stripping files negates (dedup) benefits of using reflink
     [[ -n $enhanced_cpio ]] && ddebug "strip is enabled alongside cpio reflink"
@@ -2270,25 +2268,8 @@ fi
 
 if dracut_module_included "squash"; then
     dinfo "*** Squashing the files inside the initramfs ***"
-    declare squash_compress_arg
-    # shellcheck disable=SC2086
-    if [[ $squash_compress ]]; then
-        if ! mksquashfs /dev/null "$DRACUT_TMPDIR"/.squash-test.img -no-progress -comp $squash_compress &> /dev/null; then
-            dwarn "mksquashfs doesn't support compressor '$squash_compress', failing back to default compressor."
-        else
-            squash_compress_arg="$squash_compress"
-        fi
-    fi
-
-    # shellcheck disable=SC2086
-    if ! mksquashfs "$squash_dir" "$squash_img" \
-        -no-xattrs -no-exports -noappend -no-recovery -always-use-fragments \
-        -no-progress ${squash_compress_arg:+-comp $squash_compress_arg} 1> /dev/null; then
-        dfatal "Failed making squash image"
-        exit 1
-    fi
-
-    rm -rf "$squash_dir"
+    DRACUT_SQUASH_POST_INST=1 module_install "squash"
+    rm -rf "$squashdir"
     dinfo "*** Squashing the files inside the initramfs done ***"
 
     # Skip initramfs compress
