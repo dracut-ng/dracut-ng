@@ -157,6 +157,8 @@ Creates initial ramdisk images for preloading modules
                          Default: /etc/dracut.conf
   --confdir [DIR]       Specify configuration directory to use *.conf files
                          from. Default: /etc/dracut.conf.d
+  --extra-confdir [DIR] Add an extra configuration directory to use *.conf
+                         files from.
   --tmpdir [DIR]        Temporary directory to be used instead of default
                          ${TMPDIR:-/var/tmp}.
   -r, --sysroot [DIR]   Specify sysroot directory to collect files from.
@@ -385,6 +387,7 @@ rearrange_params() {
             --long kmoddir: \
             --long conf: \
             --long confdir: \
+            --long extra-confdir: \
             --long tmpdir: \
             --long sysroot: \
             --long stdlog: \
@@ -661,6 +664,11 @@ while :; do
             PARMS_TO_STORE+=" '$2'"
             shift
             ;;
+        --extra-confdir)
+            extra_confdir="$2"
+            PARMS_TO_STORE+=" '$2'"
+            shift
+            ;;
         --tmpdir)
             tmpdir_l="$2"
             PARMS_TO_STORE+=" '$2'"
@@ -914,6 +922,11 @@ elif [[ ! -d $confdir ]]; then
     exit 1
 fi
 
+if [[ -n $extra_confdir ]] && [[ ! -d $extra_confdir ]]; then
+    printf "%s\n" "dracut[F]: Configuration directory '$extra_confdir' not found." >&2
+    exit 1
+fi
+
 # source our config file
 if [[ -f $conffile ]]; then
     check_conf_file "$conffile"
@@ -922,7 +935,7 @@ if [[ -f $conffile ]]; then
 fi
 
 # source our config dir
-for f in $(dropindirs_sort ".conf" "$confdir" "$dracutbasedir/dracut.conf.d"); do
+for f in $(dropindirs_sort ".conf" "$confdir" "$extra_confdir" "$dracutbasedir/dracut.conf.d"); do
     check_conf_file "$f"
     # shellcheck disable=SC1090
     [[ -e $f ]] && . "$f"
