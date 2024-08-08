@@ -10,7 +10,7 @@ check() {
 
 # called by dracut
 depends() {
-    echo systemd-udevd systemd-journald systemd-tmpfiles
+    echo base systemd-udevd systemd-journald systemd-tmpfiles
 }
 
 installkernel() {
