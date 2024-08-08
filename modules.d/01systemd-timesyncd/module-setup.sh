@@ -40,6 +40,7 @@ install() {
         "$systemdntpunits/*.list" \
         "$systemdutildir"/systemd-timesyncd \
         "$systemdutildir"/systemd-time-wait-sync \
+        "$systemdutildir"/timesyncd.conf \
         "$systemdutildir/timesyncd.conf.d/*.conf" \
         "$systemdsystemunitdir"/systemd-timesyncd.service \
         "$systemdsystemunitdir/systemd-timesyncd.service.d/*.conf" \
