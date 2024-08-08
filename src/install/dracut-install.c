@@ -2292,7 +2292,7 @@ int main(int argc, char **argv)
         log_debug("PATH=%s", path);
 
         ldd = getenv("DRACUT_LDD");
-        if (ldd == NULL)
+        if (isempty(ldd))
                 ldd = "ldd";
         log_debug("LDD=%s", ldd);
 
