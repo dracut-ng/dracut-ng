@@ -101,6 +101,17 @@ if ! [[ $libdirs ]]; then
     export libdirs
 fi
 
+# ldd needs LD_LIBRARY_PATH pointing to the libraries within the sysroot directory
+if [[ -n $dracutsysrootdir ]]; then
+    for lib in $libdirs; do
+        mapfile -t -d '' lib_subdirs < <(find "$lib" -type d -print0 2> /dev/null)
+        for lib_subdir in "${lib_subdirs[@]}"; do
+            LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+"$LD_LIBRARY_PATH":}$dracutsysrootdir$lib_subdir"
+        done
+    done
+    export LD_LIBRARY_PATH
+fi
+
 # helper function for check() in module-setup.sh
 # to check for required installed binaries
 # issues a standardized warning message
