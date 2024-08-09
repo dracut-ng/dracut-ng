@@ -12,6 +12,7 @@ TEST_DESCRIPTION="root filesystem on NFS with bridging/bonding/vlan with $USE_NE
 # skip the test if ifcfg dracut module can not be installed
 test_check() {
     test -d /etc/sysconfig/network-scripts
+    module_check ifcfg
 }
 
 # Network topology:
