@@ -13,7 +13,7 @@ check() {
 
 # called by dracut
 depends() {
-    return 0
+    echo base
 }
 
 installkernel() {
