@@ -14,8 +14,21 @@ else
     }
 fi
 
+# Checks if a systemd-based UKI is running and ESP UUID is set
+is_uki() {
+    [ -f /sys/firmware/efi/efivars/StubFeatures-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f ] \
+        && [ -f /sys/firmware/efi/efivars/LoaderDevicePartUUID-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f ]
+}
+
 mount_boot() {
     boot=$(getarg boot=)
+
+    if is_uki && [ -z "$boot" ]; then
+        # efivar file has 4 bytes header and contain UCS-2 data. Note, 'cat' is required
+        # as sys/firmware/efi/efivars/ files are 'special' and don't allow 'seeking'.
+        # shellcheck disable=SC2002
+        boot="PARTUUID=$(cat /sys/firmware/efi/efivars/LoaderDevicePartUUID-4a67b082-0a4c-41cf-b6c7-440b29bb8c4f | tail -c +5 | tr -d '\0' | tr 'A-F' 'a-f')"
+    fi
 
     if [ -n "$boot" ]; then
         if [ -d /boot ] && ismounted /boot; then
@@ -81,6 +94,41 @@ do_rhevh_check() {
     return 0
 }
 
+do_uki_check() {
+    local KVER
+    local uki_checked=0
+
+    KVER="$(uname -r)"
+    # UKI are placed in $ESP\EFI\Linux\<intall-tag>-<uname-r>.efi
+    if ! [ "$FIPS_MOUNTED_BOOT" = 1 ]; then
+        warn "Failed to mount ESP for doing UKI integrity check"
+        return 1
+    fi
+
+    for UKIpath in /boot/EFI/Linux/*-"$KVER".efi; do
+        # UKIs are installed to $ESP/EFI/Linux/<entry-token-or-machine-id>-<uname-r>.efi
+        # and in some cases (e.g. when the image is used as a template for creating new
+        # VMs) entry-token-or-machine-id can change. To make sure the running UKI is
+        # always checked, check all UKIs which match the 'uname -r' of the running kernel
+        # and fail the whole check if any of the matching UKIs are corrupted.
+
+        [ -r "$UKIpath" ] || break
+
+        local UKI="${UKIpath##*/}"
+        local UKIHMAC=."$UKI".hmac
+
+        fips_info "checking $UKIHMAC"
+        (cd /boot/EFI/Linux/ && sha512hmac -c "$UKIHMAC") || return 1
+        uki_checked=1
+    done
+
+    if [ "$uki_checked" = 0 ]; then
+        warn "Failed for find UKI for checking"
+        return 1
+    fi
+    return 0
+}
+
 nonfatal_modprobe() {
     modprobe "$1" 2>&1 > /dev/stdout \
         | while read -r line || [ -n "$line" ]; do
@@ -133,6 +181,9 @@ do_fips() {
         elif [ -e "/run/install/repo/images/pxeboot/vmlinuz" ]; then
             # This is a boot.iso with the .hmac inside the install.img
             do_rhevh_check /run/install/repo/images/pxeboot/vmlinuz || return 1
+        elif is_uki; then
+            # This is a UKI
+            do_uki_check || return 1
         else
             BOOT_IMAGE="$(getarg BOOT_IMAGE)"
 
