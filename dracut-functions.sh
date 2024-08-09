@@ -243,7 +243,7 @@ get_maj_min() {
     local _out
 
     if [[ $get_maj_min_cache_file ]]; then
-        _out="$(grep -m1 -oE "^$1 \S+$" "$get_maj_min_cache_file" | grep -oE "\S+$")"
+        _out="$(grep -m1 -oE "^${1//\\/\\\\} \S+$" "$get_maj_min_cache_file" | grep -oE "\S+$")"
     fi
 
     if ! [[ "$_out" ]]; then
