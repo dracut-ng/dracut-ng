@@ -731,16 +731,31 @@ fs_get_option() {
 check_kernel_config() {
     local _config_opt="$1"
     local _config_file
-    [[ -f $dracutsysrootdir/boot/config-$kernel ]] \
-        && _config_file="/boot/config-$kernel"
-    [[ -f $dracutsysrootdir/lib/modules/$kernel/config ]] \
-        && _config_file="/lib/modules/$kernel/config"
+
+    # If $no_kernel is set, $kernel will point to the running kernel.
+    # Avoid reading the current kernel config by mistake.
+    [[ $no_kernel == yes ]] && return 0
+
+    local _config_paths=(
+        "/lib/modules/$kernel/config"
+        "/lib/modules/$kernel/build/.config"
+        "/lib/modules/$kernel/source/.config"
+        "/usr/src/linux-$kernel/.config"
+        "/boot/config-$kernel"
+    )
+
+    for _config in "${_config_paths[@]}"; do
+        if [[ -f $dracutsysrootdir$_config ]]; then
+            _config_file="$_config"
+            break
+        fi
+    done
 
     # no kernel config file, so return true
     [[ $_config_file ]] || return 0
 
-    grep -q -F "${_config_opt}=" "$dracutsysrootdir$_config_file" && return 0
-    return 1
+    grep -q "^${_config_opt}=" "$dracutsysrootdir$_config_file"
+    return $?
 }
 
 # 0 if the kernel module is either built-in or available
