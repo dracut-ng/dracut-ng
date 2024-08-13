@@ -56,7 +56,7 @@ gatherData() {
     blockDevice="/dev/${fullDriveSysfsPath##*/}"
     currentPartitionCount=$(grep --count -E "${blockDevice#/dev/}[0-9]+" /proc/partitions)
 
-    freeSpaceStart=$(parted --script "${blockDevice}" unit % print free \
+    freeSpaceStart=$(parted --script "${blockDevice}" --fix unit % print free \
         | awk -v "x=${currentPartitionCount}" '$1 == x {getline; print $1}')
     if [ -z "$freeSpaceStart" ]; then
         info "Skipping overlay creation: there is no free space after the last partition"
