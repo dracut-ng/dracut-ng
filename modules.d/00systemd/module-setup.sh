@@ -110,7 +110,7 @@ install() {
         chmod 444 "$initdir/etc/machine-id"
     fi
 
-    inst_multiple nologin
+    inst_multiple -o nologin
     {
         grep '^adm:' "$dracutsysrootdir"/etc/passwd 2> /dev/null
         # we don't use systemd-networkd, but the user is in systemd.conf tmpfiles snippet
