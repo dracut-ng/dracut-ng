@@ -20,7 +20,8 @@ erofs_installpost() {
     local _img="$squashdir/erofs-root.img"
     local -a _erofs_args
 
-    _erofs_args+=("--exclude-path=$squashdir")
+    # --exclude-path requires a relative path
+    _erofs_args+=("--exclude-path=${squashdir#"$initdir"/}")
     _erofs_args+=("-E" "fragments")
 
     if [[ -n $squash_compress ]]; then
