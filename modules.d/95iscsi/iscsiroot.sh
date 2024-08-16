@@ -64,7 +64,6 @@ handle_firmware() {
         if [ "$retry" -lt "$ifaces" ]; then
             retry=$((retry + 1))
             echo $retry > /tmp/session-retry
-            return 1
         else
             rm /tmp/session-retry
         fi
