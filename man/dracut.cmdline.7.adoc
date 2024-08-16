@@ -877,6 +877,14 @@ iscsistart -b --param node.session.timeo.replacement_timeout=30
 **rd.iscsi.testroute=0**:
     Turn off checking, if the route to the iSCSI target IP is possible before trying to login.
 
+**rd.iscsi.transport=__<transport_name>__**::
+    Set the iSCSI transport name (see man:iscsiadm[8,external]). iSCSI offload
+    transports like **bnx2i** don't need the network to be up in order to bring
+    up iSCSI connections. This parameter indicates that network setup can be
+    skipped in the initramfs, which makes booting with iSCSI offload cards
+    faster and more reliable. This parameter currently only has an effect for
+    _<transport_name>=bnx2i_.
+
 FCoE
 ~~~~
 **rd.fcoe=0**::

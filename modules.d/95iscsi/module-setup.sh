@@ -54,6 +54,7 @@ install_ibft() {
                 echo -n "rd.iscsi.ibft=1 "
             fi
             echo -n "rd.iscsi.firmware=1 "
+            [ -z "$ibft_mod" ] || echo -n "rd.iscsi.transport=$ibft_mod "
         fi
     done
 }
