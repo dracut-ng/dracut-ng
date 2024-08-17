@@ -1,11 +1,15 @@
 FROM docker.io/alpine:latest
 
+# ovmf is not installed as systemd-boot-efistub is not available
+# see https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/61369
+
 RUN apk add --no-cache \
     alpine-sdk \
     asciidoc \
     bash \
     binutils \
     blkid \
+    bluez \
     btrfs-progs \
     busybox \
     bzip2 \
@@ -15,9 +19,11 @@ RUN apk add --no-cache \
     cryptsetup \
     curl \
     dash \
+    device-mapper \
     dhclient \
     dmraid \
     dosfstools \
+    dracut \
     e2fsprogs \
     erofs-utils \
     eudev \
@@ -27,8 +33,12 @@ RUN apk add --no-cache \
     gpg \
     grep \
     iputils \
+    jq \
     kbd \
+    kmod \
     kmod-dev \
+    keyutils \
+    libcap-utils \
     linux-virt \
     losetup \
     lvm2 \
@@ -38,7 +48,9 @@ RUN apk add --no-cache \
     multipath-tools \
     musl-fts-dev \
     nbd \
+    ntfs-3g \
     ntfs-3g-progs \
+    nvme-cli \
     open-iscsi \
     openssh \
     parted \
@@ -58,6 +70,4 @@ RUN apk add --no-cache \
 RUN \
   cp /usr/lib/udev/rules.d/* /lib/udev/rules.d/ && \
   ln -sf /sbin/poweroff /sbin/shutdown && \
-  ln -sf /usr/bin/dash /bin/dash && \
-  ln -sf /bin/sh /usr/bin/sh && \
   ln -sf /boot/vmlinuz-virt /boot/vmlinuz-$(cd /lib/modules; ls -1 | tail -1)
