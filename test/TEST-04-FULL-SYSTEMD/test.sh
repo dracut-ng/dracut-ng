@@ -62,36 +62,12 @@ test_setup() {
 
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
-        -m "test-root systemd-ldconfig" \
+        -m "test-root systemd" \
         -i "${PKGLIBDIR}/modules.d/80test-root/test-init.sh" "/sbin/test-init.sh" \
         -i ./test-init.sh /sbin/test-init \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
 
     mkdir -p "$TESTDIR"/overlay/source && cp -a "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.* && export initdir=$TESTDIR/overlay/source
-
-    if type -P rpm &> /dev/null; then
-        rpm -ql systemd | xargs -r "$PKGLIBDIR"/dracut-install ${initdir:+-D "$initdir"} -o -a -l
-    elif type -P dpkg &> /dev/null; then
-        dpkg -L systemd | xargs -r "$PKGLIBDIR"/dracut-install ${initdir:+-D "$initdir"} -o -a -l
-    elif type -P pacman &> /dev/null; then
-        pacman -Q -l systemd | while read -r _ a; do printf -- "%s\0" "$a"; done | xargs -0 -r "$PKGLIBDIR"/dracut-install ${initdir:+-D "$initdir"} -o -a -l
-    elif type -P equery &> /dev/null; then
-        equery f 'sys-apps/systemd*' | xargs -r "$PKGLIBDIR"/dracut-install ${initdir:+-D "$initdir"} -o -a -l
-    else
-        echo "Can't install systemd base"
-        return 1
-    fi
-
-    # softlink mtab
-    ln -fs /proc/self/mounts "$initdir"/etc/mtab
-
-    # install any Execs from the service files
-    grep -Eho '^Exec[^ ]*=[^ ]+' "$initdir"{,/usr}/lib/systemd/system/*.service \
-        | while read -r i || [ -n "$i" ]; do
-            i=${i##Exec*=}
-            i=${i##-}
-            "$PKGLIBDIR"/dracut-install ${initdir:+-D "$initdir"} -o -a -l "$i"
-        done
 
     # setup the testsuite target
     mkdir -p "$initdir"/etc/systemd/system
