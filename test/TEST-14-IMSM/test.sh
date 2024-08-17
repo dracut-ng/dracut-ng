@@ -90,7 +90,7 @@ test_setup() {
     echo "$MD_UUID" > "$TESTDIR"/mduuid
 
     test_dracut \
-        -a "lvm mdraid dmraid" \
+        -a "lvm mdraid" \
         "$TESTDIR"/initramfs.testing
 }
 
