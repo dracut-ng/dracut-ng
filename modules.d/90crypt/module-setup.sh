@@ -23,8 +23,7 @@ depends() {
 
 # called by dracut
 installkernel() {
-    hostonly="" instmods drbg
-    instmods dm_crypt
+    hostonly="" instmods drbg dm_crypt
 
     # in case some of the crypto modules moved from compiled in
     # to module based, try to install those modules
