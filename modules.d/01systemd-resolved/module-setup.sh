@@ -36,7 +36,6 @@ install() {
     inst_multiple -o \
         "$dbussystem"/org.freedesktop.resolve1.conf \
         "$dbussystemservices"/org.freedesktop.resolve1.service \
-        "$systemdutildir"/resolv.conf \
         "$systemdutildir"/resolved.conf \
         "$systemdutildir/resolved.conf.d/*.conf" \
         "$systemdutildir"/systemd-resolved \
@@ -50,7 +49,6 @@ install() {
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
-            "$systemdutilconfdir"/resolv.conf \
             "$systemdutilconfdir"/resolved.conf \
             "$systemdutilconfdir/resolved.conf.d/*.conf" \
             "$systemdsystemconfdir"/systemd-resolved.service \
