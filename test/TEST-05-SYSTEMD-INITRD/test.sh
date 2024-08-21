@@ -55,28 +55,8 @@ test_setup() {
     test_marker_check dracut-root-block-created || return 1
     rm -- "$TESTDIR"/marker.img
 
-    # directory for test configurations
-    mkdir -p /tmp/dracut.conf.d
-
-    # grab the distro configuration from the host and make it available for the tests
-    if [ -d /usr/lib/dracut/dracut.conf.d ]; then
-        cp -a /usr/lib/dracut/dracut.conf.d /tmp/
-    fi
-
-    # pick up configuration from /tmp/dracut.conf.d when running the tests
-    TEST_DRACUT_ARGS+=" --local --confdir /tmp/dracut.conf.d --no-early-microcode --force --kver $KVERSION"
-
-    # include $TESTDIR"/overlay if exists
-    if [ -d "$TESTDIR"/overlay ]; then
-        TEST_DRACUT_ARGS+=" --include $TESTDIR/overlay /"
-    fi
-
-    # shellcheck disable=SC2162
-    IFS=' ' read -a TEST_DRACUT_ARGS_ARRAY <<< "$TEST_DRACUT_ARGS"
-
-    "$DRACUT" \
-        --kernel-cmdline "rd.retry=10 rd.info rd.shell=0" \
-        "${TEST_DRACUT_ARGS_ARRAY[@]}" \
+    test_dracut \
+        --omit test \
         -m "kernel-modules systemd-initrd qemu test-root" \
         "$TESTDIR"/initramfs.testing
 }
