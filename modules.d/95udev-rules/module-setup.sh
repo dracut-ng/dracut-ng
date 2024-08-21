@@ -58,9 +58,7 @@ install() {
         80-net-name-slot.rules \
         80-net-setup-link.rules \
         81-net-dhcp.rules \
-        95-udev-late.rules \
-        "$moddir/59-persistent-storage.rules" \
-        "$moddir/61-persistent-storage.rules"
+        95-udev-late.rules
 
     {
         for i in cdrom tape dialout floppy; do
