@@ -131,8 +131,8 @@ case "$COMMAND" in
 
         if [[ ! -f "$BOOT_DIR_ABS/$INITRD" ]]; then
             # shellcheck disable=SC2046
-            dracut -f --no-hostonly --no-uefi \
-                -a "rescue" \
+            dracut -f \
+                --add-confdir rescue \
                 $([[ $KERNEL_INSTALL_VERBOSE == 1 ]] && echo --verbose) \
                 --kver "$KERNEL_VERSION" \
                 "$BOOT_DIR_ABS/$INITRD"
