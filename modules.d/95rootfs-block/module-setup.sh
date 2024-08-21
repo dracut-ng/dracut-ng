@@ -89,4 +89,8 @@ install() {
     fi
 
     inst_hook initqueue/timeout 99 "$moddir/rootfallback.sh"
+
+    inst_rules \
+        "$moddir/59-persistent-storage.rules" \
+        "$moddir/61-persistent-storage.rules"
 }
