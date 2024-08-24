@@ -58,7 +58,6 @@ test_setup() {
     # systemd-analyze.sh calls man indirectly
     # make the man command succeed always
     test_dracut \
-        -a "systemd" \
         -i ./systemd-analyze.sh /lib/dracut/hooks/pre-pivot/00-systemd-analyze.sh \
         -i "/bin/true" "/usr/bin/man" \
         "$TESTDIR"/initramfs.testing
