@@ -161,9 +161,6 @@ while (($# > 0)); do
             fi
             if [[ $V == "1" || $V == "2" ]]; then
                 tee_command="tee"
-                if [[ $V == "2" && -x "$basedir/logtee" ]]; then
-                    tee_command="$basedir/logtee"
-                fi
                 set -o pipefail
                 (
                     test_setup && test_run
