@@ -24,6 +24,10 @@ if [[ $V != "1" && $V != "2" ]]; then
     TEST_KERNEL_CMDLINE+="quiet "
 fi
 
+if [[ $V == "2" ]]; then
+    TEST_KERNEL_CMDLINE+="rd.debug "
+fi
+
 test_dracut() {
     # directory for test configurations
     mkdir -p /tmp/dracut.conf.d

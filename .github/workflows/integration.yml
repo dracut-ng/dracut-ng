@@ -5,7 +5,9 @@ on:
         branches: [ main ]
 
 env:
-    DEBUGFAIL: "${{ secrets.ACTIONS_STEP_DEBUG && 'rd.debug' }}"
+    # set V to 2 when re-running jobs with debug logging enabled
+    # see https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
+    V: "${{ secrets.ACTIONS_STEP_DEBUG && '2' }}"
 
 jobs:
     basic:
