@@ -74,9 +74,6 @@ src/install/strv.o: src/install/strv.c src/install/strv.h src/install/util.h src
 src/install/dracut-install: $(DRACUT_INSTALL_OBJECTS)
 	$(CC) $(LDFLAGS) -o $@ $(DRACUT_INSTALL_OBJECTS) $(LDLIBS) $(FTS_LIBS) $(KMOD_LIBS)
 
-logtee: src/logtee/logtee.c
-	$(CC) $(LDFLAGS) -o $@ $<
-
 dracut-install: src/install/dracut-install
 	ln -fs $< $@
 

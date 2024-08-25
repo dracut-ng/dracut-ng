@@ -19,9 +19,9 @@ NCPU=$(getconf _NPROCESSORS_ONLN)
 # treat warnings as error
 
 if ! [[ $TESTS ]]; then
-    CFLAGS="-Wextra -Werror" make -j "$NCPU" all syncheck logtee
+    CFLAGS="-Wextra -Werror" make -j "$NCPU" all syncheck
 else
-    CFLAGS="-Wextra -Werror" make -j "$NCPU" enable_documentation=no all logtee
+    CFLAGS="-Wextra -Werror" make -j "$NCPU" enable_documentation=no all
 
     cd test
 
