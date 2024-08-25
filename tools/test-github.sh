@@ -34,6 +34,6 @@ else
         )" \
         TEST_RUN_ID="$RUN_ID" \
         ${TESTS:+TESTS="$TESTS"} \
-        -k V=1 \
+        -k V="${V:=1}" \
         check
 fi

@@ -246,9 +246,14 @@ mentioned in the `test/container` Dockerfiles.
 $ make clean check
 ```
 
-in verbose mode:
+in verbose mode (enabled for GitHub Actions):
 ```
 $ make V=1 clean check
+```
+
+in extra verbose mode (enabled for debug logging):
+```
+$ make V=2 clean check
 ```
 
 only specific test:
