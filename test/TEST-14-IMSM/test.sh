@@ -6,6 +6,10 @@ TEST_DESCRIPTION="root filesystem on LVM PV on a isw dmraid"
 #DEBUGFAIL="rd.shell"
 #DEBUGFAIL="$DEBUGFAIL udev.log-priority=debug"
 
+test_check() {
+    command -v dmraid &> /dev/null
+}
+
 client_run() {
     echo "CLIENT TEST START: $*"
 
