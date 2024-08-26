@@ -22,7 +22,7 @@ _cryptgetargsname() {
     return 1
 }
 
-if ! getargbool 1 rd.luks -d -n rd_NO_LUKS; then
+if ! getargbool 1 rd.luks; then
     info "rd.luks=0: removing cryptoluks activation"
     rm -f -- /etc/udev/rules.d/70-luks.rules
 else
