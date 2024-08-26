@@ -2,7 +2,7 @@
 
 type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
 
-LVS=$(getargs rd.lvm.lv -d rd_LVM_LV=)
+LVS=$(getargs rd.lvm.lv)
 
 is_lvm2_thinp_device() {
     _device_path=$1
