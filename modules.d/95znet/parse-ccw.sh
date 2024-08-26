@@ -13,7 +13,7 @@ znet_vinfo() {
     done
 }
 
-for ccw_arg in $(getargs rd.ccw) $(getargs rd.znet); do
+for ccw_arg in $(getargs rd.znet); do
     (
         SAVED_IFS="$IFS"
         IFS=","
