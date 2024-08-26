@@ -1,7 +1,7 @@
 #!/bin/sh
 
 if type plymouthd > /dev/null 2>&1 && [ -z "$DRACUT_SYSTEMD" ]; then
-    if getargbool 1 plymouth.enable && getargbool 1 rd.plymouth -d -n rd_NO_PLYMOUTH; then
+    if getargbool 1 plymouth.enable && getargbool 1 rd.plymouth; then
         # first trigger graphics subsystem
         udevadm trigger --action=add --attr-match=class=0x030000 > /dev/null 2>&1
         # first trigger graphics and tty subsystem
