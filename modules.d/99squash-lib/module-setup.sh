@@ -72,6 +72,14 @@ squash_install() {
 squash_installpost() {
     local _file _handler
 
+    # this shouldn't happen but...
+    # ...better safe than deleting your rootfs
+    if [[ -z $initdir ]]; then
+        #shellcheck disable=SC2016
+        dfatal '$initdir not set. Something went terribly wrong.'
+        exit 1
+    fi
+
     _handler=$(squash_get_handler)
     [[ -n $_handler ]] || return 1
 
