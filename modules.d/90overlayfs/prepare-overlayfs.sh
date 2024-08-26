@@ -3,7 +3,7 @@
 type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
 
 getargbool 0 rd.live.overlay.overlayfs && overlayfs="yes"
-getargbool 0 rd.live.overlay.reset -d -y reset_overlay && reset_overlay="yes"
+getargbool 0 rd.live.overlay.reset && reset_overlay="yes"
 
 if [ -n "$overlayfs" ]; then
     if ! [ -e /run/rootfsbase ]; then

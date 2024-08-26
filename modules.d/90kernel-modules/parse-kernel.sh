@@ -5,7 +5,7 @@ if [ ! -d $_modprobe_d ]; then
     mkdir -p $_modprobe_d
 fi
 
-for i in $(getargs rd.driver.pre -d rdloaddriver=); do
+for i in $(getargs rd.driver.pre); do
     (
         IFS=,
         for p in $i; do
@@ -14,7 +14,7 @@ for i in $(getargs rd.driver.pre -d rdloaddriver=); do
     )
 done
 
-for i in $(getargs rd.driver.blacklist -d rdblacklist=); do
+for i in $(getargs rd.driver.blacklist); do
     (
         IFS=,
         for p in $i; do
@@ -23,7 +23,7 @@ for i in $(getargs rd.driver.blacklist -d rdblacklist=); do
     )
 done
 
-for p in $(getargs rd.driver.post -d rdinsmodpost=); do
+for p in $(getargs rd.driver.post); do
     echo "blacklist $p" >> $_modprobe_d/initramfsblacklist.conf
     _do_insmodpost=1
 done

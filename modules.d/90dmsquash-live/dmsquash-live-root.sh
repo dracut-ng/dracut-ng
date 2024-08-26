@@ -7,7 +7,7 @@ command -v unpack_archive > /dev/null || . /lib/img-lib.sh
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
-if getargbool 0 rd.live.debug -n -y rdlivedebug; then
+if getargbool 0 rd.live.debug; then
     exec > /tmp/liveroot.$$.out
     exec 2>> /tmp/liveroot.$$.out
     set -x
@@ -18,16 +18,16 @@ livedev="$1"
 
 # parse various live image specific options that make sense to be
 # specified as their own things
-live_dir=$(getarg rd.live.dir -d live_dir)
+live_dir=$(getarg rd.live.dir)
 [ -z "$live_dir" ] && live_dir="LiveOS"
 squash_image=$(getarg rd.live.squashimg)
 [ -z "$squash_image" ] && squash_image="squashfs.img"
 
-getargbool 0 rd.live.ram -d -y live_ram && live_ram="yes"
-getargbool 0 rd.live.overlay.reset -d -y reset_overlay && reset_overlay="yes"
-getargbool 0 rd.live.overlay.readonly -d -y readonly_overlay && readonly_overlay="--readonly" || readonly_overlay=""
-overlay=$(getarg rd.live.overlay -d overlay)
-getargbool 0 rd.writable.fsimg -d -y writable_fsimg && writable_fsimg="yes"
+getargbool 0 rd.live.ram && live_ram="yes"
+getargbool 0 rd.live.overlay.reset && reset_overlay="yes"
+getargbool 0 rd.live.overlay.readonly && readonly_overlay="--readonly" || readonly_overlay=""
+overlay=$(getarg rd.live.overlay)
+getargbool 0 rd.writable.fsimg && writable_fsimg="yes"
 overlay_size=$(getarg rd.live.overlay.size=)
 [ -z "$overlay_size" ] && overlay_size=32768
 
@@ -70,7 +70,7 @@ if [ ! -f "$livedev" ]; then
     if [ "$fs" = "iso9660" ] || [ "$fs" = "udf" ]; then
         check="yes"
     fi
-    getarg rd.live.check -d check || check=""
+    getarg rd.live.check || check=""
     if [ -n "$check" ]; then
         type plymouth > /dev/null 2>&1 && plymouth --hide-splash
         if [ -n "$DRACUT_SYSTEMD" ]; then
