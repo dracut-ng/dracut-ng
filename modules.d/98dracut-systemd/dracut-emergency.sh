@@ -13,7 +13,7 @@ type plymouth > /dev/null 2>&1 && plymouth quit
 export _rdshell_name="dracut" action="Boot" hook="emergency"
 _emergency_action=$(getarg rd.emergency)
 
-if getargbool 1 rd.shell -d -y rdshell || getarg rd.break; then
+if getargbool 1 rd.shell || getarg rd.break; then
     FSTXT="/run/dracut/fsck/fsck_help_$fstype.txt"
     RDSOSREPORT="$(rdsosreport)"
     source_hook "$hook"
