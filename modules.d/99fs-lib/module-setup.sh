@@ -17,9 +17,6 @@ echo_fs_helper() {
         jfs)
             echo -n " jfs_fsck "
             ;;
-        reiserfs)
-            echo -n " reiserfsck "
-            ;;
         btrfs)
             echo -n " btrfsck "
             ;;
@@ -65,7 +62,7 @@ install() {
         _helpers=(
             /sbin/fsck* /usr/sbin/fsck*
             xfs_db xfs_check xfs_repair xfs_metadump
-            e2fsck jfs_fsck reiserfsck btrfsck
+            e2fsck jfs_fsck btrfsck
         )
         if [[ $hostonly ]]; then
             read -r -a _helpers < <(for_each_host_dev_fs echo_fs_helper)

@@ -57,11 +57,6 @@ fsck_able() {
                 && _drv="fsck_drv_com jfs_fsck" \
                 && return 0
             ;;
-        reiserfs)
-            type reiserfsck > /dev/null 2>&1 \
-                && _drv="fsck_drv_com reiserfsck" \
-                && return 0
-            ;;
         btrfs)
             # type btrfsck >/dev/null 2>&1 &&
             # _drv="_drv=none fsck_drv_btrfs" &&
