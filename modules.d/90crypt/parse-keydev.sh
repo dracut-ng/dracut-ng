@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if getargbool 1 rd.luks -n rd_NO_LUKS \
+if getargbool 1 rd.luks \
     && [ -n "$(getarg rd.luks.key)" ]; then
     exec 7> /etc/udev/rules.d/65-luks-keydev.rules
     echo 'SUBSYSTEM!="block", GOTO="luks_keydev_end"' >&7
