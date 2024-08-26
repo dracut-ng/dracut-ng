@@ -8,7 +8,7 @@ check() {
 }
 
 depends() {
-    echo "squash"
+    echo "squash-lib"
     return 0
 }
 

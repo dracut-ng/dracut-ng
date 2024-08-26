@@ -1938,7 +1938,7 @@ if [[ $kernel_only != yes ]]; then
     fi
 fi
 
-dracut_module_included "squash" && mkdir -p "$squashdir"
+dracut_module_included "squash-lib" && mkdir -p "$squashdir"
 
 _isize=0 #initramfs size
 modules_loaded=" "
@@ -2308,9 +2308,9 @@ if [[ $do_strip == yes ]] && ! [[ $DRACUT_FIPS_MODE ]]; then
     dinfo "*** Stripping files done ***"
 fi
 
-if dracut_module_included "squash"; then
+if dracut_module_included "squash-lib"; then
     dinfo "*** Squashing the files inside the initramfs ***"
-    DRACUT_SQUASH_POST_INST=1 module_install "squash"
+    DRACUT_SQUASH_POST_INST=1 module_install "squash-lib"
     rm -rf "$squashdir"
     dinfo "*** Squashing the files inside the initramfs done ***"
 
