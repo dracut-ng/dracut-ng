@@ -975,7 +975,7 @@ emergency_shell() {
         && [ -e /run/initramfs/.die ] \
         && _emergency_action=poweroff
 
-    if getargbool 1 rd.shell -d -y rdshell || getarg rd.break -d rdbreak; then
+    if getargbool 1 rd.shell -d -y rdshell || getarg rd.break; then
         _emergency_shell "$_rdshell_name"
     else
         source_hook "$hook"
