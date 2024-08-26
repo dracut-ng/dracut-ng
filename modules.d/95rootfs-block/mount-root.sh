@@ -65,7 +65,7 @@ mount_root() {
     fi
 
     rootopts=
-    if getargbool 1 rd.fstab -d -n rd_NO_FSTAB \
+    if getargbool 1 rd.fstab \
         && ! getarg rootflags > /dev/null \
         && [ -f "$NEWROOT/etc/fstab" ] \
         && ! [ -L "$NEWROOT/etc/fstab" ]; then

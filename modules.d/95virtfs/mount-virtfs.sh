@@ -34,7 +34,7 @@ mount_root() {
     mount -t ${rootfs} -o "$rflags",ro "${root#virtfs:}" "$NEWROOT"
 
     rootopts=
-    if getargbool 1 rd.fstab -n rd_NO_FSTAB \
+    if getargbool 1 rd.fstab \
         && ! getarg rootflags \
         && [ -f "$NEWROOT/etc/fstab" ] \
         && ! [ -L "$NEWROOT/etc/fstab" ]; then

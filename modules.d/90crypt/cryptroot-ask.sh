@@ -27,7 +27,7 @@ is_keysource=${3:-0}
 numtries=${4:-10}
 
 # TODO: improve to support what cmdline does
-if [ -f /etc/crypttab ] && getargbool 1 rd.luks.crypttab -d -n rd_NO_CRYPTTAB; then
+if [ -f /etc/crypttab ] && getargbool 1 rd.luks.crypttab; then
     while read -r name dev luksfile luksoptions || [ -n "$name" ]; do
         # ignore blank lines and comments
         if [ -z "$name" ] || [ "${name#\#}" != "$name" ]; then
