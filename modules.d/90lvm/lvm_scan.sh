@@ -5,8 +5,8 @@
 extraargs="$*"
 type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
 
-VGS=$(getargs rd.lvm.vg -d rd_LVM_VG=)
-LVS=$(getargs rd.lvm.lv -d rd_LVM_LV=)
+VGS=$(getargs rd.lvm.vg)
+LVS=$(getargs rd.lvm.lv)
 
 # shellcheck disable=SC2174
 [ -d /etc/lvm ] || mkdir -m 0755 -p /etc/lvm
