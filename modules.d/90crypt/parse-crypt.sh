@@ -31,9 +31,9 @@ else
         echo 'ACTION!="add|change", GOTO="luks_end"'
     } > /etc/udev/rules.d/70-luks.rules.new
 
-    PARTUUID=$(getargs rd.luks.partuuid -d rd_LUKS_PARTUUID)
-    SERIAL=$(getargs rd.luks.serial -d rd_LUKS_SERIAL)
-    LUKS=$(getargs rd.luks.uuid -d rd_LUKS_UUID)
+    PARTUUID=$(getargs rd.luks.partuuid)
+    SERIAL=$(getargs rd.luks.serial)
+    LUKS=$(getargs rd.luks.uuid)
     tout=$(getarg rd.luks.key.tout)
 
     if [ -e /etc/crypttab ]; then
