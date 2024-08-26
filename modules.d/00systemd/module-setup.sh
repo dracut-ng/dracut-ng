@@ -44,7 +44,6 @@ install() {
         "$systemdutildir"/system.conf \
         "$systemdutildir"/system.conf.d/*.conf \
         "$systemdsystemunitdir"/debug-shell.service \
-        "$systemdsystemunitdir"/cryptsetup-pre.target \
         "$systemdsystemunitdir"/emergency.target \
         "$systemdsystemunitdir"/sysinit.target \
         "$systemdsystemunitdir"/basic.target \
