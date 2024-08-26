@@ -14,10 +14,6 @@ mount_root() {
             xfs)
                 rflags="${rflags:+${rflags},}logdev=$journaldev"
                 ;;
-            reiserfs)
-                fsckoptions="-j $journaldev $fsckoptions"
-                rflags="${rflags:+${rflags},}jdev=$journaldev"
-                ;;
             *) ;;
         esac
     fi
