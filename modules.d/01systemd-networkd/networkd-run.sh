@@ -3,7 +3,7 @@
 type source_hook > /dev/null 2>&1 || . /lib/dracut-lib.sh
 
 for ifpath in /sys/class/net/*; do
-    ifname="$(basename "$ifpath")"
+    ifname="${ifpath##*/}"
 
     # shellcheck disable=SC2015
     [ "$ifname" != "lo" ] && [ -e "$ifpath" ] && [ ! -e /tmp/networkd."$ifname".done ] || continue
