@@ -5,7 +5,7 @@
 [ -z "$root" ] && root=$(getarg root=)
 
 # support legacy syntax of passing liveimg and then just the base root
-if getargbool 0 rd.live.image -d -y liveimg; then
+if getargbool 0 rd.live.image; then
     liveroot="live:$root"
 fi
 

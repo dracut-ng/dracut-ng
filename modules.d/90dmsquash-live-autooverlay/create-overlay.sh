@@ -2,7 +2,7 @@
 
 type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
 
-if getargbool 0 rd.live.debug -n -y rdlivedebug; then
+if getargbool 0 rd.live.debug; then
     exec > /tmp/create-overlay.$$.out
     exec 2>> /tmp/create-overlay.$$.out
     set -x

@@ -5,7 +5,7 @@ type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
 [ -z "$root" ] && root=$(getarg root=)
 
 # support legacy syntax of passing liveimg and then just the base root
-if getargbool 0 rd.live.image -d -y liveimg; then
+if getargbool 0 rd.live.image; then
     liveroot="live:$root"
 fi
 
@@ -49,7 +49,7 @@ GENERATOR_DIR="$2"
 
 [ -d "$GENERATOR_DIR" ] || mkdir -p "$GENERATOR_DIR"
 
-getargbool 0 rd.live.overlay.readonly -d -y readonly_overlay && readonly_overlay="--readonly" || readonly_overlay=""
+getargbool 0 rd.live.overlay.readonly && readonly_overlay="--readonly" || readonly_overlay=""
 getargbool 0 rd.live.overlay.overlayfs && overlayfs="yes"
 [ -e /xor_overlayfs ] && xor_overlayfs="yes"
 [ -e /xor_readonly ] && xor_readonly="--readonly"
