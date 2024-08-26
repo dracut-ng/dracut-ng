@@ -20,7 +20,7 @@ if ! command -v mdadm > /dev/null \
     udevproperty rd_NO_MDDDF=1
 fi
 
-DM_RAIDS=$(getargs rd.dm.uuid -d rd_DM_UUID=)
+DM_RAIDS=$(getargs rd.dm.uuid)
 
 if [ -z "$DM_RAIDS" ] && ! getargbool 0 rd.auto; then
     udevproperty rd_NO_DM=1

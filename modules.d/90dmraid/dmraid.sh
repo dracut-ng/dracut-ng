@@ -8,7 +8,7 @@ devenc=$(str_replace "$1" '/' '\2f')
 
 : > /tmp/dmraid."$devenc"
 
-DM_RAIDS=$(getargs rd.dm.uuid -d rd_DM_UUID=)
+DM_RAIDS=$(getargs rd.dm.uuid)
 
 if [ -n "$DM_RAIDS" ] || getargbool 0 rd.auto; then
     # run dmraid if udev has settled
