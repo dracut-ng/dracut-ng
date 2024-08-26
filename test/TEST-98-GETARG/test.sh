@@ -108,7 +108,7 @@ test_run() {
         RDRETRY=$(getarg rd.retry -d 'rd_retry=')
         [[ $RDRETRY == "10" ]] || ret=$((ret + 1))
         getarg rd.break=cmdline -d rdbreak=cmdline || ret=$((ret + 1))
-        getargbool 1 rd.lvm -d -n rd_NO_LVM || ret=$((ret + 1))
+        getargbool 1 rd.lvm || ret=$((ret + 1))
         getargbool 0 rd.auto || ret=$((ret + 1))
 
         # shellcheck disable=SC2317  # called later by getarg in dracut-lib.sh
@@ -116,7 +116,7 @@ test_run() {
             echo "rd.break=cmdlined rd.lvm=0 rd.auto rd.auto=1 rd.auto=0"
         }
         getarg rd.break=cmdline -d rdbreak=cmdline && ret=$((ret + 1))
-        getargbool 1 rd.lvm -d -n rd_NO_LVM && ret=$((ret + 1))
+        getargbool 1 rd.lvm && ret=$((ret + 1))
         getargbool 0 rd.auto && ret=$((ret + 1))
 
         # shellcheck disable=SC2317  # called later by getarg in dracut-lib.sh
