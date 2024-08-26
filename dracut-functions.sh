@@ -558,10 +558,6 @@ for_each_host_dev_fs() {
     return $_ret
 }
 
-host_fs_all() {
-    printf "%s\n" "${host_fs_types[@]}"
-}
-
 # Walk all the slave relationships for a given block device.
 # Stop when our helper function returns success
 # $1 = function to call on every found block device
