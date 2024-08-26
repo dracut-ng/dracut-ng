@@ -371,7 +371,7 @@ setdebug() {
     if [ -z "$RD_DEBUG" ]; then
         if [ -e /proc/cmdline ]; then
             RD_DEBUG=no
-            if getargbool 0 rd.debug -d -y rdinitdebug -d -y rdnetdebug; then
+            if getargbool 0 rd.debug; then
                 RD_DEBUG=yes
                 [ -n "$BASH" ] \
                     && export PS4='${BASH_SOURCE}@${LINENO}(${FUNCNAME[0]-}): '
@@ -460,8 +460,8 @@ die() {
 check_quiet() {
     if [ -z "$DRACUT_QUIET" ]; then
         DRACUT_QUIET="yes"
-        getargbool 0 rd.info -d -y rdinfo && DRACUT_QUIET="no"
-        getargbool 0 rd.debug -d -y rdinitdebug && DRACUT_QUIET="no"
+        getargbool 0 rd.info && DRACUT_QUIET="no"
+        getargbool 0 rd.debug && DRACUT_QUIET="no"
         getarg quiet || DRACUT_QUIET="yes"
         a=$(getarg loglevel=)
         [ -n "$a" ] && [ "$a" -ge 28 ] && DRACUT_QUIET="yes"
@@ -923,7 +923,7 @@ _emergency_shell() {
         /sbin/rdsosreport
         echo 'You might want to save "/run/initramfs/rdsosreport.txt" to a USB stick or /boot'
         echo 'after mounting them and attach it to a bug report.'
-        if ! RD_DEBUG='' getargbool 0 rd.debug -d -y rdinitdebug -d -y rdnetdebug; then
+        if ! RD_DEBUG='' getargbool 0 rd.debug -d -y rdnetdebug; then
             echo
             echo 'To get more debug information in the report,'
             echo 'reboot with "rd.debug" added to the kernel command line.'
@@ -975,7 +975,7 @@ emergency_shell() {
         && [ -e /run/initramfs/.die ] \
         && _emergency_action=poweroff
 
-    if getargbool 1 rd.shell -d -y rdshell || getarg rd.break; then
+    if getargbool 1 rd.shell || getarg rd.break; then
         _emergency_shell "$_rdshell_name"
     else
         source_hook "$hook"

@@ -105,7 +105,7 @@ test_run() {
         getcmdline() {
             echo "rd.break=cmdline rd.lvm rd.auto=0 rd.auto rd.retry=10"
         }
-        RDRETRY=$(getarg rd.retry -d 'rd_retry=')
+        RDRETRY=$(getarg rd.retry)
         [[ $RDRETRY == "10" ]] || ret=$((ret + 1))
         getarg rd.break=cmdline || ret=$((ret + 1))
         getargbool 1 rd.lvm || ret=$((ret + 1))

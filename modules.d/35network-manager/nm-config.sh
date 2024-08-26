@@ -6,7 +6,7 @@ if [ -n "$netroot" ] || [ -e /tmp/net.ifaces ]; then
     echo rd.neednet >> /etc/cmdline.d/35-neednet.conf
 fi
 
-if getargbool 0 rd.debug -d -y rdinitdebug -d -y rdnetdebug; then
+if getargbool 0 rd.debug; then
     # shellcheck disable=SC2174
     mkdir -m 0755 -p /run/NetworkManager/conf.d
     (

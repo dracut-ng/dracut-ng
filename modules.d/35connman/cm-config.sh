@@ -6,7 +6,7 @@ if [ -n "$netroot" ] || [ -e /tmp/net.ifaces ]; then
     echo rd.neednet >> /etc/cmdline.d/connman.conf
 fi
 
-if getargbool 0 rd.debug -d -y rdinitdebug -d -y rdnetdebug; then
+if getargbool 0 rd.debug; then
     if [ -n "$DRACUT_SYSTEMD" ]; then
         # Enable tty output if a usable console is found
         # shellcheck disable=SC2217
