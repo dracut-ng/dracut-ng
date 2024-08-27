@@ -134,7 +134,8 @@ check_lvm_ver 2 3 14 "$maj" "$min" "$sub" \
     && scan_args="$scan_args --nohints"
 
 if [ -n "$LVS" ]; then
-    info "Scanning devices $lvmdevs for LVM logical volumes $LVS"
+    # shellcheck disable=SC2086 disable=SC2116
+    info "Scanning devices ${lvmdevs% } for LVM logical volumes $(echo $LVS)"
     # shellcheck disable=SC2086
     LVSLIST=$(lvm lvs $scan_args --noheading -o lv_full_name,segtype $LVS)
     info "$LVSLIST"
@@ -154,7 +155,8 @@ if [ -n "$LVS" ]; then
 fi
 
 if [ -z "$LVS" ] || [ -n "$VGS" ]; then
-    info "Scanning devices $lvmdevs for LVM volume groups $VGS"
+    # shellcheck disable=SC2086 disable=SC2116
+    info "Scanning devices ${lvmdevs% } for LVM volume groups $(echo $VGS)"
     # shellcheck disable=SC2086
     lvm vgscan $scan_args 2>&1 | vinfo
     # shellcheck disable=SC2086
