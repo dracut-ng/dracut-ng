@@ -18,15 +18,7 @@ check() {
 
 # called by dracut
 depends() {
-    local deps
-    deps="dm rootfs-block"
-
-    if dracut_module_included "systemd"; then
-        deps+=" systemd-cryptsetup"
-    fi
-
-    echo "$deps"
-    return 0
+    echo dm rootfs-block
 }
 
 # called by dracut
