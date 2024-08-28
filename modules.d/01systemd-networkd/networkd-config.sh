@@ -20,7 +20,7 @@ for f in /run/systemd/network/*.network; do
     } >> "$f"
 
     # Remove the default network if at least one was generated
-    rm -f "$systemdnetworkconfdir"/99-dracut-default.network
+    rm -f "$systemdnetworkconfdir"/zzzz-dracut-default.network
 done
 
 # Just in case networkd was already running
