@@ -97,7 +97,7 @@ test_setup() {
     chmod 0600 /tmp/key
 
     test_dracut \
-        -m "crypt lvm mdraid kernel-modules" \
+        -a "crypt lvm mdraid kernel-modules" \
         -i "./cryptroot-ask.sh" "/sbin/cryptroot-ask" \
         -i "/tmp/mdadm.conf" "/etc/mdadm.conf" \
         -i "/tmp/crypttab" "/etc/crypttab" \
