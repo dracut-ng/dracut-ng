@@ -230,17 +230,7 @@ init has the following hook points to inject scripts:
 
 ```console
 $ cd <DRACUT_SOURCE>
-$ podman pull [CONTAINER]
-$ podman run --rm -it \
-    --cap-add=SYS_PTRACE --user 0 \
-    -v /dev:/dev -v ./:/dracut:z \
-    [CONTAINER] \
-    bash -l
-# cd /dracut
-# ./configure
-# make -j $(getconf _NPROCESSORS_ONLN)
-# cd test
-# make KVERSION="$(cd /lib/modules && ls -1 | tail -1)" V=1 SKIP="16 60 61" clean check
+$ tools/test-podman.sh [TESTS] [CONTAINER]
 ```
 
 with `[CONTAINER]` being one of the

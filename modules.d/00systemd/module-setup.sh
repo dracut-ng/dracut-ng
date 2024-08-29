@@ -36,7 +36,6 @@ install() {
         "$systemdutildir"/systemd-shutdown \
         "$systemdutildir"/systemd-reply-password \
         "$systemdutildir"/systemd-fsck \
-        "$systemdutildir"/systemd-vconsole-setup \
         "$systemdutildir"/systemd-volatile-root \
         "$systemdutildir"/systemd-sysroot-fstab-check \
         "$systemdutildir"/system-generators/systemd-debug-generator \
@@ -45,7 +44,6 @@ install() {
         "$systemdutildir"/system.conf \
         "$systemdutildir"/system.conf.d/*.conf \
         "$systemdsystemunitdir"/debug-shell.service \
-        "$systemdsystemunitdir"/cryptsetup-pre.target \
         "$systemdsystemunitdir"/emergency.target \
         "$systemdsystemunitdir"/sysinit.target \
         "$systemdsystemunitdir"/basic.target \
@@ -79,7 +77,6 @@ install() {
         "$systemdsystemunitdir"/systemd-reboot.service \
         "$systemdsystemunitdir"/systemd-kexec.service \
         "$systemdsystemunitdir"/systemd-fsck@.service \
-        "$systemdsystemunitdir"/systemd-vconsole-setup.service \
         "$systemdsystemunitdir"/systemd-volatile-root.service \
         "$systemdsystemunitdir"/ctrl-alt-del.target \
         "$systemdsystemunitdir"/syslog.socket \
@@ -154,14 +151,18 @@ EOF
         90-vconsole.rules \
         99-systemd.rules
 
-    for i in \
-        emergency.target \
-        rescue.target; do
-        [[ -f "$systemdsystemunitdir"/$i ]] || continue
-        if [ -e "$systemdsystemunitdir"/systemd-vconsole-setup.service ]; then
+    if dracut_module_included "10i18n" && [[ -e "$systemdsystemunitdir"/systemd-vconsole-setup.service ]]; then
+        inst_multiple -o \
+            "$systemdutildir"/systemd-vconsole-setup \
+            "$systemdsystemunitdir"/systemd-vconsole-setup.service
+
+        for i in \
+            emergency.target \
+            rescue.target; do
+            [[ -f "$systemdsystemunitdir"/$i ]] || continue
             $SYSTEMCTL -q --root "$initdir" add-wants "$i" systemd-vconsole-setup.service
-        fi
-    done
+        done
+    fi
 
     mkdir -p "$initdir/etc/systemd"
 

@@ -1,4 +1,4 @@
-FROM docker.io/gentoo/portage:latest as portage
+FROM docker.io/gentoo/portage:latest AS portage
 
 FROM docker.io/gentoo/stage3:systemd
 COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
