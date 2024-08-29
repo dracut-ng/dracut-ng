@@ -154,14 +154,8 @@ EOF
     if dracut_module_included "10i18n" && [[ -e "$systemdsystemunitdir"/systemd-vconsole-setup.service ]]; then
         inst_multiple -o \
             "$systemdutildir"/systemd-vconsole-setup \
-            "$systemdsystemunitdir"/systemd-vconsole-setup.service
-
-        for i in \
-            emergency.target \
-            rescue.target; do
-            [[ -f "$systemdsystemunitdir"/$i ]] || continue
-            $SYSTEMCTL -q --root "$initdir" add-wants "$i" systemd-vconsole-setup.service
-        done
+            "$systemdsystemunitdir"/systemd-vconsole-setup.service \
+            "$systemdsystemunitdir"/sysinit.target.wants/systemd-vconsole-setup.service
     fi
 
     mkdir -p "$initdir/etc/systemd"
