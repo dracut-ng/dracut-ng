@@ -12,6 +12,7 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     bzip2 \
     ca-certificates \
     cargo \
+    cifs-utils \
     console-setup \
     cpio \
     cryptsetup \
@@ -21,15 +22,19 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     docbook-xml \
     docbook-xsl \
     erofs-utils \
+    fcoe-utils \
     fdisk \
+    file \
     g++ \
     gawk \
     git \
+    gpg \
     iputils-arping \
     iputils-ping \
     isc-dhcp-client \
     isc-dhcp-server \
     iscsiuio \
+    jq \
     kmod \
     less \
     libdmraid-dev \
@@ -44,10 +49,14 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     network-manager \
     nfs-kernel-server \
     ntfs-3g \
+    nvme-cli \
     open-iscsi \
+    openssh-client \
     ovmf \
     parted \
+    pcscd \
     pigz \
+    plymouth \
     pkg-config \
     procps \
     qemu-kvm \
@@ -57,7 +66,10 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     squashfs-tools \
     strace \
     systemd-boot-efi \
+    systemd-container \
     systemd-coredump \
+    systemd-resolved \
+    systemd-timesyncd \
     systemd-ukify \
     tcpdump \
     tgt \
@@ -65,5 +77,6 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     tpm2-tools \
     vim \
     wget \
+    zstd \
     && apt-get clean \
     && chmod a+r /boot/vmlinu*
