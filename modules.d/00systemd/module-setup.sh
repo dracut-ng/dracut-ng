@@ -137,7 +137,6 @@ EOF
         unset _wrapper
     fi
     ln_r "$_systemdbinary" "/init"
-    ln_r "$_systemdbinary" "/sbin/init"
 
     unset _systemdbinary
 
