@@ -15,6 +15,7 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --
     bzip2 \
     ca-certificates \
     cargo \
+    cifs-utils \
     console-setup \
     cpio \
     cryptsetup \
@@ -23,15 +24,19 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --
     docbook-xml \
     docbook-xsl \
     erofs-utils \
+    fcoe-utils \
     fdisk \
+    file \
     g++ \
     gawk \
     git \
+    gpg \
     iputils-arping \
     iputils-ping \
     isc-dhcp-client \
     isc-dhcp-server \
     iscsiuio \
+    jq \
     kmod \
     less \
     libkmod-dev \
@@ -45,24 +50,32 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --
     network-manager \
     nfs-kernel-server \
     ntfs-3g \
+    nvme-cli \
     open-iscsi \
+    openssh-client \
     ovmf \
     parted \
+    pcscd \
     pigz \
+    plymouth \
     pkg-config \
     procps \
     qemu-kvm \
     rng-tools5 \
-    shellcheck \
     sbsigntool \
+    shellcheck \
     squashfs-tools \
     strace \
     systemd-boot-efi \
+    systemd-container \
     systemd-coredump \
+    systemd-resolved \
+    systemd-timesyncd \
     tcpdump \
     tgt \
     thin-provisioning-tools \
     tpm2-tools \
     vim \
     wget \
+    zstd \
     && apt-get clean
