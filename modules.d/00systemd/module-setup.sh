@@ -157,10 +157,6 @@ EOF
             "$systemdsystemunitdir"/sysinit.target.wants/systemd-vconsole-setup.service
     fi
 
-    mkdir -p "$initdir/etc/systemd"
-
-    $SYSTEMCTL -q --root "$initdir" set-default multi-user.target
-
     # Install library file(s)
     _arch=${DRACUT_ARCH:-$(uname -m)}
     inst_libdir_file \
