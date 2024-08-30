@@ -278,7 +278,7 @@ bs = 4096
 EOF
 
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
-        -a "test-root ${USE_NETWORK}" \
+        -m "test-root" -a "${USE_NETWORK}" \
         -I "ip grep sleep nbd-server chmod modprobe vi pidof" \
         -i "${basedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${basedir}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
