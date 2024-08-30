@@ -1,11 +1,6 @@
 #!/bin/bash
 
 # called by dracut
-check() {
-    return 0
-}
-
-# called by dracut
 depends() {
     echo udev-rules shell-interpreter
     return 0

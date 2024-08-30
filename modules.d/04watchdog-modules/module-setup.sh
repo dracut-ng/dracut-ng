@@ -5,16 +5,6 @@ check() {
     return 255
 }
 
-# called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
-install() {
-    return 0
-}
-
 installkernel() {
     local -A _drivers
     local _wdtdrv

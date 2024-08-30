@@ -4,26 +4,15 @@
 
 # Prerequisite check(s) for module.
 check() {
-
     # If the binary(s) requirements are not fulfilled the module can't be installed.
     require_binaries systemd-tmpfiles || return 1
 
     # Return 255 to only include the module, if another module requires it.
     return 255
-
-}
-
-# Module dependency requirements.
-depends() {
-
-    # Return 0 to include the dependent module(s) in the initramfs.
-    return 0
-
 }
 
 # Install the required file(s) and directories for the module in the initramfs.
 install() {
-
     # Excluding "$tmpfilesdir/home.conf", sets up /home /srv
     # Excluding "$tmpfilesdir/journal-nocow.conf", requires specific btrfs setup
     # Excluding "$tmpfilesdir/legacy.conf", belongs in separated legacy module
@@ -67,5 +56,4 @@ install() {
             "$systemdsystemconfdir"/systemd-tmpfiles-setup-dev-early.service \
             "$systemdsystemconfdir/systemd-tmpfiles-setup-dev-early.service.d/*.conf"
     fi
-
 }

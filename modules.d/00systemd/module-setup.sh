@@ -11,11 +11,6 @@ check() {
     return 255
 }
 
-# called by dracut
-depends() {
-    return 0
-}
-
 installkernel() {
     hostonly='' instmods autofs4 ipv6 algif_hash hmac sha256
     instmods -s efivarfs

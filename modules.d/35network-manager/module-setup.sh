@@ -15,11 +15,6 @@ depends() {
 }
 
 # called by dracut
-installkernel() {
-    return 0
-}
-
-# called by dracut
 install() {
     local _nm_version
 

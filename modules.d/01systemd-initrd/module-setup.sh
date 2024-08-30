@@ -13,10 +13,6 @@ depends() {
     echo base systemd-udevd systemd-journald systemd-tmpfiles
 }
 
-installkernel() {
-    return 0
-}
-
 # called by dracut
 install() {
     inst_multiple -o \
