@@ -6,11 +6,6 @@ check() {
 }
 
 # called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
 installkernel() {
     local _fipsmodules _mod _bootfstype
     if [[ -f "${srcmods}/modules.fips" ]]; then

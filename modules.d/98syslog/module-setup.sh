@@ -7,11 +7,6 @@ check() {
 }
 
 # called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
 install() {
     local _installs
     if find_binary rsyslogd > /dev/null; then

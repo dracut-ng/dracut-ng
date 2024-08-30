@@ -9,11 +9,6 @@ check() {
 }
 
 # called by dracut
-depends() {
-    return 0
-}
-
-# called by dracut
 install() {
     inst_multiple dasdconf.sh
     conf=/etc/dasd.conf

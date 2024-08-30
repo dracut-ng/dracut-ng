@@ -15,11 +15,6 @@ depends() {
 }
 
 # called by dracut
-installkernel() {
-    return 0
-}
-
-# called by dracut
 install() {
     # We don't need `ip` but having it is *really* useful for people debugging
     # in an emergency shell.

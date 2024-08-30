@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# called by dracut
-check() {
-    return 0
-}
-
 echo_fs_helper() {
     local fs=$2
     case "$fs" in

@@ -26,10 +26,6 @@ depends() {
     return 0
 }
 
-installkernel() {
-    return 0
-}
-
 # called by dracut
 install() {
     inst_script "$moddir/dracut-emergency.sh" /bin/dracut-emergency
