@@ -15,7 +15,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     dash \
     dbus-daemon \
     device-mapper-multipath \
-    dhcp-client \
     dhcp-server \
     dmraid \
     e2fsprogs \
