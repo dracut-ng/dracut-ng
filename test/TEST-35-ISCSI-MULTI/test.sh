@@ -187,7 +187,7 @@ test_setup() {
 
     rm -rf -- "$TESTDIR"/overlay
     "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
-        -m "test-root ${USE_NETWORK} iscsi" \
+        -m "test-root" -a "${USE_NETWORK} iscsi" \
         -d "iscsi_tcp crc32c ipv6 af_packet" \
         -I "ip grep sleep setsid chmod modprobe pidof tgtd tgtadm" \
         -i "${basedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
