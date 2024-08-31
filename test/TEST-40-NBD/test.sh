@@ -297,7 +297,7 @@ EOF
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
-        -m "test-makeroot ${USE_NETWORK}" \
+        -m "test-makeroot" -a "${USE_NETWORK}" \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
