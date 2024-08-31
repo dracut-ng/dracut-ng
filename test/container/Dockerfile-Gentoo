@@ -20,8 +20,13 @@ RUN echo 'sys-apps/systemd ukify cryptsetup' >> /etc/portage/package.use/systemd
 # Support thin volumes and build all of LVM2 including daemons and tools like lvchange
 RUN echo 'sys-fs/lvm2 thin lvm' >> /etc/portage/package.use/lvm2
 
-RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n \
+# Ensure everything is up to date before we start
+RUN emerge --quiet --update --deep --newuse --autounmask-continue=y --with-bdeps=y @world
+
+RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     app-admin/rsyslog \
+    app-alternatives/cpio \
+	app-alternatives/bc \
     app-arch/cpio \
     app-crypt/tpm2-tools \
     app-crypt/sbsigntools \
@@ -30,6 +35,8 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n \
     app-portage/gentoolkit \
     app-shells/dash \
     dev-lang/rust-bin \
+    dev-lang/perl \
+    dev-libs/openssl \
     net-fs/cifs-utils \
     net-fs/nfs-utils \
     net-misc/dhcp \
@@ -43,6 +50,8 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n \
     sys-block/open-iscsi \
     sys-block/parted \
     sys-block/tgt \
+    sys-devel/bison \
+    sys-devel/flex \
     sys-fs/btrfs-progs \
     sys-fs/cryptsetup \
     sys-fs/dmraid \
@@ -53,6 +62,7 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n \
     sys-kernel/gentoo-kernel-bin \
     sys-libs/libxcrypt \
     sys-libs/glibc \
+    virtual/libelf \
     virtual/pkgconfig \
     && rm -rf /var/cache/* /usr/share/doc/* /usr/share/man/*
 
