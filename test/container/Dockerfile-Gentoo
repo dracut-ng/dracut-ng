@@ -55,10 +55,13 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     sys-fs/btrfs-progs \
     sys-fs/cryptsetup \
     sys-fs/dmraid \
+    sys-fs/f2fs-tools \
+    sys-fs/jfsutils \
     sys-fs/mdadm \
     sys-fs/multipath-tools \
     sys-fs/ntfs3g \
     sys-fs/squashfs-tools \
+    sys-fs/xfsprogs \
     sys-kernel/gentoo-kernel-bin \
     sys-libs/libxcrypt \
     sys-libs/glibc \
