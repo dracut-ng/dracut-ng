@@ -12,9 +12,12 @@ udevadm settle
 
 set -ex
 
-mkfs.ext4 -q -L '  rdinit=/bin/sh' /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root
+# populate TEST_FSTYPE
+. /env
+
+eval "mkfs.${TEST_FSTYPE} -q -L '  rdinit=/bin/sh' /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root"
 mkdir -p /root
-mount -t ext4 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root /root
+mount -t "${TEST_FSTYPE}" /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root /root
 cp -a -t /root /source/*
 mkdir -p /root/run
 umount /root

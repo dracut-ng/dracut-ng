@@ -1,6 +1,6 @@
 #!/bin/bash
 # shellcheck disable=SC2034
-TEST_DESCRIPTION="root filesystem on a ext4 filesystem"
+TEST_DESCRIPTION="root filesystem on ${TEST_FSTYPE} filesystem"
 
 # Uncomment this to debug failures
 # DEBUGFAIL="rd.shell rd.break"
@@ -27,12 +27,16 @@ test_setup() {
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
+    # pass enviroment variables to make the root filesystem
+    echo "TEST_FSTYPE=${TEST_FSTYPE}" > "$TESTDIR"/overlay/env
+
     # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
         -m "test-makeroot" \
+        -I "mkfs.${TEST_FSTYPE}" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
     rm -rf -- "$TESTDIR"/overlay
@@ -40,12 +44,12 @@ test_setup() {
     declare -a disk_args=()
     declare -i disk_index=0
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 80
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 160
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=/dev/dracut/root rw rootfstype=ext4 quiet console=ttyS0,115200n81" \
+        -append "root=/dev/dracut/root rw rootfstype=${TEST_FSTYPE} quiet console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.makeroot || return 1
     test_marker_check dracut-root-block-created || return 1
     rm -- "$TESTDIR"/marker.img
