@@ -25,6 +25,7 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     fcoe-utils \
     fdisk \
     file \
+    f2fs-tools \
     g++ \
     gawk \
     git \
@@ -34,6 +35,7 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     isc-dhcp-client \
     isc-dhcp-server \
     iscsiuio \
+    jfsutils \
     jq \
     kmod \
     less \
@@ -77,6 +79,7 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     tpm2-tools \
     vim \
     wget \
+    xfsprogs \
     zstd \
     && apt-get clean \
     && chmod a+r /boot/vmlinu*

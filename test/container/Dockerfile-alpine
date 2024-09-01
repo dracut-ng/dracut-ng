@@ -28,11 +28,13 @@ RUN apk add --no-cache \
     erofs-utils \
     eudev \
     findmnt \
+    f2fs-tools \
     gawk \
     git \
     gpg \
     grep \
     iputils \
+    jfsutils \
     jq \
     kbd \
     kmod \
@@ -65,6 +67,7 @@ RUN apk add --no-cache \
     squashfs-tools \
     sudo \
     util-linux-misc \
+    xfsprogs \
     xz
 
 RUN \

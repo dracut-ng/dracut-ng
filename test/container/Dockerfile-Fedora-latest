@@ -28,6 +28,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     iproute \
     iputils \
     iscsi-initiator-utils \
+    jfsutils \
     jq \
     kbd \
     kernel \
@@ -68,6 +69,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     tcpdump \
     tpm2-tools \
     wget \
+    xfsprogs \
     xz \
     && dnf -y update && dnf clean all
 

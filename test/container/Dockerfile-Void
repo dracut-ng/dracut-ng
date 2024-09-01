@@ -30,6 +30,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     glibc \
     gnupg \
     iputils \
+    jfsutils \
     jq \
     kbd \
     libkmod-devel \
@@ -61,5 +62,6 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     tgt \
     tpm2-tools \
     ukify \
+    xfsprogs \
     xz \
     && rm -rf /var/cache/xbps
