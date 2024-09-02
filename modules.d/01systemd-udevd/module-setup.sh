@@ -16,9 +16,18 @@ check() {
 
 # Module dependency requirements.
 depends() {
-    # This module has external dependency on other module(s).
-    echo udev-rules systemd systemd-sysctl systemd-modules-load
-    # Return 0 to include the dependent module(s) in the initramfs.
+    local deps
+    deps="udev-rules systemd"
+
+    # install optional dependencies unless they are omitted
+    for module in systemd-sysctl systemd-modules-load; do
+        module_check $module > /dev/null 2>&1
+        if [[ $? == 255 ]] && ! [[ " $omit_dracutmodules " == *\ $module\ * ]]; then
+            deps+=" $module"
+        fi
+    done
+
+    echo "$deps"
     return 0
 }
 
