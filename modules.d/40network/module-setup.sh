@@ -7,26 +7,26 @@ check() {
 
 # called by dracut
 depends() {
+    echo -n "net-lib kernel-network-modules "
+
     is_qemu_virtualized && echo -n "qemu-net "
 
-    for module in connman network-manager network-legacy systemd-networkd; do
+    for module in network-manager systemd-networkd connman network-legacy; do
         if dracut_module_included "$module"; then
-            network_handler="$module"
-            break
+            echo "$module"
+            return 0
         fi
     done
 
-    if [ -z "$network_handler" ]; then
-        if check_module "network-manager"; then
-            network_handler="network-manager"
-        elif check_module "systemd-networkd"; then
-            network_handler="systemd-networkd"
-        elif check_module "connman"; then
-            network_handler="connman"
-        else
-            network_handler="network-legacy"
+    for module in network-manager systemd-networkd connman; do
+        # install the first viable module, unless there omitted
+        module_check $module > /dev/null 2>&1
+        if [[ $? == 255 ]] && ! [[ " $omit_dracutmodules " == *\ $module\ * ]]; then
+            echo "$module"
+            return 0
         fi
-    fi
-    echo "net-lib kernel-network-modules $network_handler"
+    done
+
+    echo "network-legacy"
     return 0
 }
