@@ -12,15 +12,6 @@ check() {
     return 255
 }
 
-# Module dependency requirements.
-depends() {
-
-    # This module has external dependency on other module(s).
-    echo systemd-modules-load
-    # Return 0 to include the dependent module(s) in the initramfs.
-    return 0
-}
-
 # Install the required file(s) for the module in the initramfs.
 install() {
 
