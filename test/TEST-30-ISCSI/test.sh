@@ -173,7 +173,7 @@ test_setup() {
 
     # Create what will eventually be the server root filesystem onto an overlay
     "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
-        -m "test-root" -a "${USE_NETWORK}" \
+        -m "test-root ${USE_NETWORK}" \
         -d "iscsi_tcp crc32c ipv6" \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh" \
         -i "${PKGLIBDIR}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh" \
