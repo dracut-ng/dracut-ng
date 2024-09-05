@@ -1488,9 +1488,14 @@ set_global_var() {
     local _pkgconfig="$1"
     local _pkgvar="${2%:*}"
     local _var="${2#*:}"
-    [[ -z ${!_var} || ! -d ${dracutsysrootdir}${!_var} ]] \
-        && export "$_var"="$($PKG_CONFIG "$_pkgconfig" --variable="$_pkgvar" 2> /dev/null)"
-    if [[ -z ${!_var} || ! -d ${dracutsysrootdir}${!_var} ]]; then
+    if [[ $_pkgvar == modversion ]]; then
+        local _vararg=--modversion
+    else
+        local _vararg=--variable=$_pkgvar
+    fi
+    [[ -z ${!_var} || ($3 == /* && ! -d ${dracutsysrootdir}${!_var}) ]] \
+        && export "$_var"="$($PKG_CONFIG "$_pkgconfig" "$_vararg" 2> /dev/null)"
+    if [[ -z ${!_var} || ($3 == /* && ! -d ${dracutsysrootdir}${!_var}) ]]; then
         shift 2
         if (($# == 1)); then
             export "$_var"="$1"
@@ -1550,6 +1555,7 @@ set_global_var "systemd" "sysusers" "/usr/lib/sysusers.d"
 set_global_var "systemd" "sysusersconfdir" "/etc/sysusers.d"
 set_global_var "systemd" "tmpfilesdir" "/lib/tmpfiles.d" "/usr/lib/tmpfiles.d"
 set_global_var "systemd" "tmpfilesconfdir" "/etc/tmpfiles.d"
+set_global_var "systemd" "modversion:systemdversion" "0"
 
 # libkmod global variables
 set_global_var "libkmod" "depmodd" "/usr/lib/depmod.d"
