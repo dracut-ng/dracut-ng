@@ -1489,7 +1489,7 @@ set_global_var() {
     local _pkgvar="${2%:*}"
     local _var="${2#*:}"
     [[ -z ${!_var} || ! -d ${dracutsysrootdir}${!_var} ]] \
-        && export "$_var"="$(pkg-config "$_pkgconfig" --variable="$_pkgvar" 2> /dev/null)"
+        && export "$_var"="$($PKG_CONFIG "$_pkgconfig" --variable="$_pkgvar" 2> /dev/null)"
     if [[ -z ${!_var} || ! -d ${dracutsysrootdir}${!_var} ]]; then
         shift 2
         if (($# == 1)); then
