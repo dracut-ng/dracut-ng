@@ -81,6 +81,7 @@ export srcmods
 DRACUT_LDD=${DRACUT_LDD:-ldd}
 DRACUT_TESTBIN=${DRACUT_TESTBIN:-/bin/sh}
 DRACUT_LDCONFIG=${DRACUT_LDCONFIG:-ldconfig}
+PKG_CONFIG=${PKG_CONFIG:-pkg-config}
 
 # shellcheck source=./dracut-functions.sh
 . "$dracutbasedir"/dracut-functions.sh

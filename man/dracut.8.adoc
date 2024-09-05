@@ -655,6 +655,13 @@ _DRACUT_LDD_::
 Default:
     _ldd_
 
+_PKG_CONFIG_::
+    sets the _pkg-config_ program path and options. Optional.
+    Most useful together with **--sysroot**.
++
+Default:
+    _pkg-config_
+
 _DRACUT_TESTBIN_::
     sets the initially tested binary for detecting library paths.
     Optional. Used for **--sysroot**. In the cross-compiled sysroot,
