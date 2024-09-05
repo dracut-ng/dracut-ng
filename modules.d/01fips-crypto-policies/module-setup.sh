@@ -10,6 +10,12 @@ check() {
 }
 
 # called by dracut
+depends() {
+    echo fips
+    return 0
+}
+
+# called by dracut
 install() {
     inst_hook pre-pivot 01 "$moddir/fips-crypto-policies.sh"
 
