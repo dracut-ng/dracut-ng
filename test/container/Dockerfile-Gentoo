@@ -50,6 +50,7 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     sys-block/open-iscsi \
     sys-block/parted \
     sys-block/tgt \
+    sys-boot/plymouth \
     sys-devel/bison \
     sys-devel/flex \
     sys-fs/btrfs-progs \

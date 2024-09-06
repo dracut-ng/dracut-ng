@@ -58,6 +58,7 @@ RUN apk add --no-cache \
     parted \
     partx \
     pigz \
+    plymouth \
     procps \
     qemu-img \
     qemu-system-x86_64 \
