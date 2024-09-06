@@ -20,7 +20,7 @@ check() {
     [[ "$mount_needs" ]] && return 1
     [[ $(pkglib_dir) ]] || return 1
 
-    require_binaries plymouthd plymouth plymouth-set-default-theme || return 1
+    require_binaries plymouthd plymouth || return 1
 
     return 0
 }
@@ -44,9 +44,21 @@ install() {
 
     inst_hook emergency 50 "$moddir"/plymouth-emergency.sh
 
-    inst_multiple readlink
+    inst_multiple \
+        readlink \
+        plymouth \
+        plymouthd
 
-    inst_multiple plymouthd plymouth plymouth-set-default-theme
+    inst_multiple -o \
+        plymouth-set-default-theme \
+        /usr/share/plymouth/plymouthd.defaults \
+        /usr/share/plymouth/themes/default.plymouth
+
+    # Install the hosts local user configurations if enabled.
+    if [[ $hostonly ]]; then
+        inst_multiple -H -o \
+            /etc/plymouth/plymouthd.conf
+    fi
 
     if ! dracut_module_included "systemd"; then
         inst_hook pre-trigger 10 "$moddir"/plymouth-pretrigger.sh
