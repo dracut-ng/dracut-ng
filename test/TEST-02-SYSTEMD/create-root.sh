@@ -11,7 +11,7 @@ udevadm control --reload
 set -e
 
 udevadm settle
-mkfs.ext4 -q -L dracut /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root
+mkfs.ext4 -q -L '  rdinit=/bin/sh' /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root
 mkdir -p /root
 mount -t ext4 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root /root
 cp -a -t /root /source/*
