@@ -1,5 +1,8 @@
 FROM docker.io/archlinux
 
+# prefer running tests with xfs
+ENV TEST_FSTYPE=xfs
+
 RUN pacman --noconfirm -Syu \
     asciidoc \
     astyle \
