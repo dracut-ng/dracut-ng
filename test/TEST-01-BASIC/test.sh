@@ -14,7 +14,7 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE rw \"root=LABEL=  rdinit=/bin/sh\" rd.retry=3" \
+        -append "$TEST_KERNEL_CMDLINE rw root=LABEL=dracut rd.retry=3" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     test_marker_check || return 1
@@ -44,7 +44,7 @@ test_setup() {
     declare -a disk_args=()
     declare -i disk_index=0
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 160
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 300
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
