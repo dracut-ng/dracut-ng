@@ -20,9 +20,9 @@
 export LC_MESSAGES=C
 
 if [[ $EUID == "0" ]] && ! [[ $DRACUT_NO_XATTR ]]; then
-    export DRACUT_CP="cp --sparse=auto --preserve=mode,timestamps,xattr,links -dfr"
+    export DRACUT_CP="cp --preserve=mode,timestamps,xattr,links -dfr"
 else
-    export DRACUT_CP="cp --sparse=auto --preserve=mode,timestamps,links -dfr"
+    export DRACUT_CP="cp --preserve=mode,timestamps,links -dfr"
 fi
 
 # is_func <command>
