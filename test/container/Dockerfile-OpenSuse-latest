@@ -1,5 +1,8 @@
 FROM registry.opensuse.org/opensuse/tumbleweed-dnf:latest
 
+# prefer running tests with btrfs
+ENV TEST_FSTYPE=btrfs
+
 # Install needed packages for the dracut CI container
 RUN dnf -y install --setopt=install_weak_deps=False \
     asciidoc \
