@@ -409,7 +409,7 @@ normal_copy:
         const char *preservation = (geteuid() == 0
                                     && no_xattr == false) ? "--preserve=mode,xattr,timestamps,ownership" : "--preserve=mode,timestamps,ownership";
         if (pid == 0) {
-                execlp("cp", "cp", "--reflink=auto", "--sparse=auto", preservation, "-fL", src, dst, NULL);
+                execlp("cp", "cp", "--sparse=auto", preservation, "-fL", src, dst, NULL);
                 _exit(errno == ENOENT ? 127 : 126);
         }
 
@@ -421,7 +421,7 @@ normal_copy:
         }
         ret = WIFSIGNALED(ret) ? 128 + WTERMSIG(ret) : WEXITSTATUS(ret);
         if (ret != 0)
-                log_error("ERROR: 'cp --reflink=auto --sparse=auto %s -fL %s %s' failed with %d", preservation, src, dst, ret);
+                log_error("ERROR: 'cp --sparse=auto %s -fL %s %s' failed with %d", preservation, src, dst, ret);
         log_debug("cp ret = %d", ret);
         return ret;
 }

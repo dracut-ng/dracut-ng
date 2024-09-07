@@ -2599,7 +2599,7 @@ if [[ $uefi == yes ]]; then
                 exit 1
             fi
         else
-            if cp --reflink=auto "${uefi_outdir}/linux.efi" "$outfile"; then
+            if cp "${uefi_outdir}/linux.efi" "$outfile"; then
                 dinfo "*** Creating UEFI image file '$outfile' done ***"
             else
                 rm -f -- "$outfile"
@@ -2613,7 +2613,7 @@ if [[ $uefi == yes ]]; then
         exit 1
     fi
 else
-    if cp --reflink=auto "${DRACUT_TMPDIR}/initramfs.img" "$outfile"; then
+    if cp "${DRACUT_TMPDIR}/initramfs.img" "$outfile"; then
         dinfo "*** Creating initramfs image file '$outfile' done ***"
     else
         rm -f -- "$outfile"
