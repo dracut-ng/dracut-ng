@@ -407,7 +407,7 @@ static int cp(const char *src, const char *dst)
 normal_copy:
         pid = fork();
         const char *preservation = (geteuid() == 0
-                                    && no_xattr == false) ? "--preserve=mode,xattr,timestamps,ownership" : "--preserve=mode,timestamps,ownership";
+                                    && no_xattr == false) ? "--preserve=mode,xattr,timestamps,ownership" : "-p";
         if (pid == 0) {
                 execlp("cp", "cp", preservation, "-fL", src, dst, NULL);
                 _exit(errno == ENOENT ? 127 : 126);
