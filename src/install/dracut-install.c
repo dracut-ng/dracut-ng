@@ -1651,7 +1651,7 @@ static int find_modules_from_sysfs_node(struct kmod_ctx *ctx, const char *sysfs_
         return 0;
 }
 
-static void find_suppliers_for_sys_node(struct kmod_ctx *ctx, Hashmap *suppliers, const char *node_path_raw,
+static void find_suppliers_for_sys_node(Hashmap *suppliers, const char *node_path_raw,
                                         size_t node_path_len)
 {
         char node_path[PATH_MAX];
@@ -1703,7 +1703,7 @@ static void find_suppliers(struct kmod_ctx *ctx)
                                         hashmap_put(modules_suppliers, strdup(name), suppliers);
                                 }
 
-                                find_suppliers_for_sys_node(ctx, suppliers, ftsent->fts_parent->fts_path, ftsent->fts_parent->fts_pathlen);
+                                find_suppliers_for_sys_node(suppliers, ftsent->fts_parent->fts_path, ftsent->fts_parent->fts_pathlen);
 
                                 /* Skip modalias check */
                                 continue;
@@ -1721,7 +1721,7 @@ static void find_suppliers(struct kmod_ctx *ctx)
                                         hashmap_put(modules_suppliers, strdup(name), suppliers);
                                 }
 
-                                find_suppliers_for_sys_node(ctx, suppliers, ftsent->fts_parent->fts_path, ftsent->fts_parent->fts_pathlen);
+                                find_suppliers_for_sys_node(suppliers, ftsent->fts_parent->fts_path, ftsent->fts_parent->fts_pathlen);
                         }
                 }
         }
@@ -1815,7 +1815,7 @@ static int install_dependent_modules(struct kmod_ctx *ctx, struct kmod_list *mod
                 find_modules_from_sysfs_node(ctx, supplier_path, modules);
 
                 _cleanup_destroy_hashmap_ Hashmap *suppliers = hashmap_new(string_hash_func, string_compare_func);
-                find_suppliers_for_sys_node(ctx, suppliers, supplier_path, strlen(supplier_path));
+                find_suppliers_for_sys_node(suppliers, supplier_path, strlen(supplier_path));
 
                 if (!hashmap_isempty(modules)) { // Supplier is a module
                         const char *module;
