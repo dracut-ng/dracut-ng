@@ -18,6 +18,29 @@ test_check() {
     [[ -n "$(ovmf_code)" ]]
 }
 
+VMLINUZ="/lib/modules/${KVERSION}/vmlinuz"
+if ! [ -f "$VMLINUZ" ]; then
+    VMLINUZ="/lib/modules/${KVERSION}/vmlinux"
+fi
+
+if ! [ -f "$VMLINUZ" ]; then
+    [[ -f /etc/machine-id ]] && read -r MACHINE_ID < /etc/machine-id
+
+    if [[ $MACHINE_ID ]] && { [[ -d /boot/${MACHINE_ID} ]] || [[ -L /boot/${MACHINE_ID} ]]; }; then
+        VMLINUZ="/boot/${MACHINE_ID}/$KVERSION/linux"
+    elif [ -f "/boot/vmlinuz-${KVERSION}" ]; then
+        VMLINUZ="/boot/vmlinuz-${KVERSION}"
+    elif [ -f "/boot/vmlinux-${KVERSION}" ]; then
+        VMLINUZ="/boot/vmlinux-${KVERSION}"
+    elif [ -f "/boot/kernel-${KVERSION}" ]; then
+        VMLINUZ="/boot/kernel-${KVERSION}"
+    else
+        echo "Could not find a Linux kernel version $KVERSION to test with!" >&2
+        echo "Please install linux." >&2
+        exit 1
+    fi
+fi
+
 test_run() {
     declare -a disk_args=()
     declare -i disk_index=1
@@ -48,11 +71,25 @@ test_setup() {
         cp "${basedir}/dracut.conf.d/50-uki-virt.conf.example" /tmp/dracut.conf.d/50-uki-virt.conf
     fi
 
-    test_dracut \
-        --kernel-cmdline 'root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root ro rd.skipfsck rootfstype=squashfs' \
-        --drivers 'squashfs' \
-        --uefi \
-        "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
+    if command -v ukify &> /dev/null; then
+        echo "Using ukify to create UKI"
+        test_dracut --no-uefi \
+            --drivers 'squashfs' \
+            "$TESTDIR"/initramfs.testing
+
+        ukify build \
+            --linux="$VMLINUZ" \
+            --initrd="$TESTDIR"/initramfs.testing \
+            --cmdline='root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root ro rd.skipfsck rootfstype=squashfs' \
+            --output="$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
+    else
+        echo "Using dracut to create UKI"
+        test_dracut \
+            --kernel-cmdline 'root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root ro rd.skipfsck rootfstype=squashfs' \
+            --drivers 'squashfs' \
+            --uefi \
+            "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
+    fi
 }
 
 test_cleanup() {
