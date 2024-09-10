@@ -100,7 +100,7 @@ client_test() {
         ifname=net4:52:54:00:12:34:04
         ifname=net5:52:54:00:12:34:05
         $cmdline rd.net.timeout.dhcp=30
-        rd.retry=5 rw init=/sbin/init" \
+        rw init=/sbin/init" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     {

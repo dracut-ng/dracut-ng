@@ -16,7 +16,7 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=LABEL=root rw rd.retry=3" \
+        -append "$TEST_KERNEL_CMDLINE root=LABEL=root rw" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check || return 1
 }

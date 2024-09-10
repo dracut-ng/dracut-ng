@@ -22,7 +22,7 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root ro rd.auto rd.retry=20 rootwait $LUKSARGS" \
+        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root ro rd.auto rootwait $LUKSARGS" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check || return 1
     echo "CLIENT TEST END: [OK]"
@@ -32,7 +32,7 @@ test_run() {
     echo "CLIENT TEST START: Any LUKS"
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rw rd.auto rd.retry=20" \
+        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rw rd.auto" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check || return 1
     echo "CLIENT TEST END: [OK]"

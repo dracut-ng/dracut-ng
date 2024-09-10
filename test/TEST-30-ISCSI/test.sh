@@ -224,7 +224,7 @@ test_setup() {
         --no-hostonly --no-hostonly-cmdline \
         --add "$USE_NETWORK" \
         --include "./client.link" "/etc/systemd/network/01-client.link" \
-        --kernel-cmdline "rw rd.auto rd.retry=50" \
+        --kernel-cmdline "rw rd.auto" \
         "$TESTDIR"/initramfs.testing
 }
 
