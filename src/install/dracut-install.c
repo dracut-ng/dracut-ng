@@ -347,7 +347,7 @@ static bool use_clone = true;
 
 static int cp(const char *src, const char *dst)
 {
-        int pid;
+        pid_t pid;
         int ret = 0;
 
         if (use_clone) {
