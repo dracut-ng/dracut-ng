@@ -29,6 +29,7 @@ RUN pacman --noconfirm -Syu \
     lvm2 \
     lzop \
     mdadm \
+    mkosi \
     multipath-tools \
     nbd \
     networkmanager \
