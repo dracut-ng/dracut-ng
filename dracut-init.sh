@@ -104,10 +104,7 @@ fi
 # ldd needs LD_LIBRARY_PATH pointing to the libraries within the sysroot directory
 if [[ -n $dracutsysrootdir ]]; then
     for lib in $libdirs; do
-        mapfile -t -d '' lib_subdirs < <(find "$lib" -type d -print0 2> /dev/null)
-        for lib_subdir in "${lib_subdirs[@]}"; do
-            LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+"$LD_LIBRARY_PATH":}$dracutsysrootdir$lib_subdir"
-        done
+        LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+"$LD_LIBRARY_PATH":}$dracutsysrootdir$lib"
     done
     export LD_LIBRARY_PATH
 fi
