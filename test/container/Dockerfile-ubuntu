@@ -1,5 +1,8 @@
 FROM docker.io/ubuntu:latest
 
+# prefer running tests in verbose mode
+ENV V=2
+
 # Install needed packages for the dracut CI container
 # The Linux kernel is only readable by root. See https://launchpad.net/bugs/759725
 RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
