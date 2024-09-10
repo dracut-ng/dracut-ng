@@ -16,7 +16,7 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=LABEL=root rw" \
+        -append "$TEST_KERNEL_CMDLINE root=LABEL=root" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check || return 1
 }
@@ -58,7 +58,7 @@ test_setup() {
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=/dev/fakeroot rw quiet console=ttyS0,115200n81" \
+        -append "root=/dev/fakeroot quiet console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.makeroot || return 1
 
     test_marker_check dracut-root-block-created || return 1

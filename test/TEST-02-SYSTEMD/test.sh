@@ -17,7 +17,7 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE \"root=LABEL=  rdinit=/bin/sh\" rw systemd.log_target=console init=/sbin/init" \
+        -append "$TEST_KERNEL_CMDLINE \"root=LABEL=  rdinit=/bin/sh\" systemd.log_target=console init=/sbin/init" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     test_marker_check || return 1
@@ -50,7 +50,7 @@ test_setup() {
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=/dev/fakeroot rw rootfstype=ext4 quiet console=ttyS0,115200n81" \
+        -append "root=/dev/fakeroot quiet console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.makeroot || return 1
     test_marker_check dracut-root-block-created || return 1
     rm -- "$TESTDIR"/marker.img
