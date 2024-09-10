@@ -32,7 +32,7 @@ test_run() {
     echo "CLIENT TEST START: Any LUKS"
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rw rd.auto" \
+        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rd.auto" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check || return 1
     echo "CLIENT TEST END: [OK]"
@@ -42,7 +42,7 @@ test_run() {
     echo "CLIENT TEST START: Wrong LUKS UUID"
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rw rd.auto rd.luks.uuid=failme" \
+        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rd.auto rd.luks.uuid=failme" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check && return 1
     echo "CLIENT TEST END: [OK]"
@@ -79,7 +79,7 @@ test_setup() {
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=/dev/fakeroot rw rootfstype=ext4 quiet console=ttyS0,115200n81" \
+        -append "root=/dev/fakeroot quiet console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.makeroot || return 1
     test_marker_check dracut-root-block-created || return 1
     cryptoUUIDS=$(grep -F --binary-files=text -m 3 ID_FS_UUID "$TESTDIR"/marker.img)
