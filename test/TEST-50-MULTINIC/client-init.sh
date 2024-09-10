@@ -1,13 +1,9 @@
 #!/bin/sh
-. /lib/dracut-lib.sh
 
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 command -v plymouth > /dev/null 2>&1 && plymouth --quit
 exec > /dev/console 2>&1
 
-export TERM=linux
-export PS1='initramfs-test:\w\$ '
-stty sane
 echo "made it to the rootfs! Powering down."
 
 set -x
@@ -33,8 +29,6 @@ done
     echo "OK"
     echo "$IFACES"
 } | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
-
-getargbool 0 rd.shell && sh -i
 
 sync
 poweroff -f

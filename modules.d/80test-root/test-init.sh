@@ -27,20 +27,6 @@ else
     echo "All OK"
 fi
 
-export TERM=linux
-export PS1='initramfs-test:\w\$ '
-stty sane
 echo "made it to the rootfs!"
-
-. /lib/dracut-lib.sh
-
-if getargbool 0 rd.shell; then
-    strstr "$(setsid --help)" "control" && CTTY="-c"
-    setsid ${CTTY:+"${CTTY}"} sh -i
-fi
-
 echo "Powering down."
-if [ -d /run/initramfs/etc ]; then
-    echo " rd.debug=0 " >> /run/initramfs/etc/cmdline
-fi
 poweroff -f
