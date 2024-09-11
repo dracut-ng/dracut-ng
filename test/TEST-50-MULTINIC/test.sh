@@ -330,7 +330,6 @@ test_setup() {
         inst_simple ./client.link /etc/systemd/network/01-client.link
 
         inst_binary awk
-        inst_hook pre-pivot 85 "$PKGLIBDIR/modules.d/45ifcfg/write-ifcfg.sh"
     )
     # Make client's dracut image
     test_dracut \
