@@ -251,7 +251,7 @@ test_setup() {
 
         inst_multiple sh ls shutdown poweroff stty cat ps ln ip \
             dmesg mkdir cp exportfs \
-            modprobe rpc.nfsd rpc.mountd showmount \
+            modprobe rpc.nfsd rpc.mountd \
             sleep mount chmod rm
         for _terminfodir in /lib/terminfo /etc/terminfo /usr/share/terminfo; do
             if [ -f "${_terminfodir}"/l/linux ]; then
