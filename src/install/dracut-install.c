@@ -364,13 +364,9 @@ static int cp(const char *src, const char *dst)
                 if (source_desc < 0)
                         goto normal_copy;
 
-                dest_desc =
-                        open(dst, O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC,
-                             (sb.st_mode) & (S_ISUID | S_ISGID | S_ISVTX | S_IRWXU | S_IRWXG | S_IRWXO));
-
-                if (dest_desc < 0) {
+                dest_desc = open(dst, O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC, sb.st_mode & ~S_IFMT);
+                if (dest_desc < 0)
                         goto normal_copy;
-                }
 
                 ret = clone_file(dest_desc, source_desc);
 
