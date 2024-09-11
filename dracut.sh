@@ -2087,18 +2087,6 @@ if [[ $kernel_only != yes ]]; then
         cat "$f" >> "${initdir}/etc/fstab"
     done
 
-    if [[ $dracutsysrootdir$systemdutildir ]]; then
-        if [[ -d ${initdir}/$systemdutildir ]]; then
-            mkdir -p "${initdir}"/etc/conf.d
-            {
-                printf "%s\n" "systemdutildir=\"$systemdutildir\""
-                printf "%s\n" "systemdsystemunitdir=\"$systemdsystemunitdir\""
-                printf "%s\n" "systemdsystemconfdir=\"$systemdsystemconfdir\""
-                printf "%s\n" "systemdnetworkconfdir=\"$systemdnetworkconfdir\""
-            } > "${initdir}"/etc/conf.d/systemd.conf
-        fi
-    fi
-
     if [[ $DRACUT_RESOLVE_LAZY ]] && [[ $DRACUT_INSTALL ]]; then
         dinfo "*** Resolving executable dependencies ***"
         # shellcheck disable=SC2086
