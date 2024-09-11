@@ -152,6 +152,14 @@ EOF
             "$systemdsystemunitdir"/sysinit.target.wants/systemd-vconsole-setup.service
     fi
 
+    mkdir -p "${initdir}"/etc/conf.d
+    {
+        printf "%s\n" "systemdutildir=\"$systemdutildir\""
+        printf "%s\n" "systemdsystemunitdir=\"$systemdsystemunitdir\""
+        printf "%s\n" "systemdsystemconfdir=\"$systemdsystemconfdir\""
+        printf "%s\n" "systemdnetworkconfdir=\"$systemdnetworkconfdir\""
+    } >> "${initdir}"/etc/conf.d/systemd.conf
+
     # Install library file(s)
     _arch=${DRACUT_ARCH:-$(uname -m)}
     inst_libdir_file \

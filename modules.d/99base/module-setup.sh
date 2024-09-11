@@ -54,6 +54,11 @@ install() {
         inst_multiple switch_root || dfatal "Failed to install switch_root"
         inst_script "$moddir/init.sh" "/init"
         inst_hook cmdline 10 "$moddir/parse-root-opts.sh"
+
+        mkdir -p "${initdir}"/etc/conf.d
+        {
+            printf "%s\n" "systemdutildir=\"$systemdutildir\""
+        } >> "${initdir}"/etc/conf.d/systemd.conf
     fi
 
     ln -fs /proc/self/mounts "$initdir/etc/mtab"
