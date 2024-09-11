@@ -21,7 +21,7 @@ if [[ -z $basedir ]]; then basedir="$(realpath ../..)"; fi
 DRACUT=${DRACUT-${basedir}/dracut.sh}
 PKGLIBDIR=${PKGLIBDIR-$basedir}
 
-TEST_KERNEL_CMDLINE+=" panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot console=ttyS0,115200n81 $DEBUGFAIL "
+TEST_KERNEL_CMDLINE+=" rd.retry=10 rd.info rd.shell=0 panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot console=ttyS0,115200n81 $DEBUGFAIL "
 if [[ $V != "1" && $V != "2" ]]; then
     TEST_KERNEL_CMDLINE+="quiet "
 fi
@@ -51,7 +51,6 @@ test_dracut() {
     IFS=' ' read -a TEST_DRACUT_ARGS_ARRAY <<< "$TEST_DRACUT_ARGS"
 
     "$DRACUT" \
-        --kernel-cmdline "rd.retry=10 rd.info rd.shell=0" \
         "${TEST_DRACUT_ARGS_ARRAY[@]}" \
         "$@" || return 1
 }
