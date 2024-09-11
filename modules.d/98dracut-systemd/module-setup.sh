@@ -13,7 +13,7 @@ check() {
 # called by dracut
 depends() {
     local deps
-    deps="systemd-initrd systemd-ask-password"
+    deps="base systemd-initrd systemd-ask-password"
 
     # when systemd and crypt are both included
     # systemd-cryptsetup is mandatory dependency

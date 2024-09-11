@@ -10,7 +10,7 @@ check() {
 
 # called by dracut
 depends() {
-    echo base systemd-udevd systemd-journald systemd-tmpfiles
+    echo systemd-udevd systemd-journald systemd-tmpfiles
 }
 
 # called by dracut
