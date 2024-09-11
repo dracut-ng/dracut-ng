@@ -929,8 +929,8 @@ if [[ -n $add_confdir ]]; then
     # Check if it exists under $confdir.
     elif [[ -d $confdir/$add_confdir ]]; then
         add_confdir="$confdir/$add_confdir"
-    elif [[ -d $dracutbasdir/dracut.conf.d/$add_confdir ]]; then
-        add_confdir="$dracutbasdir/dracut.conf.d/$add_confdir"
+    elif [[ -d $dracutbasedir/dracut.conf.d/$add_confdir ]]; then
+        add_confdir="$dracutbasedir/dracut.conf.d/$add_confdir"
     else
         printf "%s\n" "dracut[F]: Configuration directory '$add_confdir' not found." >&2
         exit 1
