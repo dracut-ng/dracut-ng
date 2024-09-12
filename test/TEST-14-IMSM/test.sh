@@ -55,7 +55,7 @@ test_run() {
 test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
-        -m "test-root" \
+        --add-confdir test-root \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
@@ -64,7 +64,8 @@ test_setup() {
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
-        -m "test-makeroot bash lvm mdraid dmraid" \
+        --add-confdir test-makeroot \
+        -a "bash lvm mdraid dmraid" \
         -d "piix ide-gd_mod ata_piix ext4 sd_mod dm-multipath dm-crypt dm-round-robin faulty linear multipath raid0 raid10 raid1 raid456" \
         -I "grep sfdisk realpath" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
