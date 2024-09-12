@@ -62,7 +62,8 @@ test_setup() {
 
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
-        -m "test-root systemd" \
+        --add-confdir test-root \
+        -a systemd \
         -i "${PKGLIBDIR}/modules.d/80test-root/test-init.sh" "/sbin/test-init.sh" \
         -i ./test-init.sh /sbin/test-init \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
@@ -101,7 +102,8 @@ EOF
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
-        -m "test-makeroot btrfs crypt" \
+        --add-confdir test-makeroot \
+        -a "btrfs crypt" \
         -I "mkfs.btrfs cryptsetup" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1

@@ -148,7 +148,7 @@ test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     rm -rf -- "$TESTDIR"/overlay
     "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
-        -m "test-root" \
+        --add-confdir test-root \
         -I "ip grep setsid" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
@@ -161,7 +161,8 @@ test_setup() {
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -l -i "$TESTDIR"/overlay / \
-        -m "test-makeroot crypt lvm mdraid" \
+        --add-confdir test-makeroot \
+        -a "crypt lvm mdraid" \
         -I "setsid blockdev" \
         -i ./create-client-root.sh /lib/dracut/hooks/initqueue/01-create-client-root.sh \
         --no-hostonly-cmdline -N \
@@ -185,7 +186,8 @@ test_setup() {
 
     rm -rf -- "$TESTDIR"/overlay
     "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
-        -m "test-root network-legacy iscsi" \
+        --add-confdir test-root \
+        -a "network-legacy iscsi" \
         -d "iscsi_tcp crc32c ipv6 af_packet" \
         -I "ip grep sleep setsid chmod modprobe pidof tgtd tgtadm" \
         --install-optional "/etc/netconfig dhcpd /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
@@ -202,7 +204,7 @@ test_setup() {
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
-        -m "test-makeroot" \
+        --add-confdir test-makeroot \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
     rm -rf -- "$TESTDIR"/overlay
