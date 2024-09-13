@@ -2177,6 +2177,7 @@ if [[ $do_strip == yes ]]; then
         fi
     done
 
+    kstrip_args=(-g)
     if [[ $aggressive_strip == yes ]]; then
         # `eu-strip` and `strip` both strips all unneeded parts by default
         strip_args=(-p)
@@ -2325,7 +2326,7 @@ if [[ $do_strip == yes ]] && ! [[ $DRACUT_FIPS_MODE ]]; then
         | while read -r -d $'\0' f || [ -n "$f" ]; do
             SIG=$(tail -c 28 "$f" | tr -d '\000')
             [[ $SIG == '~Module signature appended~' ]] || { printf "%s\000" "$f"; }
-        done | xargs -r -0 "$strip_cmd" "${strip_args[@]}"
+        done | xargs -r -0 "$strip_cmd" "${kstrip_args[@]}"
     dinfo "*** Stripping files done ***"
 fi
 
