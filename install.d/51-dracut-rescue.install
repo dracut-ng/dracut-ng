@@ -145,7 +145,7 @@ case "$COMMAND" in
                 echo "title      $PRETTY_NAME - Rescue Image"
                 echo "version    $KERNEL_VERSION"
                 echo "machine-id $MACHINE_ID"
-                echo "options    ${BOOT_OPTIONS[*]} rd.auto=1"
+                echo "options    ${BOOT_OPTIONS[*]}"
                 echo "linux      $BOOT_DIR/linux"
                 echo "initrd     $BOOT_DIR/initrd"
             } > "$LOADER_ENTRY"
