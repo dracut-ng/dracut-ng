@@ -365,17 +365,6 @@ inst_script() {
     fi
 }
 
-inst_fsck_help() {
-    local _ret _helper="/run/dracut/fsck/fsck_help_$1.txt"
-    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$2" "$_helper"; then
-        return 0
-    else
-        _ret=$?
-        derror "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$2" "$_helper"
-        return $_ret
-    fi
-}
-
 # Use with form hostonly="$(optional_hostonly)" inst_xxxx <args>
 # If hostonly mode is set to "strict", hostonly restrictions will still
 # be applied, else will ignore hostonly mode and try to install all
