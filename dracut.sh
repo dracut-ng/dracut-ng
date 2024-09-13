@@ -810,7 +810,11 @@ while :; do
         --no-compress) _no_compress_l="cat" ;;
         --gzip) compress_l="gzip" ;;
         --enhanced-cpio) enhanced_cpio_l="yes" ;;
-        --list-modules) do_list="yes" ;;
+        --list-modules)
+            do_list="yes"
+            kernel_only="no"
+            no_kernel="yes"
+            ;;
         -M | --show-modules)
             show_modules_l="yes"
             ;;
