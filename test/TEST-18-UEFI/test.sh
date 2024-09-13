@@ -41,7 +41,12 @@ test_setup() {
     mkdir -p "$TESTDIR"/dracut.*/initramfs/proc
     mksquashfs "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/squashfs.img -quiet -no-progress
 
-    mkdir -p "$TESTDIR"/ESP/EFI/BOOT
+    mkdir -p "$TESTDIR"/ESP/EFI/BOOT /tmp/dracut.conf.d
+
+    # test with the reference uki config when systemd is available
+    if command -v systemctl &> /dev/null; then
+        cp "${basedir}/dracut.conf.d/50-uki-virt.conf.example" /tmp/dracut.conf.d/50-uki-virt.conf
+    fi
 
     test_dracut \
         --kernel-cmdline 'root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root ro rd.skipfsck rootfstype=squashfs' \
