@@ -1,0 +1,54 @@
+# EFI unified kernel image for virtual machines
+
+# generic
+hostonly="no"
+
+# unified kernel image
+uefi="yes"
+
+# VMs can't update microcode anyway
+early_microcode="no"
+
+# modules: basics
+dracutmodules+=" dracut-systemd shutdown "
+
+# modules: virtual consoles
+dracutmodules+=" i18n "
+
+# modules: encrypted block device
+dracutmodules+=" systemd-cryptsetup crypt-loop "
+
+# modules: logical volume management
+dracutmodules+=" lvm "
+
+# modules: measure boot phase into TPM2
+dracutmodules+=" systemd-pcrphase "
+
+# modules: support root on virtiofs
+dracutmodules+=" virtiofs "
+
+# modules: use sysext images (see 'man systemd-sysext')
+dracutmodules+=" systemd-sysext "
+
+# modules: root disk integrity protection
+dracutmodules+=" systemd-veritysetup "
+
+# drivers: virtual buses, pci
+drivers+=" virtio-pci virtio-mmio "      # qemu-kvm
+drivers+=" hv-vmbus pci-hyperv "         # hyperv
+drivers+=" xen-pcifront "                # xen
+
+# drivers: storage
+drivers+=" ahci nvme sd_mod sr_mod "     # generic
+drivers+=" virtio-blk virtio-scsi "      # qemu-kvm
+drivers+=" hv-storvsc "                  # hyperv
+drivers+=" xen-blkfront "                # xen
+
+# root encryption
+drivers+=" dm_crypt "
+
+# root disk integrity protection
+drivers+=" dm_verity overlay "
+
+# filesystems
+filesystems+=" vfat ext4 xfs overlay "
