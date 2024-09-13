@@ -1,0 +1,7 @@
+Recovery of btrfs file systems is not automated. We suggest you use
+'btrfs check --readonly' first to see the if there's any damage and
+what's the scope. Logging the output is a recommended for later analysis.
+
+The option 'btrfs check --repair' must be used with care, be noted that it is
+able to fix certain classes of errors but not all of them.
+-----
