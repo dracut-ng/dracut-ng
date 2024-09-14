@@ -291,9 +291,19 @@ install() {
     if checks; then
         install_base
 
-        # https://github.com/dracutdevs/dracut/issues/796
-        if dracut_module_included "systemd" && [[ -f $dracutsysrootdir${VCONFIG_CONF} ]]; then
-            inst_simple ${VCONFIG_CONF}
+        if dracut_module_included "systemd"; then
+            # https://github.com/dracutdevs/dracut/issues/796
+            [[ -f $dracutsysrootdir${VCONFIG_CONF} ]] && inst_simple ${VCONFIG_CONF}
+
+            inst_rules 90-vconsole.rules
+
+            if [[ -e "$systemdsystemunitdir"/systemd-vconsole-setup.service ]]; then
+                inst_multiple -o \
+                    "$systemdutildir"/systemd-vconsole-setup \
+                    "$systemdsystemunitdir"/systemd-vconsole-setup.service \
+                    "$systemdsystemunitdir"/sysinit.target.wants/systemd-vconsole-setup.service
+            fi
+
         fi
 
         if [[ ${hostonly} ]] && ! [[ ${i18n_install_all} == "yes" ]]; then

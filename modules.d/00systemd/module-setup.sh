@@ -2,6 +2,9 @@
 # This file is part of dracut.
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+# keep this module as small as possible and consider adding rules to more
+# specific dracut modules when possible
+
 # Prerequisite check(s) for module.
 check() {
     [[ $mount_needs ]] && return 1
@@ -120,6 +123,7 @@ install() {
 
     local _systemdbinary="$systemdutildir"/systemd
 
+    # testing systemd using sanitizers - see https://systemd.io/TESTING_WITH_SANITIZERS/
     if ldd "$_systemdbinary" | grep -qw libasan; then
         local _wrapper="$systemdutildir"/systemd-asan-wrapper
         cat > "$initdir"/"$_wrapper" << EOF
@@ -134,20 +138,6 @@ EOF
     ln_r "$_systemdbinary" "/init"
 
     unset _systemdbinary
-
-    inst_binary true
-    ln_r "$(find_binary true)" "/usr/bin/loginctl"
-    ln_r "$(find_binary true)" "/bin/loginctl"
-    inst_rules \
-        90-vconsole.rules \
-        99-systemd.rules
-
-    if dracut_module_included "i18n" && [[ -e "$systemdsystemunitdir"/systemd-vconsole-setup.service ]]; then
-        inst_multiple -o \
-            "$systemdutildir"/systemd-vconsole-setup \
-            "$systemdsystemunitdir"/systemd-vconsole-setup.service \
-            "$systemdsystemunitdir"/sysinit.target.wants/systemd-vconsole-setup.service
-    fi
 
     # Install library file(s)
     _arch=${DRACUT_ARCH:-$(uname -m)}
