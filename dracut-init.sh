@@ -383,7 +383,7 @@ inst_script() {
 }
 
 inst_fsck_help() {
-    local _ret _helper="/run/dracut/fsck/fsck_help_$1.txt"
+    local _ret _helper="/usr/lib/dracut/fsck/fsck_help_$1.txt"
     if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$2" "$_helper"; then
         return 0
     else
