@@ -73,6 +73,12 @@ install() {
         fi
     fi
 
+    inst_binary true
+    ln_r "$(find_binary true)" "/usr/bin/loginctl"
+    ln_r "$(find_binary true)" "/bin/loginctl"
+    inst_rules \
+        99-systemd.rules
+
     # Install required libraries.
     _arch=${DRACUT_ARCH:-$(uname -m)}
     inst_libdir_file {"tls/$_arch/",tls/,"$_arch/",}"libudev.so.*"
