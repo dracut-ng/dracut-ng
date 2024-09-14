@@ -82,14 +82,14 @@ test_setup() {
 
     # vanilla kernel-independent systemd-based minimal initrd without dracut specific customizations
     # since dracut-systemd is not included in the generated initrd, only systemd options are supported during boot
-    test_dracut --no-kernel --keep --tmpdir "$TESTDIR" \
+    test_dracut --no-kernel \
         --omit "test systemd-sysctl systemd-modules-load" \
         -m "systemd-initrd" \
         "$TESTDIR"/initramfs-systemd-initrd
 
     # verify that dracut systemd services are not included
     (
-        cd "$TESTDIR"/dracut.*/initramfs/usr/lib/systemd/system/ || return 1
+        cd "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/systemd/system/ || return 1
         for f in dracut*.service; do
             [ -e "$f" ] && echo "unexpected dracut service found: $f" && return 1
         done

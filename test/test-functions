@@ -31,8 +31,8 @@ if [[ $V == "2" ]]; then
 fi
 
 test_dracut() {
-    # directory for test configurations
-    mkdir -p /tmp/dracut.conf.d
+    # directory for test configurations and for the generated initrd (extracted)
+    mkdir -p /tmp/dracut.conf.d "$TESTDIR"/initrd
 
     # grab the distro configuration from the host and make it available for the tests
     if [ -d /usr/lib/dracut/dracut.conf.d ]; then
@@ -40,7 +40,7 @@ test_dracut() {
     fi
 
     # pick up configuration from /tmp/dracut.conf.d when running the tests
-    TEST_DRACUT_ARGS+=" --local --confdir /tmp/dracut.conf.d --add-confdir test --no-early-microcode --force --kver $KVERSION"
+    TEST_DRACUT_ARGS+=" --local --confdir /tmp/dracut.conf.d --add-confdir test --keep --tmpdir $TESTDIR/initrd --kver $KVERSION"
 
     # include $TESTDIR"/overlay if exists
     if [ -d "$TESTDIR"/overlay ]; then
