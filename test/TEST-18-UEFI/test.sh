@@ -3,43 +3,9 @@
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="UEFI boot"
 
-ovmf_code() {
-    for path in \
-        "/usr/share/OVMF/OVMF_CODE.fd" \
-        "/usr/share/OVMF/OVMF_CODE_4M.fd" \
-        "/usr/share/edk2/x64/OVMF_CODE.fd" \
-        "/usr/share/edk2-ovmf/OVMF_CODE.fd" \
-        "/usr/share/qemu/ovmf-x86_64-4m.bin"; do
-        [[ -s $path ]] && echo -n "$path" && return
-    done
-}
-
 test_check() {
     [[ -n "$(ovmf_code)" ]]
 }
-
-VMLINUZ="/lib/modules/${KVERSION}/vmlinuz"
-if ! [ -f "$VMLINUZ" ]; then
-    VMLINUZ="/lib/modules/${KVERSION}/vmlinux"
-fi
-
-if ! [ -f "$VMLINUZ" ]; then
-    [[ -f /etc/machine-id ]] && read -r MACHINE_ID < /etc/machine-id
-
-    if [[ $MACHINE_ID ]] && { [[ -d /boot/${MACHINE_ID} ]] || [[ -L /boot/${MACHINE_ID} ]]; }; then
-        VMLINUZ="/boot/${MACHINE_ID}/$KVERSION/linux"
-    elif [ -f "/boot/vmlinuz-${KVERSION}" ]; then
-        VMLINUZ="/boot/vmlinuz-${KVERSION}"
-    elif [ -f "/boot/vmlinux-${KVERSION}" ]; then
-        VMLINUZ="/boot/vmlinux-${KVERSION}"
-    elif [ -f "/boot/kernel-${KVERSION}" ]; then
-        VMLINUZ="/boot/kernel-${KVERSION}"
-    else
-        echo "Could not find a Linux kernel version $KVERSION to test with!" >&2
-        echo "Please install linux." >&2
-        exit 1
-    fi
-fi
 
 test_run() {
     declare -a disk_args=()
