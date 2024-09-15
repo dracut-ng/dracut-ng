@@ -40,7 +40,6 @@ test_setup() {
         --nomdadmconf \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
-    rm -rf -- "$TESTDIR"/overlay
 
     declare -a disk_args=()
     declare -i disk_index=0

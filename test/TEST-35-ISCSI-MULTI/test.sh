@@ -237,8 +237,6 @@ test_setup() {
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1
-
-    rm -rf -- "$TESTDIR"/overlay
 }
 
 test_cleanup() {

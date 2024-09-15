@@ -343,8 +343,6 @@ test_setup() {
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
         -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1
-
-    rm -rf -- "$TESTDIR"/overlay
 }
 
 kill_server() {
