@@ -39,7 +39,6 @@ test_setup() {
         -I "mkfs.${TEST_FSTYPE}" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
-    rm -rf -- "$TESTDIR"/overlay
 
     declare -a disk_args=()
     declare -i disk_index=0

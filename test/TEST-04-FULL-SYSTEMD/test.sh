@@ -107,7 +107,6 @@ EOF
         -I "mkfs.btrfs cryptsetup" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
-    rm -rf -- "$TESTDIR"/overlay/*
 
     # Create the blank file to use as a root filesystem
     declare -a disk_args=()
@@ -133,8 +132,6 @@ EOF
         --add-drivers "btrfs" \
         -i "/tmp/key" "/etc/key" \
         "$TESTDIR"/initramfs.testing
-
-    rm -rf -- "$TESTDIR"/overlay
 }
 
 # shellcheck disable=SC1090

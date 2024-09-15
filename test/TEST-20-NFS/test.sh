@@ -420,8 +420,6 @@ test_setup() {
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod e1000 i6300esb" \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1
-
-    rm -rf -- "$TESTDIR"/overlay
 }
 
 test_cleanup() {

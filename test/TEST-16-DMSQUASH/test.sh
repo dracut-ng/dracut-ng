@@ -113,7 +113,6 @@ test_setup() {
         --drivers "ntfs3 erofs" \
         --include ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         --force "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
-    rm -rf -- "$TESTDIR"/overlay
 
     # Create the blank file to use as a root filesystem
     declare -a disk_args=()
@@ -163,8 +162,6 @@ EOF
         --omit "systemd" \
         --install "mkfs.ext4" \
         "$TESTDIR"/initramfs.testing-autooverlay
-
-    rm -rf -- "$TESTDIR"/overlay
 }
 
 # shellcheck disable=SC1090

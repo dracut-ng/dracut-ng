@@ -55,7 +55,6 @@ test_setup() {
         -I "mkfs.btrfs" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
-    rm -rf -- "$TESTDIR"/overlay
 
     # Create the blank file to use as a root filesystem
     declare -a disk_args=()
@@ -78,7 +77,6 @@ test_setup() {
     test_dracut \
         -d "btrfs" \
         "$TESTDIR"/initramfs.testing
-    rm -rf -- "$TESTDIR"/overlay
 }
 
 # shellcheck disable=SC1090

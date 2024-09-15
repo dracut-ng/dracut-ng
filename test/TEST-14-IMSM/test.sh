@@ -70,7 +70,6 @@ test_setup() {
         -I "grep sfdisk realpath" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
-    rm -rf -- "$TESTDIR"/overlay
 
     # Create the blank files to use as a root filesystem
     declare -a disk_args=()
