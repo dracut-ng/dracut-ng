@@ -7,7 +7,13 @@ test_check() {
     [[ -n "$(ovmf_code)" ]]
 }
 
-test_run() {
+client_run() {
+    local test_name="$1"
+    shift
+    local client_opts="$*"
+
+    echo "CLIENT TEST START: $test_name"
+
     declare -a disk_args=()
     declare -i disk_index=1
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
@@ -17,8 +23,13 @@ test_run() {
     "$testdir"/run-qemu "${disk_args[@]}" -net none \
         -drive file=fat:rw:"$TESTDIR"/ESP,format=vvfat,label=EFI \
         -global driver=cfi.pflash01,property=secure,value=on \
+        -smbios type=11,value=io.systemd.stub.kernel-cmdline-extra="$client_opts" \
         -drive if=pflash,format=raw,unit=0,file="$(ovmf_code)",readonly=on
     test_marker_check || return 1
+}
+
+test_run() {
+    client_run "readonly root" "ro rd.skipfsck" || return 1
 }
 
 test_setup() {
@@ -46,12 +57,12 @@ test_setup() {
         ukify build \
             --linux="$VMLINUZ" \
             --initrd="$TESTDIR"/initramfs.testing \
-            --cmdline='root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root ro rd.skipfsck' \
+            --cmdline='root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root' \
             --output="$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
     else
         echo "Using dracut to create UKI"
         test_dracut \
-            --kernel-cmdline 'root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root ro rd.skipfsck' \
+            --kernel-cmdline 'root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root' \
             --drivers 'squashfs' \
             --uefi \
             "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
