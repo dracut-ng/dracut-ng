@@ -32,15 +32,15 @@ fi
 
 test_dracut() {
     # directory for test configurations and for the generated initrd (extracted)
-    mkdir -p /tmp/dracut.conf.d "$TESTDIR"/initrd
+    mkdir -p "$TESTDIR"/dracut.conf.d "$TESTDIR"/initrd
 
     # grab the distro configuration from the host and make it available for the tests
     if [ -d /usr/lib/dracut/dracut.conf.d ]; then
-        cp -a /usr/lib/dracut/dracut.conf.d /tmp/
+        cp -a /usr/lib/dracut/dracut.conf.d "$TESTDIR"/
     fi
 
-    # pick up configuration from /tmp/dracut.conf.d when running the tests
-    TEST_DRACUT_ARGS+=" --local --confdir /tmp/dracut.conf.d --add-confdir test --keep --tmpdir $TESTDIR/initrd --kver $KVERSION"
+    # pick up configuration from $TESTDIR/dracut.conf.d when running the tests
+    TEST_DRACUT_ARGS+=" --local --confdir $TESTDIR/dracut.conf.d --add-confdir test --keep --tmpdir $TESTDIR/initrd --kver $KVERSION"
 
     # include $TESTDIR"/overlay if exists
     if [ -d "$TESTDIR"/overlay ]; then
