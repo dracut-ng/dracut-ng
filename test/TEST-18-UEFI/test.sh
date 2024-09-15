@@ -41,11 +41,11 @@ test_setup() {
     mkdir -p "$TESTDIR"/dracut.*/initramfs/proc
     mksquashfs "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/squashfs.img -quiet -no-progress
 
-    mkdir -p "$TESTDIR"/ESP/EFI/BOOT /tmp/dracut.conf.d
+    mkdir -p "$TESTDIR"/ESP/EFI/BOOT "$TESTDIR"/dracut.conf.d
 
     # test with the reference uki config when systemd is available
     if command -v systemctl &> /dev/null; then
-        cp "${basedir}/dracut.conf.d/50-uki-virt.conf.example" /tmp/dracut.conf.d/50-uki-virt.conf
+        cp "${basedir}/dracut.conf.d/50-uki-virt.conf.example" "$TESTDIR"/dracut.conf.d/50-uki-virt.conf
     fi
 
     if command -v ukify &> /dev/null; then
