@@ -10,11 +10,16 @@ check() {
 
 # called by dracut
 depends() {
-    echo base systemd-udevd systemd-journald systemd-tmpfiles
+    echo systemd-udevd systemd-journald systemd-tmpfiles
 }
 
 # called by dracut
 install() {
+    # The existence of this file is required
+    if ! [[ -e "$initdir/etc/initrd-release" ]]; then
+        : > "$initdir/etc/initrd-release"
+    fi
+
     inst_multiple -o \
         "$systemdsystemunitdir"/initrd.target \
         "$systemdsystemunitdir"/initrd-fs.target \
