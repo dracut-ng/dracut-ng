@@ -230,7 +230,7 @@ init has the following hook points to inject scripts:
 
 ```console
 $ cd <DRACUT_SOURCE>
-$ tools/test-podman.sh [TESTS] [CONTAINER]
+$ test/test-podman.sh [TESTS] [CONTAINER]
 ```
 
 with `[CONTAINER]` being one of the

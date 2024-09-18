@@ -7,4 +7,4 @@ CONTAINER=$2
 
 [ -z "$CONTAINER" ] && CONTAINER='ghcr.io/dracut-ng/fedora'
 
-podman run --rm -it --device=/dev/kvm -v "$PWD"/:/z "$CONTAINER" /z/tools/test-github.sh id "$TESTS"
+podman run --rm -it --device=/dev/kvm -v "$PWD"/:/z "$CONTAINER" /z/test/test-github.sh id "$TESTS"
