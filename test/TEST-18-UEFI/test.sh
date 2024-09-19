@@ -45,7 +45,7 @@ test_setup() {
 
     # test with the reference uki config when systemd is available
     if command -v systemctl &> /dev/null; then
-        cp "${basedir}/dracut.conf.d/50-uki-virt.conf.example" "$TESTDIR"/dracut.conf.d/50-uki-virt.conf
+        cp "${basedir}"/dracut.conf.d/uki-virt/* "$TESTDIR"/dracut.conf.d/
     fi
 
     if command -v ukify &> /dev/null; then
