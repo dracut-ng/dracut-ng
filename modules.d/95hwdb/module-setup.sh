@@ -5,7 +5,6 @@
 # called by dracut
 install() {
     inst_multiple -o \
-        /etc/udev/udev.hwdb \
         "${udevdir}"/hwdb.bin
 
     # Install the hosts local user configurations if enabled.
