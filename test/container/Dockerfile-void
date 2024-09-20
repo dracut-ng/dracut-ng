@@ -56,10 +56,8 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     shellcheck \
     shfmt \
     squashfs-tools \
-    strace \
     swtpm \
     systemd-boot-efistub \
-    tcpdump \
     tgt \
     tpm2-tools \
     ukify \

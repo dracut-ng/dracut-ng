@@ -46,17 +46,14 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     ShellCheck \
     shfmt \
     squashfs \
-    strace \
     swtpm \
     systemd-boot \
     systemd-experimental \
     tar \
-    tcpdump \
     tgt \
     tpm2.0-tools \
     /usr/bin/qemu-system-$(uname -m) \
     util-linux-systemd \
-    wget \
     xz \
     && dnf -y update && dnf clean all
 

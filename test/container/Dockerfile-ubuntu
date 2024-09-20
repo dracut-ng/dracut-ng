@@ -41,7 +41,6 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     jfsutils \
     jq \
     kmod \
-    less \
     libdmraid-dev \
     libkmod-dev \
     linux-image-generic \
@@ -69,7 +68,6 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     sbsigntool \
     shellcheck \
     squashfs-tools \
-    strace \
     swtpm \
     systemd-boot-efi \
     systemd-container \
@@ -77,12 +75,9 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     systemd-resolved \
     systemd-timesyncd \
     systemd-ukify \
-    tcpdump \
     tgt \
     thin-provisioning-tools \
     tpm2-tools \
-    vim \
-    wget \
     xfsprogs \
     zstd \
     && apt-get clean \
