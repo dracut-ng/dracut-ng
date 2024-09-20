@@ -50,10 +50,11 @@ RUN pacman --noconfirm -Syu \
     shfmt \
     squashfs-tools \
     strace \
+    swtpm \
     systemd-ukify \
     tcpdump \
     tgt \
     tpm2-tools \
-    xfsprogs \
     vi \
+    xfsprogs \
     && yes | pacman -Scc

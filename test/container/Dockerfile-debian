@@ -24,10 +24,10 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --
     docbook-xml \
     docbook-xsl \
     erofs-utils \
+    f2fs-tools \
     fcoe-utils \
     fdisk \
     file \
-    f2fs-tools \
     g++ \
     gawk \
     git \
@@ -59,8 +59,8 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --
     parted \
     pcscd \
     pigz \
-    plymouth \
     pkg-config \
+    plymouth \
     procps \
     qemu-kvm \
     rng-tools5 \
@@ -68,6 +68,7 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --
     shellcheck \
     squashfs-tools \
     strace \
+    swtpm \
     systemd-boot-efi \
     systemd-container \
     systemd-coredump \

@@ -29,8 +29,8 @@ RUN apk add --no-cache \
     e2fsprogs \
     erofs-utils \
     eudev \
-    findmnt \
     file \
+    findmnt \
     f2fs-tools \
     gawk \
     git \
@@ -40,9 +40,9 @@ RUN apk add --no-cache \
     jfsutils \
     jq \
     kbd \
+    keyutils \
     kmod \
     kmod-dev \
-    keyutils \
     libcap-utils \
     linux-virt \
     losetup \
@@ -70,6 +70,7 @@ RUN apk add --no-cache \
     sfdisk \
     squashfs-tools \
     sudo \
+    swtpm \
     util-linux-misc \
     xfsprogs \
     xz

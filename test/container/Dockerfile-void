@@ -57,6 +57,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     shfmt \
     squashfs-tools \
     strace \
+    swtpm \
     systemd-boot-efistub \
     tcpdump \
     tgt \
