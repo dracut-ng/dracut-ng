@@ -87,7 +87,7 @@ DRACUT_LDCONFIG=${DRACUT_LDCONFIG:-ldconfig}
 
 # Detect lib paths
 if ! [[ $libdirs ]]; then
-    if [[ $("$DRACUT_LDD" "$dracutsysrootdir$DRACUT_TESTBIN") == */lib64/* ]] &> /dev/null \
+    if [[ $("$DRACUT_LDD" "$dracutsysrootdir$DRACUT_TESTBIN") == *"=> "*/lib64/* ]] &> /dev/null \
         && [[ -d $dracutsysrootdir/lib64 ]]; then
         libdirs+=" /lib64"
         [[ -d $dracutsysrootdir/usr/lib64 ]] && libdirs+=" /usr/lib64"
