@@ -49,12 +49,9 @@ RUN pacman --noconfirm -Syu \
     shellcheck \
     shfmt \
     squashfs-tools \
-    strace \
     swtpm \
     systemd-ukify \
-    tcpdump \
     tgt \
     tpm2-tools \
-    vi \
     xfsprogs \
     && yes | pacman -Scc

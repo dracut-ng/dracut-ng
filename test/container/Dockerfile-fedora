@@ -61,16 +61,13 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     ShellCheck \
     shfmt \
     squashfs-tools \
-    strace \
     swtpm \
     systemd-boot-unsigned \
     systemd-networkd \
     systemd-resolved \
     systemd-ukify \
     tar \
-    tcpdump \
     tpm2-tools \
-    wget \
     xfsprogs \
     xz \
     && dnf -y update && dnf clean all
