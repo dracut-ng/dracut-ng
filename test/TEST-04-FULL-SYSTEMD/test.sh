@@ -127,7 +127,7 @@ EOF
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
     echo -n test > /tmp/key
 
-    test_dracut \
+    test_dracut -v \
         -m "dracut-systemd systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pcrphase systemd-pstore systemd-repart systemd-sysext systemd-veritysetup" \
         --add-drivers "btrfs" \
         -i "/tmp/key" "/etc/key" \
