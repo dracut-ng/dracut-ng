@@ -57,4 +57,6 @@ install() {
 
     inst_multiple -o btrfsck btrfs-zero-log
     inst "$(command -v btrfs)" /sbin/btrfs
+
+    inst_fsck_help "btrfs" "$moddir/dracut-fsck-help.txt"
 }
