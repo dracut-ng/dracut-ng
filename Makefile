@@ -118,19 +118,19 @@ endif
 	@rm -f -- "$@"
 	xsltproc -o "$@" -nonet http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl $<
 
-%.xml: %.asc
+%.xml: %.adoc
 	@rm -f -- "$@"
 	asciidoc -a "version=$(DRACUT_FULL_VERSION)" -d manpage -b docbook -o "$@" $<
 
-dracut.8: man/dracut.8.asc \
-	man/dracut.usage.asc
+dracut.8: man/dracut.8.adoc \
+	man/dracut.usage.adoc
 
-dracut.html: man/dracut.asc $(manpages) docs/dracut.css man/dracut.usage.asc
+dracut.html: man/dracut.adoc $(manpages) docs/dracut.css man/dracut.usage.adoc
 	@rm -f -- dracut.xml
 	asciidoc -a "mainversion=$(DRACUT_MAIN_VERSION)" \
 		-a "version=$(DRACUT_FULL_VERSION)" \
 		-a numbered \
-		-d book -b docbook -o dracut.xml man/dracut.asc
+		-d book -b docbook -o dracut.xml man/dracut.adoc
 	@rm -f -- dracut.html
 	xsltproc -o dracut.html --xinclude -nonet \
 		--stringparam custom.css.source docs/dracut.css \
