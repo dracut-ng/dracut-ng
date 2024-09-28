@@ -150,26 +150,26 @@ This ensures, that all devices are disassembled and unmounted cleanly.
 = User Manual
 
 :leveloffset: 1
-include::dracut.8.asc[]
+include::dracut.8.adoc[]
 
 :leveloffset: 1
 [[dracutconf5]]
-include::dracut.conf.5.asc[]
+include::dracut.conf.5.adoc[]
 
 [[dracutcmdline7]]
-include::dracut.cmdline.7.asc[]
+include::dracut.cmdline.7.adoc[]
 
 [[lsinitrd1]]
-include::lsinitrd.1.asc[]
+include::lsinitrd.1.adoc[]
 
 = Developer Manual
 
 :leveloffset: 1
 [[dracutmodules7]]
-include::dracut.modules.7.asc[]
+include::dracut.modules.7.adoc[]
 
 [[dracutbootup7]]
-include::dracut.bootup.7.asc[]
+include::dracut.bootup.7.adoc[]
 
 :leveloffset: 0
 [appendix]

@@ -29,8 +29,8 @@ subdirectory, and use functionality provided by dracut-functions to do their
 work.
 
 Documentation:
- - [Introduction](man/dracut.asc)
- - [User Manual](man/dracut.usage.asc)
+ - [Introduction](man/dracut.adoc)
+ - [User Manual](man/dracut.usage.adoc)
 
 Currently dracut-ng is developed on [github.com](https://github.com/dracut-ng/dracut-ng).
 
