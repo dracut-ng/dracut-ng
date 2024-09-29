@@ -125,7 +125,7 @@ endif
 dracut.8: man/dracut.8.adoc \
 	man/dracut.usage.adoc
 
-dracut.html: man/dracut.adoc $(manpages) docs/dracut.css man/dracut.usage.adoc
+dracut.html: man/dracut.adoc $(manpages) man/dracut.usage.adoc
 	@rm -f -- dracut.xml
 	asciidoc -a "mainversion=$(DRACUT_MAIN_VERSION)" \
 		-a "version=$(DRACUT_FULL_VERSION)" \
@@ -133,8 +133,6 @@ dracut.html: man/dracut.adoc $(manpages) docs/dracut.css man/dracut.usage.adoc
 		-d book -b docbook -o dracut.xml man/dracut.adoc
 	@rm -f -- dracut.html
 	xsltproc -o dracut.html --xinclude -nonet \
-		--stringparam custom.css.source docs/dracut.css \
-		--stringparam generate.css.header 1 \
 		http://docbook.sourceforge.net/release/xsl/current/xhtml/docbook.xsl dracut.xml
 	@rm -f -- dracut.xml
 
