@@ -27,6 +27,7 @@ client_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
+        -smbios type=11,value=io.systemd.credential:key=test \
         -append "$TEST_KERNEL_CMDLINE systemd.unit=testsuite.target systemd.mask=systemd-firstboot systemd.mask=systemd-vconsole-setup root=LABEL=dracut mount.usr=LABEL=dracutusr mount.usrfstype=btrfs mount.usrflags=subvol=usr,ro $client_opts $DEBUGOUT" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
@@ -50,8 +51,8 @@ test_run() {
     . "$TESTDIR"/luks.uuid
 
     # luks
-    client_run "encrypted root with rd.luks.uuid" "root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID rd.luks.key=/etc/key" || return 1
-    client_run "encrypted root with rd.luks.name" "root=/dev/mapper/crypt rd.luks.name=$ID_FS_UUID=crypt rd.luks.key=/etc/key" || return 1
+    client_run "encrypted root with rd.luks.uuid" "root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID rd.luks.key=/run/credentials/@system/key" || return 1
+    client_run "encrypted root with rd.luks.name" "root=/dev/mapper/crypt rd.luks.name=$ID_FS_UUID=crypt rd.luks.key=/run/credentials/@system/key" || return 1
     return 0
 }
 
@@ -125,12 +126,10 @@ EOF
     test_marker_check dracut-root-block-created || return 1
 
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
-    echo -n test > /tmp/key
 
     test_dracut \
         -m "dracut-systemd systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pcrphase systemd-pstore systemd-repart systemd-sysext systemd-veritysetup" \
         --add-drivers "btrfs" \
-        -i "/tmp/key" "/etc/key" \
         "$TESTDIR"/initramfs.testing
 }
 
