@@ -1,0 +1,17 @@
+site:
+  title: Dracut
+  url: https://dracut-ng.github.io
+content:
+  sources:
+    - url: .
+      branches: HEAD
+      start_path: doc_site
+ui:
+  bundle:
+    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
+    snapshot: true
+  supplemental_files: ./doc_site/supplemental-ui
+runtime:
+  log:
+    # In C terms, -Werror
+    failure_level: warn

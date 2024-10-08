@@ -1,0 +1,36 @@
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <div class="navbar-item title">
+        <img src="{{{siteRootPath}}}/images/dracut.svg" alt="dracut-ng logo">
+        <a title" href="{{or site.url (or siteRootUrl siteRootPath)}}">Dracut-ng</a>
+      </div>
+      {{#if (or env.ALGOLIA_API_KEY env.SITE_SEARCH_PROVIDER)}}
+      <div class="navbar-item search hide-for-print">
+        <input id="search-input" type="text" placeholder="Search the docs"{{#if page.home}} autofocus{{/if}}>
+      </div>
+      {{/if}}
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <div class="navbar-link">Resources</div>
+          <div class="navbar-dropdown is-right">
+            <div class="navbar-item"><strong>Source</strong></div>
+            <a class="navbar-item has-label" href="https://github.com/dracut-ng//dracut-ng">dracut-ng/dracut-ng</a>
+            <hr class="navbar-divider">
+            <div class="navbar-item"><strong>Developer</strong></div>
+            <a class="navbar-item has-label" href="https://github.com/dracut-ng/dracut-ng/issues">Issues</a>
+            <a class="navbar-item has-label" href="https://github.com/dracut-ng/dracut-ng/pulls">Pull Requests</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
