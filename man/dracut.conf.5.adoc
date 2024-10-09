@@ -17,7 +17,7 @@ _/usr/lib/dracut/dracut.conf.d/*.conf_
 
 Description
 -----------
-_dracut.conf_ is loaded during the initialisation phase of dracut. Command line
+_dracut.conf_ is loaded during the initialization phase of dracut. Command line
 parameter will override any values set here.
 
 _*.conf_ files are read from /usr/lib/dracut/dracut.conf.d and
