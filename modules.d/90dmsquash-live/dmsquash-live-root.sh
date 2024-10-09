@@ -344,7 +344,7 @@ if [ -e "$SQUASHED" ]; then
         elif [ -f /run/initramfs/squashfs/LiveOS/ext3fs.img ]; then
             FSIMG="/run/initramfs/squashfs/LiveOS/ext3fs.img"
         fi
-    elif [ -d /run/initramfs/squashfs/proc ]; then
+    elif [ -d /run/initramfs/squashfs/usr ]; then
         FSIMG=$SQUASHED
         if [ -z "$overlayfs" ] && [ -n "$DRACUT_SYSTEMD" ]; then
             reloadsysrootmountunit=":>/xor_overlayfs;"
