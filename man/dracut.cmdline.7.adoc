@@ -211,7 +211,7 @@ It should be attached to any report about dracut problems.
         NOTE: memstrack is a memory tracing tool that tracks the total memory
               consumption, and peak memory consumption of each kernel modules
               and userspace progress during the whole initramfs runtime, report
-              is generated and the end of initramsfs run.
+              is generated and the end of initramfs run.
     5 - /proc/meminfo + /proc/slabinfo + memstrack (with top memory stacktrace)
         NOTE: memstrack (with top memory stacktrace) will print top memory
               allocation stack traces during the whole initramfs runtime.
