@@ -142,7 +142,7 @@ EOF
         90-vconsole.rules \
         99-systemd.rules
 
-    if dracut_module_included "10i18n" && [[ -e "$systemdsystemunitdir"/systemd-vconsole-setup.service ]]; then
+    if dracut_module_included "i18n" && [[ -e "$systemdsystemunitdir"/systemd-vconsole-setup.service ]]; then
         inst_multiple -o \
             "$systemdutildir"/systemd-vconsole-setup \
             "$systemdsystemunitdir"/systemd-vconsole-setup.service \
