@@ -139,9 +139,6 @@ EOF
     ln_r "$(find_binary true)" "/usr/bin/loginctl"
     ln_r "$(find_binary true)" "/bin/loginctl"
     inst_rules \
-        70-uaccess.rules \
-        71-seat.rules \
-        73-seat-late.rules \
         90-vconsole.rules \
         99-systemd.rules
 

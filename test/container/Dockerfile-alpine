@@ -27,6 +27,7 @@ RUN apk add --no-cache \
     dosfstools \
     dracut \
     e2fsprogs \
+    elogind \
     erofs-utils \
     eudev \
     file \
