@@ -135,6 +135,8 @@ dracut_install_dir/modules.d/
 	   later module, so that you can have a distro or system specific
 	   module override or modify the functionality of a generic module
 	   without having to patch the more generic module.
+	   Range 50 - 59 is reserved for out of tree (3rd party) dracut
+	   modules.
 
 `module-setup.sh`:
 	 dracut sources this script to install the functionality that a
