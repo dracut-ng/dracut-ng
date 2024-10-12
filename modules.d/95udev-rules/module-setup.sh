@@ -48,6 +48,9 @@ install() {
         70-memory.rules \
         70-mouse.rules \
         70-touchpad.rules \
+        70-uaccess.rules \
+        71-seat.rules \
+        73-seat-late.rules \
         75-net-description.rules \
         75-probe_mtd.rules \
         78-sound-card.rules \
