@@ -70,7 +70,6 @@ RUN apk add --no-cache \
     sed \
     sfdisk \
     squashfs-tools \
-    sudo \
     swtpm \
     util-linux-misc \
     xfsprogs \
