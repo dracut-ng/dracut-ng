@@ -21,6 +21,8 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
     - name: Configure Pages
       uses: actions/configure-pages@v3
     - name: Install Node.js
