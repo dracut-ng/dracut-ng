@@ -120,7 +120,7 @@ endif
 
 %.xml: %.adoc
 	@rm -f -- "$@"
-	asciidoc -a "version=$(DRACUT_FULL_VERSION)" -d manpage -b docbook -o "$@" $<
+	asciidoc -f man/asciidoc.conf -a "version=$(DRACUT_FULL_VERSION)" -d manpage -b docbook -o "$@" $<
 
 # If ANOTRA_BIN not set, default to look for "npx" to run "npx antora".  If we
 # end up with undefined ANTORA_BIN (i.e. not set and npx not found), we'll give

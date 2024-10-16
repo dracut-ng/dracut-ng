@@ -336,10 +336,10 @@ crypto LUKS - key on removable device support
 NB: If systemd is included in the dracut initrd, dracut's built in
 removable device keying support won't work. systemd will prompt for
 a password from the console even if you've supplied **rd.luks.key**.
-You may be able to use standard systemd *fstab*(5) syntax to
+You may be able to use standard systemd man:fstab[5,external] syntax to
 get the same effect. If you do need **rd.luks.key** to work,
 you will have to exclude the "systemd" dracut module and any modules
-that depend on it. See *dracut.conf*(5) and
+that depend on it. See man:dracut.conf[5] and
 https://bugzilla.redhat.com/show_bug.cgi?id=905683 for more
 information.
 
@@ -581,7 +581,7 @@ USB Android phone::
 The following options are supported by the 'network-legacy' dracut
 module. Other network modules might support a slightly different set of
 options; refer to the documentation of the specific network module in use. For
-NetworkManager, see *nm-initrd-generator*(8).
+NetworkManager, see man:nm-initrd-generator[8].
 
 **ip=**__{dhcp|on|any|dhcp6|auto6|either6|link6|single-dhcp}__::
     dhcp|on|any::: get ip from dhcp server from all interfaces. If netroot=dhcp,
@@ -696,7 +696,7 @@ interface name. Better name it "bootnet" or "bluesocket".
 **team=**__<teammaster>__:__<teamslaves>__[:__<teamrunner>__]::
     Setup team device <teammaster> on top of <teamslaves>.
     <teamslaves> is a comma-separated list of physical (ethernet) interfaces.
-    <teamrunner> is the runner type to be used (see *teamd.conf*(5)); defaults to
+    <teamrunner> is the runner type to be used (see man:teamd.conf[5,external]); defaults to
     activebackup.
     Team without parameters assumes
     team=team0:eth0,eth1:activebackup
@@ -1465,4 +1465,4 @@ Harald Hoyer
 
 SEE ALSO
 --------
-*dracut*(8) *dracut.conf*(5)
+man:dracut[8] man:dracut.conf[5]
