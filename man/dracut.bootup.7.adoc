@@ -124,4 +124,4 @@ Harald Hoyer
 
 SEE ALSO
 --------
-*dracut*(8) *bootup*(7)
+man:dracut[8] man:bootup[7,external]
