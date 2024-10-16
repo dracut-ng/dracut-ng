@@ -747,10 +747,6 @@ usable_root() {
         [ -e "$_i" ] && return 0
     done
 
-    for _i in proc sys dev; do
-        [ -e "$1"/$_i ] || return 1
-    done
-
     return 0
 }
 

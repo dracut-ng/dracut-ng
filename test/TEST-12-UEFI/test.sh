@@ -38,7 +38,6 @@ test_setup() {
         --add-confdir test-root \
         "$TESTDIR"/tmp-initramfs.root "$KVERSION" || return 1
 
-    mkdir -p "$TESTDIR"/dracut.*/initramfs/proc
     mksquashfs "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/squashfs.img -quiet -no-progress
 
     mkdir -p "$TESTDIR"/ESP/EFI/BOOT "$TESTDIR"/dracut.conf.d
