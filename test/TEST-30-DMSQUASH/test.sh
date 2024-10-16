@@ -103,6 +103,9 @@ test_setup() {
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
+    # test to make sure /proc /sys and /dev is not needed inside the generated initrd
+    rm -rf "$TESTDIR"/dracut.*/initramfs/proc "$TESTDIR"/dracut.*/initramfs/sys "$TESTDIR"/dracut.*/initramfs/dev
+
     # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid

@@ -17,6 +17,7 @@ export PATH
 
 # mount some important things
 if [ ! -d /proc/self ]; then
+    mkdir -m 0755 -p /proc
     if ! mount -t proc -o nosuid,noexec,nodev proc /proc > /dev/null; then
         echo "Cannot mount proc on /proc! Compile the kernel with CONFIG_PROC_FS!"
         exit 1
@@ -24,6 +25,7 @@ if [ ! -d /proc/self ]; then
 fi
 
 if [ ! -d /sys/kernel ]; then
+    mkdir -m 0755 -p /sys
     if ! mount -t sysfs -o nosuid,noexec,nodev sysfs /sys > /dev/null; then
         echo "Cannot mount sysfs on /sys! Compile the kernel with CONFIG_SYSFS!"
         exit 1
@@ -36,6 +38,7 @@ RD_DEBUG=""
 setdebug
 
 if ! ismounted /dev; then
+    mkdir -m 0755 -p /dev
     mount -t devtmpfs -o mode=0755,noexec,nosuid,strictatime devtmpfs /dev > /dev/null
 fi
 
