@@ -7,6 +7,8 @@ check() {
     return 255
 }
 
+testlabel
+
 # called by dracut
 install() {
     local _i _path _busybox
