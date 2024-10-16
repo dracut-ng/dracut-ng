@@ -72,7 +72,7 @@ include ld.so.conf.d/*.conf
 == Adding dracut Modules
 Some dracut modules are turned off by default and have to be activated manually.
 You can do this by adding the dracut modules to the configuration file
-_/etc/dracut.conf_ or _/etc/dracut.conf.d/myconf.conf_. See *dracut.conf*(5).
+_/etc/dracut.conf_ or _/etc/dracut.conf.d/myconf.conf_. See man:dracut.conf[5]
 You can also add dracut modules on the command line
 by using the `-a` or `--add` option:
 
@@ -95,7 +95,7 @@ distribution configuration file).
 Sometimes you don't want a dracut module to be included for reasons of speed,
 size or functionality. To do this, either specify the omit_dracutmodules
 variable in the _dracut.conf_ or _/etc/dracut.conf.d/myconf.conf_ configuration
-file (see *dracut.conf*(5)), or use the `-o` or `--omit` option
+file (see man:dracut.conf[5]) or use the `-o` or `--omit` option
 on the command line:
 
 [,console]
@@ -107,7 +107,7 @@ on the command line:
 If you need a special kernel module in the initramfs, which is not
 automatically picked up by dracut, you have the use the --add-drivers option
 on the command line or  the drivers variable in  the _/etc/dracut.conf_
-or _/etc/dracut.conf.d/myconf.conf_ configuration file (see *dracut.conf*(5)):
+or _/etc/dracut.conf.d/myconf.conf_ configuration file (see man:dracut.conf[5]):
 
 [,console]
 ----
@@ -132,7 +132,7 @@ The kernel command line can also be provided by the dhcp server with the
 root-path option. See <<NetworkBoot>>.
 
 For a full reference of all kernel command line parameters,
-see *dracut.cmdline*(7).
+see man:dracut.cmdline[7].
 
 To get a quick start for the suitable kernel command line on your system,
 use the __--print-cmdline__ option:
@@ -538,7 +538,7 @@ the dracut shell
 
 [[additional-dracut-boot-parameters]]
 === Additional dracut boot parameters
-For more debugging options, see *dracut.cmdline*(7).
+For more debugging options, see man:dracut.cmdline[7].
 
 
 [[debugging-dracut-on-shutdown]]

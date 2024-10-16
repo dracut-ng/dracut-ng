@@ -31,7 +31,7 @@ early userspace.
 
 Initramfs images are also called "initrd".
 
-For a complete list of kernel command line options see *dracut.cmdline*(7).
+For a complete list of kernel command line options see man:dracut.cmdline[7].
 
 If you are dropped to an emergency shell, while booting your initramfs,
 the file _/run/initramfs/rdsosreport.txt_ is created, which can be saved to a
@@ -619,7 +619,7 @@ and no /etc/cmdline/*.conf will be generated into the initramfs.
 
 **--enhanced-cpio**::
     Attempt to use the dracut-cpio binary, which optimizes archive creation for
-    copy-on-write filesystems by using the copy_file_range(2) syscall via Rust's
+    copy-on-write filesystems by using the man:copy_file_range[2] syscall via Rust's
     io::copy(). When specified, initramfs archives are also padded to ensure
     optimal data alignment for extent sharing. To retain reflink data
     deduplication benefits, this should be used alongside the **--no-compress**
@@ -780,4 +780,4 @@ Warren Togami
 
 SEE ALSO
 --------
-*dracut.cmdline*(7) *dracut.conf*(5) *lsinitrd*(1)
+man:dracut.cmdline[7] man:dracut.conf[5] man:lsinitrd[1]
