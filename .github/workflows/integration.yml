@@ -7,7 +7,7 @@ on:
           - antora-playbook.yaml
           - 'doc_site/**'
           - 'man/**'
-x
+
 env:
     # set V to 2 when re-running jobs with debug logging enabled
     # see https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
