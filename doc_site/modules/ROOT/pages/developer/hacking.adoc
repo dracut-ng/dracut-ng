@@ -2,15 +2,15 @@
 
 Please make sure to follow our xref:developer/contributing.adoc[Contribution Guidelines].
 
-== git
+== Source
 
 Currently dracut-ng lives on github.com.
 
 * https://github.com/dracut-ng/dracut-ng.git
 
-Pull requests should be filed preferably on github nowadays.
+Pull requests should be filed in this project
 
-=== Code Format
+== Code Format
 
 It is recommended, that you install a plugin for your editor, which reads in `.editorconfig`.
 Additionally `emacs` and `vim` config files are provided for convenience.
@@ -48,16 +48,22 @@ Some IDEs already have support for shfmt.
 
 For convenience the `make indent` Makefile target also calls shfmt, if it is in `$PATH`.
 
-=== Commit Messages
+== Commit Messages
 
 Commit messages should answer these questions:
 
-* What?: a short summary of what you changed in the subject line.
-* Why?: what the intended outcome of the change is (arguably the most important piece of information that should go into a message).
-* How?: if multiple approaches for achieving your goal were available, you also want to explain why you chose the used implementation strategy.
-Note that you should not explain how your change achieves your goal in your commit message.
-That should be obvious from the code itself.
-If you cannot achieve that clarity with the used programming language, use comments within the code instead.
+What?::
+  a short summary of what you changed in the subject line.
+Why?::
+  what the intended outcome of the change is (arguably the most important
+  piece of information that should go into a message).
+How?::
+  if multiple approaches for achieving your goal were available, you also
+  want to explain why you chose the used implementation strategy.  Note that
+  you should not explain how your change achieves your goal in your commit
+  message.  That should be obvious from the code itself.  If you cannot achieve
+  that clarity with the used programming language, use comments within the code
+  instead.
 
 The commit message is primarily the place for documenting the why.
 
@@ -65,23 +71,23 @@ Commit message titles should follow https://www.conventionalcommits.org/en/v1.0.
 
 Format is `<type>[optional scope]: <description>`, where `type` is one of:
 
-* fix: A bug fix
-* feat: A new feature
-* perf: A code change that improves performance
-* refactor: A code change that neither fixes a bug nor adds a feature
-* style: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
-* test: Adding missing tests or correcting existing tests
-* docs: Documentation only changes
-* revert: Reverts a previous commit
-* chore: Other changes that don't modify src or test files
-* build: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
-* ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
+* *fix*: A bug fix
+* *feat*: A new feature
+* *perf*: A code change that improves performance
+* *refactor*: A code change that neither fixes a bug nor adds a feature
+* *style*: Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+* *test*: Adding missing tests or correcting existing tests
+* *docs*: Documentation only changes
+* *revert*: Reverts a previous commit
+* *chore*: Other changes that don't modify src or test files
+* *build*: Changes that affect the build system or external dependencies (example scopes: gulp, broccoli, npm)
+* *ci*: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
 
 `scope` should be the module name (without numbers) or:
 
-* cli: for the dracut command line interface
-* rt: for the dracut initramfs runtime logic
-* functions: for general purpose dracut functions
+* *cli*: for the dracut command line interface
+* *rt*: for the dracut initramfs runtime logic
+* *functions*: for general purpose dracut functions
 
 Commit messages are checked with https://github.com/tomtom-international/commisery[Commisery].
 
@@ -104,9 +110,9 @@ ascending sort order. Anything in the 90-99 range is stuff that dracut
 relies on, so try not to break those hooks.
 * Hooks must have a .sh extension.
 * Generator modules are described in more detail later on.
-* We have some breakpoints for debugging your hooks.  If you pass 'rdbreak'
+* We have some breakpoints for debugging your hooks.  If you pass `rdbreak`
 as a kernel parameter, the initramfs will drop to a shell just before
-switching to a new root. You can pass 'rdbreak=hookpoint', and the initramfs
+switching to a new root. You can pass `rdbreak=hookpoint`, and the initramfs
 will break just before hooks in that hookpoint run.
 
 Also, there is an attempt to keep things as distribution-agnostic as
@@ -114,120 +120,138 @@ possible.  Every distribution has their own tool here and it's not
 something which is really interesting to have separate across them.
 So contributions to help decrease the distro-dependencies are welcome.
 
-Most of the functionality that dracut implements are actually implemented
-by dracut modules.  dracut modules live in modules.d, and have the following
+=== Module format
+
+Most of the functionality that dracut implements are actually implemented by
+dracut modules.  dracut modules live in `modules.d`, and have the following
 structure:
 
 ----
 dracut_install_dir/modules.d/
 	00modname/
 		module-setup.sh
-		check
 		<other files as needed by the hook>
 ----
 
-`00modname`: The name of the module prefixed by a two-digit numeric sort code.
-	   The numeric code must be present and in the range of 00 - 99.
-	   Modules with lower numbers are installed first.  This is important
-	   because the dracut install functions (which install files onto
-	   the initrd) refuse to overwrite already installed files. This makes
-	   it easy for an earlier module to override the functionality of a
-	   later module, so that you can have a distro or system specific
-	   module override or modify the functionality of a generic module
-	   without having to patch the more generic module.
-	   Range 50 - 59 is reserved for out of tree (3rd party) dracut
-	   modules.
+`00modname`::
+The name of the module prefixed by a two-digit numeric sort code.
++
+The numeric code must be present and in the range of 00 - 99.
++
+NOTE: Range 50 - 59 is reserved for out of tree (3rd party) dracut
+modules.
++
+Modules with lower numbers are installed first.  This is important
+because the dracut install functions (which install files onto
+the initrd) refuse to overwrite already installed files. This makes
+it easy for an earlier module to override the functionality of a
+later module, so that you can have a distro or system specific
+module override or modify the functionality of a generic module
+without having to patch the more generic module.
 
-`module-setup.sh`:
-	 dracut sources this script to install the functionality that a
-	 module implements onto the initrd.  For the most part, this amounts
-	 to copying files from the host system onto the initrd in a controlled
-	 manner.
+`module-setup.sh`::
+dracut sources this script to install the functionality that a
+module implements onto the initrd.  For the most part, this amounts
+to copying files from the host system onto the initrd in a controlled
+manner.
 
-`install()`:
-	 This function of module-setup.sh is called to install all
-	 non-kernel files. dracut supplies several install functions that are
-	 specialized for different file types.  Browse through dracut-functions
-	 for more details.  dracut also provides a $moddir variable if you
-	 need to install a file from the module directory, such as an initrd
-	 hook, a udev rule, or a specialized executable.
+==== `module-setup.sh` function API
 
-`installkernel()`:
-	 This function of module-setup.sh is called to install all
-	 kernel related files.
+`install()`::
+This function of `module-setup.sh` is called to install all
+non-kernel files.
++
+dracut supplies several install functions that are specialized for different
+file types.  Browse through `dracut-functions` for more details.
++
+dracut also provides a `$moddir` variable if you
+need to install a file from the module directory, such as an initrd
+hook, a udev rule, or a specialized executable.
 
-`check()`:
-       dracut calls this function to check and see if a module can be installed
-       on the initrd.
+`installkernel()`::
+This function of `module-setup.sh` is called to install all
+kernel related files.
 
-....
-   When called without options, check should check to make sure that
-   any files it needs to install into the initrd from the host system
-   are present.  It should exit with a 0 if they are, and a 1 if they are
-   not.
+`check()`::
+dracut calls this function to check and see if a module can be installed
+on the initrd.
++
+When called without options, check should check to make sure that
+any files it needs to install into the initrd from the host system
+are present.  It should exit with a `0` if they are, and a `1` if they are
+not.
++
+When called with `$hostonly` set, it should perform the same check
+that it would without it set, and it should also check to see if the
+functionality the module implements is being used on the host system.
++
+For example, if this module handles installing support for LUKS
+encrypted volumes, it should return `0` if all the tools to handle
+encrypted volumes are available and the host system has the root
+partition on an encrypted volume, `1` otherwise.
 
-   When called with $hostonly set, it should perform the same check
-   that it would without it set, and it should also check to see if the
-   functionality the module implements is being used on the host system.
-   For example, if this module handles installing support for LUKS
-   encrypted volumes, it should return 0 if all the tools to handle
-   encrypted volumes are available and the host system has the root
-   partition on an encrypted volume, 1 otherwise.
-....
-
-`depends()`:
-       This function should output a list of dracut modules
-       that it relies upon.  An example would be the nfs and iscsi modules,
-       which rely on the network module to detect and configure network
-       interfaces.
+`depends()`::
+This function should output a list of dracut modules
+that it relies upon.
++
+An example would be the nfs and iscsi modules, which rely on the network module
+to detect and configure network interfaces.
 
 Any other files in the module will not be touched by dracut directly.
 
-You are encouraged to provide a README that describes what the module is for.
+You are encouraged to provide a `README` that describes what the module is for.
 
-=== Hooks
+== Hooks
 
 init has the following hook points to inject scripts:
 
-`/lib/dracut/hooks/cmdline/*.sh`
-   scripts for command line parsing
+`/lib/dracut/hooks/cmdline/*.sh`::
+scripts for command line parsing
 
-`/lib/dracut/hooks/pre-udev/*.sh`
-   scripts to run before udev is started
+`/lib/dracut/hooks/pre-udev/*.sh`::
+scripts to run before udev is started
 
-`/lib/dracut/hooks/pre-trigger/*.sh`
-   scripts to run before the main udev trigger is pulled
+`/lib/dracut/hooks/pre-trigger/*.sh`::
+scripts to run before the main udev trigger is pulled
 
-`/lib/dracut/hooks/initqueue/*.sh`
-   runs in parallel to the udev trigger
-   Udev events can add scripts here with /sbin/initqueue.
-   If /sbin/initqueue is called with the "--onetime" option, the script
-   will be removed after it was run.
-   If /lib/dracut/hooks/initqueue/work is created and udev >= 143 then
-   this loop can process the jobs in parallel to the udevtrigger.
-   If the udev queue is empty and no root device is found or no root
-   filesystem was mounted, the user will be dropped to a shell after
-   a timeout.
-   Scripts can remove themselves from the initqueue by "rm $job".
+`/lib/dracut/hooks/initqueue/*.sh`::
+runs in parallel to the udev trigger
++
+Udev events can add scripts here with `/sbin/initqueue`.
++
+If `/sbin/initqueue` is called with the `--onetime` option, the script
+will be removed after it was run.
++
+If `/lib/dracut/hooks/initqueue/work` is created and `udev >= 143` then
+this loop can process the jobs in parallel to the udevtrigger.
++
+If the udev queue is empty and no root device is found or no root
+filesystem was mounted, the user will be dropped to a shell after
+a timeout.
++
+Scripts can remove themselves from the initqueue by `rm $job`.
 
-`/lib/dracut/hooks/pre-mount/*.sh`
-   scripts to run before the root filesystem is mounted
-   Network filesystems like NFS that do not use device files are an
-   exception. Root can be mounted already at this point.
+`/lib/dracut/hooks/pre-mount/*.sh`::
+scripts to run before the root filesystem is mounted
++
+Network filesystems like NFS that do not use device files are an
+exception. Root can be mounted already at this point.
 
-`/lib/dracut/hooks/mount/*.sh`
-   scripts to mount the root filesystem
-   If the udev queue is empty and no root device is found or no root
-   filesystem was mounted, the user will be dropped to a shell after
-   a timeout.
+`/lib/dracut/hooks/mount/*.sh`::
+scripts to mount the root filesystem
++
+If the udev queue is empty and no root device is found or no root
+filesystem was mounted, the user will be dropped to a shell after
+a timeout.
 
-`/lib/dracut/hooks/pre-pivot/*.sh`
-   scripts to run before latter initramfs cleanups
+`/lib/dracut/hooks/pre-pivot/*.sh`::
+scripts to run before latter initramfs cleanups
 
-`/lib/dracut/hooks/cleanup/*.sh`
-   scripts to run before the real init is executed and the initramfs
-   disappears
-   All processes started before should be killed here.
+`/lib/dracut/hooks/cleanup/*.sh`::
+scripts to run before the real init is executed and the initramfs
+disappears
++
+All processes started before should be killed here.
 
 == Testsuite
 
@@ -248,33 +272,53 @@ e.g. `ghcr.io/dracut-ng/fedora:latest`.
 For the testsuite to pass, you will have to install at least the software packages
 mentioned in the `test/container` Dockerfiles.
 
- $ make clean check
+Run tests:: {empty}
++
+[,console]
+----
+$ make clean check
+----
 
-in verbose mode (enabled for GitHub Actions):
+Run test in verbose mode (enabled for GitHub Actions):: {empty}
++
+[,console]
+----
+$ make V=1 clean check
+----
 
- $ make V=1 clean check
+Run test in extra verbose mode (enabled for debug logging):: {empty}
++
+[,console]
+----
+$ make V=2 clean check
+----
 
-in extra verbose mode (enabled for debug logging):
+Run only specific test::
+e.g. only runs the 01, 20 and 40 tests.
++
+[,console]
+----
+$ make TESTS="01 20 40" clean check
+----
 
- $ make V=2 clean check
 
-only specific test:
+Debug a specific test case:: {empty}
++
+[,console]
+----
+$ cd TEST-01-BASIC
+$ make clean setup run
+----
 
- $ make TESTS="01 20 40" clean check
+Run the test without doing the setup::
+_change some kernel parameters in `test.sh`_
++
+[,console]
+----
+$ make run
+----
 
-only runs the 01, 20 and 40 tests.
-
-debug a specific test case:
-
- $ cd TEST-01-BASIC
- $ make clean setup run
-
-... change some kernel parameters in `test.sh` ...
- $ make run
-
-to run the test without doing the setup.
-
-=== Documentation
+== Documentation
 
 To build the documentation site run `make doc_site`.  This will be built and
 published by CI on commit.
