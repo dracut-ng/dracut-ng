@@ -21,7 +21,7 @@ For more information on Coding Style and Commit messages see xref:developer/hack
 
 For older or downstream versions that are still supported by your distribution please use respective downstream tracker:
 
-https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=dracut[Debian]
-https://bugzilla.redhat.com/buglist.cgi?quicksearch=dracut[Fedora]
-https://bugs.gentoo.org/buglist.cgi?quicksearch=dracut[Gentoo]
-https://bugzilla.opensuse.org/buglist.cgi?quicksearch=dracut[openSUSE]
+* https://bugs.debian.org/cgi-bin/pkgreport.cgi?pkg=dracut[Debian]
+* https://bugzilla.redhat.com/buglist.cgi?quicksearch=dracut[Fedora]
+* https://bugs.gentoo.org/buglist.cgi?quicksearch=dracut[Gentoo]
+* https://bugzilla.opensuse.org/buglist.cgi?quicksearch=dracut[openSUSE]
