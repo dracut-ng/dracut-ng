@@ -128,6 +128,38 @@ started looks like xref:man/dracut.bootup.7.adoc[].
 On a systemd driven system, the dracut initramfs is also used for the shutdown
 procedure.  See xref:man/dracut-shutdown.service.8.adoc[] for details.
 
+== Development
+
+Issues and merge requests can be found at the GitHub development page at
+link:https://github.com/dracut-ng//dracut-ng[]
+
+== History
+
+dracut (pronounced: /ˈdreɪkət/) was the initial brainchild born out of late
+night scheme of Farce Majeure, link:https://github.com/katzj[Jeremy Katz] and
+link:https://lwn.net/Articles/317874/[Dave Jones] who also did the initial
+implementation until link:https://github.com/haraldh[Harald Hoyer] took it
+under his care in 2009 and continued its development from there
+link:https://github.com/dracut-ng/dracut-ng/commit/9371dcaba3c58377428eee44bd702fae7b2ab20e[on].
+
+The project
+link:https://github.com/dracut-ng/dracut-ng/commit/ec9315e56222d38fdbfca5f8e47f05c156ce4927[started]
+and was link:https://lkml.org/lkml/2008/12/17/318[announced] in 2008.
+
+Some people inside Red Hat started to name their projects after cities and
+villages around the developer headquarters of Red Hat in Westford,
+Massachusetts.
+
+So, dracut is named after the town
+link:https://www.google.com/maps/place/Dracut,+MA,+USA[Dracut], similar to
+link:https://www.google.com/maps/place/Wayland,+MA,+USA[Wayland] and
+link:https://www.google.com/maps/place/Weston,+MA,+USA[Weston].
+
+== Presentations
+
+* link:https://blog.linuxplumbersconf.org/2009/slides/Harald-Hoyer-dracut.pdf[Plumbers 2009 slides]
+* link:http://laotzu.ftp.acc.umu.se/pub/debian-meetings/2010/fosdem10/high/Dracut_a_generic_modular_initramfs_generation_tool.ogv[Talk at FOSDEM 2010]
+
 == Resources
 
 === Manual pages
@@ -146,11 +178,6 @@ components.
 
 * xref:man/dracut.modules.7.adoc[]
 * xref:man/dracut.bootup.7.adoc[]
-
-=== Development
-
-Issues and merge requests can be found at the GitHub development page at
-link:https://github.com/dracut-ng//dracut-ng[]
 
 == License
 
