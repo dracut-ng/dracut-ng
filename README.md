@@ -1,9 +1,8 @@
-dracut-ng
-=========
+# dracut-ng
 
 dracut-ng is an event driven initramfs infrastructure.
 
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](docs/CODE_OF_CONDUCT.md)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](https://dracut-ng.github.io/developer/code_of_conduct.html)
 [![Packaging status](https://repology.org/badge/tiny-repos/dracut.svg)](https://repology.org/project/dracut/versions)
 [![latest packaged version(s)](https://repology.org/badge/latest-versions/dracut.svg)](https://repology.org/project/dracut/versions)
 
@@ -28,23 +27,43 @@ specific functionality into the initramfs.  They live in the modules.d
 subdirectory, and use functionality provided by dracut-functions to do their
 work.
 
-Documentation:
- - https://dracut-ng.github.io/
+# Documentation
+
+Generated documentation from this source tree is available at
+https://dracut-ng.github.io/
+
+The [Wiki](https://github.com/dracut-ng/dracut-ng/wiki) is available to share
+information.
+
+# Releases
+
+The release tarballs are [here](https://github.com/dracut-ng/dracut-ng/releases).
+
+See [News](NEWS.md) for information about changes in the releases
+
+# Contributing
 
 Currently dracut-ng is developed on [github.com](https://github.com/dracut-ng/dracut-ng).
 
-The release tarballs are [here](https://github.com/dracut-ng/dracut-ng/releases).
+See the developer guide at https://dracut-ng.github.io/ for information on
+reporting issues, contributing code via pull requests and guidelines for how to
+get started contributing to dracut.
+
+# Security
+
+Security is taken very seriously.  Please do not report security issues in the
+public tracker.  For guidelines on reporting security issues see the
+[security](https://dracut-ng.github.io/developer/security.html) guide.
+
+# Chat and project interactions
 
 Chat (Matrix):
  - https://matrix.to/#/#dracut-ng:matrix.org
 
-See [News](NEWS.md) for information about changes in the releases and
-the [Wiki](https://github.com/dracut-ng/dracut-ng/wiki) to share information.
-
 See the [GitHub issue tracker](https://github.com/dracut-ng/dracut-ng/issues) for
 things which still need to be done. This is also the main place used for
 discussions.
-See [Hacking](docs/HACKING.md) for some instructions on how to get started.
 
+# License
 
 Licensed under the GPLv2

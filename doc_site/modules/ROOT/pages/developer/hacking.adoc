@@ -1,8 +1,8 @@
-# Dracut Developer Guidelines
+= Dracut Developer Guidelines
 
-Please make sure to follow our [Contribution Guidelines](../CONTRIBUTING.md).
+Please make sure to follow our xref:developer/contributing.adoc[Contribution Guidelines].
 
-## git
+== git
 
 Currently dracut-ng lives on github.com.
 
@@ -10,33 +10,37 @@ Currently dracut-ng lives on github.com.
 
 Pull requests should be filed preferably on github nowadays.
 
-### Code Format
+=== Code Format
 
 It is recommended, that you install a plugin for your editor, which reads in `.editorconfig`.
 Additionally `emacs` and `vim` config files are provided for convenience.
 
 To reformat C files use `astyle`:
-```console
+
+[,console]
+----
 $ astyle --options=.astylerc <FILE>
-```
+----
 
 For convenience there is also a Makefile `indent-c` target `make indent-c`.
 
 To reformat shell files use `shfmt`:
 
-```console
+[,console]
+----
 $ shfmt_version=3.2.4
 $ wget "https://github.com/mvdan/sh/releases/download/v${shfmt_version}/shfmt_v${shfmt_version}_linux_amd64" -O shfmt
 $ chmod u+x shfmt
 $ ./shfmt -w -s .
-```
+----
 
 or
 
-```console
+[,console]
+----
 $ GO111MODULE=on go get mvdan.cc/sh/v3/cmd/shfmt
 $ $GOPATH/bin/shfmt -w -s .
-```
+----
 
 or if `shfmt` is already in your `PATH`, use `make indent`.
 
@@ -44,20 +48,20 @@ Some IDEs already have support for shfmt.
 
 For convenience the `make indent` Makefile target also calls shfmt, if it is in `$PATH`.
 
-### Commit Messages
+=== Commit Messages
 
 Commit messages should answer these questions:
 
 * What?: a short summary of what you changed in the subject line.
 * Why?: what the intended outcome of the change is (arguably the most important piece of information that should go into a message).
 * How?: if multiple approaches for achieving your goal were available, you also want to explain why you chose the used implementation strategy.
-  Note that you should not explain how your change achieves your goal in your commit message.
-  That should be obvious from the code itself.
-  If you cannot achieve that clarity with the used programming language, use comments within the code instead.
+Note that you should not explain how your change achieves your goal in your commit message.
+That should be obvious from the code itself.
+If you cannot achieve that clarity with the used programming language, use comments within the code instead.
 
 The commit message is primarily the place for documenting the why.
 
-Commit message titles should follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
+Commit message titles should follow https://www.conventionalcommits.org/en/v1.0.0/[Conventional Commits].
 
 Format is `<type>[optional scope]: <description>`, where `type` is one of:
 
@@ -79,31 +83,31 @@ Format is `<type>[optional scope]: <description>`, where `type` is one of:
 * rt: for the dracut initramfs runtime logic
 * functions: for general purpose dracut functions
 
-Commit messages are checked with [Commisery](https://github.com/tomtom-international/commisery).
+Commit messages are checked with https://github.com/tomtom-international/commisery[Commisery].
 
-## Writing modules
+== Writing modules
 
 Some general rules for writing modules:
 
 * Use one of the inst family of functions to actually install files
-  on to the initramfs.  They handle mangling the pathnames and (for binaries,
-  scripts, and kernel modules) installing dependencies as appropriate so
-  you do not have to.
+on to the initramfs.  They handle mangling the pathnames and (for binaries,
+scripts, and kernel modules) installing dependencies as appropriate so
+you do not have to.
 * Scripts that end up on the initramfs should be POSIX compliant. dracut
-  will try to use /bin/dash as /bin/sh for the initramfs if it is available,
-  so you should install it on your system -- dash aims for strict POSIX
-  compliance to the extent possible.
+will try to use /bin/dash as /bin/sh for the initramfs if it is available,
+so you should install it on your system -- dash aims for strict POSIX
+compliance to the extent possible.
 * Hooks MUST be POSIX compliant -- they are sourced by the init script,
-  and having a bashism break your user's ability to boot really sucks.
+and having a bashism break your user's ability to boot really sucks.
 * Generator modules should have a two digit numeric prefix -- they run in
-  ascending sort order. Anything in the 90-99 range is stuff that dracut
-  relies on, so try not to break those hooks.
+ascending sort order. Anything in the 90-99 range is stuff that dracut
+relies on, so try not to break those hooks.
 * Hooks must have a .sh extension.
 * Generator modules are described in more detail later on.
 * We have some breakpoints for debugging your hooks.  If you pass 'rdbreak'
-  as a kernel parameter, the initramfs will drop to a shell just before
-  switching to a new root. You can pass 'rdbreak=hookpoint', and the initramfs
-  will break just before hooks in that hookpoint run.
+as a kernel parameter, the initramfs will drop to a shell just before
+switching to a new root. You can pass 'rdbreak=hookpoint', and the initramfs
+will break just before hooks in that hookpoint run.
 
 Also, there is an attempt to keep things as distribution-agnostic as
 possible.  Every distribution has their own tool here and it's not
@@ -114,13 +118,13 @@ Most of the functionality that dracut implements are actually implemented
 by dracut modules.  dracut modules live in modules.d, and have the following
 structure:
 
-```
+----
 dracut_install_dir/modules.d/
 	00modname/
 		module-setup.sh
 		check
 		<other files as needed by the hook>
-```
+----
 
 `00modname`: The name of the module prefixed by a two-digit numeric sort code.
 	   The numeric code must be present and in the range of 00 - 99.
@@ -150,23 +154,24 @@ dracut_install_dir/modules.d/
 	 This function of module-setup.sh is called to install all
 	 kernel related files.
 
-
 `check()`:
        dracut calls this function to check and see if a module can be installed
        on the initrd.
 
-       When called without options, check should check to make sure that
-       any files it needs to install into the initrd from the host system
-       are present.  It should exit with a 0 if they are, and a 1 if they are
-       not.
+....
+   When called without options, check should check to make sure that
+   any files it needs to install into the initrd from the host system
+   are present.  It should exit with a 0 if they are, and a 1 if they are
+   not.
 
-       When called with $hostonly set, it should perform the same check
-       that it would without it set, and it should also check to see if the
-       functionality the module implements is being used on the host system.
-       For example, if this module handles installing support for LUKS
-       encrypted volumes, it should return 0 if all the tools to handle
-       encrypted volumes are available and the host system has the root
-       partition on an encrypted volume, 1 otherwise.
+   When called with $hostonly set, it should perform the same check
+   that it would without it set, and it should also check to see if the
+   functionality the module implements is being used on the host system.
+   For example, if this module handles installing support for LUKS
+   encrypted volumes, it should return 0 if all the tools to handle
+   encrypted volumes are available and the host system has the root
+   partition on an encrypted volume, 1 otherwise.
+....
 
 `depends()`:
        This function should output a list of dracut modules
@@ -178,8 +183,7 @@ Any other files in the module will not be touched by dracut directly.
 
 You are encouraged to provide a README that describes what the module is for.
 
-
-### Hooks
+=== Hooks
 
 init has the following hook points to inject scripts:
 
@@ -223,61 +227,56 @@ init has the following hook points to inject scripts:
    disappears
    All processes started before should be killed here.
 
+== Testsuite
 
-## Testsuite
+=== Rootless in a container with podman
 
-### Rootless in a container with podman
-
-```console
+[,console]
+----
 $ cd <DRACUT_SOURCE>
 $ test/test-podman.sh [TESTS] [CONTAINER]
-```
+----
 
 with `[CONTAINER]` being one of the
-[github `dracut-ng` containers](https://github.com/orgs/dracut-ng/packages),
+https://github.com/orgs/dracut-ng/packages[github `dracut-ng` containers],
 e.g. `ghcr.io/dracut-ng/fedora:latest`.
 
-### On bare metal
+=== On bare metal
 
 For the testsuite to pass, you will have to install at least the software packages
 mentioned in the `test/container` Dockerfiles.
 
-```
-$ make clean check
-```
+ $ make clean check
 
 in verbose mode (enabled for GitHub Actions):
-```
-$ make V=1 clean check
-```
+
+ $ make V=1 clean check
 
 in extra verbose mode (enabled for debug logging):
-```
-$ make V=2 clean check
-```
+
+ $ make V=2 clean check
 
 only specific test:
-```
-$ make TESTS="01 20 40" clean check
-```
+
+ $ make TESTS="01 20 40" clean check
+
 only runs the 01, 20 and 40 tests.
 
 debug a specific test case:
-```
-$ cd TEST-01-BASIC
-$ make clean setup run
-```
+
+ $ cd TEST-01-BASIC
+ $ make clean setup run
+
 ... change some kernel parameters in `test.sh` ...
-```
-$ make run
-```
+ $ make run
+
 to run the test without doing the setup.
 
-### Documentation
+=== Documentation
 
 To build the documentation site run `make doc_site`.  This will be built and
 published by CI on commit.
 
-The documentation site is based on [Antora](https://antora.org/).  By default
+The documentation site is based on https://antora.org/[Antora].  By default
 it will build via `npx` (install `nodejs`) or if you have Antora installed in
 some other way, you can set `ANTORA_BIN`.
