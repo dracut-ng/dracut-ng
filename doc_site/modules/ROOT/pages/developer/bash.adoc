@@ -1,28 +1,28 @@
-= BASH Notes
+= Bash Notes
 
 == basename
 
 Don't use `basename`, use:
 
-[,shell]
+[,bash]
 ----
-  file=${path##*/}
+file=${path##*/}
 ----
 
 == dirname
 
 Don't use `dirname`, use:
 
-[,shell]
+[,bash]
 ----
-  dir=${path%/*}
+dir=${path%/*}
 ----
 
 == shopt
 
 If you set `shopt` in a function, reset to its default state with `trap`:
 
-[,shell]
+[,bash]
 ----
 func() {
   trap "$(shopt -p globstar)" RETURN
@@ -37,7 +37,7 @@ Try to use `globstar` and `nullglob` or null byte terminated strings.
 
 Instead of:
 
-[,shell]
+[,bash]
 ----
 func() {
     for file in $(find /usr/lib* -type f -name 'lib*.a' -print0 ); do
@@ -48,7 +48,7 @@ func() {
 
 use:
 
-[,shell]
+[,bash]
 ----
 func() {
     trap "$(shopt -p nullglob globstar)" RETURN
@@ -63,7 +63,7 @@ func() {
 
 Or collect the filenames in an array, if you need them more than once:
 
-[,shell]
+[,bash]
 ----
 func() {
     trap "$(shopt -p globstar)" RETURN
@@ -80,7 +80,7 @@ func() {
 
 Or, if you really want to use `find`, use `-print0` and an array:
 
-[,shell]
+[,bash]
 ----
 func() {
     mapfile -t -d '' filenames < <(find /usr/lib* -type f -name 'lib*.a' -print0)
@@ -94,7 +94,7 @@ NOTE: `-d ''` is the same as `-d $'\0'` and sets the null byte as the delimiter.
 
 or:
 
-[,shell]
+[,bash]
 ----
 func() {
     find /usr/lib* -type f -name 'lib*.a' -print0 | while read -r -d '' file; do
@@ -105,7 +105,7 @@ func() {
 
 or
 
-[,shell]
+[,bash]
 ----
 func() {
     while read -r -d '' file; do
@@ -120,7 +120,7 @@ Use the tool options for null terminated strings, like `-print0`, `-0`, `-z`, et
 
 Instead of:
 
-[,shell]
+[,bash]
 ----
 func() {
   other-cmd $(for k in "$@"; do echo "prefix-$k"; done)
@@ -129,7 +129,7 @@ func() {
 
 do
 
-[,shell]
+[,bash]
 ----
 func() {
   other-cmd "${@/#/prefix-}"
@@ -138,7 +138,7 @@ func() {
 
 or suffix:
 
-[,shell]
+[,bash]
 ----
 func() {
   other-cmd "${@/%/-suffix}"
@@ -149,18 +149,18 @@ func() {
 
 Here we have an associate array `_drivers`, where we want to print the keys separated by ',':
 
-[,shell]
+[,bash]
 ----
-    if [[ ${!_drivers[*]} ]]; then
-        echo "rd.driver.pre=$(IFS=, ;echo "${!_drivers[*]}")" > "${initdir}"/etc/cmdline.d/00-watchdog.conf
-    fi
+if [[ ${!_drivers[*]} ]]; then
+    echo "rd.driver.pre=$(IFS=, ;echo "${!_drivers[*]}")" > "${initdir}"/etc/cmdline.d/00-watchdog.conf
+fi
 ----
 
 == Optional parameters to commands
 
 If you want to call a command `cmd` with an option, if a variable is set, rather than doing:
 
-[,shell]
+[,bash]
 ----
 func() {
   local param="$1"
@@ -175,7 +175,7 @@ func() {
 
 do it like this:
 
-[,shell]
+[,bash]
 ----
 func() {
   local param="$1"
@@ -195,7 +195,7 @@ func
 
 If you want to specify the option even with an empty string do this:
 
-[,shell]
+[,bash]
 ----
 func() {
   local -a special_params
@@ -225,7 +225,7 @@ func
 
 Or more simple, if you only have to set an option:
 
-[,shell]
+[,bash]
 ----
 func() {
   if [[ ${1+_} ]]; then
