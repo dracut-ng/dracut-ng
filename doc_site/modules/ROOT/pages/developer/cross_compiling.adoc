@@ -1,3 +1,5 @@
+= Cross Compliation
+
 Dracut supports running against a sysroot directory that is different
 from the actual root (/) directory of the running system. It is most
 useful for creating/bootstrapping a new system that may or may not be
@@ -22,12 +24,12 @@ run on cross-compiled (a.k.a. foreign) binaries.
 
 dracut uses these crucial utilities during its operation:
 
-ldd
-===
+== ldd
+
 It lists dynamic library dependencies for executables or libraries
 
-ldconfig
-========
+== ldconfig
+
 It creates /etc/ld.so.cache, i.e. the cached information about libraries
 known to the system.
 
