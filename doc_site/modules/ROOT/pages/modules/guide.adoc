@@ -1,0 +1,490 @@
+= Dracut module types
+
+The organization and categories of dracut modules below are only meant for
+gaining better understanding of what each module does. In the dracut source
+code, there are no specific types or categories for dracut modules.
+
+* shell
+* library (usually included by other dracut modules as a dependency and not directly by user)
+* filesystems (kernel module and corresponding user-space utilities for a filesystem)
+* device (kernel module and corresponding user space utilities for a device).
+* kernel (only kernel modules, no user-space utilities)
+* utils (no kernel module, only user-space utilities)
+* meta (only for making decision which other modules to include)
+
+== local
+
+|===
+| Module | Description | Type
+
+| base
+| Base module with required utilities
+| library
+
+| bash
+| https://repology.org/project/bash[bash] (bash is preferred interpreter if there more of them available)
+| shell
+
+| biosdevname
+| BIOS network device renaming
+| utils
+
+| btrfs
+| https://docs.kernel.org/filesystems/btrfs.html[btrfs]
+| filesystem
+
+| busybox
+| https://repology.org/project/busybox/[busybox]
+| shell
+
+| caps
+| drop capabilities before init
+|
+
+| convertfs
+| Merges / into /usr on next boot
+|
+
+| crypt
+| encrypted https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup[LUKS] filesystems and https://repology.org/project/cryptsetup[cryptsetup]
+| filesystem
+
+| crypt-gpg
+| https://repology.org/project/gnupg[GPG] for crypto operations and SmartCards (may requires GPG keys)
+|
+
+| crypt-loop
+| encrypted loopback devices (symmetric key)
+|
+
+| dash
+| https://repology.org/project/dash-shell/[dash]
+| shell
+
+| debug
+| debug features
+|
+
+| dm
+| device-mapper
+| library
+
+| dmraid
+| DMRAID arrays
+|
+
+| dmsquash-live
+| SquashFS images
+|
+
+| dmsquash-live-autooverlay
+| creates a partition for overlayfs usage in the free space on the root filesystem's parent block device
+|
+
+| dmsquash-live-ntfs
+| SquashFS images located in NTFS filesystems
+|
+
+| drm
+| kernel modules for https://docs.kernel.org/gpu/introduction.html[DRM] (complex graphics devices)
+| kernel
+
+| ecryptfs
+| kernel module for https://docs.kernel.org/filesystems/ecryptfs.html[ecryptfs] (stacked cryptographic filesystem)
+| filesystem
+
+| fips
+| Enforces FIPS security standard regulations
+|
+
+| fs-lib
+| filesystem tools (including fsck.* and mount)
+| library
+
+| fstab-sys
+| Arranges for arbitrary partitions to be mounted before rootfs
+|
+
+| i18n
+| Includes keymaps, console fonts, etc.
+|
+
+| img-lib
+| Includes various tools for decompressing images
+| library
+
+| integrity
+| Extended Verification Module and https://repology.org/project/ima-evm-utils[ima-evm-utils]
+|
+
+| kernel-modules
+| kernel modules for root filesystems and other boot-time devices
+| kernel
+
+| kernel-modules-extra
+| extra out-of-tree kernel modules
+| kernel
+
+| lvm
+| LVM devices
+|
+
+| lvmthinpool-monitor
+| Monitor LVM thinpool service
+|
+
+| masterkey
+| masterkey that can be used to decrypt other keys and https://repology.org/project/keyutils/[keyutils]
+|
+
+| mdraid
+| kernel module for https://docs.kernel.org/driver-api/md/md-cluster.html[md raid cluster], https://repology.org/project/mdadm[mdadm]
+| device
+
+| mksh
+| https://repology.org/project/mksh[mksh]
+| shell
+
+| modsign
+| kernel module for https://docs.kernel.org/admin-guide/module-signing.html[signing], https://repology.org/project/keyutils/[keyutils]
+|
+
+| multipath
+| multipath devices
+| device
+
+| nvdimm
+| non-volatile DIMM devices
+| device
+
+| numlock
+| turn Num Lock on
+| device
+
+| overlayfs
+| kernel module for https://www.kernel.org/doc/html/latest/filesystems/overlayfs.html[overlayfs]
+| filesystem
+
+| ppcmac
+| thermal for PowerPC
+| device
+
+| qemu
+| kernel modules to boot inside https://repology.org/project/qemu/[qemu]
+| kernel
+
+| lunmask
+| Masks LUN devices to select only ones which required to boot
+|
+
+| plymouth
+| show splash via https://repology.org/project/plymouth/[plymouth]
+| utils
+
+| pollcdrom
+| polls CD-ROM
+|
+
+| rescue
+| utilities for rescue mode (such as ping, ssh, vi, fsck.*)
+| utils
+
+| resume
+| resume from low-power state
+|
+
+| rootfs-block
+| mount block device as rootfs
+| device
+
+| securityfs
+| mount securityfs early
+| filesystem
+
+| selinux
+| https://docs.kernel.org/admin-guide/LSM/SELinux.html[selinux] policy
+|
+
+| shutdown
+| Sets up hooks to run on shutdown
+|
+
+| syslog
+| Includes syslog capabilites
+| utils
+
+| terminfo
+| Includes a terminfo file
+| utils
+
+| udev-rules
+| Includes udev and some basic rules
+| library
+
+| uefi-lib
+| Includes UEFI tools
+| library
+
+| usrmount
+| mounts /usr
+|
+
+| virtfs
+| virtual filesystems (https://docs.kernel.org/filesystems/9p.html[9p])
+| filesystem
+
+| virtiofs
+| https://docs.kernel.org/filesystems/virtiofs.html[virtiofs]
+| filesystem
+
+| warpclock
+| Sets kernel's timezone and reset the system time if adjtime is set to LOCAL
+|
+
+| watchdog
+| Includes watchdog devices management; works only if systemd not in use
+|
+
+| watchdog-modules
+| kernel modules for watchdog loaded early in booting
+| kernel
+|===
+
+== network
+
+* requires IP connectivity
+* works with and without systemd
+
+|===
+| Module | Description
+
+| cifs
+| https://docs.kernel.org/admin-guide/cifs/index.html[CIFS], https://repology.org/project/cifs-utils[cifs-utils]
+
+| fcoe
+| Adds support for Fibre Channel over Ethernet (FCoE)
+
+| fcoe-uefi
+| Adds support for Fibre Channel over Ethernet (FCoE) in EFI mode
+
+| ifcfg
+| Includes /etc/sysconfig/network-scripts/* network scripts for network autogeneration
+
+| iscsi
+| Adds support for iSCSI devices
+
+| kernel-network-modules
+| Includes and loads kernel modules for network devices
+
+| livenet
+| Fetch live updates for SquashFS images
+
+| nbd
+| kernel module for https://docs.kernel.org/admin-guide/blockdev/nbd.html[Network Block Device], https://repology.org/project/nbd[nbd]
+
+| network
+| Virtual module for network service providers
+
+| network-legacy
+| Includes legacy networking tools support
+
+| nfs
+| kernel module for https://docs.kernel.org/admin-guide/nfs/index.html[NFS], https://repology.org/project/nfs-utils[nfs-utils]
+
+| nvmf
+| Adds support for NVMe over Fabrics devices
+
+| qemu-net
+| Includes network kernel modules for QEMU environment
+
+| ssh-client
+| Includes https://repology.org/project/openssh[ssh and scp] clients
+
+| url-lib
+| Includes https://repology.org/project/curl[curl] and SSL certs
+|===
+
+== systemd
+
+These modules would require including a version of systemd into initramfs.
+
+|===
+| Module | Description
+
+| bluetooth
+| Includes bluetooth devices support
+
+| dbus
+| Virtual module for dbus-broker or dbus-daemon
+
+| dbus-broker
+|
+
+| dbus-daemon
+|
+
+| dracut-systemd
+| Base systemd dracut module
+
+| fido2
+|
+
+| lvmmerge
+| Merges lvm snapshots
+
+| memstrack
+| Includes memstrack for memory usage monitoring
+
+| pcsc
+| Adds support for PCSC Smart cards
+
+| pkcs11
+| Includes PKCS#11 libraries
+
+| rngd
+| Starts random generator serive on early boot
+
+| squash
+| Builds SquashFS initramfs
+
+| systemd
+| Adds systemd as early init initialization system
+
+| systemd-ac-power
+| https://www.freedesktop.org/software/systemd/man/systemd-ac-power.html[systemd-ac-power]
+
+| systemd-ask-password
+| https://www.freedesktop.org/software/systemd/man/systemd-ask-password.html[systemd-ask-password]
+
+| systemd-coredump
+| https://www.freedesktop.org/software/systemd/man/systemd-coredump.html[systemd-coredump]
+
+| systemd-creds
+| https://www.freedesktop.org/software/systemd/man/systemd-creds.html[systemd-creds]
+
+| systemd-cyptsetup
+| https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptsetup@.service.html[systemd-cyptsetup]
+
+| systemd-hostnamed
+| https://www.freedesktop.org/software/systemd/man/systemd-hostnamed.html[systemd-hostnamed]
+
+| systemd-initrd
+| https://systemd.io/INITRD_INTERFACE/[INITRD_INTERFACE]
+
+| systemd-integritysetup
+| https://www.freedesktop.org/software/systemd/man/systemd-integritysetup.html[systemd-integritysetup]
+
+| systemd-journald
+| https://www.freedesktop.org/software/systemd/man/systemd-journald.html[systemd-journald]
+
+| systemd-ldconfig
+|
+
+| systemd-modules-load
+| https://www.freedesktop.org/software/systemd/man/systemd-modules-load.html[systemd-modules-load]
+
+| systemd-pcrphase
+| https://www.freedesktop.org/software/systemd/man/systemd-pcrphase.html[systemd-pcrphase]
+
+| systemd-portabled
+| https://www.freedesktop.org/software/systemd/man/systemd-portabled.html[systemd-portabled]
+
+| systemd-pstore
+| https://www.freedesktop.org/software/systemd/man/systemd-pstore.html[systemd-pstore]
+
+| systemd-repart
+| https://www.freedesktop.org/software/systemd/man/systemd-repart.html[systemd-repart]
+
+| systemd-resolved
+| https://www.freedesktop.org/software/systemd/man/systemd-resolved.html[systemd-resolved]
+
+| systemd-sysctl
+| https://www.freedesktop.org/software/systemd/man/systemd-sysctl.html[systemd-sysctl]
+
+| systemd-sysext
+| https://www.freedesktop.org/software/systemd/man/systemd-sysext.html[systemd-sysext]
+
+| systemd-sysusers
+| https://www.freedesktop.org/software/systemd/man/systemd-sysusers.html[systemd-sysusers]
+
+| systemd-timedated
+| https://www.freedesktop.org/software/systemd/man/systemd-timedated.html[systemd-timedated]
+
+| systemd-timesyncd
+| https://www.freedesktop.org/software/systemd/man/systemd-timesyncd.html[systemd-timesyncd]
+
+| systemd-tmpfiles
+| https://www.freedesktop.org/software/systemd/man/systemd-tmpfiles.html[systemd-tmpfiles]
+
+| systemd-udevd
+| https://www.freedesktop.org/software/systemd/man/systemd-udevd.html[systemd-udevd]
+
+| systemd-veritysetup
+| https://www.freedesktop.org/software/systemd/man/systemd-veritysetup.html[systemd-veritysetup]
+
+| tpm2-tss
+| Adds support for TPM2 devices
+|===
+
+== systemd network
+
+|===
+| Module | Description
+
+| systemd-network-management
+| Adds network management for systemd
+
+| systemd-networkd
+|
+
+| connman
+| https://repology.org/project/connman[connman]
+
+| network-manager
+| https://repology.org/project/networkmanager[NetworkManager]
+|===
+
+== s390(x)
+
+|===
+| Module | Description
+
+| cio_ignore
+|
+
+| cms
+| mount z/VM CMS disks on s390
+
+| dasd
+|
+
+| dasd_mod
+|
+
+| dcssblk
+|
+
+| zfcp
+| networking
+
+| zipl
+|
+
+| znet
+| networking
+|===
+
+== test
+
+|===
+| Module | Description
+
+| test
+|
+
+| test-makeroot
+|
+
+| test-root
+|
+|===

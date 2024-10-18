@@ -31,3 +31,7 @@
 * xref:developer/bash.adoc[]
 * xref:developer/release.adoc[]
 * xref:developer/cross_compiling.adoc[]
+
+.Modules Guide
+
+* xref:modules/guide.adoc[]
