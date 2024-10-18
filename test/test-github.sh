@@ -28,10 +28,6 @@ else
     # shellcheck disable=SC2012
     time LOGTEE_TIMEOUT_MS=590000 make \
         enable_documentation=no \
-        KVERSION="$(
-            cd /lib/modules
-            ls -1 | tail -1
-        )" \
         TEST_RUN_ID="$RUN_ID" \
         ${TESTS:+TESTS="$TESTS"} \
         -k V="${V:=1}" \
