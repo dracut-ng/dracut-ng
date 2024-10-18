@@ -50,10 +50,6 @@ dash:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/[0-9][0-9]dash/*'
 
-mksh:
-  - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]mksh/*'
-
 systemd:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd/*'
@@ -233,10 +229,6 @@ network-manager:
 network:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/[0-9][0-9]network/*'
-
-ifcfg:
-  - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]ifcfg/*'
 
 url-lib:
   - changed-files:
