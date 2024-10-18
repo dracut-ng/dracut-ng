@@ -97,7 +97,8 @@ static bool arg_mod_filter_symbol = false;
 static bool arg_mod_filter_nosymbol = false;
 static bool arg_mod_filter_noname = false;
 
-static int dracut_install(const char *src, const char *dst, bool isdir, bool resolvedeps, bool hashdst);
+static int dracut_install(const char *src, const char *dst, bool isdir, bool resolvedeps, bool hashdst,
+                          bool decompr);
 static int install_dependent_modules(struct kmod_ctx *ctx, struct kmod_list *modlist, Hashmap *suppliers_paths);
 
 static void item_free(char *i)
@@ -422,6 +423,74 @@ normal_copy:
         return ret;
 }
 
+static int decompress_cp(const char *src, const char *dst)
+{
+        char decompressor[5];
+        char *dest_base = strdup(dst);
+        if (endswith(src, ".xz")) {
+                strcpy(decompressor, "xz");
+                dest_base[strlen(dest_base) - 3] = 0;
+
+        } else if (endswith(src, ".gz")) {
+                strcpy(decompressor, "gz");
+                dest_base[strlen(dest_base) - 3] = 0;
+
+        } else if (endswith(src, ".zst")) {
+                strcpy(decompressor, "zstd");
+                dest_base[strlen(dest_base) - 4] = 0;
+        } else {
+                if (endswith(src, ".ko")) {
+                        log_debug("not compressed: %s", src);
+                } else {
+                        log_warning("unknown compression: %s", src);
+                }
+                // Not compressed or unknown compressor, fallback to copying
+                goto fallback;
+        }
+
+        int pid;
+        int ret = 0;
+        struct stat sb;
+
+        if (lstat(src, &sb) != 0)
+                goto fallback;
+
+        int dest_desc =
+                open(dest_base, O_WRONLY | O_CREAT | O_CLOEXEC | O_TRUNC,
+                     (sb.st_mode) & (S_ISUID | S_ISGID | S_ISVTX | S_IRWXU | S_IRWXG | S_IRWXO));
+        if (dest_desc < 0)
+                goto fallback;
+
+        pid = fork();
+        if (pid == 0) {
+                dup2(dest_desc, 1);
+                execlp(decompressor, decompressor, "--keep", "--decompress", src, "--stdout", "--force", NULL);
+                _exit(errno == ENOENT ? 127 : 126);
+        }
+        close(dest_desc);
+
+        while (waitpid(pid, &ret, 0) == -1) {
+                if (errno != EINTR) {
+                        log_error("ERROR: waitpid() failed: %m");
+                        goto fallback;
+                }
+        }
+        ret = WIFSIGNALED(ret) ? 128 + WTERMSIG(ret) : WEXITSTATUS(ret);
+        log_debug("decompress ret = %d", ret);
+        if (ret != 0) {
+                log_warning("'%s --keep --decompress %s --stdout --force' failed with %d", decompressor, src, ret);
+                // Something went wrong, fall back to copying, remove the empty
+                // file we touched in open().
+                remove(dest_base);
+                goto fallback;
+        }
+        return ret;
+
+fallback:
+        log_debug("decompression failed, falling back to cp");
+        return cp(src, dst);
+}
+
 static int library_install(const char *src, const char *lib)
 {
         _cleanup_free_ char *p = NULL;
@@ -429,7 +498,7 @@ static int library_install(const char *src, const char *lib)
         char *q, *clibdir;
         int r, ret = 0;
 
-        r = dracut_install(lib, lib, false, false, true);
+        r = dracut_install(lib, lib, false, false, true, false);
         if (r != 0)
                 log_error("ERROR: failed to install '%s' for '%s'", lib, src);
         else
@@ -442,7 +511,7 @@ static int library_install(const char *src, const char *lib)
                 p = strndup(lib, q - lib + 3);
 
                 /* ignore errors for base lib symlink */
-                if (dracut_install(p, p, false, false, true) == 0)
+                if (dracut_install(p, p, false, false, true, false) == 0)
                         log_debug("Lib install: '%s'", p);
 
                 free(p);
@@ -474,7 +543,7 @@ static int library_install(const char *src, const char *lib)
 
         clibdir = streq(basename(ppdir), "glibc-hwcaps") ? pppdir : ppdir;
         clib = strjoin(clibdir, "/", basename(p), NULL);
-        if (dracut_install(clib, clib, false, false, true) == 0)
+        if (dracut_install(clib, clib, false, false, true, false) == 0)
                 log_debug("Lib install: '%s'", clib);
         /* also install lib.so for lib.so.* files */
         q = strstr(clib, ".so.");
@@ -482,7 +551,7 @@ static int library_install(const char *src, const char *lib)
                 q[3] = '\0';
 
                 /* ignore errors for base lib symlink */
-                if (dracut_install(clib, clib, false, false, true) == 0)
+                if (dracut_install(clib, clib, false, false, true, false) == 0)
                         log_debug("Lib install: '%s'", p);
         }
 
@@ -595,7 +664,7 @@ static int resolve_deps(const char *src)
                         for (q = p; *q && (!isspace(*q)); q++) ;
                         *q = '\0';
                         log_debug("Script install: '%s'", p);
-                        ret = dracut_install(p, p, false, true, false);
+                        ret = dracut_install(p, p, false, true, false, false);
                         if (ret != 0)
                                 log_error("ERROR: failed to install '%s'", p);
                         return ret;
@@ -729,7 +798,7 @@ static int hmac_install(const char *src, const char *dst, const char *hmacpath)
                 _asprintf(&dsthmacname, "%.*s/.%s.hmac", (int)dir_len(dst), dst, &src[dlen + 1]);
         }
         log_debug("hmac cp '%s' '%s'", srchmacname, dsthmacname);
-        dracut_install(srchmacname, dsthmacname, false, false, true);
+        dracut_install(srchmacname, dsthmacname, false, false, true, false);
         return 0;
 }
 
@@ -810,7 +879,8 @@ static int dracut_mkdir(const char *src)
         return 0;
 }
 
-static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir, bool resolvedeps, bool hashdst)
+static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir, bool resolvedeps, bool hashdst,
+                          bool decompr)
 {
         struct stat sb;
         _cleanup_free_ char *fullsrcpath = NULL;
@@ -842,7 +912,7 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                 dst = orig_dst;
         }
 
-        log_debug("dracut_install('%s', '%s', %d, %d, %d)", src, dst, isdir, resolvedeps, hashdst);
+        log_debug("dracut_install('%s', '%s', %d, %d, %d, %d)", src, dst, isdir, resolvedeps, hashdst, decompr);
 
         if (check_hashmap(items_failed, src)) {
                 log_debug("hash hit items_failed for '%s'", src);
@@ -913,7 +983,7 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                         dname = strndup(dst, dir_len(dst));
                         if (!dname)
                                 return 1;
-                        ret = dracut_install(dname, dname, true, false, true);
+                        ret = dracut_install(dname, dname, true, false, true, false);
 
                         if (ret != 0) {
                                 log_error("ERROR: failed to create directory '%s'", fulldstdir);
@@ -953,7 +1023,7 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                         if (abspath == NULL)
                                 return 1;
 
-                        if (dracut_install(abspath, abspath, false, resolvedeps, hashdst)) {
+                        if (dracut_install(abspath, abspath, false, resolvedeps, hashdst, decompr)) {
                                 log_debug("'%s' install error", abspath);
                                 return 1;
                         }
@@ -1003,8 +1073,13 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                         log_info("mkdir '%s'", fulldstpath);
                         ret += dracut_mkdir(fulldstpath);
                 } else {
-                        log_info("cp '%s' '%s'", fullsrcpath, fulldstpath);
-                        ret += cp(fullsrcpath, fulldstpath);
+                        if (decompr) {
+                                log_info("decompressing '%s' '%s'", fullsrcpath, fulldstpath);
+                                ret += decompress_cp(fullsrcpath, fulldstpath);
+                        } else {
+                                log_info("cp '%s' '%s'", fullsrcpath, fulldstpath);
+                                ret += cp(fullsrcpath, fulldstpath);
+                        }
                 }
         }
 
@@ -1361,7 +1436,7 @@ static int install_one(const char *src, const char *dst)
                         STRV_FOREACH(q, p) {
                                 char *newsrc = *q;
                                 log_debug("dracut_install '%s' '%s'", newsrc, dst);
-                                ret = dracut_install(newsrc, dst, arg_createdir, arg_resolvedeps, true);
+                                ret = dracut_install(newsrc, dst, arg_createdir, arg_resolvedeps, true, false);
                                 if (ret == 0) {
                                         log_debug("dracut_install '%s' '%s' OK", newsrc, dst);
                                 }
@@ -1371,7 +1446,7 @@ static int install_one(const char *src, const char *dst)
                         ret = -1;
                 }
         } else {
-                ret = dracut_install(src, dst, arg_createdir, arg_resolvedeps, true);
+                ret = dracut_install(src, dst, arg_createdir, arg_resolvedeps, true, false);
         }
 
         if ((ret != 0) && (!arg_optional)) {
@@ -1397,7 +1472,7 @@ static int install_all(int argc, char **argv)
                                 STRV_FOREACH(q, p) {
                                         char *newsrc = *q;
                                         log_debug("dracut_install '%s'", newsrc);
-                                        ret = dracut_install(newsrc, newsrc, arg_createdir, arg_resolvedeps, true);
+                                        ret = dracut_install(newsrc, newsrc, arg_createdir, arg_resolvedeps, true, false);
                                         if (ret == 0) {
                                                 log_debug("dracut_install '%s' OK", newsrc);
                                         }
@@ -1409,7 +1484,7 @@ static int install_all(int argc, char **argv)
 
                 } else {
                         if (strchr(argv[i], '*') == NULL) {
-                                ret = dracut_install(argv[i], argv[i], arg_createdir, arg_resolvedeps, true);
+                                ret = dracut_install(argv[i], argv[i], arg_createdir, arg_resolvedeps, true, false);
                         } else {
                                 _cleanup_free_ char *realsrc = NULL;
                                 _cleanup_globfree_ glob_t globbuf;
@@ -1423,7 +1498,7 @@ static int install_all(int argc, char **argv)
                                         for (j = 0; j < globbuf.gl_pathc; j++) {
                                                 ret |= dracut_install(globbuf.gl_pathv[j] + sysrootdirlen,
                                                                       globbuf.gl_pathv[j] + sysrootdirlen,
-                                                                      arg_createdir, arg_resolvedeps, true);
+                                                                      arg_createdir, arg_resolvedeps, true, false);
                                         }
                                 }
                         }
@@ -1453,7 +1528,7 @@ static int install_firmware_fullpath(const char *fwpath)
                 }
                 fw = fwpath_compressed;
         }
-        ret = dracut_install(fw, fw, false, false, true);
+        ret = dracut_install(fw, fw, false, false, true, true);
         if (ret == 0) {
                 log_debug("dracut_install '%s' OK", fwpath);
         }
@@ -1751,7 +1826,7 @@ static int install_dependent_module(struct kmod_ctx *ctx, struct kmod_module *mo
                 return 0;
         }
 
-        *err = dracut_install(path, &path[kerneldirlen], false, false, true);
+        *err = dracut_install(path, &path[kerneldirlen], false, false, true, true);
         if (*err == 0) {
                 _cleanup_kmod_module_unref_list_ struct kmod_list *modlist = NULL;
                 _cleanup_kmod_module_unref_list_ struct kmod_list *modpre = NULL;
@@ -1874,7 +1949,7 @@ static int install_module(struct kmod_ctx *ctx, struct kmod_module *mod)
 
         log_debug("dracut_install '%s' '%s'", path, &path[kerneldirlen]);
 
-        ret = dracut_install(path, &path[kerneldirlen], false, false, true);
+        ret = dracut_install(path, &path[kerneldirlen], false, false, true, true);
         if (ret == 0) {
                 log_debug("dracut_install '%s' OK", kmod_module_get_name(mod));
         } else if (!arg_optional) {
