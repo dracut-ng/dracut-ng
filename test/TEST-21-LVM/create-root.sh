@@ -16,7 +16,7 @@ for dev in /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[123]; do
 done
 
 lvm vgcreate dracut /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[123]
-lvm lvcreate -l 100%FREE -n root dracut
+lvm lvcreate --yes -l 100%FREE -n root dracut
 lvm vgchange -ay
 mkfs.ext4 -q /dev/dracut/root
 mkdir -p /sysroot

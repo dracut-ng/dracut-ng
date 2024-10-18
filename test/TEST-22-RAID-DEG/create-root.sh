@@ -20,7 +20,7 @@ echo "The passphrase is test"
 cryptsetup luksOpen /dev/md0 dracut_crypt_test < /keyfile
 lvm pvcreate -ff -y /dev/mapper/dracut_crypt_test
 lvm vgcreate dracut /dev/mapper/dracut_crypt_test
-lvm lvcreate -l 100%FREE -n root dracut
+lvm lvcreate --yes -l 100%FREE -n root dracut
 lvm vgchange -ay
 mkfs.ext4 -q -L root /dev/dracut/root
 mkdir -p /sysroot
