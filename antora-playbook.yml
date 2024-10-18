@@ -15,3 +15,7 @@ runtime:
   log:
     # In C terms, -Werror
     failure_level: warn
+
+asciidoc:
+  extensions:
+    - ./doc_site/extensions/man.js
