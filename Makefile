@@ -140,7 +140,7 @@ endif
 	cd doc_site/modules/ROOT/pages/man/; for i in $(manpages) man/dracut.usage; do ln -sf ../../../../../$${i}.adoc $(basename $i); done
 	$(shell echo $(ANTORA_BIN)) --attribute "mainversion=$(DRACUT_MAIN_VERSION)" \
 	  --attribute "version=${DRACUT_FULL_VERSION}" \
-	  antora-playbook.yml
+	  doc_site/antora-playbook.yml
 
 dracut.8: man/dracut.8.adoc \
 	man/dracut.usage.adoc
