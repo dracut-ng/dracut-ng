@@ -3,10 +3,10 @@ name: Lint
 on:
   pull_request:
     branches: [ main ]
-      paths-ignore:
-        - antora-playbook.yaml
-        - 'doc_site/**'
-        - 'man/**'
+    paths-ignore:
+      - antora-playbook.yaml
+      - 'doc_site/**'
+      - 'man/**'
 
 jobs:
   lint-shell:
