@@ -64,4 +64,4 @@ Nikoli
 
 SEE ALSO
 --------
-*dracut*(8)
+man:dracut[8]

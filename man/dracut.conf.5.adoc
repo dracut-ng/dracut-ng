@@ -344,4 +344,4 @@ Harald Hoyer
 
 See Also
 --------
-*dracut*(8) *dracut.cmdline*(7)
+man:dracut[8] man:dracut.cmdline[7]

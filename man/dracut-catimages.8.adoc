@@ -55,4 +55,4 @@ link:$$https://github.com/dracut-ng/dracut-ng$$[https://github.com/dracut-ng/dra
 
 SEE ALSO
 --------
-*dracut*(8)
+man:dracut[8]
