@@ -1,0 +1,50 @@
+= Network dracut modules
+
+* requires IP connectivity
+* works with and without systemd
+
+|===
+| Module | Description
+
+| cifs
+| https://docs.kernel.org/admin-guide/cifs/index.html[CIFS], https://repology.org/project/cifs-utils[cifs-utils]
+
+| fcoe
+| Adds support for Fibre Channel over Ethernet (FCoE)
+
+| fcoe-uefi
+| Adds support for Fibre Channel over Ethernet (FCoE) in EFI mode
+
+| iscsi
+| Adds support for iSCSI devices
+
+| kernel-network-modules
+| Includes and loads kernel modules for network devices
+
+| livenet
+| Fetch live updates for SquashFS images
+
+| nbd
+| kernel module for https://docs.kernel.org/admin-guide/blockdev/nbd.html[Network Block Device], https://repology.org/project/nbd[nbd]
+
+| network
+| Virtual module for network service providers
+
+| network-legacy
+| Includes legacy networking tools support
+
+| nfs
+| kernel module for https://docs.kernel.org/admin-guide/nfs/index.html[NFS], https://repology.org/project/nfs-utils[nfs-utils]
+
+| nvmf
+| Adds support for NVMe over Fabrics devices
+
+| qemu-net
+| Includes network kernel modules for QEMU environment
+
+| ssh-client
+| Includes https://repology.org/project/openssh[ssh and scp] clients
+
+| url-lib
+| Includes https://repology.org/project/curl[curl] and SSL certs
+|===

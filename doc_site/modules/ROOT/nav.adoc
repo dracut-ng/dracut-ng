@@ -34,4 +34,7 @@
 
 .Modules Guide
 
-* xref:modules/guide.adoc[]
+* xref:modules/core.adoc[]
+* xref:modules/network.adoc[]
+* xref:modules/systemd.adoc[]
+* xref:modules/s390.adoc[]

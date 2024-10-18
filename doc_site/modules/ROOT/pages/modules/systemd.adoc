@@ -1,0 +1,139 @@
+== Systemd dracut modules
+
+These modules would require including a version of systemd into initramfs.
+
+|===
+| Module | Description
+
+| bluetooth
+| Includes bluetooth devices support
+
+| dbus
+| Virtual module for dbus-broker or dbus-daemon
+
+| dbus-broker
+|
+
+| dbus-daemon
+|
+
+| dracut-systemd
+| Base systemd dracut module
+
+| fido2
+|
+
+| lvmmerge
+| Merges lvm snapshots
+
+| memstrack
+| Includes memstrack for memory usage monitoring
+
+| pcsc
+| Adds support for PCSC Smart cards
+
+| pkcs11
+| Includes PKCS#11 libraries
+
+| rngd
+| Starts random generator serive on early boot
+
+| squash
+| Builds SquashFS initramfs
+
+| systemd
+| Adds systemd as early init initialization system
+
+| systemd-ac-power
+| https://www.freedesktop.org/software/systemd/man/systemd-ac-power.html[systemd-ac-power]
+
+| systemd-ask-password
+| https://www.freedesktop.org/software/systemd/man/systemd-ask-password.html[systemd-ask-password]
+
+| systemd-coredump
+| https://www.freedesktop.org/software/systemd/man/systemd-coredump.html[systemd-coredump]
+
+| systemd-creds
+| https://www.freedesktop.org/software/systemd/man/systemd-creds.html[systemd-creds]
+
+| systemd-cyptsetup
+| https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptsetup@.service.html[systemd-cyptsetup]
+
+| systemd-hostnamed
+| https://www.freedesktop.org/software/systemd/man/systemd-hostnamed.html[systemd-hostnamed]
+
+| systemd-initrd
+| https://systemd.io/INITRD_INTERFACE/[INITRD_INTERFACE]
+
+| systemd-integritysetup
+| https://www.freedesktop.org/software/systemd/man/systemd-integritysetup.html[systemd-integritysetup]
+
+| systemd-journald
+| https://www.freedesktop.org/software/systemd/man/systemd-journald.html[systemd-journald]
+
+| systemd-ldconfig
+|
+
+| systemd-modules-load
+| https://www.freedesktop.org/software/systemd/man/systemd-modules-load.html[systemd-modules-load]
+
+| systemd-pcrphase
+| https://www.freedesktop.org/software/systemd/man/systemd-pcrphase.html[systemd-pcrphase]
+
+| systemd-portabled
+| https://www.freedesktop.org/software/systemd/man/systemd-portabled.html[systemd-portabled]
+
+| systemd-pstore
+| https://www.freedesktop.org/software/systemd/man/systemd-pstore.html[systemd-pstore]
+
+| systemd-repart
+| https://www.freedesktop.org/software/systemd/man/systemd-repart.html[systemd-repart]
+
+| systemd-resolved
+| https://www.freedesktop.org/software/systemd/man/systemd-resolved.html[systemd-resolved]
+
+| systemd-sysctl
+| https://www.freedesktop.org/software/systemd/man/systemd-sysctl.html[systemd-sysctl]
+
+| systemd-sysext
+| https://www.freedesktop.org/software/systemd/man/systemd-sysext.html[systemd-sysext]
+
+| systemd-sysusers
+| https://www.freedesktop.org/software/systemd/man/systemd-sysusers.html[systemd-sysusers]
+
+| systemd-timedated
+| https://www.freedesktop.org/software/systemd/man/systemd-timedated.html[systemd-timedated]
+
+| systemd-timesyncd
+| https://www.freedesktop.org/software/systemd/man/systemd-timesyncd.html[systemd-timesyncd]
+
+| systemd-tmpfiles
+| https://www.freedesktop.org/software/systemd/man/systemd-tmpfiles.html[systemd-tmpfiles]
+
+| systemd-udevd
+| https://www.freedesktop.org/software/systemd/man/systemd-udevd.html[systemd-udevd]
+
+| systemd-veritysetup
+| https://www.freedesktop.org/software/systemd/man/systemd-veritysetup.html[systemd-veritysetup]
+
+| tpm2-tss
+| Adds support for TPM2 devices
+|===
+
+== systemd network
+
+|===
+| Module | Description
+
+| systemd-network-management
+| Adds network management for systemd
+
+| systemd-networkd
+|
+
+| connman
+| https://repology.org/project/connman[connman]
+
+| network-manager
+| https://repology.org/project/networkmanager[NetworkManager]
+|===
