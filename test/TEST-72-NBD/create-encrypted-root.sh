@@ -18,7 +18,7 @@ echo "The passphrase is test"
 cryptsetup luksOpen /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root dracut_crypt_test < /keyfile
 lvm pvcreate -ff -y /dev/mapper/dracut_crypt_test
 lvm vgcreate dracut /dev/mapper/dracut_crypt_test
-lvm lvcreate -l 100%FREE -n root dracut
+lvm lvcreate --yes -l 100%FREE -n root dracut
 lvm vgchange -ay
 udevadm settle
 mkfs.ext4 -q -L dracut -j /dev/dracut/root

@@ -21,7 +21,7 @@ mdadm --create /dev/md0 --run --auto=yes --level=stripe --raid-devices=2 /dev/di
 mdadm -W /dev/md0 || :
 lvm pvcreate -ff -y /dev/md0
 lvm vgcreate dracut /dev/md0
-lvm lvcreate -l 100%FREE -n root dracut
+lvm lvcreate --yes -l 100%FREE -n root dracut
 lvm vgchange -ay
 mkfs.ext4 -q -j -L sysroot /dev/dracut/root
 mount -t ext4 /dev/dracut/root /sysroot
