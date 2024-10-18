@@ -10,10 +10,10 @@ fi
 echo "TESTDIR=\"$TESTDIR\"" > .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
 export TESTDIR
 
+# shellcheck disable=SC2012
+[ -z "$KVERSION" ] && KVERSION="$(cd /lib/modules && ls -1 | tail -1)"
 KVERSION=${KVERSION-$(uname -r)}
-
 [ -z "$USE_NETWORK" ] && USE_NETWORK="network"
-
 [ -z "$TEST_FSTYPE" ] && TEST_FSTYPE="ext4"
 
 if [[ -z $basedir ]]; then basedir="$(realpath ../..)"; fi
@@ -70,6 +70,8 @@ VMLINUZ=${VMLINUZ-"/lib/modules/${KVERSION}/vmlinuz"}
 if ! [ -f "$VMLINUZ" ]; then
     VMLINUZ="/lib/modules/${KVERSION}/vmlinux"
 fi
+
+[ -z "$VMLINUZ" ] && VMLINUZ=$(find /boot/vmlinuz-* -type f 2> /dev/null | tail -1)
 
 if ! [ -f "$VMLINUZ" ]; then
     [[ -f /etc/machine-id ]] && read -r MACHINE_ID < /etc/machine-id
