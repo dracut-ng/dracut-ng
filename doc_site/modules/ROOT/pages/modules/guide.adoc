@@ -141,10 +141,6 @@ code, there are no specific types or categories for dracut modules.
 | kernel module for https://docs.kernel.org/driver-api/md/md-cluster.html[md raid cluster], https://repology.org/project/mdadm[mdadm]
 | device
 
-| mksh
-| https://repology.org/project/mksh[mksh]
-| shell
-
 | modsign
 | kernel module for https://docs.kernel.org/admin-guide/module-signing.html[signing], https://repology.org/project/keyutils/[keyutils]
 |
@@ -266,9 +262,6 @@ code, there are no specific types or categories for dracut modules.
 
 | fcoe-uefi
 | Adds support for Fibre Channel over Ethernet (FCoE) in EFI mode
-
-| ifcfg
-| Includes /etc/sysconfig/network-scripts/* network scripts for network autogeneration
 
 | iscsi
 | Adds support for iSCSI devices
