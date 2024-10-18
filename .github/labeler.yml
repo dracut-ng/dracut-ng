@@ -8,7 +8,7 @@ github:
 
 docs:
   - changed-files:
-    - any-glob-to-any-file: 'docs/*'
+    - any-glob-to-any-file: ['README.*', 'docs_site/*', 'docs_site/**/*', 'docs_site/**/**/*', 'docs_site/**/**/**/*', 'docs_site/**/**/**/**/*']
 
 man:
   - changed-files:
