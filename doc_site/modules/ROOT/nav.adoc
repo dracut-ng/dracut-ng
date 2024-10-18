@@ -26,6 +26,8 @@
 * xref:developer/code_of_conduct.adoc[]
 * xref:developer/security.adoc[]
 * xref:developer/hacking.adoc[]
+* xref:developer/compatability.adoc[]
+* xref:developer/reviews.adoc[]
 * xref:developer/bash.adoc[]
 * xref:developer/release.adoc[]
 * xref:developer/cross_compiling.adoc[]
