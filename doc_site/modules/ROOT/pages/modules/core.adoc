@@ -12,7 +12,7 @@ code, there are no specific types or categories for dracut modules.
 * utils (no kernel module, only user-space utilities)
 * meta (only for making decision which other modules to include)
 
-== local
+== core
 
 |===
 | Module | Description | Type
@@ -97,6 +97,10 @@ code, there are no specific types or categories for dracut modules.
 | Enforces FIPS security standard regulations
 |
 
+| fips-crypto-policies
+| crypto-policies
+| utils
+
 | fs-lib
 | filesystem tools (including fsck.* and mount)
 | library
@@ -104,6 +108,10 @@ code, there are no specific types or categories for dracut modules.
 | fstab-sys
 | Arranges for arbitrary partitions to be mounted before rootfs
 |
+
+| hwdb
+| Includes hardware database
+| utils
 
 | i18n
 | Includes keymaps, console fonts, etc.

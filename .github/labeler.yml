@@ -62,6 +62,10 @@ fips:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/[0-9][0-9]fips/*'
 
+fips-crypto-policies:
+  - changed-files:
+    - any-glob-to-any-file: 'modules.d/[0-9][0-9]fips-crypto-policies/*'
+
 systemd-ac-power:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-ac-power/*'
@@ -527,6 +531,18 @@ shutdown:
     - any-glob-to-any-file: 'modules.d/[0-9][0-9]shutdown/*'
 
 squash:
+  - changed-files:
+    - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash/*'
+
+squash-lib:
+  - changed-files:
+    - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash-lib/*'
+
+squash-erofs:
+  - changed-files:
+    - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash/*'
+
+squash-squashfs:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash/*'
 

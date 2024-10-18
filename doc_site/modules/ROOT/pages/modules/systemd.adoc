@@ -1,4 +1,4 @@
-== Systemd dracut modules
+= Systemd dracut modules
 
 These modules would require including a version of systemd into initramfs.
 
@@ -39,6 +39,15 @@ These modules would require including a version of systemd into initramfs.
 | Starts random generator serive on early boot
 
 | squash
+| Squash meta module
+
+| squash-erofs
+| Builds EroFS initramfs
+
+| squash-lib
+| Library for building Squash initramfs
+
+| squash-squashfs
 | Builds SquashFS initramfs
 
 | systemd
