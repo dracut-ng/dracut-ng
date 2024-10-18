@@ -1,0 +1,247 @@
+= Core dracut modules
+
+The organization and categories of dracut modules below are only meant for
+gaining better understanding of what each module does. In the dracut source
+code, there are no specific types or categories for dracut modules.
+
+* shell
+* library (usually included by other dracut modules as a dependency and not directly by user)
+* filesystems (kernel module and corresponding user-space utilities for a filesystem)
+* device (kernel module and corresponding user space utilities for a device).
+* kernel (only kernel modules, no user-space utilities)
+* utils (no kernel module, only user-space utilities)
+* meta (only for making decision which other modules to include)
+
+== local
+
+|===
+| Module | Description | Type
+
+| base
+| Base module with required utilities
+| library
+
+| bash
+| https://repology.org/project/bash[bash] (bash is preferred interpreter if there more of them available)
+| shell
+
+| biosdevname
+| BIOS network device renaming
+| utils
+
+| btrfs
+| https://docs.kernel.org/filesystems/btrfs.html[btrfs]
+| filesystem
+
+| busybox
+| https://repology.org/project/busybox/[busybox]
+| shell
+
+| caps
+| drop capabilities before init
+|
+
+| convertfs
+| Merges / into /usr on next boot
+|
+
+| crypt
+| encrypted https://en.wikipedia.org/wiki/Linux_Unified_Key_Setup[LUKS] filesystems and https://repology.org/project/cryptsetup[cryptsetup]
+| filesystem
+
+| crypt-gpg
+| https://repology.org/project/gnupg[GPG] for crypto operations and SmartCards (may requires GPG keys)
+|
+
+| crypt-loop
+| encrypted loopback devices (symmetric key)
+|
+
+| dash
+| https://repology.org/project/dash-shell/[dash]
+| shell
+
+| debug
+| debug features
+|
+
+| dm
+| device-mapper
+| library
+
+| dmraid
+| DMRAID arrays
+|
+
+| dmsquash-live
+| SquashFS images
+|
+
+| dmsquash-live-autooverlay
+| creates a partition for overlayfs usage in the free space on the root filesystem's parent block device
+|
+
+| dmsquash-live-ntfs
+| SquashFS images located in NTFS filesystems
+|
+
+| drm
+| kernel modules for https://docs.kernel.org/gpu/introduction.html[DRM] (complex graphics devices)
+| kernel
+
+| ecryptfs
+| kernel module for https://docs.kernel.org/filesystems/ecryptfs.html[ecryptfs] (stacked cryptographic filesystem)
+| filesystem
+
+| fips
+| Enforces FIPS security standard regulations
+|
+
+| fs-lib
+| filesystem tools (including fsck.* and mount)
+| library
+
+| fstab-sys
+| Arranges for arbitrary partitions to be mounted before rootfs
+|
+
+| i18n
+| Includes keymaps, console fonts, etc.
+|
+
+| img-lib
+| Includes various tools for decompressing images
+| library
+
+| integrity
+| Extended Verification Module and https://repology.org/project/ima-evm-utils[ima-evm-utils]
+|
+
+| kernel-modules
+| kernel modules for root filesystems and other boot-time devices
+| kernel
+
+| kernel-modules-extra
+| extra out-of-tree kernel modules
+| kernel
+
+| lvm
+| LVM devices
+|
+
+| lvmthinpool-monitor
+| Monitor LVM thinpool service
+|
+
+| masterkey
+| masterkey that can be used to decrypt other keys and https://repology.org/project/keyutils/[keyutils]
+|
+
+| mdraid
+| kernel module for https://docs.kernel.org/driver-api/md/md-cluster.html[md raid cluster], https://repology.org/project/mdadm[mdadm]
+| device
+
+| modsign
+| kernel module for https://docs.kernel.org/admin-guide/module-signing.html[signing], https://repology.org/project/keyutils/[keyutils]
+|
+
+| multipath
+| multipath devices
+| device
+
+| nvdimm
+| non-volatile DIMM devices
+| device
+
+| numlock
+| turn Num Lock on
+| device
+
+| overlayfs
+| kernel module for https://www.kernel.org/doc/html/latest/filesystems/overlayfs.html[overlayfs]
+| filesystem
+
+| ppcmac
+| thermal for PowerPC
+| device
+
+| qemu
+| kernel modules to boot inside https://repology.org/project/qemu/[qemu]
+| kernel
+
+| lunmask
+| Masks LUN devices to select only ones which required to boot
+|
+
+| plymouth
+| show splash via https://repology.org/project/plymouth/[plymouth]
+| utils
+
+| pollcdrom
+| polls CD-ROM
+|
+
+| rescue
+| utilities for rescue mode (such as ping, ssh, vi, fsck.*)
+| utils
+
+| resume
+| resume from low-power state
+|
+
+| rootfs-block
+| mount block device as rootfs
+| device
+
+| securityfs
+| mount securityfs early
+| filesystem
+
+| selinux
+| https://docs.kernel.org/admin-guide/LSM/SELinux.html[selinux] policy
+|
+
+| shutdown
+| Sets up hooks to run on shutdown
+|
+
+| syslog
+| Includes syslog capabilites
+| utils
+
+| terminfo
+| Includes a terminfo file
+| utils
+
+| udev-rules
+| Includes udev and some basic rules
+| library
+
+| uefi-lib
+| Includes UEFI tools
+| library
+
+| usrmount
+| mounts /usr
+|
+
+| virtfs
+| virtual filesystems (https://docs.kernel.org/filesystems/9p.html[9p])
+| filesystem
+
+| virtiofs
+| https://docs.kernel.org/filesystems/virtiofs.html[virtiofs]
+| filesystem
+
+| warpclock
+| Sets kernel's timezone and reset the system time if adjtime is set to LOCAL
+|
+
+| watchdog
+| Includes watchdog devices management; works only if systemd not in use
+|
+
+| watchdog-modules
+| kernel modules for watchdog loaded early in booting
+| kernel
+|===

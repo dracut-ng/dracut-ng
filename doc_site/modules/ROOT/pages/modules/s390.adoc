@@ -1,0 +1,29 @@
+= s390(x) dracut modules
+
+|===
+| Module | Description
+
+| cio_ignore
+|
+
+| cms
+| mount z/VM CMS disks on s390
+
+| dasd
+|
+
+| dasd_mod
+|
+
+| dcssblk
+|
+
+| zfcp
+| networking
+
+| zipl
+|
+
+| znet
+| networking
+|===
