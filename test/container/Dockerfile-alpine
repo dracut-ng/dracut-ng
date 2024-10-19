@@ -74,8 +74,3 @@ RUN apk add --no-cache \
     util-linux-misc \
     xfsprogs \
     xz
-
-RUN \
-  cp /usr/lib/udev/rules.d/* /lib/udev/rules.d/ && \
-  ln -sf /sbin/poweroff /sbin/shutdown && \
-  ln -sf /boot/vmlinuz-virt /boot/vmlinuz-$(cd /lib/modules; ls -1 | tail -1)
