@@ -74,3 +74,9 @@ RUN apk add --no-cache \
     util-linux-misc \
     xfsprogs \
     xz
+
+# workaround for --enable-split-usr
+# see https://github.com/eudev-project/eudev/pull/246
+# needed to run RAID tests
+RUN \
+  cp /usr/lib/udev/rules.d/* /lib/udev/rules.d/
