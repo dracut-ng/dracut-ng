@@ -1494,7 +1494,7 @@ set_global_var "dbus" "dbussystemservicesconfdir" "${dbusconfdir}/system-service
 
 # udev global variables
 set_global_var "udev" "udevdir" "/lib/udev:/lib/udev/ata_id" "/usr/lib/udev:/usr/lib/udev/ata_id"
-set_global_var "udev" "udevconfdir" "/etc/udev"
+set_global_var "udev" "udevconfdir" "/usr/lib/udev:/usr/lib/udev/kpartx_id" "/etc/udev"
 set_global_var "udev" "udevrulesdir" "${udevdir}/rules.d"
 set_global_var "udev" "udevrulesconfdir" "${udevconfdir}/rules.d"
 
