@@ -62,7 +62,7 @@ RUN apk add --no-cache \
     parted \
     partx \
     pigz \
-    plymouth \
+    plymouth-themes \
     procps \
     qemu-img \
     qemu-system-x86_64 \
