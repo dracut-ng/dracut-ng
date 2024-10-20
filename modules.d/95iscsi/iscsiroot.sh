@@ -211,7 +211,7 @@ handle_netroot() {
 
     if [ "$root" = "dhcp" ] || [ "$netroot" = "dhcp" ]; then
         # if root is not specified try to mount the whole iSCSI LUN
-        printf 'SYMLINK=="disk/by-path/*-iscsi-*-%s", SYMLINK+="root"\n' "$iscsi_lun" >> /etc/udev/rules.d/99-iscsi-root.rules
+        printf 'SYMLINK=="disk/by-path/*-iscsi-*-%s", SYMLINK+="root"\n' "$iscsi_lun" >> "${udevrulesconfdir}"/99-iscsi-root.rules
         udevadm control --reload
         write_fs_tab /dev/root
         wait_for_dev -n /dev/root

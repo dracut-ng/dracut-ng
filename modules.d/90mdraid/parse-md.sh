@@ -13,7 +13,7 @@ if { [ -z "$MD_UUID" ] && ! getargbool 0 rd.auto; } || ! getargbool 1 rd.md -d -
 else
     # rewrite the md rules to only process the specified raid array
     if [ -n "$MD_UUID" ]; then
-        for f in /etc/udev/rules.d/65-md-incremental*.rules; do
+        for f in "${udevrulesconfdir}"/65-md-incremental*.rules; do
             [ -e "$f" ] || continue
             while read -r line || [ -n "$line" ]; do
                 if [ "${line%%UUID CHECK}" != "$line" ]; then

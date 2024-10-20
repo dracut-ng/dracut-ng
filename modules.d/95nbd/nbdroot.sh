@@ -97,7 +97,7 @@ done
 # If we didn't get a root= on the command line, then we need to
 # add the udev rules for mounting the nbd0 device
 if [ "$root" = "block:/dev/root" ] || [ "$root" = "dhcp" ]; then
-    printf 'KERNEL=="nbd0", ENV{DEVTYPE}!="partition", ENV{ID_FS_TYPE}=="?*", SYMLINK+="root"\n' > /etc/udev/rules.d/99-nbd-root.rules
+    printf 'KERNEL=="nbd0", ENV{DEVTYPE}!="partition", ENV{ID_FS_TYPE}=="?*", SYMLINK+="root"\n' > "${udevrulesconfdir}"/99-nbd-root.rules
     udevadm control --reload
     wait_for_dev -n /dev/root
 

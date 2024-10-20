@@ -29,4 +29,4 @@ command -v parse_ifname_opts > /dev/null || . /lib/net-lib.sh
         echo "$ifname_if" > /tmp/ifname-"$ifname_mac"
         echo "$ifname_mac" > /tmp/ifname-"$ifname_if"
     done
-} >> /etc/udev/rules.d/80-ifname.rules
+} >> "${udevrulesconfdir}"/80-ifname.rules

@@ -27,7 +27,7 @@ install() {
     inst_hook pre-pivot 95 "$moddir/cms-write-ifcfg.sh"
     inst_script "$moddir/cmsifup.sh" /sbin/cmsifup
     # shellcheck disable=SC2046
-    inst_multiple /etc/cmsfs-fuse/filetypes.conf /etc/udev/rules.d/99-fuse.rules /etc/fuse.conf \
+    inst_multiple /etc/cmsfs-fuse/filetypes.conf "${udevrulesconfdir}"/99-fuse.rules /etc/fuse.conf \
         cmsfs-fuse fusermount bash insmod rmmod cat /lib/s390-tools/zdev-from-dasd_mod.dasd sed \
         awk getopt chzdev lszdev
 

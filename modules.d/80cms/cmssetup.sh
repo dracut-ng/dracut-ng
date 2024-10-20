@@ -108,12 +108,12 @@ processcmsfile() {
         fi
 
         # shellcheck disable=SC2016
-        printf 'SUBSYSTEM=="net", ACTION=="add", DRIVERS=="%s", KERNELS=="%s", ENV{INTERFACE}=="?*", RUN+="/sbin/initqueue --onetime --unique --name cmsifup-$name /sbin/cmsifup $name"\n' "$driver" "$devbusid" > /etc/udev/rules.d/99-cms.rules
+        printf 'SUBSYSTEM=="net", ACTION=="add", DRIVERS=="%s", KERNELS=="%s", ENV{INTERFACE}=="?*", RUN+="/sbin/initqueue --onetime --unique --name cmsifup-$name /sbin/cmsifup $name"\n' "$driver" "$devbusid" > "${udevrulesconfdir}"/99-cms.rules
         # remove the default net rules
-        rm -f -- /etc/udev/rules.d/91-default-net.rules
+        rm -f -- "${udevrulesconfdir}"/91-default-net.rules
         # shellcheck disable=SC2016
-        [[ -f /etc/udev/rules.d/90-net.rules ]] \
-            || printf 'SUBSYSTEM=="net", ACTION=="online", RUN+="/sbin/initqueue --onetime --env netif=$name source_hook initqueue/online"\n' >> /etc/udev/rules.d/99-cms.rules
+        [[ -f "${udevrulesconfdir}"/90-net.rules ]] \
+            || printf 'SUBSYSTEM=="net", ACTION=="online", RUN+="/sbin/initqueue --onetime --env netif=$name source_hook initqueue/online"\n' >> "${udevrulesconfdir}"/99-cms.rules
         udevadm control --reload
     fi
 

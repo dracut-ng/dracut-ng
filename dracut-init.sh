@@ -520,13 +520,13 @@ inst_rule_initqueue() {
 # udev rules always get installed in the same place, so
 # create a function to install them to make life simpler.
 inst_rules() {
-    local _target=/etc/udev/rules.d _rule _found
+    local _target="${udevrulesconfdir}" _rule _found
 
     inst_dir "${udevdir}/rules.d"
     inst_dir "$_target"
     for _rule in "$@"; do
         if [ "${_rule#/}" = "$_rule" ]; then
-            for r in ${hostonly:+"$dracutsysrootdir"/etc/udev/rules.d} "$dracutsysrootdir${udevdir}/rules.d"; do
+            for r in ${hostonly:+"$dracutsysrootdir${udevrulesconfdir}"} "$dracutsysrootdir${udevdir}/rules.d"; do
                 [[ -e $r/$_rule ]] || continue
                 _found="$r/$_rule"
                 inst_rule_programs "$_found"
@@ -550,7 +550,7 @@ inst_rules() {
 }
 
 inst_rules_wildcard() {
-    local _target=/etc/udev/rules.d _rule _found
+    local _target="${udevrulesconfdir}" _rule _found
 
     inst_dir "${udevdir}/rules.d"
     inst_dir "$_target"

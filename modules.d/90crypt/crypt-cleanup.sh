@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # close everything which is not busy
-rm -f -- /etc/udev/rules.d/70-luks.rules > /dev/null 2>&1
+rm -f -- "${udevrulesconfdir}"/70-luks.rules > /dev/null 2>&1
 
 if ! getarg rd.luks.uuid > /dev/null 2>&1 && getargbool 1 rd.luks > /dev/null 2>&1; then
     while true; do

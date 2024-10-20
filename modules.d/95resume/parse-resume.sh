@@ -33,7 +33,7 @@ if ! getarg noresume; then
                 "${resume#/dev/}"
             printf "SYMLINK==\"%s\", ACTION==\"add|change\", SYMLINK+=\"resume\"\n" \
                 "${resume#/dev/}"
-        } >> /etc/udev/rules.d/99-resume-link.rules
+        } >> "${udevrulesconfdir}"/99-resume-link.rules
 
         {
             if [ -x /usr/sbin/resume ]; then
@@ -54,7 +54,7 @@ if ! getarg noresume; then
             printf -- 'SYMLINK=="%s", ' "${resume#/dev/}"
             printf -- '%s' 'ACTION=="add|change", ENV{ID_FS_TYPE}=="suspend|swsuspend|swsupend",'
             printf -- '%s\n' ' RUN+="/sbin/initqueue --finished --unique --name 00resume echo %M:%m  > /sys/power/resume"'
-        } >> /etc/udev/rules.d/99-resume.rules
+        } >> "${udevrulesconfdir}"/99-resume.rules
 
         # shellcheck disable=SC2016
         printf '[ -e "%s" ] && { ln -fs "%s" /dev/resume 2> /dev/null; rm -f -- "$job" "%s/initqueue/timeout/resume.sh"; }\n' \
@@ -76,6 +76,6 @@ if ! getarg noresume; then
             fi
             printf -- '%s' 'SUBSYSTEM=="block", ACTION=="add|change", ENV{ID_FS_TYPE}=="suspend|swsuspend|swsupend",'
             printf -- '%s\n' ' RUN+="/sbin/initqueue --finished --unique --name 00resume echo %M:%m > /sys/power/resume"'
-        } >> /etc/udev/rules.d/99-resume.rules
+        } >> "${udevrulesconfdir}"/99-resume.rules
     fi
 fi

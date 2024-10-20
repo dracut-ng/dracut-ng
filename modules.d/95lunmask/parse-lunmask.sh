@@ -6,7 +6,7 @@ create_udev_rule() {
     local transport="$1"
     local tgtid="$2"
     local lun="$3"
-    local _rule=/etc/udev/rules.d/51-"${transport}"-lunmask-"${tgtid}".rules
+    local _rule="${udevrulesconfdir}"/51-"${transport}"-lunmask-"${tgtid}".rules
 
     [ -e "${_rule}" ] && return 0
 

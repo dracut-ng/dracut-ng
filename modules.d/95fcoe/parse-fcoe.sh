@@ -98,7 +98,7 @@ parse_fcoe_opts() {
             # shellcheck disable=SC2016
             printf 'ACTION=="add", SUBSYSTEM=="net", NAME=="%s", RUN+="/sbin/initqueue --onetime --timeout --unique --name fcoe-timeout-$name /sbin/fcoe-up $name %s %s"\n' "$fcoe_interface" "$fcoe_dcb" "$fcoe_mode"
         fi
-    } >> /etc/udev/rules.d/92-fcoe.rules
+    } >> "${udevrulesconfdir}"/92-fcoe.rules
 }
 
 for fcoe in $fcoe $(getargs fcoe=); do

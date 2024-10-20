@@ -46,7 +46,7 @@ install() {
         local _nullglob=$(shopt -p nullglob)
         shopt -u nullglob
         readarray -t _array < <(
-            ls -1 "$initdir"/etc/udev/rules.d/41-*.rules 2> /dev/null
+            ls -1 "$initdir"/"${udevrulesconfdir}"/41-*.rules 2> /dev/null
         )
         [[ ${#_array[@]} -gt 0 ]] && mark_hostonly "${_array[@]#$initdir}"
         readarray -t _array < <(

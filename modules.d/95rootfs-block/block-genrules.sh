@@ -6,7 +6,7 @@ if [ "${root%%:*}" = "block" ]; then
             "${root#block:/dev/}"
         printf 'SYMLINK=="%s", SYMLINK+="root"\n' \
             "${root#block:/dev/}"
-    } >> /etc/udev/rules.d/99-root.rules
+    } >> "${udevrulesconfdir}"/99-root.rules
 
     # shellcheck disable=SC2016
     printf '[ -e "%s" ] && { ln -s "%s" /dev/root 2>/dev/null; rm "$job"; }\n' \

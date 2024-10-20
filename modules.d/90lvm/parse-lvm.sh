@@ -9,7 +9,7 @@ LV_DEVS="$(getargs rd.lvm.vg) $(getargs rd.lvm.lv)"
 if ! getargbool 1 rd.lvm \
     || { [ -z "$LV_DEVS" ] && ! getargbool 0 rd.auto; }; then
     info "rd.lvm=0: removing LVM activation"
-    rm -f -- /etc/udev/rules.d/64-lvm*.rules
+    rm -f -- "${udevrulesconfdir}"/64-lvm*.rules
 else
     for dev in $LV_DEVS; do
         wait_for_dev -n "/dev/$dev"

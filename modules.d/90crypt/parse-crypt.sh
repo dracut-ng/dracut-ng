@@ -24,12 +24,12 @@ _cryptgetargsname() {
 
 if ! getargbool 1 rd.luks; then
     info "rd.luks=0: removing cryptoluks activation"
-    rm -f -- /etc/udev/rules.d/70-luks.rules
+    rm -f -- "${udevrulesconfdir}"/70-luks.rules
 else
     {
         echo 'SUBSYSTEM!="block", GOTO="luks_end"'
         echo 'ACTION!="add|change", GOTO="luks_end"'
-    } > /etc/udev/rules.d/70-luks.rules.new
+    } > "${udevrulesconfdir}"/70-luks.rules.new
 
     PARTUUID=$(getargs rd.luks.partuuid)
     SERIAL=$(getargs rd.luks.serial)
@@ -65,7 +65,7 @@ else
                     printf -- '--name cryptroot-ask-%%k %s ' "$(command -v cryptroot-ask)"
                     # shellcheck disable=SC2016
                     printf -- '$env{DEVNAME} %s %s %s"\n' "$luksname" "$is_keysource" "$tout"
-                } >> /etc/udev/rules.d/70-luks.rules.new
+                } >> "${udevrulesconfdir}"/70-luks.rules.new
             else
                 luksname=$(dev_unit_name "$luksname")
                 # shellcheck disable=SC1003
@@ -77,7 +77,7 @@ else
                         printf -- 'RUN+="%s --settled --unique --onetime ' "$(command -v initqueue)"
                         printf -- '--name systemd-cryptsetup-%%k %s start ' "$(command -v systemctl)"
                         printf -- 'systemd-cryptsetup@%s.service"\n' "$luksname"
-                    } >> /etc/udev/rules.d/70-luks.rules.new
+                    } >> "${udevrulesconfdir}"/70-luks.rules.new
                 fi
             fi
         done
@@ -105,7 +105,7 @@ else
                     printf -- '--name cryptroot-ask-%%k %s ' "$(command -v cryptroot-ask)"
                     # shellcheck disable=SC2016
                     printf -- '$env{DEVNAME} %s %s %s"\n' "$luksname" "$is_keysource" "$tout"
-                } >> /etc/udev/rules.d/70-luks.rules.new
+                } >> "${udevrulesconfdir}"/70-luks.rules.new
             else
                 luksname=$(dev_unit_name "$luksname")
                 # shellcheck disable=SC1003
@@ -117,7 +117,7 @@ else
                         printf -- 'RUN+="%s --settled --unique --onetime ' "$(command -v initqueue)"
                         printf -- '--name systemd-cryptsetup-%%k %s start ' "$(command -v systemctl)"
                         printf -- 'systemd-cryptsetup@%s.service"\n' "$luksname"
-                    } >> /etc/udev/rules.d/70-luks.rules.new
+                    } >> "${udevrulesconfdir}"/70-luks.rules.new
                 fi
             fi
         done
@@ -146,7 +146,7 @@ else
                     printf -- '--name cryptroot-ask-%%k %s ' "$(command -v cryptroot-ask)"
                     # shellcheck disable=SC2016
                     printf -- '$env{DEVNAME} %s %s %s"\n' "$luksname" "$is_keysource" "$tout"
-                } >> /etc/udev/rules.d/70-luks.rules.new
+                } >> "${udevrulesconfdir}"/70-luks.rules.new
             else
                 luksname=$(dev_unit_name "$luksname")
                 # shellcheck disable=SC1003
@@ -159,7 +159,7 @@ else
                         printf -- 'RUN+="%s --settled --unique --onetime ' "$(command -v initqueue)"
                         printf -- '--name systemd-cryptsetup-%%k %s start ' "$(command -v systemctl)"
                         printf -- 'systemd-cryptsetup@%s.service"\n' "$luksname"
-                    } >> /etc/udev/rules.d/70-luks.rules.new
+                    } >> "${udevrulesconfdir}"/70-luks.rules.new
                 fi
             fi
 
@@ -181,17 +181,17 @@ else
                 printf -- '--unique --settled --onetime --name cryptroot-ask-%%k '
                 # shellcheck disable=SC2016
                 printf -- '%s $env{DEVNAME} luks-$env{ID_FS_UUID} 0 %s"\n' "$(command -v cryptroot-ask)" "$tout"
-            } >> /etc/udev/rules.d/70-luks.rules.new
+            } >> "${udevrulesconfdir}"/70-luks.rules.new
         else
             {
                 printf -- 'ENV{ID_FS_TYPE}=="crypto_LUKS", RUN+="%s ' "$(command -v initqueue)"
                 printf -- '--unique --settled --onetime --name crypt-run-generator-%%k '
                 # shellcheck disable=SC2016
                 printf -- '%s $env{DEVNAME} luks-$env{ID_FS_UUID}"\n' "$(command -v crypt-run-generator)"
-            } >> /etc/udev/rules.d/70-luks.rules.new
+            } >> "${udevrulesconfdir}"/70-luks.rules.new
         fi
     fi
 
-    echo 'LABEL="luks_end"' >> /etc/udev/rules.d/70-luks.rules.new
-    mv /etc/udev/rules.d/70-luks.rules.new /etc/udev/rules.d/70-luks.rules
+    echo 'LABEL="luks_end"' >> "${udevrulesconfdir}"/70-luks.rules.new
+    mv "${udevrulesconfdir}"/70-luks.rules.new "${udevrulesconfdir}"/70-luks.rules
 fi

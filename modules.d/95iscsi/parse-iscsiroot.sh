@@ -40,7 +40,7 @@ if [ "${root%%:*}" = "iscsi" ]; then
     fi
     netroot=$root
     # if root is not specified try to mount the whole iSCSI LUN
-    printf 'ENV{DEVTYPE}!="partition", SYMLINK=="disk/by-path/*-iscsi-*-*", SYMLINK+="root"\n' >> /etc/udev/rules.d/99-iscsi-root.rules
+    printf 'ENV{DEVTYPE}!="partition", SYMLINK=="disk/by-path/*-iscsi-*-*", SYMLINK+="root"\n' >> "${udevrulesconfdir}"/99-iscsi-root.rules
     [ -n "$DRACUT_SYSTEMD" ] && systemctl is-active systemd-udevd && udevadm control --reload-rules
     root=/dev/root
 
@@ -57,7 +57,7 @@ done
 # Root takes precedence over netroot
 if [ "${root}" = "/dev/root" ] && getarg "netroot=dhcp"; then
     # if root is not specified try to mount the whole iSCSI LUN
-    printf 'ENV{DEVTYPE}!="partition", SYMLINK=="disk/by-path/*-iscsi-*-*", SYMLINK+="root"\n' >> /etc/udev/rules.d/99-iscsi-root.rules
+    printf 'ENV{DEVTYPE}!="partition", SYMLINK=="disk/by-path/*-iscsi-*-*", SYMLINK+="root"\n' >> "${udevrulesconfdir}"/99-iscsi-root.rules
     [ -n "$DRACUT_SYSTEMD" ] && systemctl is-active systemd-udevd && udevadm control --reload-rules
 fi
 
