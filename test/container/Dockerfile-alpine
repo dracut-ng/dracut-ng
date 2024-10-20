@@ -33,7 +33,6 @@ RUN apk add --no-cache \
     file \
     findmnt \
     f2fs-tools \
-    gawk \
     git \
     gpg \
     grep \
