@@ -93,9 +93,8 @@ fi
 
 trap "emergency_shell Signal caught!" 0
 
-export UDEVRULESD=/run/udev/rules.d
 [ -d /run/udev ] || mkdir -p -m 0755 /run/udev
-[ -d "$UDEVRULESD" ] || mkdir -p -m 0755 "$UDEVRULESD"
+[ -d /run/udev/rules.d ] || mkdir -p -m 0755 /run/udev/rules.d
 
 if [ "$RD_DEBUG" = "yes" ]; then
     mkfifo /run/initramfs/loginit.pipe
