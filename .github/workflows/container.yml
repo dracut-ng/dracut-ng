@@ -19,6 +19,7 @@ permissions:
 
 jobs:
     arm64:
+        needs: amd64
         if: github.repository == 'dracut-ng/dracut-ng' || vars.CONTAINER == 'enabled'
         name: ${{ matrix.config.tag }} on ${{ matrix.config.platform }}
         runs-on: ubuntu-latest
@@ -29,8 +30,8 @@ jobs:
             fail-fast: false
             matrix:
                 config:
-                    - { dockerfile: 'Dockerfile-debian',            tag: 'debian',     platform: 'linux/arm64,linux/amd64' }
-                    - { dockerfile: 'Dockerfile-fedora',            tag: 'fedora',     platform: 'linux/arm64,linux/amd64' }
+                    - { dockerfile: 'Dockerfile-debian',            tag: 'debian',     platform: 'linux/arm64' }
+                    - { dockerfile: 'Dockerfile-fedora',            tag: 'fedora',     platform: 'linux/arm64' }
         steps:
             -   name: Set up QEMU
                 uses: docker/setup-qemu-action@v3
@@ -67,6 +68,8 @@ jobs:
             fail-fast: false
             matrix:
                 config:
+                    - { dockerfile: 'Dockerfile-debian',            tag: 'debian',     platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-fedora',            tag: 'fedora',     platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-opensuse',          tag: 'opensuse',   platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-arch',              tag: 'arch',       platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-gentoo',            tag: 'gentoo',     platform: 'linux/amd64' }
