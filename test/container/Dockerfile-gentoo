@@ -35,8 +35,12 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     app-misc/jq \
     app-portage/gentoolkit \
     app-shells/dash \
+    app-text/asciidoc \
+    app-text/docbook-xml-dtd \
+    app-text/docbook-xsl-stylesheets \
     dev-lang/perl \
     dev-lang/rust-bin \
+    dev-libs/libxslt \
     dev-libs/openssl \
     net-fs/cifs-utils \
     net-fs/nfs-utils \
