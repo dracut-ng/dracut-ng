@@ -31,13 +31,13 @@ jobs:
             fail-fast: false
             matrix:
                 config:
-                    - { dockerfile: 'Dockerfile-debian',            tag: 'debian',     platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-fedora',            tag: 'fedora',     platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-opensuse',          tag: 'opensuse',   platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-arch',              tag: 'arch',       platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-ubuntu',            tag: 'ubuntu',     platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-alpine',            tag: 'alpine',     platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-void',              tag: 'void',       platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-debian',   tag: 'debian:latest',   platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-fedora',   tag: 'fedora:latest',   platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-opensuse', tag: 'opensuse:latest', platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-arch',     tag: 'arch:latest',     platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-ubuntu',   tag: 'ubuntu:latest',   platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-alpine',   tag: 'alpine:latest',   platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-void',     tag: 'void:latest',     platform: 'linux/amd64' }
         steps:
             -   name: Check out the repo
                 uses: actions/checkout@v4
