@@ -96,7 +96,15 @@ while (($# > 0)); do
     shift
 done
 
-[[ $KERNEL_VERSION ]] || KERNEL_VERSION="$(uname -r)"
+if ! [[ $KERNEL_VERSION ]]; then
+    if type -P systemd-detect-virt &> /dev/null && systemd-detect-virt -c &> /dev/null; then
+        # shellcheck disable=SC2012
+        KERNEL_VERSION="$(cd /lib/modules && ls -1 | tail -1)"
+        # shellcheck disable=SC2012
+        [[ $KERNEL_VERSION ]] || KERNEL_VERSION="$(cd /usr/lib/modules && ls -1 | tail -1)"
+    fi
+    [[ $KERNEL_VERSION ]] || KERNEL_VERSION="$(uname -r)"
+fi
 
 find_initrd_for_kernel_version() {
     local kernel_version="$1"
