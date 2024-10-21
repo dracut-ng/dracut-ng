@@ -4,32 +4,26 @@ set -ex
 
 [[ -d ${0%/*} ]] && cd "${0%/*}"/../
 
-RUN_ID="$1"
-TESTS=$2
+# disable documentation for extended tests
+if [ "$2" != "10" ]; then
+    CONFIGURE_ARG+=" --disable-documentation "
+fi
 
 # if is cargo installed, let's build and test dracut-cpio
 if command -v cargo > /dev/null; then
-    ./configure --enable-dracut-cpio
-else
-    ./configure
+    CONFIGURE_ARG+=" --enable-dracut-cpio "
 fi
 
-NCPU=$(getconf _NPROCESSORS_ONLN)
+./configure "$CONFIGURE_ARG"
+
+V="${V:=1}"
 
 # treat warnings as error
+CFLAGS="-Wextra -Werror" make -j "$(getconf _NPROCESSORS_ONLN)" all
 
-if ! [[ $TESTS ]]; then
-    CFLAGS="-Wextra -Werror" make -j "$NCPU" all syncheck
-else
-    CFLAGS="-Wextra -Werror" make -j "$NCPU" enable_documentation=no all
-
-    cd test
-
-    # shellcheck disable=SC2012
-    time LOGTEE_TIMEOUT_MS=590000 make \
-        enable_documentation=no \
-        TEST_RUN_ID="$RUN_ID" \
-        ${TESTS:+TESTS="$TESTS"} \
-        -k V="${V:=1}" \
-        check
+# run syncheck as part of basic tests
+if [ "$2" = "10" ]; then
+    make syncheck
 fi
+
+cd test && time make TEST_RUN_ID="$1" TESTS="$2" -k V="$V" check
