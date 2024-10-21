@@ -76,15 +76,6 @@ install() {
         grep -hE -ve '^VERSION=' -ve '^PRETTY_NAME' "$dracutsysrootdir"/etc/os-release > "${initdir}"/usr/lib/initrd-release
         [[ -n ${VERSION} ]] && VERSION+=" "
         [[ -n ${PRETTY_NAME} ]] && PRETTY_NAME+=" "
-    else
-        # Fall back to synthesizing one, since dracut is presently used
-        # on non-systemd systems as well.
-        {
-            echo "NAME=dracut"
-            echo "ID=dracut"
-            echo "VERSION_ID=\"$DRACUT_VERSION\""
-            echo 'ANSI_COLOR="0;34"'
-        } > "${initdir}"/usr/lib/initrd-release
     fi
     VERSION+="dracut-$DRACUT_VERSION"
     PRETTY_NAME+="dracut-$DRACUT_VERSION (Initramfs)"
@@ -96,7 +87,6 @@ install() {
         # having it mixed in with the real underlying OS version.
         echo "DRACUT_VERSION=\"${DRACUT_VERSION}\""
     } >> "$initdir"/usr/lib/initrd-release
-    echo "dracut-$DRACUT_VERSION" > "$initdir/lib/dracut/dracut-$DRACUT_VERSION"
     ln -sf ../usr/lib/initrd-release "$initdir"/etc/initrd-release
     ln -sf initrd-release "$initdir"/usr/lib/os-release
     ln -sf initrd-release "$initdir"/etc/os-release

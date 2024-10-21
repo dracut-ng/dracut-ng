@@ -61,6 +61,15 @@ install() {
         echo ro >> "${initdir}/etc/cmdline.d/base.conf"
     fi
 
+    {
+        echo "NAME=dracut"
+        echo "ID=dracut"
+        echo "VERSION_ID=\"$DRACUT_VERSION\""
+        echo 'ANSI_COLOR="0;34"'
+    } > "${initdir}"/usr/lib/initrd-release
+
+    echo "dracut-$DRACUT_VERSION" > "$initdir/lib/dracut/dracut-$DRACUT_VERSION"
+
     ## save host_devs which we need bring up
     if [[ $hostonly_cmdline == "yes" ]]; then
         if [[ -n ${host_devs[*]} ]]; then
