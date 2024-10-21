@@ -10,9 +10,17 @@ fi
 echo "TESTDIR=\"$TESTDIR\"" > .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
 export TESTDIR
 
+# inspired by kernel version detection in lsinitrd.sh
+
+# Some test containers do not include systemd-detect-virt, so let's just assume
+# we are running inside a container already
+
 # shellcheck disable=SC2012
-[ -z "$KVERSION" ] && KVERSION="$(cd /lib/modules && ls -1 | tail -1)"
-KVERSION=${KVERSION-$(uname -r)}
+[[ $KVERSION ]] || KVERSION="$(cd /lib/modules && ls -1 | tail -1)"
+# shellcheck disable=SC2012
+[[ $KVERSION ]] || KVERSION="$(cd /usr/lib/modules && ls -1 | tail -1)"
+[[ $KVERSION ]] || KVERSION="$(uname -r)"
+
 [ -z "$USE_NETWORK" ] && USE_NETWORK="network"
 [ -z "$TEST_FSTYPE" ] && TEST_FSTYPE="ext4"
 
