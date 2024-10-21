@@ -1,4 +1,5 @@
-FROM registry.fedoraproject.org/fedora:latest
+ARG DISTRIBUTION=fedora
+FROM registry.fedoraproject.org/${DISTRIBUTION}
 
 # Install needed packages for the dracut CI container
 RUN dnf -y install --setopt=install_weak_deps=False \

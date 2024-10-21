@@ -1,4 +1,5 @@
-FROM docker.io/ubuntu:latest
+ARG DISTRIBUTION=ubuntu
+FROM docker.io/${DISTRIBUTION}
 
 # prefer running tests in verbose mode
 ENV V=2
@@ -20,7 +21,6 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     cpio \
     cryptsetup \
     curl \
-    dmraid \
     docbook \
     docbook-xml \
     docbook-xsl \
@@ -40,7 +40,6 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq && \
     jfsutils \
     jq \
     kmod \
-    libdmraid-dev \
     libkmod-dev \
     linux-image-generic \
     lvm2 \
