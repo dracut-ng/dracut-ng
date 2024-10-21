@@ -37,6 +37,7 @@ jobs:
                     - { dockerfile: 'Dockerfile-fedora', tag: 'fedora:rawhide', platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-ubuntu', tag: 'ubuntu:rolling', platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:latest',  platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-opensuse', tag: 'tumbleweed-dnf', platform: 'linux/amd64' }
         steps:
             -   name: Check out the repo
                 uses: actions/checkout@v4

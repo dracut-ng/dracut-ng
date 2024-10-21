@@ -1,4 +1,5 @@
-FROM registry.opensuse.org/opensuse/tumbleweed-dnf:latest
+ARG DISTRIBUTION=leap-dnf:latest
+FROM registry.opensuse.org/opensuse/${DISTRIBUTION}
 
 # prefer running tests with btrfs
 ENV TEST_FSTYPE=btrfs
