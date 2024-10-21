@@ -4,6 +4,16 @@ name: Container (Dev)
 on:
     schedule:
         -  cron: '30 11 * * *'   # every day at 11:30 UTC
+    push:
+        branches: [ main ]
+        paths:
+            - 'test/container/**'
+            - '.github/workflows/container-dev.yml'
+    pull_request:
+        branches: [ main ]
+        paths:
+            - 'test/container/**'
+            - '.github/workflows/container-dev.yml'
 
 permissions:
     packages: write
@@ -41,6 +51,7 @@ jobs:
                 uses: docker/build-push-action@v6
                 with:
                     file: test/container/${{ matrix.config.dockerfile }}
+                    tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}
                     push: ${{ github.event_name == 'schedule' }}
                     platforms: ${{ matrix.config.platform }}
                     build-args: |
