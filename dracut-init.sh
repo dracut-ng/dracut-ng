@@ -549,32 +549,6 @@ inst_rules() {
     done
 }
 
-inst_rules_wildcard() {
-    local _target=/etc/udev/rules.d _rule _found
-
-    inst_dir "${udevdir}/rules.d"
-    inst_dir "$_target"
-    for _rule in ${udevdir}/rules.d/$1 ${dracutbasedir}/rules.d/$1; do
-        [[ -e $_rule ]] || continue
-        inst_rule_programs "$_rule"
-        inst_rule_group_owner "$_rule"
-        inst_rule_initqueue "$_rule"
-        inst_simple "$_rule"
-        _found=$_rule
-    done
-    if [[ -n ${hostonly} ]]; then
-        for _rule in ${_target}/$1; do
-            [[ -f $_rule ]] || continue
-            inst_rule_programs "$_rule"
-            inst_rule_group_owner "$_rule"
-            inst_rule_initqueue "$_rule"
-            inst_simple "$_rule"
-            _found=$_rule
-        done
-    fi
-    [[ $_found ]] || ddebug "Skipping udev rule: $_rule"
-}
-
 # make sure that library links are correct and up to date
 build_ld_cache() {
     local dstdir="${dstdir:-"$initdir"}"
