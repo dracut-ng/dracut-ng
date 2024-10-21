@@ -1,4 +1,5 @@
-FROM docker.io/debian:latest
+ARG DISTRIBUTION=debian
+FROM docker.io/${DISTRIBUTION}
 
 # dmraid is no longer installed
 # see https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1056944
