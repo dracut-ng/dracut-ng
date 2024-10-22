@@ -129,8 +129,8 @@ jobs:
             fail-fast: false
             matrix:
                 container: [
-                        "debian",
-                        "fedora",
+                        "debian-arm64",
+                        "fedora-arm64",
                 ]
                 test: [
                         "80",
