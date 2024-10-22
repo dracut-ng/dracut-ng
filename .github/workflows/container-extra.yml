@@ -1,6 +1,6 @@
 # Containers that takes longer to build or mainline, development, non-stable version of CI containers
-
 name: Container (extra)
+
 on:
     schedule:
         -  cron: '30 11 * * *'   # every day at 11:30 UTC
@@ -55,7 +55,7 @@ jobs:
                 with:
                     file: test/container/${{ matrix.config.dockerfile }}
                     tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}
-                    push: ${{ github.event_name == 'schedule' }}
+                    push: ${{ github.event_name == 'push' ||  github.event_name == 'schedule' }}
                     platforms: ${{ matrix.config.platform }}
                     build-args: |
                         DISTRIBUTION=${{ matrix.config.tag }}
