@@ -320,8 +320,24 @@ $ make run
 
 == Documentation
 
-To build the documentation site run `make doc_site`.  This will be built and
-published by CI on commit.
+=== Man pages
+
+Runtime documentation is largely in `man` pages shipped by distributions.  The
+man pages are built from link:https://asciidoc.org/[AsciiDoc] sources by
+link:https://asciidoctor.org/[Asciidoctor].
+
+To disable man page generation run `configure` with `--disable-documentation`
+
+WARNING: The flag `--disable-asciidoctor` is provided to build the manual pages
+with the `asciidoc` and `docbook` toolchain.  As the documentation site
+generator Antora is based on Asciidoctor, this flag is deprecated to enable a
+single Asciidoctor-based toolchain for manual pages and the generated site in a
+future release.
+
+=== Documentation site
+
+To build this documentation site run `make doc_site`.  The site is built and
+published by CI on commits.
 
 The documentation site is based on https://antora.org/[Antora].  By default
 it will build via `npx` (install `nodejs`) or if you have Antora installed in

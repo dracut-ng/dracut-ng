@@ -8,7 +8,6 @@ FROM docker.io/${DISTRIBUTION}
 # Install dracut as a linux-initramfs-tool provider so that the default initramfs-tool package does not get installed
 RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --no-install-recommends dracut && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
-    asciidoc \
     asciidoctor \
     astyle \
     bluez \

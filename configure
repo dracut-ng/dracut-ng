@@ -50,6 +50,7 @@ while (($# > 0)); do
         --systemdsystemunitdir) read_arg systemdsystemunitdir "$@" || shift ;;
         --bashcompletiondir) read_arg bashcompletiondir "$@" || shift ;;
         --enable-dracut-cpio) enable_dracut_cpio=yes ;;
+        --disable-asciidoctor) disable_asciidoctor=yes ;;
         *) echo "Ignoring unknown option '$1'" ;;
     esac
     shift
@@ -173,6 +174,7 @@ sysconfdir ?= ${sysconfdir:-${prefix}/etc}
 sbindir ?= ${sbindir:-${prefix}/sbin}
 mandir ?= ${mandir:-${prefix}/share/man}
 enable_documentation ?= ${enable_documentation:-yes}
+disable_asciidoctor ?= ${disable_asciidoctor:-no}
 enable_dracut_cpio ?= ${enable_dracut_cpio}
 bindir ?= ${bindir:-${prefix}/bin}
 KMOD_CFLAGS ?= $(${PKG_CONFIG} --cflags " libkmod >= 23 ") ${KMOD_CFLAGS_EXTRA}

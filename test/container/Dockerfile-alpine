@@ -6,7 +6,6 @@ ENV CC=clang
 # ovmf is not installed as systemd-boot-efistub is not available
 # see https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/61369
 RUN apk add --no-cache \
-    asciidoc \
     asciidoctor \
     bash \
     binutils \

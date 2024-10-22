@@ -114,6 +114,8 @@ ifneq ($(enable_documentation),no)
 all: doc
 endif
 
+ifeq ($(disable_asciidoctor),yes)
+$(warning *** Building with asciidoc deprecated)
 %: %.xml
 	@rm -f -- "$@"
 	xsltproc -o "$@" -nonet http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl $<
@@ -121,6 +123,21 @@ endif
 %.xml: %.adoc
 	@rm -f -- "$@"
 	asciidoc -a "version=$(DRACUT_FULL_VERSION)" -d manpage -b docbook -o "$@" $<
+else
+define ASCIIDOC_MANPAGE
+	asciidoctor -a "version=$(DRACUT_FULL_VERSION)" -b manpage $<
+endef
+
+%.1: %.1.adoc
+	$(ASCIIDOC_MANPAGE)
+%.5: %.5.adoc
+	$(ASCIIDOC_MANPAGE)
+%.7: %.7.adoc
+	$(ASCIIDOC_MANPAGE)
+%.8: %.8.adoc
+	$(ASCIIDOC_MANPAGE)
+endif
+
 
 # If ANOTRA_BIN not set, default to look for "npx" to run "npx antora".  If we
 # end up with undefined ANTORA_BIN (i.e. not set and npx not found), we'll give

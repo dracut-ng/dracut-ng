@@ -3,7 +3,6 @@ FROM registry.fedoraproject.org/${DISTRIBUTION}
 
 # Install needed packages for the dracut CI container
 RUN dnf -y install --setopt=install_weak_deps=False \
-    asciidoc \
     asciidoctor \
     astyle \
     bash-completion \

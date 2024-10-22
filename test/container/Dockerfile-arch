@@ -4,7 +4,6 @@ FROM docker.io/archlinux
 ENV TEST_FSTYPE=xfs
 
 RUN pacman --noconfirm -Syu \
-    asciidoc \
     asciidoctor \
     astyle \
     base-devel \
