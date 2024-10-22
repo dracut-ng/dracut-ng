@@ -42,6 +42,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     qemu-kvm \
     rng-tools \
     rpm-build \
+    ruby3.3-rubygem-asciidoctor \
     sbsigntools \
     ShellCheck \
     shfmt \

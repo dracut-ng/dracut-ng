@@ -53,6 +53,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     plymouth \
     qemu \
     rng-tools \
+    ruby-asciidoctor \
     sbsigntool \
     shellcheck \
     shfmt \
