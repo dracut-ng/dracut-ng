@@ -42,6 +42,7 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     dev-lang/rust-bin \
     dev-libs/libxslt \
     dev-libs/openssl \
+    dev-ruby/asciidoctor \
     net-fs/cifs-utils \
     net-fs/nfs-utils \
     net-misc/dhcp \
