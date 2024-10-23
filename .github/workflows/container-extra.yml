@@ -9,11 +9,6 @@ on:
         paths:
             - 'test/container/**'
             - '.github/workflows/container-extra.yml'
-    pull_request:
-        branches: [ main ]
-        paths:
-            - 'test/container/**'
-            - '.github/workflows/container-extra.yml'
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
 
