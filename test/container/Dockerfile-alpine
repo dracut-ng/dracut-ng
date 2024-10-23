@@ -1,4 +1,5 @@
-FROM docker.io/alpine:latest
+ARG DISTRIBUTION=alpine
+FROM docker.io/${DISTRIBUTION}
 
 # prefer running tests with clang
 ENV CC=clang
@@ -79,4 +80,4 @@ RUN apk add --no-cache \
 # see https://github.com/eudev-project/eudev/pull/246
 # needed to run RAID tests
 RUN \
-  cp /usr/lib/udev/rules.d/* /lib/udev/rules.d/
+  mkdir -p /lib/udev/rules.d && cp /usr/lib/udev/rules.d/* /lib/udev/rules.d/
