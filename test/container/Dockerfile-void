@@ -51,7 +51,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     parted \
     pigz \
     plymouth \
-    qemu \
+    qemu-system-amd64 \
     rng-tools \
     ruby-asciidoctor \
     sbsigntool \
