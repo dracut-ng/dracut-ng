@@ -48,7 +48,7 @@ man8pages = man/dracut.8 \
 
 manpages = $(man1pages) $(man5pages) $(man7pages) $(man8pages)
 
-.PHONY: install cleaninstall clean archive testimage test all check AUTHORS CONTRIBUTORS doc
+.PHONY: install cleaninstall clean archive test all check AUTHORS CONTRIBUTORS doc
 
 all: dracut.pc dracut-install src/skipcpio/skipcpio dracut-util
 
@@ -272,32 +272,6 @@ endif
 
 check: all syncheck
 	@$(MAKE) -C test check
-
-testimage: all
-	./dracut.sh -N -l -a debug -f test-$(KVERSION).img $(KVERSION)
-	@echo wrote  test-$(KVERSION).img
-
-debugtestimage: all
-	./dracut.sh --debug -l -a debug -f test-$(KVERSION).img $(KVERSION)
-	@echo wrote  test-$(KVERSION).img
-
-testimages: all
-	./dracut.sh -l -a debug --kernel-only -f test-kernel-$(KVERSION).img $(KVERSION)
-	@echo wrote  test-$(KVERSION).img
-	./dracut.sh -l -a debug --no-kernel -f test-dracut.img $(KVERSION)
-	@echo wrote  test-dracut.img
-
-debughostimage: all
-	./dracut.sh --debug -H -l -f test-$(KVERSION).img $(KVERSION)
-	@echo wrote  test-$(KVERSION).img
-
-hostimage: all
-	./dracut.sh -H -l -f test-$(KVERSION).img $(KVERSION)
-	@echo wrote  test-$(KVERSION).img
-
-efi: all
-	./dracut.sh --uefi -H -l -f linux-$(KVERSION).efi $(KVERSION)
-	@echo wrote linux-$(KVERSION).efi
 
 AUTHORS:
 	@git log | git shortlog --numbered --summary -e | while read -r a rest || [ -n "$$rest" ]; do echo "$$rest"; done > AUTHORS
