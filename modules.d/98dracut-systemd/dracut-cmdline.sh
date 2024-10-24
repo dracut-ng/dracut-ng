@@ -18,9 +18,9 @@ fi
 info "Using kernel command line parameters:" "$(getcmdline)"
 
 getargbool 0 rd.udev.log_level=info -d rd.udev.log-priority=info -d rd.udev.info -d -y rdudevinfo \
-    && echo 'udev_log="info"' >> /etc/udev/udev.conf
+    && echo 'udev_log=info' >> /etc/udev/udev.conf
 getargbool 0 rd.udev.log_level=debug -d rd.udev.log-priority=debug -d rd.udev.debug -d -y rdudevdebug \
-    && echo 'udev_log="debug"' >> /etc/udev/udev.conf
+    && echo 'udev_log=debug' >> /etc/udev/udev.conf
 
 source_conf /etc/conf.d
 
