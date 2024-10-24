@@ -15,6 +15,7 @@ RUN apt-get update -y -qq && apt-get upgrade -y -qq
 RUN if [ "${DISTRIBUTION}" = "ubuntu:rolling" ] ; then \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
     systemd-cryptsetup \
+    systemd-repart \
     ; fi
 
 RUN \
