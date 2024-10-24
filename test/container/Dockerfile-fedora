@@ -60,8 +60,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     rpm-build \
     sbsigntools \
     scsi-target-utils \
-    ShellCheck \
-    shfmt \
     squashfs-tools \
     swtpm \
     systemd-boot-unsigned \

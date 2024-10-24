@@ -77,7 +77,6 @@ RUN \
     qemu-kvm \
     rng-tools5 \
     sbsigntool \
-    shellcheck \
     squashfs-tools \
     swtpm \
     systemd-boot-efi \

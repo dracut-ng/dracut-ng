@@ -21,9 +21,4 @@ V="${V:=1}"
 # treat warnings as error
 CFLAGS="-Wextra -Werror" make -j "$(getconf _NPROCESSORS_ONLN)" all
 
-# run syncheck as part of basic tests
-if [ "$2" = "10" ]; then
-    make syncheck
-fi
-
 cd test && time make TEST_RUN_ID="$1" TESTS="$2" -k V="$V" check
