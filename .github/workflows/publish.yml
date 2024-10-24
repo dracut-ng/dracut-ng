@@ -40,8 +40,8 @@ jobs:
         node-version: '18'
     - name: Install dependencies
       run: |
-        sudo apt -y update
-        sudo apt -y install make asciidoc
+        sudo apt-get -y update
+        sudo apt-get -y install make asciidoc
     - name: Install Antora
       run: npm i antora
     - name: Generate Site

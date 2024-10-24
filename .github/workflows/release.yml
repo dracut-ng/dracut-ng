@@ -24,8 +24,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt -y update
-          sudo apt -y install asciidoc
+          sudo apt-get -y update
+          sudo apt-get -y install asciidoc
 
       - name: Build
         run: bash ${GITHUB_WORKSPACE}/tools/release.sh ${{ inputs.tag }}
