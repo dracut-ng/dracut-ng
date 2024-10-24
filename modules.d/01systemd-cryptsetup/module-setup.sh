@@ -4,7 +4,7 @@
 check() {
     local fs
     # if cryptsetup is not installed, then we cannot support encrypted devices.
-    require_any_binary "$systemdutildir"/systemd-cryptsetup || return 1
+    require_binaries "$systemdutildir"/systemd-cryptsetup || return 1
 
     [[ $hostonly ]] || [[ $mount_needs ]] && {
         for fs in "${host_fs_types[@]}"; do
