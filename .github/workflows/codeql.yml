@@ -47,8 +47,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt -y update
-          sudo apt -y install asciidoc gcc libkmod-dev libsystemd-dev pkg-config
+          sudo apt-get -y update
+          sudo apt-get -y install asciidoc gcc libkmod-dev libsystemd-dev pkg-config
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v3
