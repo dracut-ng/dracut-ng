@@ -44,8 +44,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     rpm-build \
     ruby3.3-rubygem-asciidoctor \
     sbsigntools \
-    ShellCheck \
-    shfmt \
     squashfs \
     swtpm \
     systemd-boot \

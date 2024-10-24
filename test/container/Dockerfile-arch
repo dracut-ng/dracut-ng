@@ -47,8 +47,6 @@ RUN pacman --noconfirm -Syu \
     qrencode \
     rng-tools \
     sbsigntools \
-    shellcheck \
-    shfmt \
     squashfs-tools \
     swtpm \
     systemd-ukify \

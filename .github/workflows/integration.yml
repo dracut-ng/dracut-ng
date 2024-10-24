@@ -46,6 +46,19 @@ jobs:
                 uses: actions/checkout@v4
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
                 run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+
+    # syncheck
+    syncheck:
+      name: syncheck
+      runs-on: ubuntu-latest
+      steps:
+        - name: "Checkout Repository"
+          uses: actions/checkout@v4
+        - run: |
+              sudo apt-get update
+              sudo apt -y install shellcheck shfmt
+              make syncheck
+
     extended:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}

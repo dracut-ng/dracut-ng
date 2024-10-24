@@ -55,8 +55,6 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     rng-tools \
     ruby-asciidoctor \
     sbsigntool \
-    shellcheck \
-    shfmt \
     squashfs-tools \
     swtpm \
     systemd-boot-efistub \
