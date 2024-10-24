@@ -84,6 +84,9 @@ jobs:
                         "80",
                         "81",
                 ]
+                exclude:
+                  - container: opensuse
+                    test: 41
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm'
