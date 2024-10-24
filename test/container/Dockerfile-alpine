@@ -6,6 +6,10 @@ ENV CC=clang
 
 # ovmf is not installed as systemd-boot-efistub is not available
 # see https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/61369
+
+# dash is not installed to run test suite only with busybox and bash
+# (without requiring dash)
+
 RUN apk add --no-cache \
     asciidoc \
     asciidoctor \
@@ -22,7 +26,6 @@ RUN apk add --no-cache \
     cpio \
     cryptsetup \
     curl \
-    dash \
     device-mapper \
     dhclient \
     dmraid \
