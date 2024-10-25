@@ -6,15 +6,16 @@ set -ex
 
 # disable documentation for extended tests
 if [ "$2" != "10" ]; then
-    CONFIGURE_ARG+=" --disable-documentation "
+    CONFIGURE_ARG+=" --disable-documentation"
 fi
 
 # if is cargo installed, let's build and test dracut-cpio
 if command -v cargo > /dev/null; then
-    CONFIGURE_ARG+=" --enable-dracut-cpio "
+    CONFIGURE_ARG+=" --enable-dracut-cpio"
 fi
 
-./configure "$CONFIGURE_ARG"
+# shellcheck disable=SC2086
+./configure $CONFIGURE_ARG
 
 V="${V:=1}"
 
