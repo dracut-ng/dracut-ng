@@ -65,6 +65,7 @@ _<output file>_ **--rebuild**::
 
 **-a, --add** _<list of dracut modules>_::
     Add a space-separated list of dracut modules to the default set of modules.
+    If a module appears in both _add_ and _omit_ lists, it will be omitted.
     This parameter can be specified multiple times.
 +
 [NOTE]
@@ -77,9 +78,11 @@ example:
 ===============================
 
 **--force-add** _<list of dracut modules>_::
-    Force to add a space-separated list of dracut modules to the default set of
-    modules, when -H is specified. This parameter can be specified multiple
-    times.
+    A space-separated list of dracut modules appended to the default set of
+    modules when _host-only_ (`-H`) mode is specified.  Unlike `--add`,
+    `--force-add` will _override_ omittied (`-o`) modules; it is thus useful to
+    ensure that a module is added even if it is specified as omitted in
+    configuration files.  This parameter can be specified multiple times.
 +
 [NOTE]
 ===============================
