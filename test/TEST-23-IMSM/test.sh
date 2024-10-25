@@ -7,7 +7,7 @@ TEST_DESCRIPTION="root filesystem on LVM PV on a isw dmraid"
 #DEBUGFAIL="$DEBUGFAIL udev.log-priority=debug"
 
 test_check() {
-    command -v dmraid &> /dev/null
+    (command -v dmraid && command -v kpartx) &> /dev/null
 }
 
 client_run() {
