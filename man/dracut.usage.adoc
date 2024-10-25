@@ -74,24 +74,28 @@ Some dracut modules are turned off by default and have to be activated manually.
 You can do this by adding the dracut modules to the configuration file
 _/etc/dracut.conf_ or _/etc/dracut.conf.d/myconf.conf_. See *dracut.conf*(5).
 You can also add dracut modules on the command line
-by using the -a or --add option:
+by using the `-a` or `--add` option:
 
 [,console]
 ----
 # dracut --add module initramfs-module.img
 ----
 
-To see a list of available dracut modules, use the --list-modules option:
+To see a list of available dracut modules, use the `--list-modules` option:
 [,console]
 ----
 # dracut --list-modules
 ----
 
+TIP: Omitted modules will _override_ added modules.  `--force-add` can be used
+to add a module in host-only mode if it is specified as omitted (usually via a
+distribution configuration file).
+
 == Omitting dracut Modules
 Sometimes you don't want a dracut module to be included for reasons of speed,
 size or functionality. To do this, either specify the omit_dracutmodules
 variable in the _dracut.conf_ or _/etc/dracut.conf.d/myconf.conf_ configuration
-file (see *dracut.conf*(5)), or use the -o or --omit option
+file (see *dracut.conf*(5)), or use the `-o` or `--omit` option
 on the command line:
 
 [,console]
