@@ -10,6 +10,11 @@ ENV CC=clang
 # dash is not installed to run test suite only with busybox and bash
 # (without requiring dash)
 
+# ntfs-3g and erofs-utils not installed as the corresponding kernel
+# modules are not enabled with linux-virt
+
+# multipath-tools is not installed as it does not work well
+
 RUN apk add --no-cache \
     asciidoc \
     asciidoctor \
@@ -33,7 +38,6 @@ RUN apk add --no-cache \
     dracut \
     e2fsprogs \
     elogind \
-    erofs-utils \
     eudev \
     file \
     findmnt \
@@ -55,11 +59,8 @@ RUN apk add --no-cache \
     make \
     mdadm \
     mtools \
-    multipath-tools \
     musl-fts-dev \
     nbd \
-    ntfs-3g \
-    ntfs-3g-progs \
     nvme-cli \
     open-iscsi \
     openssh \
