@@ -1,4 +1,6 @@
 To create a initramfs image, the most simple command is:
+
+[,console]
 ----
 # dracut
 ----
@@ -12,23 +14,31 @@ or Linux distribution policy.
 
 If the initramfs image already exists, dracut will display an error message, and
 to overwrite the existing image, you have to use the --force option.
+
+[source,console]
 ----
 # dracut --force
 ----
 
 If you want to specify another filename for the resulting image you would issue
 a command like:
+
+[,console]
 ----
 # dracut foobar.img
 ----
 
 To generate an image for a specific kernel version, the command would be:
+
+[,console]
 ----
 # dracut foobar.img 2.6.40-1.rc5.f20
 ----
 
 A shortcut to generate the image at the default location for a specific kernel
 version is:
+
+[,console]
 ----
 # dracut --kver 2.6.40-1.rc5.f20
 ----
@@ -45,11 +55,15 @@ kernel) as a fallback to rescue your system.
 == Inspecting the Contents
 To see the contents of the image created by dracut, you can use the lsinitrd
 tool.
+
+[,console]
 ----
 # lsinitrd | less
 ----
 
 To display the contents of a file in the initramfs also use the lsinitrd tool:
+
+[,console]
 ----
 # lsinitrd -f /etc/ld.so.conf
 include ld.so.conf.d/*.conf
@@ -61,11 +75,14 @@ You can do this by adding the dracut modules to the configuration file
 _/etc/dracut.conf_ or _/etc/dracut.conf.d/myconf.conf_. See *dracut.conf*(5).
 You can also add dracut modules on the command line
 by using the -a or --add option:
+
+[,console]
 ----
 # dracut --add module initramfs-module.img
 ----
 
 To see a list of available dracut modules, use the --list-modules option:
+[,console]
 ----
 # dracut --list-modules
 ----
@@ -76,6 +93,8 @@ size or functionality. To do this, either specify the omit_dracutmodules
 variable in the _dracut.conf_ or _/etc/dracut.conf.d/myconf.conf_ configuration
 file (see *dracut.conf*(5)), or use the -o or --omit option
 on the command line:
+
+[,console]
 ----
 # dracut -o "multipath lvm" no-multipath-lvm.img
 ----
@@ -85,6 +104,8 @@ If you need a special kernel module in the initramfs, which is not
 automatically picked up by dracut, you have the use the --add-drivers option
 on the command line or  the drivers variable in  the _/etc/dracut.conf_
 or _/etc/dracut.conf.d/myconf.conf_ configuration file (see *dracut.conf*(5)):
+
+[,console]
 ----
 # dracut --add-drivers mymod initramfs-with-mymod.img
 ----
@@ -111,6 +132,8 @@ see *dracut.cmdline*(7).
 
 To get a quick start for the suitable kernel command line on your system,
 use the __--print-cmdline__ option:
+
+[,console]
 ----
 # dracut --print-cmdline
  root=UUID=8b8b6f91-95c7-4da2-831b-171e12179081 rootflags=rw,relatime,discard,data=ordered rootfstype=ext4
@@ -139,12 +162,15 @@ root=LABEL=myrootpartitionlabel
 ----
 
 To see all UUIDs or LABELs on your system, do:
+
+[,console]
 ----
 # ls -l /dev/disk/by-uuid
 ----
 
 or
 
+[,console]
 ----
 # ls -l /dev/disk/by-label
 ----
@@ -198,6 +224,8 @@ To add your own files to the initramfs image, you have several possibilities.
 
 The --include option let you specify a source path and a target path.
 For example
+
+[,console]
 ----
 # dracut --include cmdline-preset /etc/cmdline.d/mycmdline.conf initramfs-cmdline-pre.img
 ----
@@ -205,7 +233,7 @@ will create an initramfs image, where the file cmdline-preset will be copied
 inside the initramfs to _/etc/cmdline.d/mycmdline.conf_. --include can only
 be specified once.
 
-
+[,console]
 ----
 # mkdir -p rd.live.overlay/etc/cmdline.d
 # mkdir -p rd.live.overlay/etc/conf.d
@@ -230,7 +258,7 @@ The --install option let you specify several files, which will get installed in
 the initramfs image at the same location, as they are present on initramfs
 creation time.
 
-
+[,console]
 ----
 # dracut --install 'strace fsck.ext4 ssh' initramfs-dbg.img
 ----
@@ -264,7 +292,7 @@ initramfs image.
 
 For example for a NFS image, you would do:
 
-
+[,console]
 ----
 # dracut -m "nfs network base" initramfs-nfs-only.img
 ----
@@ -272,7 +300,7 @@ For example for a NFS image, you would do:
 Then you would boot from this image with your target machine and reduce the size
 once more by creating it on the target machine with the --host-only option:
 
-
+[,console]
 ----
 # dracut -m "nfs network base" --host-only initramfs-nfs-host-only.img
 ----
@@ -325,6 +353,7 @@ following information:
 
 * Please include the output of
 +
+[,console]
 ----
 # /sbin/ifup <interfacename>
 # ip addr show
@@ -380,6 +409,7 @@ http://www.faqs.org/docs/Linux-HOWTO/Remote-Serial-Console-HOWTO.html#CONFIGURE-
 NOTE: You can redirect all non-interactive output to _/dev/kmsg_ and the kernel
 will put it out on the console when it reaches the kernel buffer by doing
 
+[,console]
 ----
 # exec >/dev/kmsg 2>&1 </dev/console
 ----
@@ -442,6 +472,7 @@ LVM Logical volume.
 
 . Inspect your partitions using parted
 +
+[,console]
 ----
 # parted /dev/sda -s p
 Model: ATA HTS541060G9AT00 (scsi)
@@ -456,6 +487,7 @@ Number  Start   End     Size    Type      File system  Flags
 . You recall that your root volume was a LVM logical volume. Scan and activate
 any logical volumes.
 +
+[,console]
 ----
 # lvm vgscan
 # lvm vgchange -ay
@@ -463,6 +495,7 @@ any logical volumes.
 +
 . You should see any logical volumes now using the command blkid:
 +
+[,console]
 ----
 # blkid
 /dev/sda1: UUID="3de247f3-5de4-4a44-afc5-1fe179750cf7" TYPE="ext4"
@@ -476,6 +509,7 @@ any logical volumes.
 block device. Following the guidance disk encryption guidance from the
 Installation Guide, you unlock your encrypted root volume.
 +
+[,console]
 ----
 # UUID=$(cryptsetup luksUUID /dev/mapper/linux-root)
 # cryptsetup luksOpen /dev/mapper/linux-root luks-$UUID
@@ -485,6 +519,7 @@ Key slot 0 unlocked.
 +
 . Next, make a symbolic link to the unlocked root volume
 +
+[,console]
 ----
 # ln -s /dev/mapper/luks-$UUID /dev/root
 ----
@@ -492,6 +527,7 @@ Key slot 0 unlocked.
 . With the root volume available, you may continue booting the system by exiting
 the dracut shell
 +
+[,console]
 ----
 # exit
 ----
@@ -508,6 +544,7 @@ To debug the shutdown sequence on systemd systems, you can _rd.break_
 on _pre-shutdown_ or _shutdown_.
 
 To do this from an already booted system:
+[,console]
 ----
 # mkdir -p /run/initramfs/etc/cmdline.d
 # echo "rd.debug rd.break=pre-shutdown rd.break=shutdown" > /run/initramfs/etc/cmdline.d/debug.conf
