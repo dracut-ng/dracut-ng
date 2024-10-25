@@ -2,6 +2,14 @@
 # This file is part of dracut.
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+check() {
+    if [[ $hostonly ]]; then
+        return 255
+    fi
+
+    return 0
+}
+
 # called by dracut
 install() {
     inst_multiple -o \
