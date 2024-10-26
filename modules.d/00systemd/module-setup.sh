@@ -15,12 +15,13 @@ check() {
 }
 
 installkernel() {
-    hostonly='' instmods autofs4 ipv6 algif_hash hmac sha256 dmi-sysfs
+    hostonly='' instmods autofs4 ipv6 dmi-sysfs
     instmods -s efivarfs
 }
 
 # called by dracut
 install() {
+
     if [[ $prefix == /run/* ]]; then
         dfatal 'systemd does not work with a prefix, which contains "/run"!!'
         exit 1
