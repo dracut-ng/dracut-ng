@@ -15,7 +15,7 @@ check() {
 }
 
 installkernel() {
-    hostonly='' instmods autofs4 ipv6 dmi-sysfs
+    hostonly='' instmods autofs4 ipv6 dmi-sysfs vmw_vsock_virtio_transport
     instmods -s efivarfs
 }
 
