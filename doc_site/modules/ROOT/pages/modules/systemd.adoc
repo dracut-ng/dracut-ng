@@ -26,6 +26,9 @@ These modules would require including a version of systemd into initramfs.
 | lvmmerge
 | Merges lvm snapshots
 
+| lvmthinpool-monitor
+| Monitor LVM thinpool service
+
 | memstrack
 | Includes memstrack for memory usage monitoring
 
