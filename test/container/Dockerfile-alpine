@@ -15,6 +15,8 @@ ENV CC=clang
 
 # multipath-tools is not installed as it does not work well
 
+# cargo is not installed only in this container to test packaging without cargo
+
 RUN apk add --no-cache \
     asciidoc \
     asciidoctor \
@@ -25,7 +27,6 @@ RUN apk add --no-cache \
     btrfs-progs \
     busybox \
     bzip2 \
-    cargo \
     clang \
     coreutils \
     cpio \
