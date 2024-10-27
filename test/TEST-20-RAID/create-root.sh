@@ -1,14 +1,6 @@
 #!/bin/sh
 
 trap 'poweroff -f' EXIT
-
-# don't let udev and this script step on eachother's toes
-for x in 64-lvm.rules 70-mdadm.rules 99-mount-rules; do
-    : > "/etc/udev/rules.d/$x"
-done
-rm -f -- /etc/lvm/lvm.conf
-udevadm control --reload
-udevadm settle
 set -ex
 mdadm --create /dev/md0 --run --auto=yes --level=5 --raid-devices=3 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid[123]
 # wait for the array to finish initializing, otherwise this sometimes fails
