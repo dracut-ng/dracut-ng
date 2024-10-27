@@ -137,10 +137,6 @@ code, there are no specific types or categories for dracut modules.
 | LVM devices
 |
 
-| lvmthinpool-monitor
-| Monitor LVM thinpool service
-|
-
 | masterkey
 | masterkey that can be used to decrypt other keys and https://repology.org/project/keyutils/[keyutils]
 |

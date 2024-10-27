@@ -10,7 +10,7 @@ check() {
 
 # called by dracut
 depends() {
-    echo lvm
+    echo lvm systemd
     return 0
 }
 
