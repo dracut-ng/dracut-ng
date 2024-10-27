@@ -255,17 +255,17 @@ All processes started before should be killed here.
 
 == Testsuite
 
-=== Rootless in a container with podman
+=== In a container
 
 [,console]
 ----
 $ cd <DRACUT_SOURCE>
-$ test/test-podman.sh [TESTS] [CONTAINER]
+$ test/test.sh [CONTAINER] [TESTS]
 ----
 
 with `[CONTAINER]` being one of the
 https://github.com/orgs/dracut-ng/packages[github `dracut-ng` containers],
-e.g. `ghcr.io/dracut-ng/fedora:latest`.
+e.g. `fedora`.
 
 === On bare metal
 
