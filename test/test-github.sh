@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -ex
+set -e
+if [ "$V" = "2" ]; then set -x; fi
 
 [[ -d ${0%/*} ]] && cd "${0%/*}"/../
 
