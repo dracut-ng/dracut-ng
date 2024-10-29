@@ -272,7 +272,7 @@ e.g. only runs the 10, 20 tests inside the default container.
 +
 [,console]
 ----
-$ TESTS="10 11" test.sh
+$ TESTS="10 11" test/test.sh
 ----
 
 Run all tests on `ubuntu:rolling` in quiet mode (V=0):: {empty}
@@ -293,7 +293,7 @@ Run test in extra verbose mode (enabled for debug logging):: {empty}
 +
 [,console]
 ----
-$ V=2 test.sh
+$ V=2 test/test.sh
 ----
 
 === On bare metal
