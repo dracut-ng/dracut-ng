@@ -16,4 +16,3 @@
 /test/*/.testdir
 /test/*/test.log
 build/
-test*.img

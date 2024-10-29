@@ -240,7 +240,6 @@ clean:
 	$(RM) */*~
 	$(RM) */*/*~
 	$(RM) $(manpages:%=%.xml) dracut.xml
-	$(RM) test-*.img
 	$(RM) dracut-*.tar.bz2 dracut-*.tar.xz
 	$(RM) dracut-install src/install/dracut-install $(DRACUT_INSTALL_OBJECTS)
 	$(RM) src/skipcpio/skipcpio $(SKIPCPIO_OBJECTS)
