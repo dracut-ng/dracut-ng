@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# script for integration testing invoked by GitHub Actions
+# wraps configure && make
+# assumes that it runs inside a CI container
+
 set -e
 if [ "$V" = "2" ]; then set -x; fi
 
@@ -18,9 +22,6 @@ fi
 # shellcheck disable=SC2086
 ./configure $CONFIGURE_ARG
 
-V="${V:=1}"
-
 # treat warnings as error
-CFLAGS="-Wextra -Werror" make -j "$(getconf _NPROCESSORS_ONLN)" all
-
-cd test && time make TEST_RUN_ID="$1" TESTS="$2" -k V="$V" check
+# shellcheck disable=SC2086
+CFLAGS="-Wextra -Werror" make TEST_RUN_ID="${TEST_RUN_ID:=$1}" TESTS="${TESTS:=$2}" V="${V:=1}" ${TARGETS:=all check}
