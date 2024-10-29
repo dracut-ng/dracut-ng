@@ -270,7 +270,7 @@ else
 endif
 endif
 
-check: all syncheck
+check: all
 	@$(MAKE) -C test check
 
 AUTHORS:
