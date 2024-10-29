@@ -264,8 +264,37 @@ $ test/test.sh [CONTAINER] [TESTS]
 ----
 
 with `[CONTAINER]` being one of the
-https://github.com/orgs/dracut-ng/packages[github `dracut-ng` containers],
-e.g. `fedora`.
+https://github.com/orgs/dracut-ng/packages[github `dracut-ng` containers].
+Default container is `fedora`.
+
+Run only specific test::
+e.g. only runs the 10, 20 tests inside the default container.
++
+[,console]
+----
+$ TESTS="10 11" test.sh
+----
+
+Run all tests on `ubuntu:rolling` in quiet mode (V=0):: {empty}
++
+[,console]
+----
+$ V=0 test/test.sh ubuntu:rolling
+----
+
+Run test in verbose mode (enabled for GitHub Actions):: {empty}
++
+[,console]
+----
+$ V=1 test/test.sh
+----
+
+Run test in extra verbose mode (enabled for debug logging):: {empty}
++
+[,console]
+----
+$ V=2 test.sh
+----
 
 === On bare metal
 
@@ -279,28 +308,13 @@ Run tests:: {empty}
 $ make clean check
 ----
 
-Run test in verbose mode (enabled for GitHub Actions):: {empty}
-+
-[,console]
-----
-$ make V=1 clean check
-----
-
-Run test in extra verbose mode (enabled for debug logging):: {empty}
-+
-[,console]
-----
-$ make V=2 clean check
-----
-
 Run only specific test::
-e.g. only runs the 01, 20 and 40 tests.
+e.g. only runs the 10, 11 tests.
 +
 [,console]
 ----
-$ make TESTS="01 20 40" clean check
+$ make TESTS="10 11" clean check
 ----
-
 
 Debug a specific test case:: {empty}
 +
