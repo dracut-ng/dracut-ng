@@ -243,8 +243,8 @@ clean:
 	$(RM) test-*.img
 	$(RM) dracut-*.tar.bz2 dracut-*.tar.xz
 	$(RM) dracut-install src/install/dracut-install $(DRACUT_INSTALL_OBJECTS)
-	$(RM) skipcpio/skipcpio $(SKIPCPIO_OBJECTS)
-	$(RM) dracut-util util/util $(UTIL_OBJECTS)
+	$(RM) src/skipcpio/skipcpio $(SKIPCPIO_OBJECTS)
+	$(RM) dracut-util src/util/util $(UTIL_OBJECTS)
 	$(RM) $(manpages)
 	$(RM) dracut.pc
 	$(RM) dracut-cpio src/dracut-cpio/target/release/dracut-cpio*
