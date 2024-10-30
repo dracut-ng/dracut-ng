@@ -7,8 +7,6 @@ check() {
 
 # called by dracut
 depends() {
-    echo -n "net-lib kernel-network-modules "
-
     is_qemu_virtualized && echo -n "qemu-net "
 
     for module in network-manager systemd-networkd connman network-legacy; do

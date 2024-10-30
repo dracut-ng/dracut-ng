@@ -22,7 +22,7 @@ check() {
 depends() {
 
     # This module has external dependency on other module(s).
-    echo kernel-network-modules systemd-sysusers systemd
+    echo net-lib kernel-network-modules systemd-sysusers systemd
     # Return 0 to include the dependent module(s) in the initramfs.
     return 0
 
