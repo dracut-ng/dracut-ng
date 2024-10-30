@@ -27,7 +27,5 @@ install() {
 
     inst_rules "$moddir/11-dm.rules"
 
-    inst_rules "$moddir/59-persistent-storage-dm.rules"
-
     inst_hook shutdown 25 "$moddir/dm-shutdown.sh"
 }
