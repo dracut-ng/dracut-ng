@@ -1,28 +1,49 @@
 ARG DISTRIBUTION=fedora
-FROM registry.fedoraproject.org/${DISTRIBUTION}
+ARG REGISTRY=registry.fedoraproject.org
 
-# Install needed packages for the dracut CI container
-RUN dnf -y install --setopt=install_weak_deps=False \
-    asciidoc \
+FROM ${REGISTRY}/${DISTRIBUTION}
+
+# export ARG
+ARG DISTRIBUTION
+
+RUN \
+if [ "${DISTRIBUTION}" = "centos:stream9" ]; then \
+    dnf config-manager --set-enabled crb; \
+else \
+    dnf -y install --setopt=install_weak_deps=False \
     asciidoctor \
     astyle \
-    bash-completion \
-    bluez \
     btrfs-progs \
     busybox \
+    dash \
+    dmraid \
+    erofs-utils \
+    f2fs-tools \
+    jfsutils \
+    mkosi \
+    nbd \
+    ntfs-3g \
+    ntfsprogs \
+    qemu \
+    qrencode \
+    sbsigntools \
+    scsi-target-utils \
+    systemd-networkd \
+; fi
+
+RUN dnf -y install --setopt=install_weak_deps=False \
+    asciidoc \
+    bash-completion \
+    bluez \
     bzip2 \
     cargo \
     cifs-utils \
     cryptsetup \
-    dash \
     dbus-daemon \
     device-mapper-multipath \
     dhcp-client \
     dhcp-server \
-    dmraid \
     e2fsprogs \
-    erofs-utils \
-    f2fs-tools \
     fcoe-utils \
     fuse3 \
     gcc \
@@ -30,7 +51,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     iproute \
     iputils \
     iscsi-initiator-utils \
-    jfsutils \
     jq \
     kbd \
     kernel \
@@ -42,28 +62,20 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     make \
     mdadm \
     memstrack \
-    mkosi \
-    nbd \
     ndctl \
     NetworkManager \
     nfs-utils \
-    ntfs-3g \
-    ntfsprogs \
     nvme-cli \
     parted \
     pcsc-lite \
     pigz \
     plymouth \
-    qemu \
-    qrencode \
+    qemu-kvm \
     rng-tools \
     rpm-build \
-    sbsigntools \
-    scsi-target-utils \
     squashfs-tools \
     swtpm \
     systemd-boot-unsigned \
-    systemd-networkd \
     systemd-resolved \
     systemd-ukify \
     tar \
@@ -72,8 +84,9 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     xz \
     && dnf -y update && dnf clean all
 
-# discard configurations that enforce an out-of-tree dracut module
-# which would break test automation
-# since this is a distro specific change, lets do it in the container
+# discard configurations that enforce an out-of-tree dracut module breaking CI
+# CentOS Stream ships only qemu-kvm, but it disables the KVM accel when it's not available
 RUN \
-  rm -rf /usr/lib/dracut/dracut.conf.d/50-nss-softokn.conf
+    rm -rf /usr/lib/dracut/dracut.conf.d/50-nss-softokn.conf && \
+    [[ -e /usr/bin/qemu-kvm ]] || ln -sf /usr/libexec/qemu-kvm /usr/bin/qemu-kvm && \
+    [[ -e /usr/bin/qemu-system-$(uname -m) ]] || ln -sv /usr/libexec/qemu-kvm /usr/bin/qemu-system-$(uname -m)
