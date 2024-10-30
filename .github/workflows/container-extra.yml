@@ -27,17 +27,18 @@ jobs:
         name: ${{ matrix.config.tag }} on ${{ matrix.config.platform }}
         runs-on: ubuntu-latest
         concurrency:
-            group: amd64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.dockerfile }}
+            group: amd64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.tag }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
             matrix:
                 config:
                     - { dockerfile: 'Dockerfile-debian', tag: 'debian:sid',     platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-fedora', tag: 'fedora:rawhide', platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-ubuntu', tag: 'ubuntu:rolling', platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-alpine', tag: 'alpine:edge',    platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:latest',  platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-fedora', tag: 'fedora:rawhide', platform: 'linux/amd64', registry: 'registry.fedoraproject.org' }
+                    - { dockerfile: 'Dockerfile-fedora', tag: 'centos:stream9', platform: 'linux/amd64', registry: 'quay.io/centos' }
         steps:
             -   name: Check out the repo
                 uses: actions/checkout@v4
@@ -60,6 +61,7 @@ jobs:
                     platforms: ${{ matrix.config.platform }}
                     build-args: |
                         DISTRIBUTION=${{ matrix.config.tag }}
+                        REGISTRY=${{ matrix.config.registry }}
 
     arm64:
         if: github.repository == 'dracut-ng/dracut-ng' || vars.CONTAINER == 'enabled'
