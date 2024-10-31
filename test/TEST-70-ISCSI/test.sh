@@ -122,6 +122,10 @@ test_run() {
 }
 
 test_check() {
+    if ! type -p dhclient &> /dev/null; then
+        echo "Test needs dhclient for server networking... Skipping"
+        return 1
+    fi
     if ! command -v tgtd &> /dev/null || ! command -v tgtadm &> /dev/null; then
         echo "Need tgtd and tgtadm from scsi-target-utils"
         return 1

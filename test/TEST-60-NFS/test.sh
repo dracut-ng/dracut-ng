@@ -4,6 +4,11 @@
 TEST_DESCRIPTION="root filesystem on NFS with $USE_NETWORK"
 
 test_check() {
+    if ! type -p dhclient &> /dev/null; then
+        echo "Test needs dhclient for server networking... Skipping"
+        return 1
+    fi
+
     command -v exportfs &> /dev/null
 }
 

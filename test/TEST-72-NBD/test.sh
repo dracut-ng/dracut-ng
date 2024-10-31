@@ -9,6 +9,11 @@ TEST_DESCRIPTION="root filesystem on NBD with $USE_NETWORK"
 #SERIAL="tcp:127.0.0.1:9999"
 
 test_check() {
+    if ! type -p dhclient &> /dev/null; then
+        echo "Test needs dhclient for server networking... Skipping"
+        return 1
+    fi
+
     if ! type -p nbd-server &> /dev/null; then
         echo "Test needs nbd-server... Skipping"
         return 1
