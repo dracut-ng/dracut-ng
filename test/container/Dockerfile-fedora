@@ -11,7 +11,6 @@ if [[ "${DISTRIBUTION}" =~ "centos:" ]]; then \
     dnf config-manager --set-enabled crb; \
 else \
     dnf -y install --setopt=install_weak_deps=False \
-    asciidoctor \
     btrfs-progs \
     busybox \
     dhcp-client \
