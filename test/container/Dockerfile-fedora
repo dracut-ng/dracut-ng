@@ -7,9 +7,11 @@ FROM ${REGISTRY}/${DISTRIBUTION}
 ARG DISTRIBUTION
 
 RUN \
-if [[ "${DISTRIBUTION}" =~ "centos:" ]]; then \
     dnf config-manager --set-enabled crb; \
-else \
+    dnf -y install epel-release epel-release-next
+
+
+RUN \
     dnf -y install --setopt=install_weak_deps=False \
     asciidoctor \
     btrfs-progs \
@@ -23,8 +25,7 @@ else \
     qrencode \
     sbsigntools \
     scsi-target-utils \
-    systemd-networkd \
-; fi
+    systemd-networkd
 
 RUN dnf -y install --setopt=install_weak_deps=False \
     asciidoc \
