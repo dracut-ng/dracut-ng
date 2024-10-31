@@ -7,13 +7,15 @@ FROM ${REGISTRY}/${DISTRIBUTION}
 ARG DISTRIBUTION
 
 RUN \
-if [ "${DISTRIBUTION}" = "centos:stream9" ]; then \
+if [[ "${DISTRIBUTION}" =~ "centos:" ]]; then \
     dnf config-manager --set-enabled crb; \
 else \
     dnf -y install --setopt=install_weak_deps=False \
     asciidoctor \
     btrfs-progs \
     busybox \
+    dhcp-client \
+    dhcp-server \
     dmraid \
     erofs-utils \
     f2fs-tools \
@@ -39,8 +41,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     cryptsetup \
     dbus-daemon \
     device-mapper-multipath \
-    dhcp-client \
-    dhcp-server \
     e2fsprogs \
     fcoe-utils \
     fuse3 \
