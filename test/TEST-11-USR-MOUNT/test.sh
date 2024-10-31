@@ -6,6 +6,13 @@ TEST_DESCRIPTION="root filesystem on a btrfs filesystem with /usr subvolume"
 # Uncomment this to debug failures
 #DEBUGFAIL="rd.shell rd.break"
 
+test_check() {
+    if ! type -p mkfs.btrfs &> /dev/null; then
+        echo "Test needs mkfs.btrfs.. Skipping"
+        return 1
+    fi
+}
+
 client_run() {
     local test_name="$1"
     shift
