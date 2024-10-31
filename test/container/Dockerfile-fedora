@@ -72,7 +72,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     plymouth \
     qemu-kvm \
     rng-tools \
-    rpm-build \
     squashfs-tools \
     swtpm \
     systemd-boot-unsigned \
