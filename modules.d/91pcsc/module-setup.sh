@@ -51,7 +51,8 @@ install() {
         {"tls/$_arch/",tls/,"$_arch/",}"pcsc/drivers/ifd-ccid.bundle/Contents/Info.plist" \
         {"tls/$_arch/",tls/,"$_arch/",}"pcsc/drivers/ifd-ccid.bundle/Contents/Linux/libccid.so" \
         {"tls/$_arch/",tls/,"$_arch/",}"pcsc/drivers/serial/libccidtwin.so" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libpcsclite.so.*"
+        {"tls/$_arch/",tls/,"$_arch/",}"libpcsclite.so.*" \
+        {"tls/$_arch/",tls/,"$_arch/",}"libpcsclite_real.so.*"
 
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
