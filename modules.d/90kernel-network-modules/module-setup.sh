@@ -6,6 +6,11 @@ check() {
 }
 
 # called by dracut
+depends() {
+    is_qemu_virtualized && echo -n "qemu-net "
+}
+
+# called by dracut
 installkernel() {
     # Include wired net drivers, excluding wireless
     local _arch=${DRACUT_ARCH:-$(uname -m)}
