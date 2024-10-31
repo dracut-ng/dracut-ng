@@ -19,7 +19,6 @@ ENV CC=clang
 
 RUN apk add --no-cache \
     asciidoc \
-    asciidoctor \
     bash \
     binutils \
     blkid \

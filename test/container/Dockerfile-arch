@@ -5,7 +5,6 @@ ENV TEST_FSTYPE=xfs
 
 RUN pacman --noconfirm -Syu \
     asciidoc \
-    asciidoctor \
     base-devel \
     bluez \
     btrfs-progs \
