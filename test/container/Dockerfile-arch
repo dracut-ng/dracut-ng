@@ -6,7 +6,6 @@ ENV TEST_FSTYPE=xfs
 RUN pacman --noconfirm -Syu \
     asciidoc \
     asciidoctor \
-    astyle \
     base-devel \
     bluez \
     btrfs-progs \
@@ -15,7 +14,6 @@ RUN pacman --noconfirm -Syu \
     cifs-utils \
     connman \
     cpio \
-    dash \
     dhclient \
     dhcp \
     dmraid \

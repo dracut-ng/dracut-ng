@@ -11,7 +11,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     bzip2 \
     cargo \
     cryptsetup \
-    dash \
     dbus-broker \
     dhcp-client \
     dhcp-server \
