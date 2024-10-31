@@ -12,10 +12,8 @@ if [ "${DISTRIBUTION}" = "centos:stream9" ]; then \
 else \
     dnf -y install --setopt=install_weak_deps=False \
     asciidoctor \
-    astyle \
     btrfs-progs \
     busybox \
-    dash \
     dmraid \
     erofs-utils \
     f2fs-tools \

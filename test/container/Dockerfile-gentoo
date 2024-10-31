@@ -34,7 +34,6 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     app-emulation/qemu \
     app-misc/jq \
     app-portage/gentoolkit \
-    app-shells/dash \
     app-text/asciidoc \
     app-text/docbook-xml-dtd \
     app-text/docbook-xsl-stylesheets \
