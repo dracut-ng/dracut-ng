@@ -38,7 +38,7 @@ jobs:
                     - { dockerfile: 'Dockerfile-alpine', tag: 'alpine:edge',    platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:latest',  platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-fedora', tag: 'fedora:rawhide', platform: 'linux/amd64', registry: 'registry.fedoraproject.org' }
-                    - { dockerfile: 'Dockerfile-fedora', tag: 'centos:stream9', platform: 'linux/amd64', registry: 'quay.io/centos' }
+                    - { dockerfile: 'Dockerfile-fedora', tag: 'centos:stream10-development', platform: 'linux/amd64', registry: 'quay.io/centos' }
         steps:
             -   name: Check out the repo
                 uses: actions/checkout@v4
