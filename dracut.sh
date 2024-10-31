@@ -35,6 +35,19 @@ readonly dracut_cmd=$(readlink -f "$0")
 
 set -o pipefail
 
+# below we sometimes cd, which causes problems if we're building an UKI
+# and relative paths are passed on to us. Store the pwd before we do anything.
+pwd=$(pwd)
+path_rel_to_abs() {
+    for var in "$@"; do
+        if [[ $var == /* ]]; then
+            echo "$var"
+        else
+            echo "$pwd/$var"
+        fi
+    done
+}
+
 usage() {
     [[ $sysroot_l ]] && dracutsysrootdir="$sysroot_l"
     [[ $dracutbasedir ]] || dracutbasedir="$dracutsysrootdir"/usr/lib/dracut
@@ -1095,9 +1108,9 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $reproducible_l ]] && reproducible="$reproducible_l"
 [[ $loginstall_l ]] && loginstall="$loginstall_l"
 [[ $uefi_l ]] && uefi=$uefi_l
-[[ $uefi_stub_l ]] && uefi_stub="$uefi_stub_l"
-[[ $uefi_splash_image_l ]] && uefi_splash_image="$uefi_splash_image_l"
-[[ $kernel_image_l ]] && kernel_image="$kernel_image_l"
+[[ $uefi_stub_l ]] && uefi_stub=$(path_rel_to_abs "$uefi_stub_l")
+[[ $uefi_splash_image_l ]] && uefi_splash_image=$(path_rel_to_abs "$uefi_splash_image_l")
+[[ $kernel_image_l ]] && kernel_image=$(path_rel_to_abs "$kernel_image_l")
 [[ $sbat_l ]] && sbat="$sbat_l"
 [[ $machine_id_l ]] && machine_id="$machine_id_l"
 
