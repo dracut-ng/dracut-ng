@@ -22,7 +22,7 @@ else \
     nbd \
     ntfs-3g \
     ntfsprogs \
-    qemu \
+    /usr/bin/qemu-system-$(uname -m) \
     qrencode \
     sbsigntools \
     scsi-target-utils \
