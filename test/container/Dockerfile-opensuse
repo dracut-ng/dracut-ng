@@ -41,7 +41,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     python3-pefile \
     qemu-kvm \
     rng-tools \
-    rpm-build \
     ruby3.3-rubygem-asciidoctor \
     sbsigntools \
     squashfs \
