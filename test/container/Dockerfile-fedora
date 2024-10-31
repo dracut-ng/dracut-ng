@@ -17,13 +17,8 @@ else \
     dhcp-client \
     dhcp-server \
     dmraid \
-    erofs-utils \
-    f2fs-tools \
-    jfsutils \
     mkosi \
     nbd \
-    ntfs-3g \
-    ntfsprogs \
     /usr/bin/qemu-system-$(uname -m) \
     qrencode \
     sbsigntools \
@@ -42,6 +37,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     dbus-daemon \
     device-mapper-multipath \
     e2fsprogs \
+    erofs-utils \
     fcoe-utils \
     fuse3 \
     gcc \
