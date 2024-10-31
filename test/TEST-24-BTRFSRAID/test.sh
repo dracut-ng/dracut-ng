@@ -2,6 +2,13 @@
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on multiple device btrfs"
 
+test_check() {
+    if ! type -p mkfs.btrfs &> /dev/null; then
+        echo "Test needs mkfs.btrfs.. Skipping"
+        return 1
+    fi
+}
+
 # Uncomment this to debug failures
 #DEBUGFAIL="rd.shell"
 test_run() {
