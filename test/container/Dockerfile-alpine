@@ -1,7 +1,7 @@
 ARG DISTRIBUTION=alpine
 FROM docker.io/${DISTRIBUTION}
 
-# prefer running tests with clang
+# run tests with clang
 ENV CC=clang
 
 # ovmf is not installed as systemd-boot-efistub is not available
@@ -22,7 +22,6 @@ RUN apk add --no-cache \
     bash \
     binutils \
     blkid \
-    bluez \
     btrfs-progs \
     busybox \
     bzip2 \
@@ -42,7 +41,6 @@ RUN apk add --no-cache \
     file \
     findmnt \
     f2fs-tools \
-    git \
     gpg \
     grep \
     iputils \

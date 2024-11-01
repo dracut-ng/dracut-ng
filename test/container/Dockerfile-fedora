@@ -40,7 +40,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     fcoe-utils \
     fuse3 \
     gcc \
-    git \
     iproute \
     iputils \
     iscsi-initiator-utils \
