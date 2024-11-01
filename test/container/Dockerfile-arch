@@ -19,7 +19,6 @@ RUN pacman --noconfirm -Syu \
     elfutils \
     erofs-utils \
     f2fs-tools \
-    git \
     glibc \
     jfsutils \
     jq \

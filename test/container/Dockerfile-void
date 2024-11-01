@@ -2,15 +2,11 @@ FROM ghcr.io/void-linux/void-glibc-full
 
 RUN xbps-install -Syu xbps && xbps-install -yu \
     asciidoc \
-    base-devel \
     bash \
     binutils \
-    bluez \
     btrfs-progs \
-    busybox \
     cargo \
     cifs-utils \
-    connman \
     cpio \
     cryptsetup \
     curl \
@@ -25,9 +21,10 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     erofs-utils \
     eudev \
     f2fs-tools \
-    git \
+    gcc \
     glibc \
     gnupg \
+    iproute2 \
     iputils \
     jfsutils \
     jq \
@@ -40,7 +37,6 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     mdadm \
     mtools \
     nbd \
-    NetworkManager \
     nfs-utils \
     ntfs-3g \
     nvme-cli \
@@ -48,9 +44,9 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     openssh \
     parted \
     pigz \
+    pkg-config \
     plymouth \
     qemu-system-amd64 \
-    rng-tools \
     sbsigntool \
     squashfs-tools \
     swtpm \
