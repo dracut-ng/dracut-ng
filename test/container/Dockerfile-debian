@@ -82,6 +82,7 @@ RUN \
     systemd-container \
     systemd-coredump \
     systemd-resolved \
+    systemd-sysv \
     systemd-timesyncd \
     tgt \
     thin-provisioning-tools \

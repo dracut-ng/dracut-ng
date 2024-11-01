@@ -83,6 +83,7 @@ RUN \
     systemd-container \
     systemd-coredump \
     systemd-resolved \
+    systemd-sysv \
     systemd-timesyncd \
     systemd-ukify \
     tgt \
