@@ -4,18 +4,21 @@ FROM docker.io/${DISTRIBUTION}
 # export ARG
 ARG DISTRIBUTION
 
-# dmraid is no longer installed
-# see https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1056944
+# prefer running tests in verbose mode
+ENV V=2
 
-# Install needed packages for the dracut CI container
+# dmraid is no longer maintained. See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1056944
+
 # Install dracut as a linux-initramfs-tool provider so that the default initramfs-tool package does not get installed
 RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --no-install-recommends dracut
 
 # extra packages for sid
 RUN if [ "$DISTRIBUTION" = "debian:sid" ] ; then \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
+    network-manager \
     systemd-cryptsetup \
     systemd-repart \
+    systemd-ukify \
     ; fi
 
 RUN \
@@ -58,7 +61,6 @@ RUN \
     multipath-tools \
     nbd-client \
     nbd-server \
-    network-manager \
     nfs-kernel-server \
     ntfs-3g \
     nvme-cli \
@@ -69,7 +71,7 @@ RUN \
     pcscd \
     pigz \
     pkg-config \
-    plymouth \
+    plymouth-themes \
     procps \
     qemu-kvm \
     rng-tools5 \
@@ -86,4 +88,5 @@ RUN \
     tpm2-tools \
     xfsprogs \
     zstd \
-    && apt-get clean
+    && apt-get clean \
+    && chmod a+r /boot/vmlinu*

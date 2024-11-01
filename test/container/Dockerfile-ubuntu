@@ -7,9 +7,12 @@ ARG DISTRIBUTION
 # prefer running tests in verbose mode
 ENV V=2
 
-# Install needed packages for the dracut CI container
+# dmraid is no longer maintained. See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1056944
+
 # The Linux kernel is only readable by root. See https://launchpad.net/bugs/759725
-RUN apt-get update -y -qq && apt-get upgrade -y -qq
+
+# Install dracut as a linux-initramfs-tool provider so that the default initramfs-tool package does not get installed
+RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --no-install-recommends dracut
 
 # extra packages for rolling
 RUN if [ "${DISTRIBUTION}" = "ubuntu:rolling" ] ; then \
