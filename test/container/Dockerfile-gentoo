@@ -1,3 +1,14 @@
+# Test coverage provided by this container:
+# - systemd-networkd
+# - bash
+
+# Not installed
+# - NetworkManager (to increase coverage)
+# - busybox (to increase coverage)
+# - dash (to increase coverage)
+# - rng-tools (to increase coverage)
+# - ntfs3g (to keep container small)
+
 FROM docker.io/gentoo/portage:latest AS portage
 
 FROM docker.io/gentoo/stage3:systemd
@@ -24,11 +35,9 @@ RUN echo 'sys-fs/lvm2 thin lvm' >> /etc/portage/package.use/lvm2
 RUN emerge --quiet --update --deep --newuse --autounmask-continue=y --with-bdeps=y @world
 
 RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
-    app-admin/rsyslog \
     app-alternatives/bc \
     app-alternatives/cpio \
     app-arch/cpio \
-    app-crypt/sbsigntools \
     app-crypt/swtpm \
     app-crypt/tpm2-tools \
     app-emulation/qemu \
@@ -41,14 +50,10 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     dev-lang/rust-bin \
     dev-libs/libxslt \
     dev-libs/openssl \
-    net-fs/cifs-utils \
     net-fs/nfs-utils \
     net-misc/dhcp \
     net-wireless/bluez \
-    sys-apps/biosdevname \
-    sys-apps/busybox \
     sys-apps/nvme-cli \
-    sys-apps/rng-tools \
     sys-apps/systemd \
     sys-block/nbd \
     sys-block/open-iscsi \
@@ -60,13 +65,9 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     sys-fs/btrfs-progs \
     sys-fs/cryptsetup \
     sys-fs/dmraid \
-    sys-fs/f2fs-tools \
-    sys-fs/jfsutils \
     sys-fs/mdadm \
     sys-fs/multipath-tools \
-    sys-fs/ntfs3g \
     sys-fs/squashfs-tools \
-    sys-fs/xfsprogs \
     sys-kernel/gentoo-kernel-bin \
     sys-libs/glibc \
     sys-libs/libxcrypt \

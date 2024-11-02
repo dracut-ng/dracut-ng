@@ -1,3 +1,15 @@
+# Test coverage provided by this container:
+# - arm64
+# - hostonly
+# - memstrack
+# - ndctl (for nvdimm)
+# - fcoe-utils (Fibre Channel over Ethernet)
+# - curl (url-lib)
+# - cifs-utils (cifs)
+# - openssh (ssh-client)
+# - rsyslog (syslog)
+# - libkcapi-hmaccalc (fido)
+
 ARG DISTRIBUTION=fedora
 ARG REGISTRY=registry.fedoraproject.org
 
@@ -16,11 +28,8 @@ else \
     dhcp-client \
     dhcp-server \
     dmraid \
-    mkosi \
     nbd \
     /usr/bin/qemu-system-$(uname -m) \
-    qrencode \
-    sbsigntools \
     scsi-target-utils \
     systemd-networkd \
 ; fi
@@ -29,7 +38,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     asciidoc \
     bash-completion \
     bluez \
-    bzip2 \
     cargo \
     cifs-utils \
     cryptsetup \
@@ -50,7 +58,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     libkcapi-hmaccalc \
     libselinux-utils \
     lvm2 \
-    lzop \
     make \
     mdadm \
     memstrack \
@@ -60,19 +67,16 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     nvme-cli \
     parted \
     pcsc-lite \
-    pigz \
     plymouth \
     qemu-kvm \
     rng-tools \
+    rsyslog \
     squashfs-tools \
     swtpm \
     systemd-boot-unsigned \
     systemd-resolved \
     systemd-ukify \
-    tar \
     tpm2-tools \
-    xfsprogs \
-    xz \
     && dnf -y update && dnf clean all
 
 # discard configurations that enforce an out-of-tree dracut module breaking CI

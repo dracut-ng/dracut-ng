@@ -1,3 +1,15 @@
+# Test coverage provided by this container:
+# - arm64
+# - dash default shell (instead of bash)
+# - pigz compression
+# - verbose logging for tests
+
+# Not installed
+# - dmraid (no longer maintained, https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1056944)
+# - plymouth-themes (not yet working with dracut, https://bugs.launchpad.net/ubuntu/+source/dracut/+bug/1596220)
+# - iscsiuio, open-iscsi (not yet working with dracut, https://bugs.launchpad.net/ubuntu/+source/open-iscsi/+bug/2072484)
+# - busybox-static
+
 ARG DISTRIBUTION=ubuntu
 FROM docker.io/${DISTRIBUTION}
 
@@ -6,10 +18,6 @@ ARG DISTRIBUTION
 
 # prefer running tests in verbose mode
 ENV V=2
-
-# dmraid is no longer maintained. See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1056944
-
-# The Linux kernel is only readable by root. See https://launchpad.net/bugs/759725
 
 # Install dracut as a linux-initramfs-tool provider so that the default initramfs-tool package does not get installed
 RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --no-install-recommends dracut
@@ -26,21 +34,15 @@ RUN \
     asciidoc \
     bluez \
     btrfs-progs \
-    busybox-static \
-    bzip2 \
     ca-certificates \
     cargo \
-    cifs-utils \
     console-setup \
     cpio \
     cryptsetup \
-    curl \
     docbook \
     docbook-xml \
     docbook-xsl \
     erofs-utils \
-    f2fs-tools \
-    fcoe-utils \
     fdisk \
     file \
     gcc \
@@ -49,8 +51,6 @@ RUN \
     iputils-ping \
     isc-dhcp-client \
     isc-dhcp-server \
-    iscsiuio \
-    jfsutils \
     jq \
     kmod \
     libkmod-dev \
@@ -65,18 +65,14 @@ RUN \
     nfs-kernel-server \
     ntfs-3g \
     nvme-cli \
-    open-iscsi \
-    openssh-client \
     ovmf \
     parted \
     pcscd \
     pigz \
     pkg-config \
-    plymouth-themes \
     procps \
     qemu-kvm \
     rng-tools5 \
-    sbsigntool \
     squashfs-tools \
     swtpm \
     systemd-boot-efi \
@@ -89,7 +85,5 @@ RUN \
     tgt \
     thin-provisioning-tools \
     tpm2-tools \
-    xfsprogs \
-    zstd \
     && apt-get clean \
     && chmod a+r /boot/vmlinu*

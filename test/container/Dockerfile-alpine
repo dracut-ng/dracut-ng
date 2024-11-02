@@ -1,21 +1,26 @@
+# Test coverage provided by this container:
+# - hostonly
+# - musl (instead of glibc)
+# - openrc (instead of systemd)
+# - eudev (instead of systemd-udev)
+# - elogind (instead of logind)
+# - busybox default shell (no dash installed)
+# - lzma compression (provided by busybox)
+# - clang
+
+# Not installed
+# - cargo (to increase coverage)
+# - dash (to increase coverage)
+# - ntfs-3g (not enabled with linux-virt)
+# - erofs-utils (not enabled with linux-virt)
+# - multipath-tools (does not work well)
+# - ovmf (systemd-boot-efistub is not available)
+# - networkmanager (does not work with dracut)
+
 ARG DISTRIBUTION=alpine
 FROM docker.io/${DISTRIBUTION}
 
-# run tests with clang
 ENV CC=clang
-
-# ovmf is not installed as systemd-boot-efistub is not available
-# see https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/61369
-
-# dash is not installed to run test suite only with busybox and bash
-# (without requiring dash)
-
-# ntfs-3g and erofs-utils not installed as the corresponding kernel
-# modules are not enabled with linux-virt
-
-# multipath-tools is not installed as it does not work well
-
-# cargo is not installed only in this container to test packaging without cargo
 
 RUN apk add --no-cache \
     asciidoc \
@@ -23,28 +28,22 @@ RUN apk add --no-cache \
     binutils \
     blkid \
     btrfs-progs \
-    busybox \
-    bzip2 \
     clang \
     coreutils \
     cpio \
     cryptsetup \
-    curl \
     device-mapper \
     dhclient \
     dmraid \
-    dosfstools \
     dracut \
     e2fsprogs \
     elogind \
     eudev \
     file \
     findmnt \
-    f2fs-tools \
     gpg \
     grep \
     iputils \
-    jfsutils \
     jq \
     kbd \
     keyutils \
@@ -56,15 +55,10 @@ RUN apk add --no-cache \
     lvm2 \
     make \
     mdadm \
-    mtools \
     musl-fts-dev \
-    nbd \
     nvme-cli \
-    open-iscsi \
-    openssh \
     parted \
     partx \
-    pigz \
     plymouth-themes \
     procps \
     qemu-img \
@@ -73,10 +67,7 @@ RUN apk add --no-cache \
     sed \
     sfdisk \
     squashfs-tools \
-    swtpm \
-    util-linux-misc \
-    xfsprogs \
-    xz
+    util-linux-misc
 
 # workaround for --enable-split-usr
 # see https://github.com/eudev-project/eudev/pull/246
