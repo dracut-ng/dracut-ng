@@ -1,3 +1,10 @@
+# Test coverage provided by this container:
+# - dash default shell (instead of bash)
+# - runit (instead of systemd)
+# - eudev (instead of systemd-udev)
+# - elogind (instead of logind)
+# - uki (without systemd)
+
 FROM ghcr.io/void-linux/void-glibc-full
 
 RUN xbps-install -Syu xbps && xbps-install -yu \
@@ -6,54 +13,36 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     binutils \
     btrfs-progs \
     cargo \
-    cifs-utils \
     cpio \
     cryptsetup \
-    curl \
     dhclient \
     dhcp \
     dmraid \
-    dosfstools \
     e2fsprogs \
     edk2-ovmf \
     elfutils \
     elogind \
     erofs-utils \
     eudev \
-    f2fs-tools \
     gcc \
-    glibc \
     gnupg \
     iproute2 \
     iputils \
-    jfsutils \
     jq \
     kbd \
     libkmod-devel \
     linux \
     lvm2 \
-    lzop \
     make \
     mdadm \
-    mtools \
-    nbd \
     nfs-utils \
-    ntfs-3g \
     nvme-cli \
-    open-iscsi \
-    openssh \
     parted \
-    pigz \
     pkg-config \
     plymouth \
     qemu-system-amd64 \
-    sbsigntool \
     squashfs-tools \
-    swtpm \
     systemd-boot-efistub \
     tgt \
-    tpm2-tools \
     ukify \
-    xfsprogs \
-    xz \
     && rm -rf /var/cache/xbps

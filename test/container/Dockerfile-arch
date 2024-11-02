@@ -1,3 +1,15 @@
+# Test coverage provided by this container:
+# - xfs, ntfs-3g
+# - mkinitcpio, mkosi
+# - sbsigntools
+# - qrencode (systemd-bsod)
+
+# Not installed
+# - busybox (no need, tested elsewhere)
+# - cifs-utils (no need, tested elsewhere)
+# - openssh (no need, tested elsewhere)
+# - rng-tools (does not start, https://github.com/dracut-ng/dracut-ng/pull/290#issuecomment-2138184351)
+
 FROM docker.io/archlinux
 
 # prefer running tests with xfs
@@ -5,26 +17,21 @@ ENV TEST_FSTYPE=xfs
 
 RUN pacman --noconfirm -Syu \
     asciidoc \
-    base-devel \
     bluez \
     btrfs-progs \
     busybox \
     cargo \
-    cifs-utils \
-    connman \
     cpio \
     dhclient \
     dhcp \
     dmraid \
     elfutils \
     erofs-utils \
-    f2fs-tools \
-    glibc \
-    jfsutils \
+    gcc \
     jq \
     linux \
     lvm2 \
-    lzop \
+    make \
     mdadm \
     mkosi \
     multipath-tools \
@@ -35,13 +42,11 @@ RUN pacman --noconfirm -Syu \
     ntfs-3g \
     nvme-cli \
     open-iscsi \
-    openssh \
     parted \
-    pigz \
+    pkgconf \
     plymouth \
     qemu \
     qrencode \
-    rng-tools \
     sbsigntools \
     squashfs-tools \
     swtpm \

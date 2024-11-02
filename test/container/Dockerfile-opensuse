@@ -1,3 +1,7 @@
+# Test coverage provided by this container:
+# - network-legacy
+# - hmaccalc (fido)
+
 FROM registry.opensuse.org/opensuse/tumbleweed-dnf:latest
 
 # prefer running tests with btrfs
@@ -8,7 +12,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     asciidoc \
     bash-completion \
     btrfsprogs \
-    bzip2 \
     cargo \
     cryptsetup \
     dbus-broker \
@@ -28,28 +31,23 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     lvm2 \
     make \
     mdadm \
-    mkosi \
     nbd \
     NetworkManager \
     nfs-utils \
     open-iscsi \
     parted \
-    pigz \
     procps \
     python3-pefile \
     qemu-kvm \
     rng-tools \
-    sbsigntools \
     squashfs \
     swtpm \
     systemd-boot \
     systemd-experimental \
-    tar \
     tgt \
     tpm2.0-tools \
     /usr/bin/qemu-system-$(uname -m) \
     util-linux-systemd \
-    xz \
     && dnf -y update && dnf clean all
 
 # configuration in the package is not compatible
