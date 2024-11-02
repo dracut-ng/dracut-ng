@@ -1,6 +1,7 @@
 # Test coverage provided by this container:
 # - arm64
 # - dash default shell (instead of bash)
+# - mawk (instead of gawk)
 # - pigz compression
 # - verbose logging for tests
 
