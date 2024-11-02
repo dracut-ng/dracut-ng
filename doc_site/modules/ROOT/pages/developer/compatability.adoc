@@ -28,42 +28,18 @@ time-to-time between dracut releases (e.g. as files gets added and removed).
 Dependencies for the generated initramfs:
 
 * glibc or musl
-* shell (bash and/or dash). Some features are only supported with bash.
-* udev. Forks of systemd's udev and related tools are unsupported.
-* switch_root, mount, blkid, kmod
+* shell (bash, dash, busybox). Some features are only supported with bash.
+* udev or eudev
+* systemd is an optional (not required) dependency
 
-== Minimal versions of notable dependencies in test containers
-
-[cols="1,1"]
-|===
-|udevadm | v251
-|systemd | v252
-|linux-kernel | v6.1
-|bash    | v5.1
-|eudev   | 3.2.14
-|busybox | 1.34
-|qemu    | 7.2
-|===
-
-== Max versions of notable dependencies in test containers
+== Minimal versions of important dependencies in test containers
 
 [cols="1,1"]
 |===
-|udev, systemd, ukify |  v256
-|linux-kernel | v6.10
-|bash | v5.2
-|===
-
-== Test containers
-
-[cols="1,1"]
-|===
-|arch (rolling) | newest version of systemd, systemd-networkd
-|debian (v12) | arm64 and amd64, deb packages, oldest versions of software
-|fedora (v40) | arm64 and amd64, NetworkManager
-|gentoo (rolling) | systemd-networkd (intentionally no NetworkManager)
-|opensuse (rolling) | network-legacy and NetworkManager
-|ubuntu (v24.04) | deb packages, usually newer than Debian, NetworkManager and systemd-networkd both installed
-|alpine (v3.20) | musl, openrc, eudev
-|void (rolling) | runit, eudev
+|udev/systemd (debian 12) | 252
+|linux-kernel (debian 12) | 6.1
+|bash (debian 12)         | 5.2
+|eudev (alpine/void)      | 3.2.14
+|busybox (alpine)         | 1.36
+|qemu (debian 12)         | 7.2
 |===
