@@ -6,7 +6,13 @@ echo \#buildapi-variable-no-builddir > /dev/null
 prefix=/usr
 
 enable_documentation=yes
-enable_dracut_cpio=no
+
+# if is cargo installed, let's build dracut-cpio
+if command -v cargo > /dev/null; then
+    enable_dracut_cpio=yes
+else
+    enable_dracut_cpio=no
+fi
 
 CC="${CC:-cc}"
 PKG_CONFIG="${PKG_CONFIG:-pkg-config}"
