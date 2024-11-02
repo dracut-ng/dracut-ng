@@ -25,6 +25,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     erofs-utils \
     eudev \
     gcc \
+    glibc \
     gnupg \
     iproute2 \
     iputils \
@@ -43,6 +44,5 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     qemu-system-amd64 \
     squashfs-tools \
     systemd-boot-efistub \
-    tgt \
     ukify \
     && rm -rf /var/cache/xbps
