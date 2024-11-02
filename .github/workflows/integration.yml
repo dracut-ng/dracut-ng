@@ -8,6 +8,9 @@ on:
           - 'doc_site/**'
           - 'man/**'
 
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
 env:
     # set V to 2 when re-running jobs with debug logging enabled
     # see https://docs.github.com/en/actions/monitoring-and-troubleshooting-workflows/troubleshooting-workflows/enabling-debug-logging
