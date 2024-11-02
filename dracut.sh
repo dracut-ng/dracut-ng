@@ -2044,10 +2044,12 @@ if [[ $no_kernel != yes ]]; then
     if [[ $force_drivers ]]; then
         # shellcheck disable=SC2086
         hostonly='' instmods -c $force_drivers
-        rm -f "$initdir"/etc/cmdline.d/20-force_driver.conf
-        for mod in $force_drivers; do
-            echo "rd.driver.pre=$mod" >> "$initdir"/etc/cmdline.d/20-force_drivers.conf
-        done
+        if [[ $kernel_only != yes ]]; then
+            rm -f "$initdir"/etc/cmdline.d/20-force_driver.conf
+            for mod in $force_drivers; do
+                echo "rd.driver.pre=$mod" >> "$initdir"/etc/cmdline.d/20-force_drivers.conf
+            done
+        fi
     fi
     if [[ $filesystems ]]; then
         # shellcheck disable=SC2086
