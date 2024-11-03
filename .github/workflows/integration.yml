@@ -52,15 +52,16 @@ jobs:
 
     # syncheck
     syncheck:
-      name: syncheck
-      runs-on: ubuntu-latest
-      steps:
-        - name: "Checkout Repository"
-          uses: actions/checkout@v4
-        - run: |
-              sudo apt-get update
-              sudo apt-get -y install shellcheck shfmt
-              make syncheck
+        needs: basic
+        name: syncheck
+        runs-on: ubuntu-latest
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v4
+            - run: |
+                  sudo apt-get update
+                  sudo apt-get -y install shellcheck shfmt
+                  make syncheck
 
     extended:
         needs: basic
