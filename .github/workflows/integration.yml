@@ -63,6 +63,35 @@ jobs:
                   sudo apt-get -y install shellcheck shfmt
                   make syncheck
 
+    doc:
+        needs: basic
+        name: doc on ${{ matrix.container }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        concurrency:
+            group: basic-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                container: [
+                        "alpine",
+                        "arch",
+                        "debian",
+                        "fedora",
+                        "gentoo",
+                        "opensuse",
+                        "ubuntu",
+                        "void",
+                ]
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
+        steps:
+            -   name: "Checkout Repository"
+                uses: actions/checkout@v4
+            -   name: doc on "${{ matrix.container }}"
+                run:  TARGETS=all enable_documentation=yes ./test/test-github.sh
+
     extended:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
