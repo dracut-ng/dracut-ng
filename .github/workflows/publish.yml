@@ -1,7 +1,9 @@
 name: Publish to GitHub Pages
 
 on:
-  push:
+  workflow_run:
+    workflows: [Labeler]
+    types: [completed]
     branches: [main]
     paths-ignore:
       - 'modules.d/**'

@@ -1,6 +1,8 @@
-name: "Pull Request Labeler"
+name: "Labeler"
 
-on: pull_request_target
+on:
+    pull_request:
+        branches: [ main ]
 
 jobs:
     triage:
