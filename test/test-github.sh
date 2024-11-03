@@ -9,10 +9,8 @@ if [ "$V" = "2" ]; then set -x; fi
 
 [[ -d ${0%/*} ]] && cd "${0%/*}"/../
 
-# disable documentation for extended tests
-if [ "$2" != "10" ]; then
-    CONFIGURE_ARG+=" --disable-documentation"
-fi
+# disable building documentation by default
+[ -z "$enable_documentation" ] && export enable_documentation=no
 
 # shellcheck disable=SC2086
 ./configure $CONFIGURE_ARG
