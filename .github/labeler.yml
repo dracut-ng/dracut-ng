@@ -8,7 +8,7 @@ github:
 
 docs:
   - changed-files:
-    - any-glob-to-any-file: ['README.*', 'doc_site/*', 'doc_site/**/*', 'doc_site/**/**/*', 'doc_site/**/**/**/*', 'doc_site/**/**/**/**/*']
+    - any-glob-to-any-file: ['antora-playbook.yaml', 'README.*', 'man/*', 'doc_site/*', 'doc_site/**/*', 'doc_site/**/**/*', 'doc_site/**/**/**/*', 'doc_site/**/**/**/**/*']
 
 man:
   - changed-files:

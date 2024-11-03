@@ -2,9 +2,9 @@
 
 dracut-ng is an event driven initramfs infrastructure.
 
+[![distributions](https://repology.org/badge/tiny-repos/dracut.svg)](https://repology.org/project/dracut/versions)
+[![version(s)](https://repology.org/badge/latest-versions/dracut.svg)](https://repology.org/project/dracut/versions)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](https://dracut-ng.github.io/dracut-ng/developer/code_of_conduct.html)
-[![Packaging status](https://repology.org/badge/tiny-repos/dracut.svg)](https://repology.org/project/dracut/versions)
-[![latest packaged version(s)](https://repology.org/badge/latest-versions/dracut.svg)](https://repology.org/project/dracut/versions)
 
 dracut creates an initrd image by copying tools and files from an installed
 system and combining it with dracut modules, usually found in
