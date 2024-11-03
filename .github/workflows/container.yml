@@ -36,7 +36,7 @@ jobs:
                     - { dockerfile: 'Dockerfile-fedora',   tag: 'fedora:latest',   platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-opensuse', tag: 'opensuse:latest', platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-arch',     tag: 'arch:latest',     platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-ubuntu',   tag: 'ubuntu:latest',   platform: 'linux/amd64' }
+                    - { dockerfile: 'Dockerfile-debian',   tag: 'ubuntu:latest',   platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-alpine',   tag: 'alpine:latest',   platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-void',     tag: 'void:latest',     platform: 'linux/amd64' }
         steps:

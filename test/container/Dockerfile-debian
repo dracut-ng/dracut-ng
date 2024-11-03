@@ -23,13 +23,18 @@ ENV V=2
 # Install dracut as a linux-initramfs-tool provider so that the default initramfs-tool package does not get installed
 RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --no-install-recommends dracut
 
-# extra packages for sid
-RUN if [ "$DISTRIBUTION" = "debian:sid" ] ; then \
+# extra packages for sid, ubuntu
+RUN if [ "${DISTRIBUTION}" = "debian:sid" ] || [ "${DISTRIBUTION}" = "ubuntu:latest" ] ; then \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
     network-manager \
+    systemd-ukify \
+    ; fi
+
+# extra packages for sid, rolling
+RUN if [ "$DISTRIBUTION" = "debian:sid" ] || [ "${DISTRIBUTION}" = "ubuntu:rolling" ] ; then \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
     systemd-cryptsetup \
     systemd-repart \
-    systemd-ukify \
     ; fi
 
 RUN \
