@@ -607,9 +607,9 @@ for_each_host_dev_and_slaves_all() {
     local _dev
     local _ret=1
 
-    [[ "${host_devs[*]}" ]] || return 2
+    [[ "${host_devs[*]}" ]] || [[ "${user_devs[*]}" ]] || return 2
 
-    for _dev in "${host_devs[@]}"; do
+    for _dev in "${host_devs[@]}" "${user_devs[@]}"; do
         [[ -b $_dev ]] || continue
         if check_block_and_slaves_all "$_func" "$(get_maj_min "$_dev")"; then
             _ret=0
@@ -622,9 +622,9 @@ for_each_host_dev_and_slaves() {
     local _func="$1"
     local _dev
 
-    [[ "${host_devs[*]}" ]] || return 2
+    [[ "${host_devs[*]}" ]] || [[ "${user_devs[*]}" ]] || return 2
 
-    for _dev in "${host_devs[@]}"; do
+    for _dev in "${host_devs[@]}" "${user_devs[@]}"; do
         [[ -b $_dev ]] || continue
         check_block_and_slaves "$_func" "$(get_maj_min "$_dev")" && return 0
     done
