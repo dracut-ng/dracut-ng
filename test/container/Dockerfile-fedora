@@ -9,6 +9,7 @@
 # - openssh (ssh-client)
 # - rsyslog (syslog)
 # - libkcapi-hmaccalc (fido)
+# - nss-softokn out of tree dracut module
 
 ARG DISTRIBUTION=fedora
 ARG REGISTRY=registry.fedoraproject.org

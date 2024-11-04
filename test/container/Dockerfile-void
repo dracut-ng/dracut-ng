@@ -4,6 +4,7 @@
 # - eudev (instead of systemd-udev)
 # - elogind (instead of logind)
 # - uki (without systemd)
+# - zfs and zfs out of tree dracut module
 
 FROM ghcr.io/void-linux/void-glibc-full
 
@@ -45,4 +46,5 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     squashfs-tools \
     systemd-boot-efistub \
     ukify \
+    zfs \
     && rm -rf /var/cache/xbps
