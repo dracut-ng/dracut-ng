@@ -1,9 +1,8 @@
 name: Lint
 
 on:
-  workflow_run:
-    workflows: [Labeler]
-    types: [completed]
+  pull_request:
+    branches: [ main ]
     paths-ignore:
       - antora-playbook.yaml
       - 'doc_site/**'
@@ -48,7 +47,6 @@ jobs:
           path: ${{ steps.ShellCheck.outputs.sarif }}
 
   lint-c:
-    if: contains(github.event.issue.labels.*.name, 'c')
     runs-on: ubuntu-latest
 
     steps:
