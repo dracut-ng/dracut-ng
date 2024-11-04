@@ -1,6 +1,7 @@
 # Test coverage provided by this container:
 # - network-legacy
 # - hmaccalc (fido)
+# - rdma out of tree dracut module
 
 FROM registry.opensuse.org/opensuse/tumbleweed-dnf:latest
 
@@ -36,6 +37,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     nfs-utils \
     open-iscsi \
     parted \
+    pciutils \
     procps \
     python3-pefile \
     qemu-kvm \

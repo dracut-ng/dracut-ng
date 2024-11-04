@@ -3,6 +3,7 @@
 # - mkinitcpio, mkosi
 # - sbsigntools
 # - qrencode (systemd-bsod)
+# - rdma out of tree dracut module
 
 # Not installed
 # - busybox (no need, tested elsewhere)
@@ -43,6 +44,7 @@ RUN pacman --noconfirm -Syu \
     nvme-cli \
     open-iscsi \
     parted \
+    pciutils \
     pkgconf \
     plymouth \
     qemu \
