@@ -1,8 +1,9 @@
 name: "Labeler"
 
+# runs on pull_request_target instead of pull_request
+# see https://github.com/actions/labeler?tab=readme-ov-file#permissions
 on:
-    pull_request:
-        branches: [ main ]
+    pull_request_target:
 
 jobs:
     triage:
