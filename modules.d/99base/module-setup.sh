@@ -72,7 +72,7 @@ install() {
 
     ## save host_devs which we need bring up
     if [[ $hostonly_cmdline == "yes" ]]; then
-        if [[ -n ${host_devs[*]} ]]; then
+        if [[ -n ${host_devs[*]} ]] || [[ -n ${user_devs[*]} ]]; then
             dracut_need_initqueue
         fi
         if [[ -f $initdir/lib/dracut/need-initqueue ]] || ! dracut_module_included "systemd"; then
@@ -99,6 +99,22 @@ install() {
                     done
 
                     _pdev=$(get_persistent_dev "$_dev")
+
+                    case "$_pdev" in
+                        /dev/?*) wait_for_dev "$_pdev" 0 ;;
+                        *) ;;
+                    esac
+                done
+
+                for _dev in "${user_devs[@]}"; do
+
+                    case "$_dev" in
+                        /dev/?*) wait_for_dev "$_dev" 0 ;;
+                        *) ;;
+                    esac
+
+                    _pdev=$(get_persistent_dev "$_dev")
+                    [[ $_dev == "$_pdev" ]] && continue
 
                     case "$_pdev" in
                         /dev/?*) wait_for_dev "$_pdev" 0 ;;
