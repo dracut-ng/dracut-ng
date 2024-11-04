@@ -38,6 +38,10 @@ skipcpio:
   - changed-files:
     - any-glob-to-any-file: 'src/skipcpio/*'
 
+c:
+  - changed-files:
+    - any-glob-to-any-file: 'src/**/*.c'
+
 modules:
   - changed-files:
     - any-glob-to-any-file: ['modules.d/*', 'modules.d/**/*']
