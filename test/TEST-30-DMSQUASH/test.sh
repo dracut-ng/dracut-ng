@@ -121,13 +121,13 @@ test_setup() {
     declare -a disk_args=()
     declare -i disk_index=0
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 160
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 512
 
     # erofs drive
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs 160
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs 512
 
     # NTFS drive
-    dd if=/dev/zero of="$TESTDIR"/root_ntfs.img bs=1MiB count=160
+    dd if=/dev/zero of="$TESTDIR"/root_ntfs.img bs=1MiB count=512
     qemu_add_drive disk_index disk_args "$TESTDIR"/root_ntfs.img root_ntfs
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
@@ -156,6 +156,7 @@ EOF
         --omit "systemd" \
         --drivers "ntfs3" \
         --install "mkfs.ext4" \
+        -a bash \
         --include /tmp/ntfs3.rules /lib/udev/rules.d/ntfs3.rules \
         "$TESTDIR"/initramfs.testing
 
@@ -164,6 +165,7 @@ EOF
         --add "dmsquash-live-autooverlay qemu" \
         --omit "systemd" \
         --install "mkfs.ext4" \
+        -a bash \
         "$TESTDIR"/initramfs.testing-autooverlay
 }
 

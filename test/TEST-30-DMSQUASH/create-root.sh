@@ -5,7 +5,7 @@ set -e
 
 # create a single partition using 50% of the capacity of the image file created by test_setup() in test.sh
 sfdisk /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root << EOF
-2048,161792
+2048,452688
 EOF
 
 udevadm settle

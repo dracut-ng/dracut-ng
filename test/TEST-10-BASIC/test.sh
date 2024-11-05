@@ -44,7 +44,6 @@ test_setup() {
     # shellcheck disable=SC2046
     "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
-        -i /bin/dd /usr/sbin/dd \
         $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "-I mkfs.${TEST_FSTYPE}"; fi) \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
