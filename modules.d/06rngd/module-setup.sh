@@ -21,6 +21,7 @@
 check() {
     # if there's no rngd binary, no go.
     require_binaries rngd || return 1
+    require_binaries "${systemdsystemunitdir}/rngd.service" || return 1
 
     return 0
 }
