@@ -52,7 +52,7 @@ jobs:
 
     # syncheck
     syncheck:
-        needs: basic
+        needs: extended
         name: syncheck
         runs-on: ubuntu-latest
         steps:
@@ -64,12 +64,12 @@ jobs:
                   make syncheck
 
     doc:
-        needs: basic
+        needs: extended
         name: doc on ${{ matrix.container }}
         runs-on: ubuntu-latest
         timeout-minutes: 10
         concurrency:
-            group: basic-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}
+            group: doc-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
@@ -124,11 +124,41 @@ jobs:
                         "25",
                         "26",
                         "30",
+                        "80",
+                        "81",
+                ]
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            options: '--device=/dev/kvm'
+        steps:
+            -   name: "Checkout Repository"
+                uses: actions/checkout@v4
+            -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+                run: TARGETS='all install cleaninstall check' DRACUT=dracut ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+
+    extended-systemd:
+        needs: basic
+        name: ${{ matrix.test }} on ${{ matrix.container }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        concurrency:
+            group: extended-systemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                container: [
+                        "arch",
+                        "debian",
+                        "fedora",
+                        "gentoo",
+                        "opensuse",
+                        "ubuntu",
+                ]
+                test: [
                         "40",
                         "41",
                         "42",
-                        "80",
-                        "81",
                 ]
                 exclude:
                   - container: opensuse
@@ -141,8 +171,9 @@ jobs:
                 uses: actions/checkout@v4
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
                 run: TARGETS='all install cleaninstall check' DRACUT=dracut ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+
     dracut-cpio:
-        needs: basic
+        needs: extended
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-latest
         timeout-minutes: 10
@@ -167,7 +198,7 @@ jobs:
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
                 run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     arm64:
-        needs: basic
+        needs: extended
         name: ${{ matrix.test }} on ${{ matrix.container }} on arm64
         runs-on: ubuntu-latest
         timeout-minutes: 10
@@ -194,7 +225,7 @@ jobs:
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
                 run: docker run --platform linux/arm64 '--device=/dev/kvm' -v $PWD:/w ghcr.io/dracut-ng/${{ matrix.container }} /w/test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     network:
-        needs: [basic, extended]
+        needs: extended
         # all nfs based on default networking
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-latest
