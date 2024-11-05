@@ -190,7 +190,7 @@ endif
 		ln -srf $(DESTDIR)$(pkglibdir)/modules.d/98dracut-systemd/dracut-shutdown-onfailure.service $(DESTDIR)$(systemdsystemunitdir)/dracut-shutdown-onfailure.service; \
 		ln -srf $(DESTDIR)$(pkglibdir)/modules.d/98dracut-systemd/dracut-shutdown.service $(DESTDIR)$(systemdsystemunitdir)/dracut-shutdown.service; \
 		mkdir -p $(DESTDIR)$(systemdsystemunitdir)/sysinit.target.wants; \
-		ln -s ../dracut-shutdown.service \
+		ln -sf ../dracut-shutdown.service \
 		$(DESTDIR)$(systemdsystemunitdir)/sysinit.target.wants/dracut-shutdown.service; \
 		mkdir -p $(DESTDIR)$(systemdsystemunitdir)/initrd.target.wants; \
 		for i in \
@@ -203,7 +203,7 @@ endif
 		    dracut-pre-udev.service \
 		    ; do \
 			ln -srf $(DESTDIR)$(pkglibdir)/modules.d/98dracut-systemd/$$i $(DESTDIR)$(systemdsystemunitdir); \
-			ln -s ../$$i \
+			ln -sf ../$$i \
 			$(DESTDIR)$(systemdsystemunitdir)/initrd.target.wants/$$i; \
 		done \
 	fi

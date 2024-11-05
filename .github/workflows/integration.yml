@@ -48,7 +48,7 @@ jobs:
             -   name: "Checkout Repository"
                 uses: actions/checkout@v4
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-                run:  TARGETS='all install check' DRACUT=dracut ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+                run:  TARGETS='all install cleaninstall check' DRACUT=dracut ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
 
     # syncheck
     syncheck:

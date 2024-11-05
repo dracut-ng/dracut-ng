@@ -14,6 +14,11 @@ else
     enable_dracut_cpio=no
 fi
 
+# set systemdsystemunitdir on systemd-based systems
+if [ -d /usr/lib/systemd/system ]; then
+    systemdsystemunitdir=/usr/lib/systemd/system
+fi
+
 CC="${CC:-cc}"
 PKG_CONFIG="${PKG_CONFIG:-pkg-config}"
 
