@@ -194,7 +194,7 @@ jobs:
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
                 run: docker run --platform linux/arm64 '--device=/dev/kvm' -v $PWD:/w ghcr.io/dracut-ng/${{ matrix.container }} /w/test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     network:
-        needs: basic
+        needs: [basic, extended]
         # all nfs based on default networking
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-latest
