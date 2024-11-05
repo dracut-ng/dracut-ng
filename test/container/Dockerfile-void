@@ -8,6 +8,9 @@
 
 FROM ghcr.io/void-linux/void-glibc-full
 
+# prefer running tests with zfs
+ENV TEST_FSTYPE=zfs
+
 RUN xbps-install -Syu xbps && xbps-install -yu \
     asciidoc \
     bash \
@@ -45,6 +48,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     qemu-system-amd64 \
     squashfs-tools \
     systemd-boot-efistub \
+    ncurses-base \
     ukify \
     zfs \
     && rm -rf /var/cache/xbps
