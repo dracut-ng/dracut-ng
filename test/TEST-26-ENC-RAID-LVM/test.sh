@@ -73,9 +73,9 @@ test_setup() {
     declare -a disk_args=()
     declare -i disk_index=0
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1 80
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2 80
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-3.img disk3 80
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1 160
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2 160
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-3.img disk3 160
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \

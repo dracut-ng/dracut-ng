@@ -75,8 +75,8 @@ test_setup() {
     declare -a disk_args=()
     declare -i disk_index=0
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1 200
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2 200
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1 420
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2 420
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \

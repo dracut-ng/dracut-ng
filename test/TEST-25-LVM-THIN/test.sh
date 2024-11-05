@@ -46,9 +46,9 @@ test_setup() {
     # shellcheck disable=SC2034
     declare -i disk_index=0
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1 40
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2 40
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-3.img disk3 40
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1 80
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2 80
+    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-3.img disk3 80
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
