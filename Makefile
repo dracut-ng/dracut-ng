@@ -171,6 +171,7 @@ install: all
 	ln -fs dracut-functions.sh $(DESTDIR)$(pkglibdir)/dracut-functions
 	install -m 0755 dracut-logger.sh $(DESTDIR)$(pkglibdir)/dracut-logger.sh
 	install -m 0755 dracut-initramfs-restore.sh $(DESTDIR)$(pkglibdir)/dracut-initramfs-restore
+	rm -rf $(DESTDIR)$(pkglibdir)/modules.d/80test*
 	cp -arx modules.d dracut.conf.d $(DESTDIR)$(pkglibdir)
 ifneq ($(enable_test),no)
 	cp -arx test $(DESTDIR)$(pkglibdir)
