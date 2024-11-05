@@ -50,3 +50,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     /usr/bin/qemu-system-$(uname -m) \
     util-linux-systemd \
     && dnf -y update && dnf clean all
+
+# force non-hostonly mode, but keep all the other config
+RUN \
+  echo 'hostonly="no"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf
