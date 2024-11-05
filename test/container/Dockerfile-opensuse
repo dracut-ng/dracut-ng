@@ -41,7 +41,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     procps \
     python3-pefile \
     qemu-kvm \
-    rng-tools \
     squashfs \
     swtpm \
     systemd-boot \
@@ -51,8 +50,3 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     /usr/bin/qemu-system-$(uname -m) \
     util-linux-systemd \
     && dnf -y update && dnf clean all
-
-# configuration in the package is not compatible
-# with the upstream CI, lets remove it
-RUN \
-  rm -rf /usr/lib/dracut/dracut.conf.d
