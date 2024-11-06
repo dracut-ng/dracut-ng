@@ -5,7 +5,7 @@
 # - eudev (instead of systemd-udev)
 # - elogind (instead of logind)
 # - busybox default shell (no dash installed)
-# - lzma compression (provided by busybox)
+# - gzip compression
 # - clang
 
 # Not installed
@@ -20,57 +20,61 @@
 ARG DISTRIBUTION=alpine
 FROM docker.io/${DISTRIBUTION}
 
+# export ARG
+ARG DISTRIBUTION
+
 ENV CC=clang
 
+# Packages to pass the BASIC test
 RUN apk add --no-cache \
     asciidoc \
     bash \
     binutils \
     blkid \
-    btrfs-progs \
     clang \
     coreutils \
+    dracut \
+    dracut-tests \
+    e2fsprogs \
+    eudev \
+    findmnt \
+    grep \
+    kmod \
+    kmod-dev \
+    linux-virt \
+    make \
+    musl-fts-dev \
+    partx \
+    qemu-img \
+    qemu-system-x86_64 \
+    sed \
+    sfdisk
+
+# Packages for all tests, only enabled for alpine:edge
+RUN \
+if [ "$DISTRIBUTION" = "alpine:edge" ] ; then \
+    apk add --no-cache \
+    btrfs-progs \
     cpio \
     cryptsetup \
     device-mapper \
     dhclient \
     dmraid \
-    dracut \
-    e2fsprogs \
     elogind \
-    eudev \
     file \
-    findmnt \
     gpg \
-    grep \
     iputils \
     jq \
     kbd \
     keyutils \
-    kmod \
-    kmod-dev \
     libcap-utils \
-    linux-virt \
     losetup \
     lvm2 \
-    make \
     mdadm \
-    musl-fts-dev \
     nvme-cli \
     parted \
-    partx \
     plymouth-themes \
     procps \
-    qemu-img \
-    qemu-system-x86_64 \
-    rng-tools \
-    sed \
-    sfdisk \
     squashfs-tools \
-    util-linux-misc
-
-# workaround for --enable-split-usr
-# see https://github.com/eudev-project/eudev/pull/246
-# needed to run RAID tests
-RUN \
-  mkdir -p /lib/udev/rules.d && cp /usr/lib/udev/rules.d/* /lib/udev/rules.d/
+    util-linux-misc \
+; fi
