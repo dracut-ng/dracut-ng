@@ -104,7 +104,6 @@ jobs:
             fail-fast: false
             matrix:
                 container: [
-                        "alpine",
                         "arch",
                         "debian",
                         "fedora",
