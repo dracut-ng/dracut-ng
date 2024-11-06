@@ -35,6 +35,8 @@ RUN apk add --no-cache \
     e2fsprogs \
     eudev \
     findmnt \
+    file \
+    gcc \
     grep \
     kmod \
     kmod-dev \
@@ -58,7 +60,6 @@ if [ "$DISTRIBUTION" = "alpine:edge" ] ; then \
     dhclient \
     dmraid \
     elogind \
-    file \
     gpg \
     iputils \
     jq \
