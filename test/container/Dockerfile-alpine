@@ -23,15 +23,12 @@ FROM docker.io/${DISTRIBUTION}
 # export ARG
 ARG DISTRIBUTION
 
-ENV CC=clang
-
 # Packages to pass the BASIC test
 RUN apk add --no-cache \
     asciidoc \
     bash \
     binutils \
     blkid \
-    clang \
     coreutils \
     dracut \
     dracut-tests \

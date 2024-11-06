@@ -5,11 +5,14 @@
 # - elogind (instead of logind)
 # - uki (without systemd)
 # - zfs and zfs out of tree dracut module
+# - gzip compression
+# - clang
 
 FROM ghcr.io/void-linux/void-glibc-full
 
-# prefer running tests with zfs
+# prefer running tests with zfs and clang
 ENV TEST_FSTYPE=zfs
+ENV CC=clang
 
 RUN xbps-install -Syu xbps && xbps-install -yu \
     asciidoc \
@@ -17,6 +20,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     binutils \
     btrfs-progs \
     cargo \
+    clang \
     cpio \
     cryptsetup \
     dhclient \
