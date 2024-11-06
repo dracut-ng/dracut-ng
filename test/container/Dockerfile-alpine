@@ -42,6 +42,7 @@ RUN apk add --no-cache \
     kmod-dev \
     linux-virt \
     make \
+    musl-dev \
     musl-fts-dev \
     partx \
     qemu-img \
