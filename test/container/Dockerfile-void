@@ -32,7 +32,6 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     elogind \
     erofs-utils \
     eudev \
-    gcc \
     glibc \
     gnupg \
     iproute2 \
