@@ -26,6 +26,7 @@ RUN pacman --noconfirm -Syu \
     dhclient \
     dhcp \
     dmraid \
+    dracut \
     elfutils \
     erofs-utils \
     gcc \

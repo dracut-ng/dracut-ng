@@ -68,6 +68,7 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     sys-fs/mdadm \
     sys-fs/multipath-tools \
     sys-fs/squashfs-tools \
+    sys-kernel/dracut \
     sys-kernel/gentoo-kernel-bin \
     sys-libs/glibc \
     sys-libs/libxcrypt \
