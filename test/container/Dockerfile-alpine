@@ -26,29 +26,16 @@ ARG DISTRIBUTION
 # Packages to pass the BASIC test
 RUN apk add --no-cache \
     asciidoc \
-    bash \
-    binutils \
-    blkid \
-    coreutils \
     dracut \
     dracut-tests \
-    e2fsprogs \
-    eudev \
-    findmnt \
     file \
     gcc \
-    grep \
     kmod \
     kmod-dev \
     linux-virt \
     make \
     musl-dev \
-    musl-fts-dev \
-    partx \
-    qemu-img \
-    qemu-system-x86_64 \
-    sed \
-    sfdisk
+    musl-fts-dev
 
 # Packages for all tests, only enabled for alpine:edge
 RUN \
