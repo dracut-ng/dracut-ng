@@ -7,6 +7,10 @@ on:
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
 
+    pull_request:
+        paths:
+          - '.github/workflows/integration-extra.yml'
+
 jobs:
     basic:
         # run this test on all containers
