@@ -28,7 +28,7 @@ test_run() {
 
 test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
-    "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
@@ -42,7 +42,7 @@ test_setup() {
     # devices, volume groups, encrypted partitions, etc.
 
     # shellcheck disable=SC2046
-    "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
+    "$DRACUT" -N -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "-I mkfs.${TEST_FSTYPE}"; fi) \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \

@@ -152,7 +152,7 @@ test_check() {
 test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     rm -rf -- "$TESTDIR"/overlay
-    "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -I "ip grep setsid" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
@@ -165,7 +165,7 @@ test_setup() {
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
+    "$DRACUT" -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -a "crypt lvm mdraid" \
         -I "setsid blockdev" \
@@ -190,7 +190,7 @@ test_setup() {
     rm -- "$TESTDIR"/marker.img
 
     rm -rf -- "$TESTDIR"/overlay
-    "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "network-legacy iscsi" \
         -d "iscsi_tcp crc32c ipv6 af_packet" \
@@ -208,7 +208,7 @@ test_setup() {
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
+    "$DRACUT" -N -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
@@ -235,7 +235,7 @@ test_setup() {
         "$TESTDIR"/initramfs.testing
 
     # Make server's dracut image
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
+    "$DRACUT" -i "$TESTDIR"/overlay / \
         -a "test rootfs-block debug kernel-modules network-legacy" \
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod e1000 drbg" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
