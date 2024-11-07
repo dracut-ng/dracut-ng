@@ -48,7 +48,7 @@ test_dracut() {
     fi
 
     # pick up configuration from $TESTDIR/dracut.conf.d when running the tests
-    TEST_DRACUT_ARGS+=" --local --confdir $TESTDIR/dracut.conf.d --add-confdir test --keep --tmpdir $TESTDIR/initrd --kver $KVERSION"
+    TEST_DRACUT_ARGS+=" --confdir $TESTDIR/dracut.conf.d --add-confdir test --keep --tmpdir $TESTDIR/initrd --kver $KVERSION"
 
     # include $TESTDIR"/overlay if exists
     if [ -d "$TESTDIR"/overlay ]; then

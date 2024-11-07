@@ -194,7 +194,7 @@ client_run() {
 make_encrypted_root() {
     rm -fr "$TESTDIR"/overlay
     # Create what will eventually be our root filesystem onto an overlay
-    "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -I "ip grep" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
@@ -206,7 +206,7 @@ make_encrypted_root() {
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
+    "$DRACUT" -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -a "crypt lvm mdraid" \
         -I "cryptsetup" \
@@ -231,7 +231,7 @@ make_encrypted_root() {
 
 make_client_root() {
     rm -fr "$TESTDIR"/overlay
-    "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -I "ip" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
@@ -243,7 +243,7 @@ make_client_root() {
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -l -i "$TESTDIR"/overlay / \
+    "$DRACUT" -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -i ./create-client-root.sh /lib/dracut/hooks/initqueue/01-create-client-root.sh \
         --nomdadmconf \
@@ -279,7 +279,7 @@ port = 2001
 bs = 4096
 EOF
 
-    "$DRACUT" -l --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "network-legacy" \
         -I "ip grep sleep nbd-server chmod modprobe vi pidof" \
@@ -297,7 +297,7 @@ EOF
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
+    "$DRACUT" -N -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -a "network-legacy" \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
@@ -342,7 +342,7 @@ test_setup() {
         -i "/tmp/key" "/etc/key" \
         "$TESTDIR"/initramfs.testing
 
-    "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
+    "$DRACUT" -N -i "$TESTDIR"/overlay / \
         -a "test rootfs-block debug kernel-modules network-legacy" \
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod e1000 drbg" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \

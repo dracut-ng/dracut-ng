@@ -62,7 +62,7 @@ test_run() {
 }
 
 test_setup() {
-    "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
@@ -71,7 +71,7 @@ test_setup() {
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -N -l -i "$TESTDIR"/overlay / \
+    "$DRACUT" -N -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -a "bash crypt lvm mdraid" \
         -I "grep cryptsetup" \

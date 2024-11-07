@@ -34,7 +34,7 @@ test_run() {
 
 test_setup() {
     # Create what will eventually be our root filesystem
-    "$DRACUT" -N -l --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         "$TESTDIR"/tmp-initramfs.root "$KVERSION" || return 1
 
