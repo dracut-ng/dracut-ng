@@ -17,7 +17,7 @@ skipcpio_simple() {
         echo "first archive file $i" >> ./"$i"
     done
     find . -print0 | sort -z \
-        | cpio -o --null -H newc --file "$CPIO_TESTDIR/skipcpio_simple.cpio"
+        | cpio -o --null -H newc > "$CPIO_TESTDIR/skipcpio_simple.cpio"
     popd
 
     mkdir -p "$CPIO_TESTDIR/skipcpio_simple/second_archive"

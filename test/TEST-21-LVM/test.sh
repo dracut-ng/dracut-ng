@@ -6,6 +6,13 @@ TEST_DESCRIPTION="root filesystem on LVM PV"
 # Uncomment this to debug failures
 #DEBUGFAIL="rd.break rd.shell"
 
+test_check() {
+    if ! type -p lvm &> /dev/null; then
+        echo "Test needs lvm for lvm module... Skipping"
+        return 1
+    fi
+}
+
 test_run() {
     declare -a disk_args=()
     declare -i disk_index=0

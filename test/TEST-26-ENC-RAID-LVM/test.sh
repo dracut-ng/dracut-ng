@@ -7,6 +7,13 @@ TEST_DESCRIPTION="root filesystem on LVM on encrypted partitions of a RAID-5"
 #DEBUGFAIL="rd.shell rd.udev.log-priority=debug loglevel=70 systemd.log_target=kmsg systemd.log_target=debug"
 #DEBUGFAIL="rd.shell loglevel=70 systemd.log_target=kmsg systemd.log_target=debug"
 
+test_check() {
+    if ! type -p cryptsetup &> /dev/null; then
+        echo "Test needs cryptsetup for crypt module... Skipping"
+        return 1
+    fi
+}
+
 test_run() {
     LUKSARGS=$(cat "$TESTDIR"/luks.txt)
 

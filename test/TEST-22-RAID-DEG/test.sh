@@ -8,6 +8,13 @@ TEST_DESCRIPTION="root filesystem on an encrypted LVM PV on a degraded RAID-5"
 #DEBUGFAIL="rd.shell rd.udev.log-priority=debug loglevel=70 systemd.log_target=kmsg"
 #DEBUGFAIL="rd.shell loglevel=70 systemd.log_target=kmsg"
 
+test_check() {
+    if ! type -p cryptsetup &> /dev/null; then
+        echo "Test needs cryptsetup for crypt module... Skipping"
+        return 1
+    fi
+}
+
 client_run() {
     echo "CLIENT TEST START: $*"
     declare -a disk_args=()
