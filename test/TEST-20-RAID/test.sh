@@ -2,6 +2,13 @@
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on an encrypted LVM PV on a RAID-5"
 
+test_check() {
+    if ! type -p cryptsetup &> /dev/null; then
+        echo "Test needs cryptsetup for crypt module... Skipping"
+        return 1
+    fi
+}
+
 # Uncomment this to debug failures
 #DEBUGFAIL="rd.shell rd.udev.log-priority=debug loglevel=70 systemd.log_target=kmsg"
 #DEBUGFAIL="rd.break rd.shell rd.debug debug"

@@ -6,6 +6,13 @@ TEST_DESCRIPTION="live root on a squash filesystem"
 # Uncomment these to debug failures
 #DEBUGFAIL="rd.shell rd.debug rd.live.debug loglevel=7"
 
+test_check() {
+    if ! type -p mksquashfs &> /dev/null; then
+        echo "Test needs mksquashfs for crypt module... Skipping"
+        return 1
+    fi
+}
+
 test_run() {
     declare -a disk_args=()
     declare -i disk_index=0
