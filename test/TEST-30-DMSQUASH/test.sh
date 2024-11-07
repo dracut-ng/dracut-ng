@@ -128,14 +128,13 @@ test_setup() {
     declare -a disk_args=()
     declare -i disk_index=0
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 512
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 1
 
     # erofs drive
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs 512
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs 1
 
     # NTFS drive
-    dd if=/dev/zero of="$TESTDIR"/root_ntfs.img bs=1MiB count=512
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_ntfs.img root_ntfs
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root_ntfs.img root_ntfs 1
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \

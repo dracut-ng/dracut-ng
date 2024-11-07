@@ -127,7 +127,7 @@ COLOR_NORMAL='\033[0;39m'
 # args: name of the argument array variable (set to () at start)
 # filename: filename of the raw disk image
 # id-name: name of the disk in /dev/disk/by-id -> /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_$name
-# size: optional file size in MiB (0 implies size is not set)
+# size: optional boolean to initialize the drive
 # bootindex: optional bootindex number
 #
 # to be used later with `qemu … "${args[@]}" …`
@@ -153,6 +153,12 @@ qemu_add_drive() {
     local bootindex=$6
 
     if [ "${size}" -ne 0 ]; then
+        if [[ ${name} =~ "marker" ]]; then
+            size=1
+        else
+            size=512
+        fi
+
         dd if=/dev/zero of="${file}" bs=1MiB count="${size}" status=none
         sync
     fi
