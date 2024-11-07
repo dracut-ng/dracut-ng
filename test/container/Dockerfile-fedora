@@ -9,7 +9,7 @@
 # - openssh (ssh-client)
 # - rsyslog (syslog)
 # - libkcapi-hmaccalc (fido)
-# - nss-softokn out of tree dracut module
+# - nss-softokn, kdumpbase out of tree dracut modules
 
 ARG DISTRIBUTION=fedora
 ARG REGISTRY=registry.fedoraproject.org
@@ -54,6 +54,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     iscsi-initiator-utils \
     jq \
     kbd \
+    kdump-utils \
     kernel \
     kmod-devel \
     libkcapi-hmaccalc \
@@ -80,16 +81,12 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     tpm2-tools \
     && dnf -y update && dnf clean all
 
-# discard configurations that enforce an out-of-tree dracut module breaking CI
 # CentOS Stream ships only qemu-kvm, but it disables the KVM accel when it's not available
-RUN \
-    rm -rf /usr/lib/dracut/dracut.conf.d/50-nss-softokn.conf && \
-    [[ -e /usr/bin/qemu-kvm ]] || ln -sf /usr/libexec/qemu-kvm /usr/bin/qemu-kvm && \
-    [[ -e /usr/bin/qemu-system-$(uname -m) ]] || ln -sv /usr/libexec/qemu-kvm /usr/bin/qemu-system-$(uname -m)
-
 # force non-hostonly mode, but keep all the other config
 # this workaround is needed to pass crypt tests with rd.auto
 RUN \
 if [[ "${DISTRIBUTION}" =~ "centos:" ]]; then \
-  echo 'hostonly="no"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf \
+    [[ -e /usr/bin/qemu-kvm ]] || ln -sf /usr/libexec/qemu-kvm /usr/bin/qemu-kvm ;\
+    [[ -e /usr/bin/qemu-system-$(uname -m) ]] || ln -sv /usr/libexec/qemu-kvm /usr/bin/qemu-system-$(uname -m) ;\
+    echo 'hostonly="no"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf \
 ; fi
