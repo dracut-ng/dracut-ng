@@ -104,9 +104,10 @@ test_setup() {
     echo -n test > /tmp/key
     chmod 0600 /tmp/key
 
-    test_dracut \
+    cat /tmp/crypttab
+
+    test_dracut -v \
         -a "crypt lvm mdraid" \
-        -i "./cryptroot-ask.sh" "/sbin/cryptroot-ask" \
         -i "/tmp/crypttab" "/etc/crypttab" \
         -i "/tmp/key" "/etc/key" \
         "$TESTDIR"/initramfs.testing

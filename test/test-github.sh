@@ -4,6 +4,24 @@
 # wraps configure && make
 # assumes that it runs inside a CI container
 
+export V=2
+export stdloglvl=4
+export sysloglvl=0
+
+#ls -lRa /etc/dracut*
+#ls -lRa /usr/lib/dracut/
+
+#rm -rf  /usr/lib/dracut/dracut.conf.d/*
+
+#echo 'hostonly="no"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf
+rm -rf /usr/lib/dracut/dracut.conf.d/02-dist.conf
+
+#mv /usr/lib/dracut/dracut.conf.d /tmp
+#rm -rf /usr/lib/dracut/*
+#mv /tmp/dracut.conf.d /usr/lib/dracut/
+#ls -la /usr/lib/dracut/dracut.conf.d/
+echo hello
+
 set -e
 if [ "$V" = "2" ]; then set -x; fi
 

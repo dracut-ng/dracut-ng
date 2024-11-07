@@ -20,10 +20,13 @@ test_run() {
     qemu_add_drive disk_index disk_args "$TESTDIR"/raid-2.img raid2
     qemu_add_drive disk_index disk_args "$TESTDIR"/raid-3.img raid3
 
+    # shellcheck source=$TESTDIR/luks.uuid
+    . "$TESTDIR"/luks.uuid
+
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rd.auto" \
+        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rd.auto rd.luks.uuid=$ID_FS_UUID rd.luks.key=/etc/key" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     test_marker_check || return 1
@@ -61,13 +64,12 @@ test_setup() {
     test_marker_check dracut-root-block-created || return 1
     eval "$(grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img)"
 
-    echo "testluks UUID=$ID_FS_UUID /etc/key" > /tmp/crypttab
     echo -n "test" > /tmp/key
+
+    grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
 
     test_dracut \
         -a "crypt lvm mdraid" \
-        -i "./cryptroot-ask.sh" "/sbin/cryptroot-ask" \
-        -i "/tmp/crypttab" "/etc/crypttab" \
         -i "/tmp/key" "/etc/key" \
         "$TESTDIR"/initramfs.testing
 }

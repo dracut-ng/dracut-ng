@@ -172,9 +172,9 @@ ${CC} $CFLAGS $LDFLAGS weakdep_test.c $(${PKG_CONFIG} --libs libkmod) > /dev/nul
 ret=$?
 rm -f weakdep_test.c a.out
 
-if test $ret -eq 0; then
-    KMOD_CFLAGS_EXTRA+=" -DCONFIG_WEAKDEP"
-fi
+#if test $ret -eq 0; then
+#    KMOD_CFLAGS_EXTRA+=" -DCONFIG_WEAKDEP"
+#fi
 
 cat > Makefile.inc.$$ << EOF
 prefix ?= ${prefix}

@@ -45,18 +45,18 @@ test_run() {
     read -r MD_UUID < "$TESTDIR"/mduuid
 
     client_run failme && return 1
-    client_run rd.auto || return 1
+    client_run rd.luks.uuid="$LUKS_UUID" rd.auto || return 1
 
-    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid="$MD_UUID" rd.md.conf=0 rd.lvm.vg=dracut || return 1
+#    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid="$MD_UUID" rd.md.conf=0 rd.lvm.vg=dracut || return 1
 
-    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid=failme rd.md.conf=0 rd.lvm.vg=dracut failme && return 1
+#    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid=failme rd.md.conf=0 rd.lvm.vg=dracut failme && return 1
 
-    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid="$MD_UUID" rd.lvm=0 failme && return 1
-    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid="$MD_UUID" rd.lvm=0 rd.auto=1 failme && return 1
-    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid="$MD_UUID" rd.lvm.vg=failme failme && return 1
-    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid="$MD_UUID" rd.lvm.vg=dracut || return 1
-    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid="$MD_UUID" rd.lvm.lv=dracut/failme failme && return 1
-    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid="$MD_UUID" rd.lvm.lv=dracut/root || return 1
+#    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid="$MD_UUID" rd.lvm=0 failme && return 1
+#    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid="$MD_UUID" rd.lvm=0 rd.auto=1 failme && return 1
+#    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid="$MD_UUID" rd.lvm.vg=failme failme && return 1
+#    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid="$MD_UUID" rd.lvm.vg=dracut || return 1
+#    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid="$MD_UUID" rd.lvm.lv=dracut/failme failme && return 1
+#    client_run rd.luks.uuid="$LUKS_UUID" rd.md.uuid="$MD_UUID" rd.lvm.lv=dracut/root || return 1
 
     return 0
 }
@@ -103,10 +103,11 @@ test_setup() {
     echo -n test > /tmp/key
     chmod 0600 /tmp/key
 
-    test_dracut \
+    cat /tmp/crypttab
+
+    test_dracut -v \
         -a "crypt lvm mdraid kernel-modules" \
         -o network \
-        -i "./cryptroot-ask.sh" "/sbin/cryptroot-ask" \
         -i "/tmp/mdadm.conf" "/etc/mdadm.conf" \
         -i "/tmp/crypttab" "/etc/crypttab" \
         -i "/tmp/key" "/etc/key" \

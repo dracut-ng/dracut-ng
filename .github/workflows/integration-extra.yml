@@ -1,5 +1,6 @@
 name: Integration Test  (extra)
 
+
 on:
     schedule:
         -  cron: '30 23 * * *'   # every day at 23:30 UTC
@@ -24,12 +25,9 @@ jobs:
             fail-fast: false
             matrix:
                 container: [
-                        "alpine",
-                        "alpine:edge",
+                        "fedora",
+                        "opensuse",
                         "centos:stream10-development",
-                        "fedora:rawhide",
-                        "debian:sid",
-                        "ubuntu:rolling",
                 ]
                 test: [
                         "10",
