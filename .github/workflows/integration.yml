@@ -48,7 +48,7 @@ jobs:
             -   name: "Checkout Repository"
                 uses: actions/checkout@v4
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-                run:  TARGETS='all install cleaninstall check' DRACUT=dracut ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+                run:  ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
 
     # syncheck
     syncheck:
@@ -104,7 +104,7 @@ jobs:
             -   name: "Checkout Repository"
                 uses: actions/checkout@v4
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-                run: TARGETS='all install cleaninstall check' DRACUT=dracut ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+                run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
 
     extended-systemd:
         needs: basic
@@ -139,7 +139,7 @@ jobs:
             -   name: "Checkout Repository"
                 uses: actions/checkout@v4
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-                run: TARGETS='all install cleaninstall check' DRACUT=dracut ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+                run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
 
     dracut-cpio:
         needs: basic

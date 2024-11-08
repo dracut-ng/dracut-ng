@@ -7,6 +7,8 @@
 set -e
 if [ "$V" = "2" ]; then set -x; fi
 
+export DRACUT=dracut
+
 [[ -d ${0%/*} ]] && cd "${0%/*}"/../
 
 # disable building documentation by default
@@ -17,4 +19,4 @@ if [ "$V" = "2" ]; then set -x; fi
 
 # treat warnings as error
 # shellcheck disable=SC2086
-CFLAGS="-Wextra -Werror" make TEST_RUN_ID="${TEST_RUN_ID:=$1}" TESTS="${TESTS:=$2}" V="${V:=1}" ${TARGETS:=all check}
+CFLAGS="-Wextra -Werror" make TEST_RUN_ID="${TEST_RUN_ID:=$1}" TESTS="${TESTS:=$2}" V="${V:=1}" ${TARGETS:=all install cleaninstall check}
