@@ -314,7 +314,7 @@ test_setup() {
         )
 
         inst_multiple sh shutdown poweroff stty cat ps ln ip dd \
-            mount dmesg mkdir cp grep setsid ls vi cat sync
+            mount dmesg mkdir cp grep setsid ls cat sync
         for _terminfodir in /lib/terminfo /etc/terminfo /usr/share/terminfo; do
             if [ -f "${_terminfodir}"/l/linux ]; then
                 inst_multiple -o "${_terminfodir}"/l/linux
