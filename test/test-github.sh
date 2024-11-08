@@ -14,6 +14,10 @@ export DRACUT=dracut
 # disable building documentation by default
 [ -z "$enable_documentation" ] && export enable_documentation=no
 
+echo hello1
+cat /proc/cmdline
+echo hello2
+
 # shellcheck disable=SC2086
 ./configure $CONFIGURE_ARG
 
