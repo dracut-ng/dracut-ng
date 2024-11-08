@@ -26,10 +26,17 @@ jobs:
                 container: [
                         "alpine",
                         "alpine:edge",
-                        "centos:stream10-development",
-                        "fedora:rawhide",
+                        "arch",
+                        "debian",
                         "debian:sid",
+                        "fedora",
+                        "fedora:rawhide",
+                        "centos:stream10-development",
+                        "gentoo",
+                        "opensuse",
+                        "ubuntu",
                         "ubuntu:rolling",
+                        "void",
                 ]
                 test: [
                         "10",
