@@ -17,6 +17,15 @@ export DRACUT=dracut
 # shellcheck disable=SC2086
 ./configure $CONFIGURE_ARG
 
+TESTS="${TESTS:=$2}"
+
+# Compute wildcards for TESTS variable (e.g. '1*')
+# shellcheck disable=SC1001
+[ -n "$TESTS" ] && TESTS=$(
+    cd test
+    for T in ${TESTS}; do find . -depth -type d -name "TEST-*${T}*" -exec echo {} \; | cut -d\- -f2 | tr '\n' ' '; done
+)
+
 # treat warnings as error
 # shellcheck disable=SC2086
-CFLAGS="-Wextra -Werror" make TEST_RUN_ID="${TEST_RUN_ID:=$1}" TESTS="${TESTS:=$2}" V="${V:=1}" ${TARGETS:=all install check}
+CFLAGS="-Wextra -Werror" make TEST_RUN_ID="${TEST_RUN_ID:=$1}" TESTS="${TESTS}" V="${V:=1}" ${TARGETS:=all install check}
