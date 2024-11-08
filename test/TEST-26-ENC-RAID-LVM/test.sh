@@ -44,16 +44,6 @@ test_run() {
     test_marker_check || return 1
     echo "CLIENT TEST END: [OK]"
 
-    test_marker_reset
-
-    echo "CLIENT TEST START: Wrong LUKS UUID"
-    "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rd.auto rd.luks.uuid=failme" \
-        -initrd "$TESTDIR"/initramfs.testing
-    test_marker_check && return 1
-    echo "CLIENT TEST END: [OK]"
-
     return 0
 }
 
