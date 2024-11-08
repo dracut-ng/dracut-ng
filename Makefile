@@ -48,7 +48,7 @@ man8pages = man/dracut.8 \
 
 manpages = $(man1pages) $(man5pages) $(man7pages) $(man8pages)
 
-.PHONY: install cleaninstall clean archive test all check AUTHORS CONTRIBUTORS doc
+.PHONY: install clean archive test all check AUTHORS CONTRIBUTORS doc
 
 all: dracut.pc dracut-install src/skipcpio/skipcpio dracut-util
 
@@ -227,8 +227,6 @@ endif
 	install -m 0644 shell-completion/bash/lsinitrd $(DESTDIR)${bashcompletiondir}/lsinitrd
 	mkdir -p $(DESTDIR)${pkgconfigdatadir}
 	install -m 0644 dracut.pc $(DESTDIR)${pkgconfigdatadir}/dracut.pc
-
-cleaninstall: install
 	if ! [ -n "$(systemdsystemunitdir)" ]; then \
 		rm -rf $(DESTDIR)$(pkglibdir)/modules.d/*systemd* $(DESTDIR)$(mandir)/*.service.* ; \
 		for i in bluetooth connman dbus* fido2 lvmmerge lvmthinpool-monitor memstrack network-manager pcsc pkcs11 rngd squash* tpm2-tss; do \

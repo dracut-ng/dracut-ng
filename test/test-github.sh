@@ -19,4 +19,4 @@ export DRACUT=dracut
 
 # treat warnings as error
 # shellcheck disable=SC2086
-CFLAGS="-Wextra -Werror" make TEST_RUN_ID="${TEST_RUN_ID:=$1}" TESTS="${TESTS:=$2}" V="${V:=1}" ${TARGETS:=all install cleaninstall check}
+CFLAGS="-Wextra -Werror" make TEST_RUN_ID="${TEST_RUN_ID:=$1}" TESTS="${TESTS:=$2}" V="${V:=1}" ${TARGETS:=all install check}
