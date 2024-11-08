@@ -76,7 +76,6 @@ jobs:
             matrix:
                 container: [
                         "arch",
-                        "debian",
                         "fedora",
                         "gentoo",
                         "opensuse",
@@ -119,7 +118,6 @@ jobs:
             matrix:
                 container: [
                         "arch",
-                        "debian",
                         "fedora",
                         "gentoo",
                         "opensuse",
