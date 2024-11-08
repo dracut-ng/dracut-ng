@@ -282,7 +282,7 @@ EOF
     "$DRACUT" --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "network-legacy" \
-        -I "ip grep sleep nbd-server chmod modprobe vi pidof" \
+        -I "ip grep sleep nbd-server chmod modprobe pidof" \
         --install-optional "/etc/netconfig dhcpd /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
         -i /tmp/config /etc/nbd-server/config \
         -i "./dhcpd.conf" "/etc/dhcpd.conf" \
