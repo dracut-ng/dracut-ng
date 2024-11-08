@@ -52,7 +52,7 @@ jobs:
 
     # syncheck
     syncheck:
-        needs: extended
+        needs: basic
         name: syncheck
         runs-on: ubuntu-latest
         steps:
@@ -62,35 +62,6 @@ jobs:
                   sudo apt-get update
                   sudo apt-get -y install shellcheck shfmt
                   make syncheck
-
-    doc:
-        needs: extended
-        name: doc on ${{ matrix.container }}
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
-        concurrency:
-            group: doc-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}
-            cancel-in-progress: true
-        strategy:
-            fail-fast: false
-            matrix:
-                container: [
-                        "alpine",
-                        "arch",
-                        "debian",
-                        "fedora",
-                        "gentoo",
-                        "opensuse",
-                        "ubuntu",
-                        "void",
-                ]
-        container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}
-        steps:
-            -   name: "Checkout Repository"
-                uses: actions/checkout@v4
-            -   name: doc on "${{ matrix.container }}"
-                run:  TARGETS=all enable_documentation=yes ./test/test-github.sh
 
     extended:
         needs: basic
@@ -171,7 +142,7 @@ jobs:
                 run: TARGETS='all install cleaninstall check' DRACUT=dracut ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
 
     dracut-cpio:
-        needs: extended
+        needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-latest
         timeout-minutes: 10
@@ -196,7 +167,7 @@ jobs:
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
                 run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     arm64:
-        needs: extended
+        needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }} on arm64
         runs-on: ubuntu-latest
         timeout-minutes: 10
@@ -223,7 +194,7 @@ jobs:
             -   name: "${{ matrix.container }} TEST-${{ matrix.test }}"
                 run: docker run --platform linux/arm64 '--device=/dev/kvm' -v $PWD:/w ghcr.io/dracut-ng/${{ matrix.container }} /w/test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     network:
-        needs: extended
+        needs: basic
         # all nfs based on default networking
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-latest
