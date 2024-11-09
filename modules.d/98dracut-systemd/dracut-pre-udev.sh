@@ -41,7 +41,7 @@ for p in $(getargs rd.driver.post); do
     _do_insmodpost=1
 done
 
-[ -n "$_do_insmodpost" ] && initqueue --settled --unique --onetime insmodpost.sh
+[ -n "$_do_insmodpost" ] && /sbin/initqueue --settled --unique --onetime insmodpost.sh
 unset _do_insmodpost _modprobe_d
 unset i
 

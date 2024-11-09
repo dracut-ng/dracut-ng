@@ -27,7 +27,7 @@ if ! [ -e /sys/bus/fcoe/ctlr_create ] && ! modprobe -b fcoe && ! modprobe -b lib
     die "FCoE requested but kernel/initrd does not support FCoE"
 fi
 
-initqueue --onetime modprobe -b -q bnx2fc
+/sbin/initqueue --onetime modprobe -b -q bnx2fc
 
 parse_fcoe_opts() {
     local fcoe_interface
