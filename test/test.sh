@@ -19,7 +19,7 @@ fi
 # clear previous test run
 TARGETS='clean all install check' "$PODMAN" run --rm -it \
     --device=/dev/kvm \
-    -e V -e TESTS -e TEST_RUN_ID -e TARGETS -e DRACUT \
+    -e V -e TESTS -e TEST_RUN_ID -e TARGETS \
     -v "$PWD"/:/z \
     "ghcr.io/dracut-ng/$CONTAINER" \
     /z/test/test-github.sh
