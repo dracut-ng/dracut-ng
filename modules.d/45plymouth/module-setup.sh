@@ -36,7 +36,7 @@ install() {
         . "$moddir"/plymouth-populate-initrd.sh
     else
         PLYMOUTH_POPULATE_SOURCE_FUNCTIONS="$dracutfunctions" \
-            "$dracutsysrootdir""${PKGLIBDIR}"/plymouth-populate-initrd -t "$initdir"
+            "$dracutsysrootdir""${PKGLIBDIR}"/plymouth-populate-initrd -t "$initdir" 2> /dev/null
     fi
 
     inst_hook emergency 50 "$moddir"/plymouth-emergency.sh
