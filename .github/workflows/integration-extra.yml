@@ -55,6 +55,7 @@ jobs:
                         "42",
                         "80",
                         "81",
+                        "82",
                 ]
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
