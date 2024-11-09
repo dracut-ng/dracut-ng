@@ -9,43 +9,64 @@
 # - rng-tools (to increase coverage)
 # - ntfs3g (to keep container small)
 
+ARG EXTRAPACKAGES=yes
+
 FROM docker.io/gentoo/portage:latest AS portage
 
 FROM docker.io/gentoo/stage3:systemd
 COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
 
-# Speed-up using binpkgs
-RUN echo "MAKEOPTS=\"-j$(nproc) -l$(nproc)\"" >> /etc/portage/make.conf
-RUN echo "EMERGE_DEFAULT_OPTS=\"-j$(nproc) -l$(nproc)\"" >> /etc/portage/make.conf
-RUN echo "FEATURES=\"getbinpkg binpkg-ignore-signature parallel-fetch parallel-install pkgdir-index-trusted\"" >> /etc/portage/make.conf
+# export ARG
+ARG EXTRAPACKAGES
 
-# systemd-boot, no need to install intramfs with kernel
-RUN echo "USE=\"boot kernel-install pkcs7 pkcs11 tpm -initramfs\"" >> /etc/portage/make.conf
-
-# Use debian's installkernel
-RUN echo 'sys-kernel/installkernel -systemd' >> /etc/portage/package.use/kernel
-
-# Enable ukify and cryptsetup tools (includes unit generator for crypttab)
-RUN echo 'sys-apps/systemd ukify cryptsetup' >> /etc/portage/package.use/systemd
-
-# Support thin volumes and build all of LVM2 including daemons and tools like lvchange
-RUN echo 'sys-fs/lvm2 thin lvm' >> /etc/portage/package.use/lvm2
-
-# Ensure everything is up to date before we start
-RUN emerge --quiet --update --deep --newuse --autounmask-continue=y --with-bdeps=y @world
-
-RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
+# Dependencies for full testsuite
+RUN \
+if [ "$EXTRAPACKAGES" != "no" ] ; then \
+    emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     app-alternatives/bc \
+; fi
+
+RUN \
+    # Speed-up using binpkgs \
+    echo "MAKEOPTS=\"-j$(nproc) -l$(nproc)\"" >> /etc/portage/make.conf ;\
+    echo "EMERGE_DEFAULT_OPTS=\"-j$(nproc) -l$(nproc)\"" >> /etc/portage/make.conf ;\
+    echo "FEATURES=\"getbinpkg binpkg-ignore-signature parallel-fetch parallel-install pkgdir-index-trusted\"" >> /etc/portage/make.conf ;\
+    # systemd-boot, no need to install intramfs with kernel \
+    echo "USE=\"boot kernel-install pkcs7 pkcs11 tpm -initramfs\"" >> /etc/portage/make.conf ;\
+    # Use debian's installkernel \
+    echo 'sys-kernel/installkernel -systemd' >> /etc/portage/package.use/kernel ;\
+    # Enable ukify and cryptsetup tools (includes unit generator for crypttab) \
+    echo 'sys-apps/systemd ukify cryptsetup' >> /etc/portage/package.use/systemd ;\
+    # Support thin volumes and build all of LVM2 including daemons and tools like lvchange \
+    echo 'sys-fs/lvm2 thin lvm' >> /etc/portage/package.use/lvm2 ;\
+    # Ensure everything is up to date before we start \
+    emerge --quiet --update --deep --newuse --autounmask-continue=y --with-bdeps=y @world
+
+# Dependencies to pass basic test
+RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     app-alternatives/cpio \
     app-arch/cpio \
-    app-crypt/swtpm \
-    app-crypt/tpm2-tools \
     app-emulation/qemu \
-    app-misc/jq \
     app-portage/gentoolkit \
     app-text/asciidoc \
     app-text/docbook-xml-dtd \
     app-text/docbook-xsl-stylesheets \
+    sys-apps/systemd \
+    sys-kernel/dracut \
+    sys-kernel/gentoo-kernel-bin \
+    sys-libs/glibc \
+    sys-libs/libxcrypt \
+    virtual/libelf \
+    virtual/pkgconfig
+
+# Dependencies for full testsuite
+RUN \
+if [ "$EXTRAPACKAGES" != "no" ] ; then \
+    emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
+    app-alternatives/bc \
+    app-crypt/swtpm \
+    app-crypt/tpm2-tools \
+    app-misc/jq \
     dev-lang/perl \
     dev-lang/rust-bin \
     dev-libs/libxslt \
@@ -54,7 +75,6 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     net-misc/dhcp \
     net-wireless/bluez \
     sys-apps/nvme-cli \
-    sys-apps/systemd \
     sys-block/nbd \
     sys-block/open-iscsi \
     sys-block/parted \
@@ -68,12 +88,9 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     sys-fs/mdadm \
     sys-fs/multipath-tools \
     sys-fs/squashfs-tools \
-    sys-kernel/dracut \
-    sys-kernel/gentoo-kernel-bin \
-    sys-libs/glibc \
-    sys-libs/libxcrypt \
-    virtual/libelf \
-    virtual/pkgconfig \
-    && rm -rf /var/cache/* /usr/share/doc/* /usr/share/man/*
+; fi
 
-RUN emerge --depclean --with-bdeps=n
+# cleanup
+RUN \
+    rm -rf /var/cache/* /usr/share/doc/* /usr/share/man/* ;\
+    emerge --depclean --with-bdeps=n
