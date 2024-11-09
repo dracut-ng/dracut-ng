@@ -24,7 +24,7 @@ check() {
 
 # called by dracut
 depends() {
-    echo drm
+    echo drm bash
 }
 
 # called by dracut
