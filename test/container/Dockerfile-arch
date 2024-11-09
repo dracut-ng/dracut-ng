@@ -35,6 +35,7 @@ RUN pacman --noconfirm -Syu \
     lvm2 \
     make \
     mdadm \
+    mkinitcpio \
     mkosi \
     multipath-tools \
     nbd \
