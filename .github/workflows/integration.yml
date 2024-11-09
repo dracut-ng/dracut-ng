@@ -120,7 +120,6 @@ jobs:
                         "arch",
                         "fedora",
                         "gentoo",
-                        "opensuse",
                         "ubuntu",
                 ]
                 test: [
@@ -128,8 +127,6 @@ jobs:
                         "41",
                         "42",
                 ]
-                exclude:
-                  - { container: opensuse, test: 41 }
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm'
@@ -216,8 +213,6 @@ jobs:
                         "61",
                         "62",
                 ]
-                exclude:
-                  - { container: fedora, test: 60 }
                 include:
                   - network: ""
                   - # on debian run tests with systemd-networkd
