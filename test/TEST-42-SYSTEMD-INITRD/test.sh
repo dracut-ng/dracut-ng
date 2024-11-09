@@ -75,7 +75,9 @@ test_setup() {
     rm -- "$TESTDIR"/marker.img
 
     # initrd for test infra and required kernel modules
+    # Improve boot time by generating two initrds. Do not re-compress kernel modules
     test_dracut \
+        --no-compress \
         -m "kernel-modules" \
         "$TESTDIR"/initramfs-test
 
