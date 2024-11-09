@@ -7,8 +7,6 @@
 set -e
 if [ "$V" = "2" ]; then set -x; fi
 
-export DRACUT=dracut
-
 [[ -d ${0%/*} ]] && cd "${0%/*}"/../
 
 # disable building documentation by default
