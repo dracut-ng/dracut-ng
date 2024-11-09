@@ -44,7 +44,3 @@ ldconfig in GLIBC as is does support a sysroot with its -r option.
 
 Extra environment variables needed to run dracut on the sysroot are
 documented in the dracut(8) man page.
-
-For the Plymouth boot splash to be added to the initramfs image,
-this gitlab PR is needed for Plymouth:
-https://gitlab.freedesktop.org/plymouth/plymouth/merge_requests/72
