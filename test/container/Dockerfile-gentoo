@@ -35,8 +35,8 @@ RUN \
     echo "USE=\"boot kernel-install pkcs7 pkcs11 tpm -initramfs\"" >> /etc/portage/make.conf ;\
     # Use debian's installkernel \
     echo 'sys-kernel/installkernel -systemd' >> /etc/portage/package.use/kernel ;\
-    # Enable ukify and cryptsetup tools (includes unit generator for crypttab) \
-    echo 'sys-apps/systemd ukify cryptsetup' >> /etc/portage/package.use/systemd ;\
+    # Enable ukify, qrcode and cryptsetup (includes unit generator for crypttab) \
+    echo 'sys-apps/systemd ukify qrcode cryptsetup' >> /etc/portage/package.use/systemd ;\
     # Support thin volumes and build all of LVM2 including daemons and tools like lvchange \
     echo 'sys-fs/lvm2 thin lvm' >> /etc/portage/package.use/lvm2 ;\
     # Ensure everything is up to date before we start \
