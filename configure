@@ -61,6 +61,7 @@ while (($# > 0)); do
         --systemdsystemunitdir) read_arg systemdsystemunitdir "$@" || shift ;;
         --bashcompletiondir) read_arg bashcompletiondir "$@" || shift ;;
         --enable-dracut-cpio) enable_dracut_cpio=yes ;;
+        --disable-dracut-cpio) enable_dracut_cpio=no ;;
         *) echo "Ignoring unknown option '$1'" ;;
     esac
     shift
