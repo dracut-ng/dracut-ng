@@ -70,6 +70,10 @@ fips-crypto-policies:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/[0-9][0-9]fips-crypto-policies/*'
 
+systemd-battery-check:
+  - changed-files:
+    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-battery-check/*'
+
 systemd-ac-power:
   - changed-files:
     - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-ac-power/*'

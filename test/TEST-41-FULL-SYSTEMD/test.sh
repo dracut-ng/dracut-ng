@@ -135,7 +135,7 @@ EOF
     # TODO enable systemd-bsod for Gentoo
 
     test_dracut \
-        -m "resume dracut-systemd systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pcrphase systemd-pstore systemd-repart systemd-sysext systemd-veritysetup" \
+        -m "systemd-battery-check resume dracut-systemd systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pcrphase systemd-pstore systemd-repart systemd-sysext systemd-veritysetup" \
         --add-drivers "btrfs" \
         "$TESTDIR"/initramfs.testing
 
