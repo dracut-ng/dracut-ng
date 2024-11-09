@@ -176,10 +176,6 @@ Creates initial ramdisk images for preloading modules
   --tmpdir [DIR]        Temporary directory to be used instead of default
                          ${TMPDIR:-/var/tmp}.
   -r, --sysroot [DIR]   Specify sysroot directory to collect files from.
-  -l, --local           Local mode. Use modules from the current working
-                         directory instead of the system-wide installed in
-                         /usr/lib/dracut/modules.d.
-                         Useful when running dracut from a git checkout.
   -H, --hostonly        Host-only mode: Install only what is needed for
                          booting the local host instead of a generic host.
   -N, --no-hostonly     Disables host-only mode.
@@ -376,7 +372,7 @@ rearrange_params() {
     TEMP=$(
         unset POSIXLY_CORRECT
         getopt \
-            -o "a:m:o:d:I:k:c:r:L:fvqlHhMNp" \
+            -o "a:m:o:d:I:k:c:r:L:fvqHhMNp" \
             --long kver: \
             --long add: \
             --long force-add: \
@@ -430,7 +426,6 @@ rearrange_params() {
             --long logfile: \
             --long verbose \
             --long quiet \
-            --long local \
             --long hostonly \
             --long host-only \
             --long no-hostonly \
@@ -768,11 +763,6 @@ while :; do
             ;;
         -v | --verbose) ((verbosity_mod_l++)) ;;
         -q | --quiet) ((verbosity_mod_l--)) ;;
-        -l | --local)
-            allowlocal="yes"
-            [[ -f "$(readlink -f "${0%/*}")/dracut-init.sh" ]] \
-                && dracutbasedir="$(readlink -f "${0%/*}")"
-            ;;
         -H | --hostonly | --host-only)
             hostonly_l="yes"
             ;;
@@ -919,22 +909,14 @@ export DRACUT_LOG_LEVEL=warning
 
 # if we were not passed a config file, try the default one
 if [[ -z $conffile ]]; then
-    if [[ $allowlocal ]]; then
-        conffile="$dracutbasedir/dracut.conf"
-    else
-        conffile="$dracutsysrootdir/etc/dracut.conf"
-    fi
+    conffile="$dracutsysrootdir/etc/dracut.conf"
 elif [[ ! -e $conffile ]]; then
     printf "%s\n" "dracut[F]: Configuration file '$conffile' not found." >&2
     exit 1
 fi
 
 if [[ -z $confdir ]]; then
-    if [[ $allowlocal ]]; then
-        confdir="$dracutbasedir/dracut.conf.d"
-    else
-        confdir="$dracutsysrootdir/etc/dracut.conf.d"
-    fi
+    confdir="$dracutsysrootdir/etc/dracut.conf.d"
 elif [[ ! -d $confdir ]]; then
     printf "%s\n" "dracut[F]: Configuration directory '$confdir' not found." >&2
     exit 1
@@ -2512,11 +2494,7 @@ else
 fi
 
 if ((maxloglvl >= 5)) && ((verbosity_mod_l >= 0)); then
-    if [[ $allowlocal ]]; then
-        "$dracutbasedir/lsinitrd.sh" "${DRACUT_TMPDIR}/initramfs.img" | ddebug
-    else
-        lsinitrd "${DRACUT_TMPDIR}/initramfs.img" | ddebug
-    fi
+    lsinitrd "${DRACUT_TMPDIR}/initramfs.img" | ddebug
 fi
 
 umask 077

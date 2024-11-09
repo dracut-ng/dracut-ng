@@ -26,11 +26,11 @@ __contains_word() {
 _dracut() {
     local cur=${COMP_WORDS[COMP_CWORD]} prev=${COMP_WORDS[COMP_CWORD - 1]}
     local -A OPTS=(
-        [STANDALONE]='-f -v -q -l -H -h -M -N -p
+        [STANDALONE]='-f -v -q -H -h -M -N -p
             --ro-mnt --force --kernel-only --no-kernel --strip --nostrip
             --hardlink --nohardlink --noprefix --mdadmconf --nomdadmconf
             --lvmconf --nolvmconf --debug --profile --verbose --quiet
-            --local --hostonly --no-hostonly --fstab --help --bzip2 --lzma
+            --hostonly --no-hostonly --fstab --help --bzip2 --lzma
             --xz --zstd --no-compress --gzip --list-modules --show-modules --keep
             --printsize --regenerate-all --noimageifnotneeded --early-microcode
             --no-early-microcode --print-cmdline --reproducible --uefi
