@@ -19,6 +19,11 @@ check() {
 }
 
 # called by dracut
+depends() {
+    echo bash
+}
+
+# called by dracut
 installkernel() {
     local _boot_zipl
 
