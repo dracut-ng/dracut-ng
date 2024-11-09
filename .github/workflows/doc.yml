@@ -12,8 +12,6 @@ on:
 jobs:
     doc:
         name: doc on ${{ matrix.container }}
-        path:
-            - 'man/**'
         runs-on: ubuntu-latest
         timeout-minutes: 10
         concurrency:
