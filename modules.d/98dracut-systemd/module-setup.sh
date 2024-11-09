@@ -12,17 +12,7 @@ check() {
 
 # called by dracut
 depends() {
-    local deps
-    deps="systemd-initrd systemd-ask-password"
-
-    # when systemd and crypt are both included
-    # systemd-cryptsetup is mandatory dependency
-    # see https://github.com/dracut-ng/dracut-ng/issues/563
-    if dracut_module_included "crypt"; then
-        deps+=" systemd-cryptsetup"
-    fi
-
-    echo "$deps"
+    echo "systemd-initrd systemd-ask-password"
     return 0
 }
 
