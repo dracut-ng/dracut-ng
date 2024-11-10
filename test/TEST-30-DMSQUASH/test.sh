@@ -8,7 +8,7 @@ TEST_DESCRIPTION="live root on a squash filesystem"
 
 test_check() {
     if ! type -p mksquashfs &> /dev/null; then
-        echo "Test needs mksquashfs for crypt module... Skipping"
+        echo "Test needs mksquashfs... Skipping"
         return 1
     fi
 }
