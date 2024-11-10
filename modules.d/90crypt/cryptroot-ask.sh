@@ -78,7 +78,7 @@ asked_file=/tmp/cryptroot-asked-$luksname
 # load dm_crypt if it is not already loaded
 [ -d /sys/module/dm_crypt ] || modprobe dm_crypt
 
-. /lib/dracut-crypt-lib.sh
+command -v ask_for_password > /dev/null || . /lib/dracut-crypt-lib.sh
 
 #
 # Open LUKS device

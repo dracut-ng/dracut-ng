@@ -1,7 +1,7 @@
 #!/bin/sh
 
 type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
-. /lib/cifs-lib.sh
+type cifs_to_var > /dev/null 2>&1 || . /lib/cifs-lib.sh
 
 [ "$#" = 3 ] || exit 1
 
