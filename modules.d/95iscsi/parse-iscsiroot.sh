@@ -4,10 +4,6 @@
 #       root=iscsi:[<servername>]:[<protocol>]:[<port>]:[<LUN>]:<targetname>
 #       [root=*] netroot=iscsi:[<servername>]:[<protocol>]:[<port>]:[<LUN>]:<targetname>
 #
-# Legacy formats:
-#       [net]root=[iscsi] iscsiroot=[<servername>]:[<protocol>]:[<port>]:[<LUN>]:<targetname>
-#       [net]root=[iscsi] iscsi_firmware
-#
 # root= takes precedence over netroot= if root=iscsi[...]
 #
 
@@ -26,10 +22,7 @@ if [ -z "$netroot" ]; then
         netroot="$nroot"
     fi
 fi
-[ -z "$iscsiroot" ] && iscsiroot=$(getarg iscsiroot=)
 [ -z "$iscsi_firmware" ] && getargbool 0 rd.iscsi.firmware -y iscsi_firmware && iscsi_firmware="1"
-
-[ -n "$iscsiroot" ] && [ -n "$iscsi_firmware" ] && die "Mixing iscsiroot and iscsi_firmware is dangerous"
 
 type write_fs_tab > /dev/null 2>&1 || . /lib/fs-lib.sh
 
@@ -59,21 +52,6 @@ if [ "${root}" = "/dev/root" ] && getarg "netroot=dhcp"; then
     # if root is not specified try to mount the whole iSCSI LUN
     printf 'ENV{DEVTYPE}!="partition", SYMLINK=="disk/by-path/*-iscsi-*-*", SYMLINK+="root"\n' >> /etc/udev/rules.d/99-iscsi-root.rules
     [ -n "$DRACUT_SYSTEMD" ] && systemctl is-active systemd-udevd && udevadm control --reload-rules
-fi
-
-if [ -n "$iscsiroot" ]; then
-    [ -z "$netroot" ] && netroot=$root
-
-    # @deprecated
-    echo "Warning: Argument iscsiroot is deprecated and might be removed in a future"
-    echo "release. See 'man dracut.kernel' for more information."
-
-    # Accept iscsiroot argument?
-    [ -z "$netroot" ] || [ "$netroot" = "iscsi" ] \
-        || die "Argument iscsiroot only accepted for empty root= or [net]root=iscsi"
-
-    # Override root with iscsiroot content?
-    [ -z "$netroot" ] || [ "$netroot" = "iscsi" ] && netroot=iscsi:$iscsiroot
 fi
 
 # iscsi_firmware does not need argument checking
