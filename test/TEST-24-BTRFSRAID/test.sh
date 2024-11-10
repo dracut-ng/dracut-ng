@@ -29,11 +29,6 @@ test_run() {
 }
 
 test_setup() {
-    # Create the blank file to use as a root filesystem
-    DISKIMAGE=$TESTDIR/TEST-15-BTRFSRAID-root.img
-    rm -f -- "$DISKIMAGE"
-    dd if=/dev/zero of="$DISKIMAGE" bs=1M count=1024
-
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
