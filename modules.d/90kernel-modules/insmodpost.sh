@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. /lib/dracut-lib.sh
+type getargs > /dev/null 2>&1 || . /lib/dracut-lib.sh
 
 for modlist in $(getargs rd.driver.post); do
     (

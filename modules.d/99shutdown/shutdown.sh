@@ -17,7 +17,7 @@ ACTION="$1"
 
 export TERM=linux
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
-. /lib/dracut-lib.sh
+type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
 
 if [ "$(stat -c '%T' -f /)" = "tmpfs" ]; then
     mount -o remount,rw /
