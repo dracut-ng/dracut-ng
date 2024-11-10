@@ -23,7 +23,7 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=LABEL=root" \
+        -append "$TEST_KERNEL_CMDLINE root=LABEL=root ro" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check || return 1
 }
@@ -41,8 +41,7 @@ test_setup() {
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
-        -a "bash btrfs" \
-        -d "piix ide-gd_mod ata_piix btrfs sd_mod" \
+        -d "btrfs piix ide-gd_mod ata_piix btrfs sd_mod" \
         -I "mkfs.btrfs" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
@@ -64,7 +63,7 @@ test_setup() {
 
     test_marker_check dracut-root-block-created || return 1
 
-    test_dracut \
+    test_dracut --nofscks \
         -d "btrfs" \
         "$TESTDIR"/initramfs.testing
 }
