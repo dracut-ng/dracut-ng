@@ -1,4 +1,4 @@
-name: Integration Test  (extra)
+name: Daily Integration Tests
 
 on:
     schedule:
@@ -33,6 +33,7 @@ jobs:
                         "fedora:rawhide",
                         "centos:stream10-development",
                         "gentoo",
+                        "gentoo:slim",
                         "opensuse",
                         "ubuntu",
                         "ubuntu:rolling",
