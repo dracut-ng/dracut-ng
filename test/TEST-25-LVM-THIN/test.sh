@@ -10,6 +10,11 @@ test_check() {
         echo "Test needs lvm for lvm module... Skipping"
         return 1
     fi
+
+    if ! type -p mdraid &> /dev/null; then
+        echo "Test needs mdraid for mdraid module ... Skipping"
+        return 1
+    fi
 }
 
 test_run() {

@@ -4,6 +4,11 @@
 TEST_DESCRIPTION="UEFI boot"
 
 test_check() {
+    if ! type -p mksquashfs &> /dev/null; then
+        echo "Test needs mksquashfs... Skipping"
+        return 1
+    fi
+
     [[ -n "$(ovmf_code)" ]]
 }
 
