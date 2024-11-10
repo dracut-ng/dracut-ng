@@ -132,10 +132,8 @@ EOF
 
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
 
-    # TODO enable systemd-bsod for Gentoo
-
     test_dracut \
-        -m "systemd-battery-check resume dracut-systemd systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pcrphase systemd-pstore systemd-repart systemd-sysext systemd-veritysetup" \
+        -m "resume dracut-systemd systemd-ac-power systemd-battery-check systemd-bsod systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pcrphase systemd-pstore systemd-repart systemd-sysext systemd-veritysetup" \
         --add-drivers "btrfs" \
         "$TESTDIR"/initramfs.testing
 
@@ -143,8 +141,13 @@ EOF
         find "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/systemd/system/ -printf "%f\n" | sort | uniq > systemd-dracut
         mkinitcpio -k "$KVERSION" --builddir "$TESTDIR" --save -A systemd
         find "$TESTDIR"/mkinitcpio.*/root/usr/lib/systemd/system/ -printf "%f\n" | sort | uniq > systemd-mkinitcpio
-        echo "systemd units included in initrd from mkinitcpio but not from dracut"
-        diff systemd-dracut systemd-mkinitcpio | grep '> ' || :
+
+        # fail the test if mkinitcpio installs some services that dracut does not
+        mkinitcpio_units=$(comm -23 systemd-mkinitcpio systemd-dracut)
+        if [ -n "$mkinitcpio_units" ]; then
+            printf "\n *** systemd units included in initrd from mkinitcpio but not from dracut:%s\n\n" "${mkinitcpio_units}"
+            exit 1
+        fi
     fi
 }
 
