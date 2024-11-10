@@ -36,8 +36,8 @@ jobs:
                     - { dockerfile: 'Dockerfile-debian', tag: 'debian:sid',     platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-ubuntu', tag: 'ubuntu:rolling', platform: 'linux/amd64' }
                     - { dockerfile: 'Dockerfile-alpine', tag: 'alpine:edge',    platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:latest',  platform: 'linux/amd64' }
-                    - { dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:slim',    platform: 'linux/amd64', extrapackages: 'no' }
+                    - { dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:latest',  platform: 'linux/amd64', option: 'systemd' }
+                    - { dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:musl',    platform: 'linux/amd64', option: 'musl' }
                     - { dockerfile: 'Dockerfile-fedora', tag: 'fedora:rawhide', platform: 'linux/amd64', registry: 'registry.fedoraproject.org' }
                     - { dockerfile: 'Dockerfile-fedora', tag: 'centos:stream10-development', platform: 'linux/amd64', registry: 'quay.io/centos' }
         steps:
@@ -63,7 +63,7 @@ jobs:
                     build-args: |
                         DISTRIBUTION=${{ matrix.config.tag }}
                         REGISTRY=${{ matrix.config.registry }}
-                        EXTRAPACKAGES=${{ matrix.config.extrapackages }}
+                        OPTION=${{ matrix.config.option }}
 
     arm64:
         if: github.repository == 'dracut-ng/dracut-ng' || vars.CONTAINER == 'enabled'

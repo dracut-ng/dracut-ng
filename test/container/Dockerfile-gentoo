@@ -1,4 +1,5 @@
 # Test coverage provided by this container:
+# - glibc/systemd or musl/openrc
 # - systemd-networkd
 # - bash
 
@@ -9,22 +10,15 @@
 # - rng-tools (to increase coverage)
 # - ntfs3g (to keep container small)
 
-ARG EXTRAPACKAGES=yes
+ARG OPTION=systemd
 
 FROM docker.io/gentoo/portage:latest AS portage
 
-FROM docker.io/gentoo/stage3:systemd
+FROM docker.io/gentoo/stage3:${OPTION}
 COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
 
 # export ARG
-ARG EXTRAPACKAGES
-
-# Dependencies for full testsuite
-RUN \
-if [ "$EXTRAPACKAGES" != "no" ] ; then \
-    emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
-    app-alternatives/bc \
-; fi
+ARG OPTION
 
 RUN \
     # Speed-up using binpkgs \
@@ -51,17 +45,15 @@ RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     app-text/asciidoc \
     app-text/docbook-xml-dtd \
     app-text/docbook-xsl-stylesheets \
-    sys-apps/systemd \
     sys-kernel/dracut \
     sys-kernel/gentoo-kernel-bin \
-    sys-libs/glibc \
     sys-libs/libxcrypt \
     virtual/libelf \
     virtual/pkgconfig
 
 # Dependencies for full testsuite
 RUN \
-if [ "$EXTRAPACKAGES" != "no" ] ; then \
+if [ "$OPTION" = "systemd" ] ; then \
     emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     app-alternatives/bc \
     app-crypt/swtpm \
@@ -74,6 +66,7 @@ if [ "$EXTRAPACKAGES" != "no" ] ; then \
     net-fs/nfs-utils \
     net-misc/dhcp \
     net-wireless/bluez \
+    sys-apps/systemd \
     sys-apps/nvme-cli \
     sys-block/nbd \
     sys-block/open-iscsi \
@@ -88,6 +81,7 @@ if [ "$EXTRAPACKAGES" != "no" ] ; then \
     sys-fs/mdadm \
     sys-fs/multipath-tools \
     sys-fs/squashfs-tools \
+    sys-libs/glibc \
 ; fi
 
 # cleanup
