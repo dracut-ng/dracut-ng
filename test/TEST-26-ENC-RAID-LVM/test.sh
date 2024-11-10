@@ -13,8 +13,8 @@ test_check() {
         return 1
     fi
 
-    if ! type -p mdraid &> /dev/null; then
-        echo "Test needs mdraid for mdraid module ... Skipping"
+    if ! type -p mdadm &> /dev/null; then
+        echo "Test needs mdadm for mdraid module ... Skipping"
         return 1
     fi
 }
