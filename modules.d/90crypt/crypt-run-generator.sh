@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. /lib/dracut-lib.sh
+type getargs > /dev/null 2>&1 || . /lib/dracut-lib.sh
 type crypttab_contains > /dev/null 2>&1 || . /lib/dracut-crypt-lib.sh
 
 dev=$1
