@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. /lib/dracut-crypt-lib.sh
+command -v test_dev > /dev/null || . /lib/dracut-crypt-lib.sh
 
 real_keydev="$1"
 keypath="$2"

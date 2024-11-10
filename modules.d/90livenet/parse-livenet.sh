@@ -3,7 +3,8 @@
 # root=live:[url-to-backing-file]
 
 [ -z "$root" ] && root=$(getarg root=)
-. /lib/url-lib.sh
+get_url_handler
+command -v get_url_handler > /dev/null || . /lib/url-lib.sh
 
 # live updates
 updates=$(getarg live.updates=)
