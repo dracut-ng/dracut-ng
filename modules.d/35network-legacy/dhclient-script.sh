@@ -2,8 +2,8 @@
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
-type ip_to_var > /dev/null 2>&1 || . /lib/net-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
+command -v ip_to_var > /dev/null || . /lib/net-lib.sh
 
 # We already need a set netif here
 netif=$interface

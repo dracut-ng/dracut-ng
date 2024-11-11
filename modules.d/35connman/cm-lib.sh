@@ -1,6 +1,6 @@
 #!/bin/sh
 
-type getcmdline > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getcmdline > /dev/null || . /lib/dracut-lib.sh
 
 cm_generate_connections() {
     if getargbool 0 rd.neednet; then

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-type ismounted > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v ismounted > /dev/null || . /lib/dracut-lib.sh
 
 if [ "${fstype}" = "virtiofs" ] || [ "${root%%:*}" = "virtiofs" ]; then
     if ! load_fstype virtiofs; then

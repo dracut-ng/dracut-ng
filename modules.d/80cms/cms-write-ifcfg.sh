@@ -1,6 +1,6 @@
 #!/bin/bash
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
 OLD_UMASK=$(umask)
 umask 0022

@@ -31,7 +31,7 @@ fi
 
 [ -n "$iscsiroot" ] && [ -n "$iscsi_firmware" ] && die "Mixing iscsiroot and iscsi_firmware is dangerous"
 
-type write_fs_tab > /dev/null 2>&1 || . /lib/fs-lib.sh
+command -v write_fs_tab > /dev/null || . /lib/fs-lib.sh
 
 # Root takes precedence over netroot
 if [ "${root%%:*}" = "iscsi" ]; then
@@ -146,7 +146,7 @@ fi
 
 for nroot in $(getargs netroot); do
     [ "${nroot%%:*}" = "iscsi" ] || continue
-    type parse_iscsi_root > /dev/null 2>&1 || . /lib/net-lib.sh
+    command -v parse_iscsi_root > /dev/null || . /lib/net-lib.sh
     parse_iscsi_root "$nroot" || return 1
     netroot_enc=$(str_replace "$nroot" '/' '\2f')
     echo "${DRACUT_SYSTEMD+systemctl is-active initrd-root-device.target || }[ -f '/tmp/iscsistarted-$netroot_enc' ]" > "$hookdir"/initqueue/finished/iscsi_started.sh

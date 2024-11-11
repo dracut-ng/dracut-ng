@@ -33,7 +33,7 @@ if [ ! -d /sys/kernel ]; then
 fi
 
 RD_DEBUG=""
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
 setdebug
 

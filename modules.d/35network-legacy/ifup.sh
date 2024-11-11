@@ -7,8 +7,8 @@
 # or it is for manually bring up network ie. for kdump scp vmcore
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
-type ip_to_var > /dev/null 2>&1 || . /lib/net-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
+command -v ip_to_var > /dev/null || . /lib/net-lib.sh
 
 # Huh? No $1?
 [ -z "$1" ] && exit 1

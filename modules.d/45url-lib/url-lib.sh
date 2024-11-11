@@ -4,7 +4,7 @@
 # Authors:
 #   Will Woods <wwoods@redhat.com>
 
-type mkuniqdir > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v mkuniqdir > /dev/null || . /lib/dracut-lib.sh
 
 # fetch_url URL [OUTFILE]
 #   fetch the given URL to a locally-visible location.

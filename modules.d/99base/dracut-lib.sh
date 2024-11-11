@@ -1,6 +1,6 @@
 #!/bin/sh
 
-type wait_for_dev > /dev/null 2>&1 || . /lib/dracut-dev-lib.sh
+command -v wait_for_dev > /dev/null || . /lib/dracut-dev-lib.sh
 
 export DRACUT_SYSTEMD
 export NEWROOT
@@ -803,7 +803,7 @@ wait_for_loginit() {
 }
 
 # pidof version for root
-if ! command -v pidof > /dev/null 2> /dev/null; then
+if ! command -v pidof > /dev/null; then
     pidof() {
         debug_off
         local _cmd

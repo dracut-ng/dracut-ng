@@ -1,6 +1,6 @@
 #!/bin/sh
 
-type getcmdline > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getcmdline > /dev/null || . /lib/dracut-lib.sh
 
 nm_generate_connections() {
     rm -f /run/NetworkManager/system-connections/*

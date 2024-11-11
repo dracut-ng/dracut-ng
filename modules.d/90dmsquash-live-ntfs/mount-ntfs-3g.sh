@@ -1,6 +1,6 @@
 #!/bin/sh
 
-type vwarn > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v vwarn > /dev/null || . /lib/dracut-lib.sh
 
 # Symlinking /usr/bin/ntfs-3g as /sbin/mount.ntfs seems to boot
 # at the first glance, but ends with lots and lots of squashfs

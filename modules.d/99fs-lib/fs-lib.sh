@@ -1,6 +1,6 @@
 #!/bin/sh
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
 fsck_ask_reboot() {
     info "note - fsck suggests reboot, if you"
@@ -162,7 +162,7 @@ fsck_batch() {
     local _ret
     local _out
 
-    [ $# -eq 0 ] || ! type fsck > /dev/null 2>&1 && return 255
+    [ $# -eq 0 ] || ! command -v fsck > /dev/null && return 255
 
     info "Checking filesystems (fsck -M -T -a):"
     for _dev in "$@"; do

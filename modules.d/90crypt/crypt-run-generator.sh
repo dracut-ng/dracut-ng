@@ -1,7 +1,7 @@
 #!/bin/sh
 
-type getargs > /dev/null 2>&1 || . /lib/dracut-lib.sh
-type crypttab_contains > /dev/null 2>&1 || . /lib/dracut-crypt-lib.sh
+command -v getargs > /dev/null || . /lib/dracut-lib.sh
+command -v crypttab_contains > /dev/null || . /lib/dracut-crypt-lib.sh
 
 dev=$1
 luks=$2
