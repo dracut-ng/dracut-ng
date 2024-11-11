@@ -1,6 +1,6 @@
 #!/bin/sh
 
-type crypttab_contains > /dev/null 2>&1 || . /lib/dracut-crypt-lib.sh
+command -v crypttab_contains > /dev/null || . /lib/dracut-crypt-lib.sh
 
 _cryptgetargsname() {
     debug_off

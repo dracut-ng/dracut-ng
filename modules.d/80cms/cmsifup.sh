@@ -1,6 +1,6 @@
 #!/bin/bash
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
 DEVICE=$1
 
@@ -35,7 +35,7 @@ IFACES="$IFACES $DEVICE"
 echo "$IFACES" >> /tmp/net.ifaces
 
 if [ -x /usr/libexec/nm-initrd-generator ] || [ -x /usr/lib/nm-initrd-generator ]; then
-    type nm_generate_connections > /dev/null 2>&1 || . /lib/nm-lib.sh
+    command -v nm_generate_connections > /dev/null || . /lib/nm-lib.sh
     nm_generate_connections
     nm_reload_connections
 else

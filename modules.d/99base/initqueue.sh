@@ -7,7 +7,7 @@
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
 while [ $# -gt 0 ]; do
     case "$1" in

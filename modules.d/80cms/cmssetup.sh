@@ -1,7 +1,7 @@
 #!/bin/bash
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
-type zdev_parse_dasd_list > /dev/null 2>&1 || . /lib/s390-tools/zdev-from-dasd_mod.dasd
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
+command -v zdev_parse_dasd_list > /dev/null || . /lib/s390-tools/zdev-from-dasd_mod.dasd
 
 function dasd_settle() {
     local dasd_status

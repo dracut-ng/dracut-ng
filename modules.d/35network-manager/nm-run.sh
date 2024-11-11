@@ -1,6 +1,6 @@
 #!/bin/bash
 
-type source_hook > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v source_hook > /dev/null || . /lib/dracut-lib.sh
 
 if [ -z "$DRACUT_SYSTEMD" ]; then
     # Only start NM if networking is needed

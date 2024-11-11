@@ -1,6 +1,6 @@
 #!/bin/sh
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
 getargbool 0 rd.live.overlay.overlayfs && overlayfs="yes"
 getargbool 0 rd.live.overlay.reset && reset_overlay="yes"

@@ -1,8 +1,8 @@
 #!/bin/sh
 # livenetroot - fetch a live image from the network and run it
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
-type fetch_url > /dev/null 2>&1 || . /lib/url-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
+command -v fetch_url > /dev/null || . /lib/url-lib.sh
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 RETRIES=${RETRIES:-100}

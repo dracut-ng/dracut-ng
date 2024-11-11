@@ -5,7 +5,7 @@
 # CIFSROOT is something like: cifs://[<username>[:<password>]]@<host>/<path>
 # NETIF is used to get information from DHCP options, if needed.
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
 cifs_to_var() {
     local cifsuser

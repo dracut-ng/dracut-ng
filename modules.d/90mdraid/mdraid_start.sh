@@ -1,6 +1,6 @@
 #!/bin/sh
 
-type getargs > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getargs > /dev/null || . /lib/dracut-lib.sh
 
 _md_start() {
     local _udevinfo

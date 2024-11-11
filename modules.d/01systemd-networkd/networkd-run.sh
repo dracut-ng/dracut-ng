@@ -1,6 +1,6 @@
 #!/bin/bash
 
-type source_hook > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v source_hook > /dev/null || . /lib/dracut-lib.sh
 
 for ifpath in /sys/class/net/*; do
     ifname="${ifpath##*/}"

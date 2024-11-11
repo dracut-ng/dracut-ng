@@ -1,6 +1,6 @@
 #!/bin/sh
 
-type cm_generate_connections > /dev/null 2>&1 || . /lib/cm-lib.sh
+command -v cm_generate_connections > /dev/null || . /lib/cm-lib.sh
 
 if [ -n "$netroot" ] || [ -e /tmp/net.ifaces ]; then
     echo rd.neednet >> /etc/cmdline.d/connman.conf

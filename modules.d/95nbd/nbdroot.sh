@@ -1,6 +1,6 @@
 #!/bin/sh
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
@@ -102,7 +102,7 @@ if [ "$root" = "block:/dev/root" ] || [ "$root" = "dhcp" ]; then
     wait_for_dev -n /dev/root
 
     if [ -z "$DRACUT_SYSTEMD" ]; then
-        type write_fs_tab > /dev/null 2>&1 || . /lib/fs-lib.sh
+        command -v write_fs_tab > /dev/null || . /lib/fs-lib.sh
 
         write_fs_tab /dev/root "$nbdfstype" "$fsopts"
 

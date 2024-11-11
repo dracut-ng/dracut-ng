@@ -3,7 +3,7 @@
 # memdebug=4 and memdebug=5 requires debug fs to be mounted.
 # And there is no need to umount it.
 
-type getargnum > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getargnum > /dev/null || . /lib/dracut-lib.sh
 
 # "sys/kernel/tracing" has the priority if exists.
 get_trace_base() {

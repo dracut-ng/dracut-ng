@@ -6,7 +6,7 @@ NEWROOT=${NEWROOT:-"/sysroot"}
 # do not ask, if we already have root
 [ -f "$NEWROOT"/proc ] && exit 0
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
 mkdir -p -m 0700 /run/cryptsetup
 

@@ -1,7 +1,7 @@
 #!/bin/sh
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
-type nfs_to_var > /dev/null 2>&1 || . /lib/nfs-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
+command -v nfs_to_var > /dev/null || . /lib/nfs-lib.sh
 
 [ "$#" = 3 ] || exit 1
 

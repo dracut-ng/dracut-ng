@@ -6,9 +6,9 @@
 # iscsistart needs this.
 #
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
-type parse_iscsi_root > /dev/null 2>&1 || . /lib/net-lib.sh
-type write_fs_tab > /dev/null 2>&1 || . /lib/fs-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
+command -v parse_iscsi_root > /dev/null || . /lib/net-lib.sh
+command -v write_fs_tab > /dev/null || . /lib/fs-lib.sh
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 

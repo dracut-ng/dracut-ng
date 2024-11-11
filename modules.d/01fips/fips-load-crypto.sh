@@ -1,6 +1,6 @@
 #!/bin/sh
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
 if ! fipsmode=$(getarg fips) || [ "$fipsmode" = "0" ]; then
     :

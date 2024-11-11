@@ -6,7 +6,7 @@ PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
 # File to start dhclient requests on different interfaces in parallel
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
 . /lib/net-lib.sh
 
 netif=$1

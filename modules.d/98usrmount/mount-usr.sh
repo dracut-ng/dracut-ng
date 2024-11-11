@@ -1,7 +1,7 @@
 #!/bin/sh
 
-type info > /dev/null 2>&1 || . /lib/dracut-lib.sh
-type fsck_single > /dev/null 2>&1 || . /lib/fs-lib.sh
+command -v info > /dev/null || . /lib/dracut-lib.sh
+command -v fsck_single > /dev/null || . /lib/fs-lib.sh
 
 filtersubvol() {
     local _oldifs

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
 # systemd lets stdout go to journal only, but the system
 # has to halt when the integrity check fails to satisfy FIPS.

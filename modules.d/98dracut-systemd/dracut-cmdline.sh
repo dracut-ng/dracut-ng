@@ -3,7 +3,7 @@
 if [ -f /dracut-state.sh ]; then
     . /dracut-state.sh 2> /dev/null
 fi
-type getarg > /dev/null 2>&1 || . /lib/dracut-lib.sh
+command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
 [ -f /usr/lib/initrd-release ] && . /usr/lib/initrd-release
 [ -n "$DRACUT_VERSION" ] && info "dracut-$DRACUT_VERSION"
