@@ -33,7 +33,7 @@ jobs:
                         "fedora:rawhide",
                         "centos:stream10-development",
                         "gentoo",
-                        "gentoo:slim",
+                        "gentoo:musl"
                         "opensuse",
                         "ubuntu",
                         "ubuntu:rolling",
