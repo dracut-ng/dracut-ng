@@ -1,17 +1,12 @@
 #!/usr/bin/env bash
 
-if [ "$TEST_FSTYPE" != "zfs" ]; then
-    export TEST_FSTYPE="btrfs"
-fi
+[ -z "$TEST_FSTYPE" ] && TEST_FSTYPE="ext4"
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on multiple device $TEST_FSTYPE"
 
 test_check() {
-    if ! type -p mkfs.btrfs &> /dev/null; then
-        echo "Test needs mkfs.btrfs.. Skipping"
-        return 1
-    fi
+    (command -v zfs || (command -v mdadm && command -v "mkfs.$TEST_FSTYPE")) &> /dev/null
 }
 
 # Uncomment this to debug failures
@@ -25,8 +20,10 @@ test_run() {
 
     if [ "$TEST_FSTYPE" = "zfs" ]; then
         TEST_KERNEL_CMDLINE+=" root=ZFS=dracut/root "
-    else
+    elif [ "$TEST_FSTYPE" = "btrfs" ]; then
         TEST_KERNEL_CMDLINE+=" root=LABEL=root "
+    else
+        TEST_KERNEL_CMDLINE+=" root=/dev/dracut/root rd.auto"
     fi
 
     test_marker_reset
@@ -55,7 +52,7 @@ test_setup() {
     # shellcheck disable=SC2046
     "$DRACUT" -N -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
-        -d "btrfs piix ide-gd_mod ata_piix sd_mod" \
+        -a "lvm mdraid" \
         $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "-I mkfs.${TEST_FSTYPE}"; fi) \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
@@ -77,6 +74,7 @@ test_setup() {
 
     # shellcheck disable=SC2046
     test_dracut \
+        -a "lvm mdraid" \
         $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; fi) \
         "$TESTDIR"/initramfs.testing
 }
