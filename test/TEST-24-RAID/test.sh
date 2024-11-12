@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
+
+if [ "$TEST_FSTYPE" != "zfs" ]; then
+    export TEST_FSTYPE="btrfs"
+fi
+
 # shellcheck disable=SC2034
-TEST_DESCRIPTION="root filesystem on multiple device btrfs"
+TEST_DESCRIPTION="root filesystem on multiple device $TEST_FSTYPE"
 
 test_check() {
     if ! type -p mkfs.btrfs &> /dev/null; then
@@ -17,13 +22,17 @@ test_run() {
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
     qemu_add_drive disk_index disk_args "$TESTDIR"/raid-1.img raid1
     qemu_add_drive disk_index disk_args "$TESTDIR"/raid-2.img raid2
-    qemu_add_drive disk_index disk_args "$TESTDIR"/raid-3.img raid3
-    qemu_add_drive disk_index disk_args "$TESTDIR"/raid-4.img raid4
+
+    if [ "$TEST_FSTYPE" = "zfs" ]; then
+        TEST_KERNEL_CMDLINE+=" root=ZFS=dracut/root "
+    else
+        TEST_KERNEL_CMDLINE+=" root=LABEL=root "
+    fi
 
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=LABEL=root ro" \
+        -append "$TEST_KERNEL_CMDLINE ro" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check || return 1
 }
@@ -35,14 +44,19 @@ test_setup() {
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
+    # pass enviroment variables to make the root filesystem
+    echo "TEST_FSTYPE=${TEST_FSTYPE}" > "$TESTDIR"/overlay/env
+
     # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
+
+    # shellcheck disable=SC2046
     "$DRACUT" -N -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
-        -d "btrfs piix ide-gd_mod ata_piix btrfs sd_mod" \
-        -I "mkfs.btrfs" \
+        -d "btrfs piix ide-gd_mod ata_piix sd_mod" \
+        $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "-I mkfs.${TEST_FSTYPE}"; fi) \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
 
@@ -53,8 +67,6 @@ test_setup() {
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
     qemu_add_drive disk_index disk_args "$TESTDIR"/raid-1.img raid1 1
     qemu_add_drive disk_index disk_args "$TESTDIR"/raid-2.img raid2 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/raid-3.img raid3 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/raid-4.img raid4 1
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
@@ -63,8 +75,9 @@ test_setup() {
 
     test_marker_check dracut-root-block-created || return 1
 
-    test_dracut --nofscks \
-        -d "btrfs" \
+    # shellcheck disable=SC2046
+    test_dracut \
+        $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; fi) \
         "$TESTDIR"/initramfs.testing
 }
 
