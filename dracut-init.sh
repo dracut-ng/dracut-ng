@@ -91,7 +91,10 @@ if ! [[ $libdirs ]]; then
         && [[ -d $dracutsysrootdir/lib64 ]]; then
         libdirs+=" /lib64"
         [[ -d $dracutsysrootdir/usr/lib64 ]] && libdirs+=" /usr/lib64"
-    else
+
+    fi
+
+    if [[ -d $dracutsysrootdir/lib ]]; then
         libdirs+=" /lib"
         [[ -d $dracutsysrootdir/usr/lib ]] && libdirs+=" /usr/lib"
     fi

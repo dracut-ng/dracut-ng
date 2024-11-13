@@ -138,9 +138,8 @@ EOF
 
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
 
-    # TODO switch back to -a from -m after https://github.com/dracut-ng/dracut-ng/issues/685 is fixed, otherwise this test fails on Ubuntu
     test_dracut \
-        -m "resume dracut-systemd systemd-ac-power systemd-battery-check systemd-bsod systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pcrphase systemd-pstore systemd-repart systemd-sysext systemd-veritysetup" \
+        -a "resume dracut-systemd systemd-ac-power systemd-battery-check systemd-bsod systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pcrphase systemd-pstore systemd-repart systemd-sysext systemd-veritysetup" \
         --add-drivers "btrfs" \
         "$TESTDIR"/initramfs.testing
 
