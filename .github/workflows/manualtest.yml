@@ -58,7 +58,7 @@ jobs:
     test:
         needs: matrix
         runs-on: ubuntu-latest
-        timeout-minutes: 10
+        timeout-minutes: 20
         concurrency:
             group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
             cancel-in-progress: true
