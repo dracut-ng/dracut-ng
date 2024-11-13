@@ -96,6 +96,10 @@ example:
 **-o, --omit** _<list of dracut modules>_::
     Omit a space-separated list of dracut modules. This parameter can be
     specified multiple times.
+    Warning: Avoid manually omitting dracut modules, as you may
+    inadvertently remove essential ones that dracut can't detect
+    or warn you about. Using this option is not recommended and is at
+    your own risk.
 +
 [NOTE]
 ===============================
@@ -112,6 +116,7 @@ example:
     parameter can be specified multiple times.
     This option forces dracut to only include the specified dracut modules.
     In most cases the "--add" option is what you want to use.
+    This option is not recomended to use (use at your own risk).
 +
 [NOTE]
 ===============================
@@ -126,6 +131,9 @@ example:
     Specify a space-separated list of kernel modules to exclusively include
     in the initramfs. The kernel modules have to be specified without the ".ko"
     suffix. This parameter can be specified multiple times.
+    This option forces dracut to only include the specified kernel modules.
+    In most cases the "--add-drivers" option is what you want to use.
+    This option is not recomended to use (use at your own risk).
 +
 [NOTE]
 ===============================
