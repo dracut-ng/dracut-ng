@@ -42,8 +42,8 @@ install() {
         # these are purely generated udev rules so we have to glob expand
         # within $initdir and strip the $initdir prefix for mark_hostonly
         local -a _array
-        # shellcheck disable=SC2155
-        local _nullglob=$(shopt -p nullglob)
+        local _nullglob
+        _nullglob=$(shopt -p nullglob)
         shopt -u nullglob
         readarray -t _array < <(
             ls -1 "$initdir"/etc/udev/rules.d/41-*.rules 2> /dev/null
