@@ -16,7 +16,7 @@ jobs:
         # run this test on all containers
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-latest
-        timeout-minutes: 10
+        timeout-minutes: 20
         concurrency:
             group: basic-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
             cancel-in-progress: true

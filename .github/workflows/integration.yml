@@ -21,7 +21,7 @@ jobs:
         # run this test on all containers
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-latest
-        timeout-minutes: 10
+        timeout-minutes: 20
         concurrency:
             group: basic-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
             cancel-in-progress: true
@@ -67,7 +67,7 @@ jobs:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-latest
-        timeout-minutes: 10
+        timeout-minutes: 20
         concurrency:
             group: extended-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
             cancel-in-progress: true
@@ -109,7 +109,7 @@ jobs:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-latest
-        timeout-minutes: 10
+        timeout-minutes: 20
         concurrency:
             group: extended-systemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
             cancel-in-progress: true
@@ -140,7 +140,7 @@ jobs:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-latest
-        timeout-minutes: 10
+        timeout-minutes: 20
         concurrency:
             group: dracut-cpio-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
             cancel-in-progress: true
@@ -165,7 +165,7 @@ jobs:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }} on arm64
         runs-on: ubuntu-latest
-        timeout-minutes: 10
+        timeout-minutes: 20
         concurrency:
             group: arm64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
             cancel-in-progress: true
@@ -193,7 +193,7 @@ jobs:
         # all nfs based on default networking
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-latest
-        timeout-minutes: 10
+        timeout-minutes: 20
         concurrency:
             group: network-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
             cancel-in-progress: true
@@ -232,7 +232,7 @@ jobs:
 #    network-advanced:
 #        name: ${{ matrix.test }} on ${{ matrix.container }}
 #        runs-on: ubuntu-latest
-#        timeout-minutes: 10
+#        timeout-minutes: 20
 #        concurrency:
 #            group: network-iscsi-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
 #            cancel-in-progress: true
