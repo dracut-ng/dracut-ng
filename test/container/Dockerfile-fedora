@@ -10,6 +10,7 @@
 # - rsyslog (syslog)
 # - libkcapi-hmaccalc (fido)
 # - nss-softokn, kdumpbase out of tree dracut modules
+# - fips
 
 ARG DISTRIBUTION=fedora
 ARG REGISTRY=registry.fedoraproject.org
@@ -42,8 +43,10 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     cargo \
     cifs-utils \
     cryptsetup \
+    crypto-policies-scripts \
     dbus-daemon \
     device-mapper-multipath \
+    dracut-live \
     e2fsprogs \
     erofs-utils \
     fcoe-utils \
@@ -88,5 +91,8 @@ RUN \
 if [[ "${DISTRIBUTION}" =~ "centos:" ]]; then \
     [[ -e /usr/bin/qemu-kvm ]] || ln -sf /usr/libexec/qemu-kvm /usr/bin/qemu-kvm ;\
     [[ -e /usr/bin/qemu-system-$(uname -m) ]] || ln -sv /usr/libexec/qemu-kvm /usr/bin/qemu-system-$(uname -m) ;\
-    echo 'hostonly="no"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf \
-; fi
+    echo 'hostonly="no"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf ;\
+    update-crypto-policies --no-reload --set FIPS ;\
+else \
+    fips-mode-setup --enable ;\
+fi
