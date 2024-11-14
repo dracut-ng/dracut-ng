@@ -15,6 +15,8 @@ test_run() {
         TEST_KERNEL_CMDLINE+=" root=ZFS=dracut/root "
     else
         TEST_KERNEL_CMDLINE+=" root=LABEL=dracut "
+        # test fips mode
+        [ -f /usr/share/crypto-policies/default-fips-config ] && TEST_KERNEL_CMDLINE+=" fips=1 rd.fips.skipkernel boot=LABEL=dracut "
     fi
 
     test_marker_reset
