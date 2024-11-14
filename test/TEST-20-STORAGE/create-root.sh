@@ -7,18 +7,22 @@ set -e
 . /env
 
 if [ "$TEST_FSTYPE" = "zfs" ]; then
-    zpool create dracut /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid[12]
+    zpool create dracut /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
     zfs create dracut/root
 elif [ "$TEST_FSTYPE" = "btrfs" ]; then
-    mkfs.btrfs -q -draid0 -mraid0 -L root /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid[12]
+    mkfs.btrfs -q -draid0 -mraid0 -L root /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
     udevadm settle
     btrfs device scan
 else
-    mdadm --create /dev/md0 --run --auto=yes --level=0 --raid-devices=2 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid[12]
-    # wait for the array to finish initializing, otherwise this sometimes fails randomly.
-    mdadm -W /dev/md0 || :
+    # storage layers (if available)
+    # mdadm (optional) --> crypt (optional) --> lvm --> TEST_FSTYPE (e.g. ext4)
+    if ! grep -qF 'rd.md=0' /proc/cmdline && command -v mdadm > /dev/null; then
+        mdadm --create /dev/md0 --run --auto=yes --level=0 --raid-devices=2 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
+        # wait for the array to finish initializing, otherwise this sometimes fails randomly.
+        mdadm -W /dev/md0 || :
+    fi
 
-    if command -v cryptsetup > /dev/null; then
+    if ! grep -qF 'rd.luks=0' /proc/cmdline && command -v cryptsetup > /dev/null; then
         printf test > keyfile
         cryptsetup -q luksFormat /dev/md0 /keyfile
         echo "The passphrase is test"
@@ -26,8 +30,15 @@ else
         lvm pvcreate -ff -y /dev/mapper/dracut_crypt_test
         lvm vgcreate dracut /dev/mapper/dracut_crypt_test
     else
-        lvm pvcreate -ff -y /dev/md0
-        lvm vgcreate dracut /dev/md0
+        if [ -e /dev/md0 ]; then
+            lvm pvcreate -ff -y /dev/md0
+            lvm vgcreate dracut /dev/md0
+        else
+            for dev in /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]; do
+                lvm pvcreate -ff -y "$dev"
+            done
+            lvm vgcreate dracut /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
+        fi
     fi
 
     lvm lvcreate --yes -l 100%FREE -n root dracut
@@ -43,7 +54,7 @@ if [ "$TEST_FSTYPE" = "zfs" ]; then
     zfs set mountpoint=/sysroot dracut/root
     zfs get mounted dracut/root
 elif [ "$TEST_FSTYPE" = "btrfs" ]; then
-    mount -t "$TEST_FSTYPE" /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid1 /sysroot
+    mount -t "$TEST_FSTYPE" /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk1 /sysroot
 else
     mount -t "$TEST_FSTYPE" /dev/dracut/root /sysroot
 fi
