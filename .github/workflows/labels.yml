@@ -1,3 +1,4 @@
+---
 name: "Labeler"
 
 # runs on pull_request_target instead of pull_request
