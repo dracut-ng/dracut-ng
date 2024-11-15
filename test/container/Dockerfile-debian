@@ -2,7 +2,7 @@
 # - arm64
 # - dash default shell (instead of bash)
 # - mawk (instead of gawk)
-# - pigz compression
+# - zstd compression
 # - verbose logging for tests
 
 # Not installed
@@ -75,7 +75,6 @@ RUN \
     ovmf \
     parted \
     pcscd \
-    pigz \
     pkg-config \
     procps \
     qemu-kvm \
@@ -91,5 +90,6 @@ RUN \
     tgt \
     thin-provisioning-tools \
     tpm2-tools \
+    zstd \
     && apt-get clean \
     && chmod a+r /boot/vmlinu*
