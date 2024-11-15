@@ -1,3 +1,4 @@
+---
 name: Commisery
 on:
   pull_request:
