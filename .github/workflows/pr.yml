@@ -1,6 +1,6 @@
 ---
 name: Commisery
-on:
+on:  # yamllint disable-line rule:truthy
   pull_request:
     types: [edited, opened, synchronize, reopened]
 
@@ -9,13 +9,13 @@ jobs:
     name: Conventional Commit Message Checker (Commisery)
     runs-on: ubuntu-latest
     steps:
-    - name: Check-out the repo under $GITHUB_WORKSPACE
-      uses: actions/checkout@v4
+      - name: Check-out the repo under $GITHUB_WORKSPACE
+        uses: actions/checkout@v4
 
-    - name: Run Commisery
-      uses: tomtom-international/commisery-action@master
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        # don't validate the pull request title
-        validate-pull-request: false
-        validate-pull-request-title-bump: false
+      - name: Run Commisery
+        uses: tomtom-international/commisery-action@master
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # don't validate the pull request title
+          validate-pull-request: false
+          validate-pull-request-title-bump: false

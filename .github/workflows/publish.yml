@@ -1,7 +1,7 @@
 ---
 name: Publish to GitHub Pages
 
-on:
+on:  # yamllint disable-line rule:truthy
   push:
     branches: [main]
     paths-ignore:
@@ -29,28 +29,28 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-    - name: Configure Pages
-      uses: actions/configure-pages@v5
-    - name: Install Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-    - name: Install dependencies
-      run: |
-        sudo apt-get -y update
-        sudo apt-get -y install make asciidoc
-    - name: Install Antora
-      run: npm i antora
-    - name: Generate Site
-      run: make doc_site
-    - name: Upload Artifacts
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: build/site
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: |
+          sudo apt-get -y update
+          sudo apt-get -y install make asciidoc
+      - name: Install Antora
+        run: npm i antora
+      - name: Generate Site
+        run: make doc_site
+      - name: Upload Artifacts
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
