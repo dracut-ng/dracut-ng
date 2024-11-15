@@ -9,12 +9,6 @@ test_check() {
         return 1
     fi
 
-    # TODO this check can be removed after CI switched to debian:13
-    if ! [ -f /usr/lib/systemd/systemd-battery-check ]; then
-        echo "Test needs systemd-battery-check.. Skipping"
-        return 1
-    fi
-
     command -v systemctl &> /dev/null
 }
 
@@ -138,8 +132,11 @@ EOF
 
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
 
+    # shellcheck disable=SC2046
     test_dracut \
-        -a "resume dracut-systemd systemd-ac-power systemd-battery-check systemd-bsod systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pcrphase systemd-pstore systemd-repart systemd-sysext systemd-veritysetup" \
+        -a "resume dracut-systemd systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pcrphase systemd-pstore systemd-repart systemd-sysext systemd-veritysetup" \
+        $(if [ -f /usr/lib/systemd/systemd-battery-check ]; then echo "-a systemd-battery-check"; fi) \
+        $(if [ -f /usr/lib/systemd/systemd-bsod ]; then echo "-a systemd-bsod"; fi) \
         --add-drivers "btrfs" \
         "$TESTDIR"/initramfs.testing
 
