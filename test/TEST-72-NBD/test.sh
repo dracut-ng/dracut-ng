@@ -40,7 +40,7 @@ run_server() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
-        -net nic,macaddr=52:54:00:12:34:56,model=e1000 \
+        -net nic,macaddr=52:54:00:12:34:56,model=virtio \
         -net socket,listen=127.0.0.1:12340 \
         -append "panic=1 oops=panic softlockup_panic=1 rd.luks=0 systemd.crash_reboot quiet root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_serverroot rootfstype=ext4 rw console=ttyS0,115200n81 $SERVER_DEBUG" \
         -initrd "$TESTDIR"/initramfs.server \
@@ -83,7 +83,7 @@ client_test() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -net nic,macaddr="$mac",model=e1000 \
+        -net nic,macaddr="$mac",model=virtio \
         -net socket,connect=127.0.0.1:12340 \
         -append "$cmdline rd.auto ro console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.testing
@@ -344,7 +344,7 @@ test_setup() {
 
     "$DRACUT" -N -i "$TESTDIR"/overlay / \
         -a "test rootfs-block debug kernel-modules network-legacy" \
-        -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod e1000 drbg" \
+        -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod drbg virtio_net" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
         -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1

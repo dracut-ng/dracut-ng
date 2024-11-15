@@ -21,8 +21,8 @@ run_server() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
-        -net nic,macaddr=52:54:00:12:34:56,model=e1000 \
-        -net nic,macaddr=52:54:00:12:34:57,model=e1000 \
+        -net nic,macaddr=52:54:00:12:34:56,model=virtio \
+        -net nic,macaddr=52:54:00:12:34:57,model=virtio \
         -net socket,listen=127.0.0.1:12330 \
         -append "panic=1 oops=panic softlockup_panic=1 quiet root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_serverroot rw console=ttyS0,115200n81 $SERVER_DEBUG" \
         -initrd "$TESTDIR"/initramfs.server \
@@ -58,8 +58,8 @@ run_client() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -net nic,macaddr=52:54:00:12:34:00,model=e1000 \
-        -net nic,macaddr=52:54:00:12:34:01,model=e1000 \
+        -net nic,macaddr=52:54:00:12:34:00,model=virtio \
+        -net nic,macaddr=52:54:00:12:34:01,model=virtio \
         -net socket,connect=127.0.0.1:12330 \
         -acpitable file=ibft.table \
         -append "$TEST_KERNEL_CMDLINE $*" \
@@ -215,7 +215,7 @@ test_setup() {
     # Make server's dracut image
     "$DRACUT" \
         -a "rootfs-block test kernel-modules network-legacy" \
-        -d "piix ide-gd_mod ata_piix ext4 sd_mod e1000 drbg virtio_pci virtio_scsi" \
+        -d "piix ide-gd_mod ata_piix ext4 sd_mod drbg virtio_net virtio_pci virtio_scsi" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i ./wait-if-server.sh /lib/dracut/hooks/pre-mount/99-wait-if-server.sh \
         --no-hostonly-cmdline -N \

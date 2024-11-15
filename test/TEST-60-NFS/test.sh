@@ -28,7 +28,7 @@ run_server() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -net socket,listen=127.0.0.1:12320 \
-        -net nic,macaddr=52:54:00:12:34:56,model=e1000 \
+        -net nic,macaddr=52:54:00:12:34:56,model=virtio \
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
         -append "panic=1 oops=panic softlockup_panic=1 root=LABEL=dracut rootfstype=ext4 rw console=ttyS0,115200n81 $SERVER_DEBUG" \
         -initrd "$TESTDIR"/initramfs.server \
@@ -69,7 +69,7 @@ client_test() {
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -net nic,macaddr="$mac",model=e1000 \
+        -net nic,macaddr="$mac",model=virtio \
         -net socket,connect=127.0.0.1:12320 \
         -append "$TEST_KERNEL_CMDLINE $cmdline ro" \
         -initrd "$TESTDIR"/initramfs.testing
@@ -422,7 +422,7 @@ test_setup() {
     # Make server's dracut image
     "$DRACUT" -i "$TESTDIR"/overlay / \
         -a "bash rootfs-block debug kernel-modules watchdog qemu network-legacy" \
-        -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod e1000 i6300esb" \
+        -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod i6300esb virtio_net" \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1
 }
