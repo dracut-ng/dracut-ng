@@ -11,6 +11,7 @@
 # - libkcapi-hmaccalc (fido)
 # - nss-softokn, kdumpbase out of tree dracut modules
 # - fips
+# - ignition
 
 ARG DISTRIBUTION=fedora
 ARG REGISTRY=registry.fedoraproject.org
@@ -52,6 +53,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     fcoe-utils \
     fuse3 \
     gcc \
+    ignition \
     iproute \
     iputils \
     iscsi-initiator-utils \
