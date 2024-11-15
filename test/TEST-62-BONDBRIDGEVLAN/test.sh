@@ -7,6 +7,7 @@ TEST_DESCRIPTION="root filesystem on NFS with bridging/bonding/vlan with $USE_NE
 
 # Uncomment this to debug failures
 #DEBUGFAIL="rd.shell rd.break"
+#SERVER_DEBUG="rd.debug loglevel=7"
 #SERIAL="tcp:127.0.0.1:9999"
 
 # skip the test if ifcfg dracut module can not be installed
@@ -373,7 +374,7 @@ test_setup() {
     # Make client's dracut image
     test_dracut \
         --no-hostonly --no-hostonly-cmdline \
-        -a "debug ${USE_NETWORK} ifcfg" \
+        -a "${USE_NETWORK} ifcfg ${DEBUGFAIL:+debug}" \
         "$TESTDIR"/initramfs.testing
 
     (
@@ -388,7 +389,7 @@ test_setup() {
     # Make server's dracut image
     "$DRACUT" -i "$TESTDIR"/overlay / \
         --no-early-microcode \
-        -m "rootfs-block debug kernel-modules watchdog qemu network network-legacy" \
+        -m "rootfs-block kernel-modules watchdog qemu network network-legacy ${SERVER_DEBUG:+debug}" \
         -d "ipvlan macvlan af_packet piix ide-gd_mod ata_piix ext4 sd_mod nfsv2 nfsv3 nfsv4 nfs_acl nfs_layout_nfsv41_files nfsd virtio-net i6300esb" \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1
