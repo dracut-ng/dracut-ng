@@ -101,7 +101,6 @@ test_setup() {
 
     test_dracut \
         -a "crypt lvm mdraid kernel-modules" \
-        -o network \
         -i "./cryptroot-ask.sh" "/sbin/cryptroot-ask" \
         -i "/tmp/mdadm.conf" "/etc/mdadm.conf" \
         -i "/tmp/crypttab" "/etc/crypttab" \
