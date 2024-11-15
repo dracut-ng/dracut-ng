@@ -139,8 +139,11 @@ EOF
     if [ -f /usr/lib/systemd/systemd-bsod ]; then
         optional_modules="$optional_modules systemd-bsod"
     fi
+    if [ -f /usr/lib/systemd/systemd-pcrextend ]; then
+        optional_modules="$optional_modules systemd-pcrphase"
+    fi
     test_dracut \
-        -a "resume dracut-systemd systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pcrphase systemd-pstore systemd-repart systemd-sysext systemd-veritysetup $optional_modules" \
+        -a "resume dracut-systemd systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup $optional_modules" \
         --add-drivers "btrfs" \
         "$TESTDIR"/initramfs.testing
 
