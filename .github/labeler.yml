@@ -1,576 +1,584 @@
 ---
 repository:
   - changed-files:
-    - any-glob-to-any-file: './*'
+      - any-glob-to-any-file: './*'
 
 github:
   - changed-files:
-    - any-glob-to-any-file: ['.github/*', '.github/**/*']
+      - any-glob-to-any-file: ['.github/*', '.github/**/*']
 
 docs:
   - changed-files:
-    - any-glob-to-any-file: ['antora-playbook.yaml', 'README.*', 'man/*', 'doc_site/*', 'doc_site/**/*', 'doc_site/**/**/*', 'doc_site/**/**/**/*', 'doc_site/**/**/**/**/*']
+      - any-glob-to-any-file:
+          - antora-playbook.yaml
+          - README.*
+          - man/*
+          - doc_site/*
+          - doc_site/**/*
+          - doc_site/**/**/*
+          - doc_site/**/**/**/*
+          - doc_site/**/**/**/**/*
 
 man:
   - changed-files:
-    - any-glob-to-any-file: 'man/*'
+      - any-glob-to-any-file: 'man/*'
 
 kernel-install:
   - changed-files:
-    - any-glob-to-any-file: 'install.d/*'
+      - any-glob-to-any-file: 'install.d/*'
 
 shell-completion:
   - changed-files:
-    - any-glob-to-any-file: ['shell-completion/*', 'shell-completion/**/*']
+      - any-glob-to-any-file: ['shell-completion/*', 'shell-completion/**/*']
 
 dracut-cpio:
   - changed-files:
-    - any-glob-to-any-file: ['src/dracut-cpio/*', 'src/dracut-cpio/**/*']
+      - any-glob-to-any-file: ['src/dracut-cpio/*', 'src/dracut-cpio/**/*']
 
 dracut-install:
   - changed-files:
-    - any-glob-to-any-file: 'src/install/*'
+      - any-glob-to-any-file: 'src/install/*'
 
 dracut-util:
   - changed-files:
-    - any-glob-to-any-file: 'src/util/*'
+      - any-glob-to-any-file: 'src/util/*'
 
 skipcpio:
   - changed-files:
-    - any-glob-to-any-file: 'src/skipcpio/*'
+      - any-glob-to-any-file: 'src/skipcpio/*'
 
 c:
   - changed-files:
-    - any-glob-to-any-file: 'src/**/*.c'
+      - any-glob-to-any-file: 'src/**/*.c'
 
 modules:
   - changed-files:
-    - any-glob-to-any-file: ['modules.d/*', 'modules.d/**/*']
+      - any-glob-to-any-file: ['modules.d/*', 'modules.d/**/*']
 
 bash:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]bash/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]bash/*'
 
 dash:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]dash/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]dash/*'
 
 systemd:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd/*'
 
 warpclock:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]warpclock/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]warpclock/*'
 
 fips:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]fips/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]fips/*'
 
 fips-crypto-policies:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]fips-crypto-policies/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]fips-crypto-policies/*'
 
 systemd-battery-check:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-battery-check/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-battery-check/*'
 
 systemd-ac-power:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-ac-power/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-ac-power/*'
 
 systemd-ask-password:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-ask-password/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-ask-password/*'
 
 systemd-bsod:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-bsod/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-bsod/*'
 
 systemd-coredump:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-coredump/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-coredump/*'
 
 systemd-creds:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-creds/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-creds/*'
 
 systemd-hostnamed:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-hostnamed/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-hostnamed/*'
 
 systemd-initrd:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-initrd/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-initrd/*'
 
 systemd-integritysetup:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-integritysetup/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-integritysetup/*'
 
 systemd-journald:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-journald/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-journald/*'
 
 systemd-ldconfig:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-ldconfig/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-ldconfig/*'
 
 systemd-modules-load:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-modules-load/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-modules-load/*'
 
 systemd-networkd:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-networkd/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-networkd/*'
 
 systemd-network-management:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-network-management/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-network-management/*'
 
 systemd-pcrphase:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-pcrphase/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-pcrphase/*'
 
 systemd-portabled:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-portabled/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-portabled/*'
 
 systemd-pstore:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-pstore/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-pstore/*'
 
 systemd-repart:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-repart/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-repart/*'
 
 systemd-resolved:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-resolved/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-resolved/*'
 
 systemd-sysctl:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-sysctl/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-sysctl/*'
 
 systemd-sysext:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-sysext/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-sysext/*'
 
 systemd-sysusers:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-sysusers/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-sysusers/*'
 
 systemd-timedated:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-timedated/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-timedated/*'
 
 systemd-timesyncd:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-timesyncd/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-timesyncd/*'
 
 systemd-tmpfiles:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-tmpfiles/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-tmpfiles/*'
 
 systemd-udevd:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-udevd/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-udevd/*'
 
 systemd-veritysetup:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-veritysetup/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-veritysetup/*'
 
 caps:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]caps/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]caps/*'
 
 modsign:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]modsign/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]modsign/*'
 
 rescue:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]rescue/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]rescue/*'
 
 watchdog:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]watchdog/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]watchdog/*'
 
 watchdog-modules:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]watchdog-modules/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]watchdog-modules/*'
 
 busybox:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]busybox/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]busybox/*'
 
 dbus-broker:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]dbus-broker/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]dbus-broker/*'
 
 dbus-daemon:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]dbus-daemon/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]dbus-daemon/*'
 
 rngd:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]rngd/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]rngd/*'
 
 dbus:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]dbus/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]dbus/*'
 
 i18n:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]i18n/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]i18n/*'
 
 convertfs:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]convertfs/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]convertfs/*'
 
 connman:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]connman/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]connman/*'
 
 network-legacy:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]network-legacy/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]network-legacy/*'
 
 network-manager:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]network-manager/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]network-manager/*'
 
 network:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]network/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]network/*'
 
 url-lib:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]url-lib/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]url-lib/*'
 
 drm:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]drm/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]drm/*'
 
 plymouth:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]plymouth/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]plymouth/*'
 
 bluetooth:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]bluetooth/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]bluetooth/*'
 
 cms:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]cms/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]cms/*'
 
 lvmmerge:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]lvmmerge/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]lvmmerge/*'
 
 lvmthinpool-monitor:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]lvmthinpool-monitor/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]lvmthinpool-monitor/*'
 
 cio_ignore:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]cio_ignore/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]cio_ignore/*'
 
 btrfs:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]btrfs/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]btrfs/*'
 
 crypt:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]crypt/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]crypt/*'
 
 dm:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]dm/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]dm/*'
 
 dmraid:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]dmraid/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]dmraid/*'
 
 dmsquash-live:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]dmsquash-live/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]dmsquash-live/*'
 
 dmsquash-live-autooverlay:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]dmsquash-live-autooverlay/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]dmsquash-live-autooverlay/*'
 
 dmsquash-live-ntfs:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]dmsquash-live-ntfs/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]dmsquash-live-ntfs/*'
 
 kernel-modules:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]kernel-modules/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]kernel-modules/*'
 
 kernel-modules-extra:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]kernel-modules-extra/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]kernel-modules-extra/*'
 
 kernel-network-modules:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]kernel-network-modules/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]kernel-network-modules/*'
 
 livenet:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]livenet/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]livenet/*'
 
 lvm:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]lvm/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]lvm/*'
 
 mdraid:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]mdraid/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]mdraid/*'
 
 multipath:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]multipath/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]multipath/*'
 
 numlock:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]numlock/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]numlock/*'
 
 nvdimm:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]nvdimm/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]nvdimm/*'
 
 overlayfs:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]overlayfs/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]overlayfs/*'
 
 ppcmac:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]ppcmac/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]ppcmac/*'
 
 qemu:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]qemu/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]qemu/*'
 
 qemu-net:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]qemu-net/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]qemu-net/*'
 
 systemd-cryptsetup:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-cryptsetup/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-cryptsetup/*'
 
 crypt-gpg:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]crypt-gpg/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]crypt-gpg/*'
 
 crypt-loop:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]crypt-loop/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]crypt-loop/*'
 
 fido2:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]fido2/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]fido2/*'
 
 pcsc:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]pcsc/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]pcsc/*'
 
 pkcs11:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]pkcs11/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]pkcs11/*'
 
 tpm2-tss:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]tpm2-tss/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]tpm2-tss/*'
 
 zipl:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]zipl/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]zipl/*'
 
 cifs:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]cifs/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]cifs/*'
 
 dasd:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]dasd/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]dasd/*'
 
 dasd_mod:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]dasd_mod/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]dasd_mod/*'
 
 dcssblk:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]dcssblk/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]dcssblk/*'
 
 debug:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]debug/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]debug/*'
 
 fcoe:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]fcoe/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]fcoe/*'
 
 fcoe-uefi:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]fcoe-uefi/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]fcoe-uefi/*'
 
 fstab-sys:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]fstab-sys/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]fstab-sys/*'
 
 hwdb:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]hwdb/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]hwdb/*'
 
 iscsi:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]iscsi/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]iscsi/*'
 
 lunmask:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]lunmask/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]lunmask/*'
 
 nbd:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]nbd/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]nbd/*'
 
 nfs:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]nfs/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]nfs/*'
 
 nvmf:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]nvmf/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]nvmf/*'
 
 resume:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]resume/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]resume/*'
 
 rootfs-block:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]rootfs-block/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]rootfs-block/*'
 
 ssh-client:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]ssh-client/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]ssh-client/*'
 
 terminfo:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]terminfo/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]terminfo/*'
 
 udev-rules:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]udev-rules/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]udev-rules/*'
 
 virtfs:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]virtfs/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]virtfs/*'
 
 virtiofs:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]virtiofs/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]virtiofs/*'
 
 zfcp:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]zfcp/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]zfcp/*'
 
 znet:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]znet/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]znet/*'
 
 securityfs:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]securityfs/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]securityfs/*'
 
 biosdevname:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]biosdevname/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]biosdevname/*'
 
 masterkey:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]masterkey/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]masterkey/*'
 
 dracut-systemd:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]dracut-systemd/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]dracut-systemd/*'
 
 ecryptfs:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]ecryptfs/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]ecryptfs/*'
 
 integrity:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]integrity/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]integrity/*'
 
 pollcdrom:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]pollcdrom/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]pollcdrom/*'
 
 selinux:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]selinux/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]selinux/*'
 
 syslog:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]syslog/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]syslog/*'
 
 usrmount:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]usrmount/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]usrmount/*'
 
 base:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]base/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]base/*'
 
 fs-lib:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]fs-lib/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]fs-lib/*'
 
 img-lib:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]img-lib/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]img-lib/*'
 
 memstrack:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]memstrack/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]memstrack/*'
 
 shutdown:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]shutdown/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]shutdown/*'
 
 squash:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash/*'
 
 squash-lib:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash-lib/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash-lib/*'
 
 squash-erofs:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash/*'
 
 squash-squashfs:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash/*'
 
 uefi-lib:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]uefi-lib/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]uefi-lib/*'
 
 net-lib:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]net-lib/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]net-lib/*'
 
 pcmcia:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]pcmcia/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]pcmcia/*'
 
 shell-interpreter:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]shell-interpreter/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]shell-interpreter/*'
 
 test:
   - changed-files:
-    - any-glob-to-any-file: ['test/*', 'test/**/*']
+      - any-glob-to-any-file: ['test/*', 'test/**/*']

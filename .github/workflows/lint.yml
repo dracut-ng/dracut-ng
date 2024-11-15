@@ -1,9 +1,9 @@
 ---
 name: Lint
 
-on:
+on:  # yamllint disable-line rule:truthy
   pull_request:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
       - antora-playbook.yaml
       - 'doc_site/**'
@@ -19,9 +19,10 @@ jobs:
       - name: shfmt
         uses: luizm/action-sh-checker@v0.9.0
         env:
-          SHFMT_OPTS: -s # arguments to shfmt.
+          SHFMT_OPTS: -s  # arguments to shfmt.
         with:
-          sh_checker_shellcheck_disable: true # disable shellcheck in favor of differential-shellcheck
+          # disable shellcheck in favor of differential-shellcheck
+          sh_checker_shellcheck_disable: true
 
   differential-shellcheck:
     runs-on: ubuntu-latest

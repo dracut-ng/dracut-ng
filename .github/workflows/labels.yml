@@ -3,7 +3,7 @@ name: "Labeler"
 
 # runs on pull_request_target instead of pull_request
 # see https://github.com/actions/labeler?tab=readme-ov-file#permissions
-on:
+on:  # yamllint disable-line rule:truthy
     pull_request_target:
 
 jobs:
