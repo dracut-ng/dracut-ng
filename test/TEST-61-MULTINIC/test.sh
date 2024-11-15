@@ -29,7 +29,7 @@ run_server() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -net socket,listen=127.0.0.1:12350 \
-        -net nic,macaddr=52:54:01:12:34:56,model=e1000 \
+        -net nic,macaddr=52:54:01:12:34:56,model=virtio \
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
         -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=LABEL=dracut rootfstype=ext4 rw console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.server \
@@ -74,13 +74,13 @@ client_test() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -net socket,connect=127.0.0.1:12350 \
-        -net nic,macaddr=52:54:00:12:34:"$mac1",model=e1000 \
-        -net nic,macaddr=52:54:00:12:34:"$mac2",model=e1000 \
-        -net nic,macaddr=52:54:00:12:34:"$mac3",model=e1000 \
+        -net nic,macaddr=52:54:00:12:34:"$mac1",model=virtio \
+        -net nic,macaddr=52:54:00:12:34:"$mac2",model=virtio \
+        -net nic,macaddr=52:54:00:12:34:"$mac3",model=virtio \
         -netdev hubport,id=n1,hubid=1 \
         -netdev hubport,id=n2,hubid=2 \
-        -device e1000,netdev=n1,mac=52:54:00:12:34:98 \
-        -device e1000,netdev=n2,mac=52:54:00:12:34:99 \
+        -device virtio,netdev=n1,mac=52:54:00:12:34:98 \
+        -device virtio,netdev=n2,mac=52:54:00:12:34:99 \
         -append "$TEST_KERNEL_CMDLINE $cmdline ro init=/sbin/init systemd.log_target=console" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
@@ -354,7 +354,7 @@ test_setup() {
     # Make server's dracut image
     "$DRACUT" -i "$TESTDIR"/overlay / \
         -m "bash rootfs-block debug kernel-modules watchdog qemu network-legacy" \
-        -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod nfsv2 nfsv3 nfsv4 nfs_acl nfs_layout_nfsv41_files nfsd e1000 i6300esb" \
+        -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod nfsv2 nfsv3 nfsv4 nfs_acl nfs_layout_nfsv41_files nfsd i6300esb virtio_net" \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1
 
