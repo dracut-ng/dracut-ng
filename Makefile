@@ -173,6 +173,9 @@ install: all
 	install -m 0755 dracut-initramfs-restore.sh $(DESTDIR)$(pkglibdir)/dracut-initramfs-restore
 	rm -rf $(DESTDIR)$(pkglibdir)/modules.d/80test*
 	cp -arx modules.d dracut.conf.d $(DESTDIR)$(pkglibdir)
+	for i in $(configprofile) ; do \
+		cp -arx dracut.conf.d/$$i/* $(DESTDIR)$(pkglibdir)/dracut.conf.d/ ;\
+	done
 ifneq ($(enable_test),no)
 	cp -arx test $(DESTDIR)$(pkglibdir)
 else
