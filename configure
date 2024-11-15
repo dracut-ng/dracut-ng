@@ -62,6 +62,7 @@ while (($# > 0)); do
         --bashcompletiondir) read_arg bashcompletiondir "$@" || shift ;;
         --enable-dracut-cpio) enable_dracut_cpio=yes ;;
         --disable-dracut-cpio) enable_dracut_cpio=no ;;
+        --configprofile) read_arg configprofile "$@" || shift ;;
         *) echo "Ignoring unknown option '$1'" ;;
     esac
     shift
@@ -202,6 +203,7 @@ EOF
     [[ $infodir ]] && echo "infodir ?= ${infodir}"
     [[ $systemdsystemunitdir ]] && echo "systemdsystemunitdir ?= ${systemdsystemunitdir}"
     [[ $bashcompletiondir ]] && echo "bashcompletiondir ?= ${bashcompletiondir}"
+    [[ $configprofile ]] && echo "configprofile ?= ${configprofile}"
 } >> Makefile.inc.$$
 
 mv Makefile.inc.$$ Makefile.inc
