@@ -41,8 +41,15 @@ else
         fi
     fi
 
-    lvm lvcreate --yes -l 100%FREE -n root dracut
-    lvm vgchange -ay
+    if grep -qF 'test.thin' /proc/cmdline; then
+        modprobe dm_thin_pool
+        lvm lvcreate --yes --ignoremonitoring --extents 100%FREE --thin dracut/mythinpool
+        lvm lvcreate --yes --ignoremonitoring --virtualsize 400M --thin dracut/mythinpool --name root
+    else
+        lvm lvcreate --yes --ignoremonitoring --extents 100%FREE --name root dracut
+    fi
+
+    lvm vgchange --ignoremonitoring -ay
 
     eval "mkfs.${TEST_FSTYPE} -q -L root /dev/dracut/root"
 fi

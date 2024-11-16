@@ -113,7 +113,11 @@ test_setup() {
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
 
+    # LVM
     test_makeroot "$TEST_FSTYPE" "disk" "rd.md=0 rd.luks=0" || return 1
+
+    # LVM-THIN
+    test_makeroot "$TEST_FSTYPE" "disk" "rd.md=0 rd.luks=0 test.thin" || return 1
 
     if [ -n "$HAVE_RAID" ]; then
         test_makeroot "raid" "raid" "rd.luks=0" || return 1
