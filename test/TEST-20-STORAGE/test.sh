@@ -33,8 +33,13 @@ client_run() {
     declare -a disk_args=()
     declare -i disk_index=0
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
+
     qemu_add_drive disk_index disk_args "$TESTDIR/${disk}-1.img" disk1
-    qemu_add_drive disk_index disk_args "$TESTDIR/${disk}-2.img" disk2
+
+    if ! grep -qF 'degraded' "$test_name"; then
+        # only add disk2 if RAID is NOT degraded
+        qemu_add_drive disk_index disk_args "$TESTDIR/${disk}-2.img" disk2
+    fi
 
     test_marker_reset
     "$testdir"/run-qemu \
@@ -53,11 +58,13 @@ test_run() {
     # ignore crypttab with rd.luks.crypttab=0
     if [ -n "$HAVE_RAID" ]; then
         client_run "raid" "raid" "rd.luks.crypttab=0" || return 1
+        client_run "degraded raid" "raid" "rd.luks.crypttab=0" || return 1
     fi
 
     # for encrypted test run - use raid-crypt.img drives instead of raid.img drives
     if [ -n "$HAVE_CRYPT" ]; then
-        client_run "raid-crypt" "raid-crypt" " " || return 1
+        client_run "raid crypt" "raid-crypt" " " || return 1
+        client_run "degraded raid crypt" "raid-crypt" " " || return 1
     fi
 }
 
