@@ -7,17 +7,17 @@ set -e
 . /env
 
 if [ "$TEST_FSTYPE" = "zfs" ]; then
-    zpool create dracut /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
+    zpool create dracut mirror /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
     zfs create dracut/root
 elif [ "$TEST_FSTYPE" = "btrfs" ]; then
-    mkfs.btrfs -q -draid0 -mraid0 -L root /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
+    mkfs.btrfs -q -draid1 -mraid1 -L root /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
     udevadm settle
     btrfs device scan
 else
     # storage layers (if available)
     # mdadm (optional) --> crypt (optional) --> lvm --> TEST_FSTYPE (e.g. ext4)
     if ! grep -qF 'rd.md=0' /proc/cmdline && command -v mdadm > /dev/null; then
-        mdadm --create /dev/md0 --run --auto=yes --level=0 --raid-devices=2 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
+        mdadm --create /dev/md0 --run --auto=yes --level=1 --metadata=0.90 --raid-devices=2 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
         # wait for the array to finish initializing, otherwise this sometimes fails randomly.
         mdadm -W /dev/md0 || :
     fi
