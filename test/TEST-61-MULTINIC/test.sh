@@ -75,8 +75,8 @@ client_test() {
         -net nic,macaddr=52:54:00:12:34:"$mac3",model=virtio \
         -netdev hubport,id=n1,hubid=1 \
         -netdev hubport,id=n2,hubid=2 \
-        -device virtio,netdev=n1,mac=52:54:00:12:34:98 \
-        -device virtio,netdev=n2,mac=52:54:00:12:34:99 \
+        -device virtio-net-pci,netdev=n1,mac=52:54:00:12:34:98 \
+        -device virtio-net-pci,netdev=n2,mac=52:54:00:12:34:99 \
         -append "$TEST_KERNEL_CMDLINE $cmdline ro init=/sbin/init systemd.log_target=console" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
