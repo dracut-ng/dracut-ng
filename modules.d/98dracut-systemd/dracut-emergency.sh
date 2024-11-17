@@ -32,7 +32,13 @@ if getargbool 1 rd.shell || getarg rd.break; then
     done < /proc/consoles
     [ -f /etc/profile ] && . /etc/profile
     [ -z "$PS1" ] && export PS1="$_name:\${PWD}# "
-    exec sulogin -e
+
+    if getargbool 0 SYSTEMD_SULOGIN_FORCE; then
+        # allows passwordless logins if root account is locked.
+        exec sulogin -e
+    else
+        exec sulogin
+    fi
 else
     export hook="shutdown-emergency"
     warn "$action has failed. To debug this issue add \"rd.shell rd.debug\" to the kernel command line."
