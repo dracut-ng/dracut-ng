@@ -63,4 +63,5 @@ if [ "$DISTRIBUTION" = "alpine:edge" ] ; then \
     procps \
     squashfs-tools \
     util-linux-misc \
+    util-linux-login \
 ; fi
