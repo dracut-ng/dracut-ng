@@ -82,7 +82,7 @@ fi
 
 {
     echo "dracut-root-block-created"
-    echo MD_UUID="$MD_UUID"
+    echo "MD_UUID=$MD_UUID"
     echo "ID_FS_UUID=$ID_FS_UUID"
 } | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
 
