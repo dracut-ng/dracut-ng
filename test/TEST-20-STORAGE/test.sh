@@ -150,7 +150,6 @@ test_setup() {
 
         eval "$(grep -F --binary-files=text -m 1 MD_UUID "$TESTDIR"/marker.img)"
         echo "$MD_UUID" > "$TESTDIR"/mduuid
-        echo "ARRAY /dev/md0 level=raid1 num-devices=2 UUID=$MD_UUID" > /tmp/mdadm.conf
 
         eval "$(grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img)"
         echo "$ID_FS_UUID" > "$TESTDIR"/luksuuid
@@ -165,8 +164,6 @@ test_setup() {
         $(if command -v mdadm > /dev/null; then echo "-a mdraid"; fi) \
         $(if command -v cryptsetup > /dev/null; then echo "-a crypt"; fi) \
         $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; fi) \
-        -i "/tmp/mdadm.conf" "/etc/mdadm.conf" \
-        -i "./cryptroot-ask.sh" "/sbin/cryptroot-ask" \
         -i "/tmp/crypttab" "/etc/crypttab" \
         -i "/tmp/key" "/etc/key" \
         "$TESTDIR"/initramfs.testing
