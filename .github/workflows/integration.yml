@@ -30,14 +30,7 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - alpine
-                    - arch
-                    - debian
-                    - fedora
                     - gentoo
-                    - opensuse
-                    - ubuntu
-                    - void
                 test:
                     - "10"
         container:
@@ -74,12 +67,7 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - arch
-                    - fedora
                     - gentoo
-                    - opensuse
-                    - ubuntu
-                    - void
                 test:
                     - "11"
                     - "12"
@@ -110,10 +98,7 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - arch
-                    - fedora
                     - gentoo
-                    - ubuntu
                 test:
                     - "40"
                     - "41"

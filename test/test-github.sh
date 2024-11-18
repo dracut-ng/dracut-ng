@@ -15,6 +15,9 @@ if [ "$V" = "2" ]; then set -x; fi
 # shellcheck disable=SC2086
 ./configure $CONFIGURE_ARG
 
+mkdir -p /usr/lib/dracut/dracut.conf.d
+cp dracut.conf.d/hostonly/* /usr/lib/dracut/dracut.conf.d/
+
 TESTS="${TESTS:=$2}"
 
 # Compute wildcards for TESTS variable (e.g. '1*')
@@ -27,3 +30,5 @@ TESTS="${TESTS:=$2}"
 # treat warnings as error
 # shellcheck disable=SC2086
 CFLAGS="-Wextra -Werror" make TEST_RUN_ID="${TEST_RUN_ID:=$1}" TESTS="${TESTS}" V="${V:=1}" ${TARGETS:=all install check}
+
+find /usr/lib/dracut/dracut.conf.d/
