@@ -63,6 +63,16 @@ test_dracut() {
         "$@" || return 1
 }
 
+# Wait for the server QEMU has been started up.
+# It should print "Serving" in the server.log in that case.
+wait_for_server_startup() {
+    while ! grep -q Serving "$TESTDIR"/server.log; do
+        echo "Waiting for the server to startup"
+        tail "$TESTDIR"/server.log
+        sleep 1
+    done
+}
+
 ovmf_code() {
     for path in \
         "/usr/share/OVMF/OVMF_CODE.fd" \

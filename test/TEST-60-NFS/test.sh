@@ -39,10 +39,7 @@ run_server() {
     tty -s && stty sane
 
     if ! [[ $SERIAL ]]; then
-        while ! grep -q Serving "$TESTDIR"/server.log; do
-            echo "Waiting for the server to startup"
-            sleep 1
-        done
+        wait_for_server_startup || return 1
     else
         echo Sleeping 10 seconds to give the server a head start
         sleep 10
