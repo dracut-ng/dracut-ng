@@ -15,7 +15,10 @@ test_check() {
         return 1
     fi
 
-    test -d /etc/sysconfig/network-scripts
+    command -v exportfs &> /dev/null
+
+    # TODO: remove this check and make this test work on other distributions as well not just fedora
+    [ -f /usr/lib/os-release ] && . /usr/lib/os-release && [ "$ID" = "fedora" ]
 }
 
 run_server() {
@@ -175,6 +178,7 @@ test_client() {
 }
 
 test_setup() {
+    # shellcheck disable=SC2153
     export kernel=$KVERSION
     export srcmods="/lib/modules/$kernel/"
     rm -rf -- "$TESTDIR"/overlay
