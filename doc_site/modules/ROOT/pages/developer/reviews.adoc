@@ -2,17 +2,43 @@
 
 How to give feedback and review distribution specific changes ?
 
-Most people using Dracut has some sort of preference or biast towards a specific Linux distribution. It is common for a contributor to only test a PR on one Linux distribution and not consider other distributions.
+Most people using Dracut has some sort of preference or biast towards a specific Linux
+distribution. It is common for a contributor to only test a PR on one Linux distribution and not
+consider other distributions.
 
-*Reviewers and maintainers are expected to challenge PR's that are not distribution agonistic.* Expect longer discussions on those PRs. This however does not mean that distribution specific PRs are automatically rejected. The project has a long history of maintaining modules for specific https://github.com/dracut-ng/dracut-ng/tree/main/modules.d/45ifcfg[distributions], https://github.com/dracut-ng/dracut-ng/blob/main/modules.d/95znet/module-setup.sh#L6[architectures], https://github.com/dracut-ng/dracut-ng/blob/main/modules.d/80cms/module-setup.sh#L31[package managers] and https://github.com/dracut-ng/dracut-ng/blob/main/modules.d/90ppcmac/module-setup.sh#L3[HW configurations].
+*Reviewers and maintainers are expected to challenge PR's that are not distribution agonistic.*
+Expect longer discussions on those PRs. This however does not mean that distribution specific PRs
+are automatically rejected. The project has a long history of maintaining modules for specific
+https://github.com/dracut-ng/dracut-ng/tree/main/modules.d/45ifcfg[distributions],
+https://github.com/dracut-ng/dracut-ng/blob/main/modules.d/95znet/module-setup.sh#L6[architectures],
+https://github.com/dracut-ng/dracut-ng/blob/main/modules.d/80cms/module-setup.sh#L31[package managers]
+and https://github.com/dracut-ng/dracut-ng/blob/main/modules.d/90ppcmac/module-setup.sh#L3[HW configurations].
 
 Do
 
-* *Consider the benefit of the PR* even if the PR is distribution specific ! Would the PR lead to a lot more people using Dracut/dracut module or the PR just benefits a handful of people? Remind yourself during the review that *more Dracut users will lead to eventually more Dracut testing and more Dracut PRs and higher quality software for _all_ Linux distributions* - including _your_ preferred distribution. This happens more often than you think and it tends to be underestimated during reviews.
-* *Consider the cost of the PR*. Is the PR in an isolated dracut module that can be simply removed later if maintenance is a problem or the PR is adding changes in core components all over the place that is not easy to remove later ? Is the code from the PR covered by tests that would significantly reduce the maintenance cost ? Can the PR changed in a way that reduces cost even if it stays distribution specific ?
+* *Consider the benefit of the PR* even if the PR is distribution specific ! Would the PR lead to a
+lot more people using Dracut/dracut module or the PR just benefits a handful of people? Remind
+yourself during the review that *more Dracut users will lead to eventually more Dracut testing and
+more Dracut PRs and higher quality software for _all_ Linux distributions* - including _your_
+preferred distribution. This happens more often than you think and it tends to be underestimated
+during reviews.
+* *Consider the cost of the PR*. Is the PR in an isolated dracut module that can be simply removed
+later if maintenance is a problem or the PR is adding changes in core components all over the place
+that is not easy to remove later ? Is the code from the PR covered by tests that would
+significantly reduce the maintenance cost ? Can the PR changed in a way that reduces cost even if
+it stays distribution specific ?
 
 Don't
 
-* No need to guess or assume things that are outside of the scope of a given PR under review. The job is not to predict the future beyond the next release. Consider if the PR would be useful for the current release or not.
-Comments like "If we allow this PR, that when will we stop including similar PRs" or "we do not want this PR because of some future plans that are not yet agreed by the project" are not specific and confusing and just invites further comments that are not in scope for the PR. *We have a process where we consider each PR review in isolation.* If the PR improves code that is currently in the upstream tree, it should be strongly considered.
-* Do not consider if the PR is useful for you personally or not. Spend time understand the benefit and the cost. You are reviewing a PR that somebody spend time to prepare for the project that is over 10 years old used by millions of users with thousands of commits from about 300 contributors. *Try to make a decision based on data and not based on emotions.* If you need more data, just ask.
+* No need to guess or assume things that are outside of the scope of a given PR under review. The
+job is not to predict the future beyond the next release. Consider if the PR would be useful for
+the current release or not.
+Comments like "If we allow this PR, that when will we stop including similar PRs" or "we do not
+want this PR because of some future plans that are not yet agreed by the project" are not specific
+and confusing and just invites further comments that are not in scope for the PR. *We have a
+process where we consider each PR review in isolation.* If the PR improves code that is currently
+in the upstream tree, it should be strongly considered.
+* Do not consider if the PR is useful for you personally or not. Spend time understand the benefit
+and the cost. You are reviewing a PR that somebody spend time to prepare for the project that is
+over 10 years old used by millions of users with thousands of commits from about 300 contributors.
+*Try to make a decision based on data and not based on emotions.* If you need more data, just ask.
