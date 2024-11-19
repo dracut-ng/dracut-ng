@@ -38,6 +38,7 @@ jobs:
                     - opensuse
                     - ubuntu
                     - ubuntu:devel
+                    - ubuntu:rolling
                     - void
                 test:
                     - "10"
