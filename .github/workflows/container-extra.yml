@@ -37,6 +37,7 @@ jobs:
                 config:
                     - {dockerfile: 'Dockerfile-debian', tag: 'debian:sid', platform: 'linux/amd64'}
                     - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:devel', platform: 'linux/amd64'}
+                    - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:rolling', platform: 'linux/amd64'}
                     - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:edge', platform: 'linux/amd64'}
                     - {dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:latest', platform: 'linux/amd64', option: 'systemd'}
                     - {dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:amd64-openrc', platform: 'linux/amd64', option: 'amd64-openrc'}
