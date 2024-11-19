@@ -237,6 +237,9 @@ while (($# > 0)); do
             ;;
         --all)
             if ! test_check 2 &> test${TEST_RUN_ID:+-$TEST_RUN_ID}.log; then
+                if [ "$V" -ge 1 ]; then
+                    cat test${TEST_RUN_ID:+-$TEST_RUN_ID}.log
+                fi
                 echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_WARNING" "[SKIPPED]" "$COLOR_NORMAL"
                 exit 0
             else
