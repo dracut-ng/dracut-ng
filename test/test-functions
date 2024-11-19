@@ -249,7 +249,7 @@ while (($# > 0)); do
                     rm -fr -- "$TESTDIR"
                     rm -f -- .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
                     exit $ret
-                ) < /dev/null 2>&1 | "$tee_command" "test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
+                ) 2>&1 | "$tee_command" "test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
             else
                 (
                     test_setup && test_run
@@ -258,7 +258,7 @@ while (($# > 0)); do
                     rm -fr -- "$TESTDIR"
                     rm -f -- .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
                     exit $ret
-                ) < /dev/null > test${TEST_RUN_ID:+-$TEST_RUN_ID}.log 2>&1
+                ) > test${TEST_RUN_ID:+-$TEST_RUN_ID}.log 2>&1
             fi
             ret=$?
             set +o pipefail
