@@ -16,6 +16,13 @@ else
     PODMAN=docker
 fi
 
+# Compute wildcards for TESTS variable (e.g. '1*')
+# shellcheck disable=SC1001
+[ -n "$TESTS" ] && TESTS=$(
+    cd test
+    for T in ${TESTS}; do find . -depth -type d -name "TEST-*${T}*" -exec echo {} \; | cut -d\- -f2 | tr '\n' ' '; done
+)
+
 # clear previous test run
 TARGETS='clean all install check' "$PODMAN" run --rm -it \
     --device=/dev/kvm \
