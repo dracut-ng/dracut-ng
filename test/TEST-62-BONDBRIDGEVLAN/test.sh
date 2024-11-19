@@ -52,10 +52,10 @@ run_server() {
         -netdev socket,id=n1,listen=127.0.0.1:12371 \
         -netdev socket,id=n2,listen=127.0.0.1:12372 \
         -netdev socket,id=n3,listen=127.0.0.1:12373 \
-        -device virtio-net-pci,netdev=n0,mac=52:54:01:12:34:56 \
-        -device virtio-net-pci,netdev=n1,mac=52:54:01:12:34:57 \
-        -device virtio-net-pci,netdev=n2,mac=52:54:01:12:34:58 \
-        -device virtio-net-pci,netdev=n3,mac=52:54:01:12:34:59 \
+        -device virtio-net-pci,netdev=n0,mac=52:54:00:42:00:01 \
+        -device virtio-net-pci,netdev=n1,mac=52:54:00:42:00:02 \
+        -device virtio-net-pci,netdev=n2,mac=52:54:00:42:00:03 \
+        -device virtio-net-pci,netdev=n3,mac=52:54:00:42:00:04 \
         -hda "$TESTDIR"/server.ext4 \
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
         -append "panic=1 oops=panic softlockup_panic=1 root=LABEL=dracut rootfstype=ext4 rw console=ttyS0,115200n81" \
