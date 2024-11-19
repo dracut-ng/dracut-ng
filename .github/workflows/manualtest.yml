@@ -22,7 +22,7 @@ on:  # yamllint disable-line rule:truthy
                     - "debian"
                     - "debian:sid"
                     - "ubuntu"
-                    - "ubuntu:rolling"
+                    - "ubuntu:devel"
                     - "opensuse"
                     - "gentoo"
                     - "void"

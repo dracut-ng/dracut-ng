@@ -37,7 +37,7 @@ jobs:
                     - gentoo:amd64-openrc
                     - opensuse
                     - ubuntu
-                    - ubuntu:rolling
+                    - ubuntu:devel
                     - void
                 test:
                     - "10"

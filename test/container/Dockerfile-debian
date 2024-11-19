@@ -24,14 +24,14 @@ ENV V=2
 RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --no-install-recommends dracut
 
 # extra packages for sid, ubuntu
-RUN if [ "${DISTRIBUTION}" = "debian:sid" ] || [ "${DISTRIBUTION}" = "ubuntu:latest" ] ; then \
+RUN if [ "${DISTRIBUTION}" ! = "debian:latest" ] ; then \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
     network-manager \
     systemd-ukify \
     ; fi
 
-# extra packages for sid, rolling
-RUN if [ "$DISTRIBUTION" = "debian:sid" ] || [ "${DISTRIBUTION}" = "ubuntu:rolling" ] ; then \
+# extra packages for sid, rolling, devel
+RUN if [ "$DISTRIBUTION" = "debian:sid" ] || [ "${DISTRIBUTION}" = "ubuntu:rolling" ] || [ "${DISTRIBUTION}" = "ubuntu:devel" ] ; then \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
     systemd-cryptsetup \
     systemd-repart \
