@@ -1,355 +1,369 @@
-DRACUT.CONF(5)
-==============
+= DRACUT.CONF(5)
 :doctype: manpage
 :man source:   dracut
 :man manual:   dracut
 :man version:  {version}
 
-NAME
-----
+== NAME
 dracut.conf - configuration file(s) for dracut
 
-SYNOPSIS
---------
+== SYNOPSIS
 _/etc/dracut.conf_
 _/etc/dracut.conf.d/\*.conf_
 _/usr/lib/dracut/dracut.conf.d/*.conf_
 
-Description
------------
-_dracut.conf_ is loaded during the initialization phase of dracut. Command line
-parameter will override any values set here.
+== Description
+_dracut.conf_ is loaded during the initialization phase of dracut.
 
-_*.conf_ files are read from /usr/lib/dracut/dracut.conf.d and
-/etc/dracut.conf.d. Files with the same name in /etc/dracut.conf.d will replace
-files in /usr/lib/dracut/dracut.conf.d.
+_*.conf_ files are read from `/usr/lib/dracut/dracut.conf.d` and
+/etc/dracut.conf.d. Files with the same name in `/etc/dracut.conf.d` will replace
+files in `/usr/lib/dracut/dracut.conf.d`.
+
 The files are then read in alphanumerical order and will override parameters
 set in _/etc/dracut.conf_. Each line specifies an attribute and a value. A '#'
-indicates the beginning of a comment; following characters, up to the end of the
-line are not interpreted.
+indicates the beginning of a comment; the following characters, up to the end
+of the line, are not interpreted.
 
 dracut command line options will override any values set here.
 
-Configuration files must have the extension .conf; other extensions are ignored.
+Configuration files must have the extension `.conf`; other extensions are
+ignored.
+
+== Configuration Options
 
 *add_dracutmodules+=*" __<dracut modules>__ "::
-    Add a space-separated list of dracut modules to call when building the
-    initramfs. Modules are located in _/usr/lib/dracut/modules.d_.
+Add a space-separated list of dracut modules to call when building the
+initramfs. Modules are located in _/usr/lib/dracut/modules.d_.
 
 *force_add_dracutmodules+=*" __<dracut modules>__ "::
-    Force to add a space-separated list of dracut modules to the default set of
-    modules, when host-only mode is specified. This parameter can be specified
-    multiple times.
+Force to add a space-separated list of dracut modules to the default set of
+modules, when host-only mode is specified. This parameter can be specified
+multiple times.
 
 *omit_dracutmodules+=*" __<dracut modules>__ "::
-    Omit a space-separated list of dracut modules to call when building the
-    initramfs. Modules are located in _/usr/lib/dracut/modules.d_.
-    Warning: Avoid manually omitting dracut modules, as you may
-    inadvertently remove essential ones that dracut can't detect
-    or warn you about. Using this option is not recommended and is at
-    your own risk.
+Omit a space-separated list of dracut modules to call when building the
+initramfs. Modules are located in _/usr/lib/dracut/modules.d_.
++
+WARNING: Avoid manually omitting dracut modules, as you may inadvertently
+remove essential ones that dracut can't detect or warn you about. Using this
+option is not recommended and is at your own risk.
 
 *dracutmodules+=*" __<dracut modules>__ "::
-    Specify a space-separated list of dracut modules to call when building the
-    initramfs. Modules are located in _/usr/lib/dracut/modules.d_.
-    This option forces dracut to only include the specified dracut modules.
-    In most cases the "add_dracutmodules" option is what you want to use.
-    This option is not recomended to use (use at your own risk).
+Specify a space-separated list of dracut modules to call when building the
+initramfs. Modules are located in _/usr/lib/dracut/modules.d_.
+This option forces dracut to only include the specified dracut modules.
+In most cases the "add_dracutmodules" option is what you want to use.
+This option is not recomended to use (use at your own risk).
 
 *add_drivers+=*" __<kernel modules>__ "::
-    Specify a space-separated list of kernel modules to add to the initramfs.
-    The kernel modules have to be specified without the ".ko" suffix.
+Specify a space-separated list of kernel modules to add to the initramfs.
+The kernel modules have to be specified without the ".ko" suffix.
 
 *force_drivers+=*" __<list of kernel modules>__ "::
-    See add_drivers above. But in this case it is ensured that the drivers
-    are tried to be loaded early via modprobe.
+See add_drivers above. But in this case it is ensured that the drivers
+are tried to be loaded early via modprobe.
 
 *omit_drivers+=*" __<kernel modules>__ "::
-    Specify a space-separated list of kernel modules not to add to the
-    initramfs. The kernel modules have to be specified without the ".ko" suffix.
+Specify a space-separated list of kernel modules not to add to the
+initramfs. The kernel modules have to be specified without the ".ko" suffix.
 
 *drivers+=*" __<kernel modules>__ "::
-    Specify a space-separated list of kernel modules to exclusively include in
-    the initramfs. The kernel modules have to be specified without the ".ko"
-    suffix.
-    This option forces dracut to only include the specified kernel modules.
-    In most cases the "--add-drivers" option is what you want to use.
-    This option is not recomended to use (use at your own risk).
+Specify a space-separated list of kernel modules to exclusively include in
+the initramfs. The kernel modules have to be specified without the ".ko"
+suffix.
+This option forces dracut to only include the specified kernel modules.
+In most cases the "--add-drivers" option is what you want to use.
+This option is not recomended to use (use at your own risk).
 
 *filesystems+=*" __<filesystem names>__ "::
-    Specify a space-separated list of kernel filesystem modules to exclusively
-    include in the generic initramfs.
+Specify a space-separated list of kernel filesystem modules to exclusively
+include in the generic initramfs.
 
 *drivers_dir=*"__<kernel modules directory>__"::
-    Specify the directory where to look for kernel modules.
+Specify the directory where to look for kernel modules.
 
 *fw_dir+=*" :__<dir>__[:__<dir>__ ...] "::
-    Specify additional colon-separated list of directories where to look for
-    firmware files.
+Specify additional colon-separated list of directories where to look for
+firmware files.
 
 *libdirs+=*" __<dir>__[ __<dir>__ ...] "::
-    Specify a space-separated list of directories where to look for libraries.
+Specify a space-separated list of directories where to look for libraries.
 
 *install_items+=*" __<file>__[ __<file>__ ...] "::
-    Specify additional files to include in the initramfs, separated by spaces.
+Specify additional files to include in the initramfs, separated by spaces.
 
 *install_optional_items+=*" __<file>__[ __<file>__ ...] "::
-    Specify additional files to include in the initramfs, separated by spaces,
-    if they exist.
+Specify additional files to include in the initramfs, separated by spaces,
+if they exist.
 
 *compress=*"__{cat|bzip2|lzma|xz|gzip|lzop|lz4|zstd|<compressor [args ...]>}__"::
-    Compress the generated initramfs using the passed compression program. If
-    you pass it just the name of a compression program, it will call that
-    program with known-working arguments. If you pass arguments, it will be
-    called with exactly those arguments. Depending on what you pass, this may
-    result in an initramfs that the kernel cannot decompress.
-    To disable compression, use "cat".
+Compress the generated initramfs using the passed compression program.
++
+If you pass it just the name of a compression program, it will call that
+program with known-working arguments.
++
+If you pass arguments, it will be called with exactly those
+arguments.
++
+Depending on what you pass, this may result in an initramfs that the
+kernel cannot decompress.
++
+To disable compression, use "cat".
 
 *squash_compress=*"__{<compressor [args ...]>}__"::
-    Compress the squashfs image using the passed compressor and compressor
-    specific options for mksquashfs. You can refer to mksquashfs manual for
-    supported compressors and compressor specific options. If squash module is
-    not called when building the initramfs, this option will not take effect.
+Compress the squashfs image using the passed compressor and compressor specific
+options for `mksquashfs`.  You can refer to `mksquashfs` manual for supported
+compressors and compressor specific options.
++
+If squash module is not called when building the initramfs,
+this option will not take effect.
 
 *do_strip=*"__{yes|no}__"::
-    Strip binaries in the initramfs (default=yes).
+Strip binaries in the initramfs (default=yes).
 
 *aggressive_strip=*"__{yes|no}__"::
-    Strip more than just debug symbol and sections, for a smaller initramfs
-    build. The "do_strip=yes" option must also be specified (default=no).
+Strip more than just debug symbol and sections, for a smaller initramfs
+build. The "do_strip=yes" option must also be specified (default=no).
 
 *do_hardlink=*"__{yes|no}__"::
-    Hardlink files in the initramfs (default=yes).
+Hardlink files in the initramfs (default=yes).
 
 *prefix=*" __<directory>__ "::
-    Prefix initramfs files with __<directory>__.
+Prefix initramfs files with __<directory>__.
 
 *hostonly=*"__{yes|no}__"::
-    Host-only mode: Install only what is needed for booting the local host
-    instead of a generic host and generate host-specific configuration
-    (default=no).
+Host-only mode: Install only what is needed for booting the local host
+instead of a generic host and generate host-specific configuration
+(default=no).
 
 *hostonly_mode=*"__{sloppy|strict}__"::
-    Specify the host-only mode to use (default=sloppy).
-    In "sloppy" host-only mode, extra drivers and modules will be installed, so
-    minor hardware change won't make the image unbootable (e.g. changed
-    keyboard), and the image is still portable among similar hosts.
-    With "strict" mode enabled, anything not necessary for booting the local
-    host in its current state will not be included, and modules may do some
-    extra job to save more space. Minor change of hardware or environment could
-    make the image unbootable.
+Specify the host-only mode to use (default=sloppy).
++
+In "sloppy" host-only mode, extra drivers and modules will be installed, so
+minor hardware change won't make the image unbootable (e.g. changed
+keyboard), and the image is still portable among similar hosts.
++
+With "strict" mode enabled, anything not necessary for booting the local host
+in its current state will not be included, and modules may make additional
+efforts to save more space. Minor changes in hardware or environment can make
+the image unbootable.
 
 *hostonly_cmdline=*"__{yes|no}__"::
-    If set to "yes", store the kernel command line arguments needed in the
-    initramfs. If **hostonly="yes"** and this option is not configured, it's
-    automatically set to "yes".
+If set to "yes", store the kernel command line arguments needed in the
+initramfs. If **hostonly="yes"** and this option is not configured, it's
+automatically set to "yes".
 
 *hostonly_nics+=*" [__<nic>__[ __<nic>__ ...]] "::
-    Only enable listed NICs in the initramfs. The list can be empty, so other
-    modules can install only the necessary network drivers.
+Only enable listed NICs in the initramfs. The list can be empty, so other
+modules can install only the necessary network drivers.
 
 *persistent_policy=*"__<policy>__"::
-    Use _<policy>_ to address disks and partitions.
-    _<policy>_ can be any directory name found in /dev/disk (e.g. "by-uuid",
-    "by-label"), or "mapper" to use /dev/mapper device names (default=mapper).
+Use _<policy>_ to address disks and partitions.
+_<policy>_ can be any directory name found in /dev/disk (e.g. "by-uuid",
+"by-label"), or "mapper" to use /dev/mapper device names (default=mapper).
 
 *tmpdir=*"__<temporary directory>__"::
-    Specify temporary directory to use.
-
-[WARNING]
-====
-If chrooted to another root other than the real root device, use --fstab and
-provide a valid _/etc/fstab_.
-====
+Specify temporary directory to use.
++
+WARNING: If chrooted to another root other than the real root device, use
+`--fstab` and provide a valid _/etc/fstab_.
 
 *use_fstab=*"__{yes|no}__"::
-    Use _/etc/fstab_ instead of _/proc/self/mountinfo_ (default=no).
+Use _/etc/fstab_ instead of _/proc/self/mountinfo_ (default=no).
 
 *add_fstab+=*" __<filename>__ "::
-    Add entries of __<filename>__ to the initramfs /etc/fstab.
+Add entries of __<filename>__ to the initramfs `/etc/fstab`.
 
 *add_device+=*" __<device>__ "::
-    Bring up _<device>_ in initramfs, _<device>_ should be the device name.
-    This can be useful in host-only mode for resume support when your swap is on
-    LVM an encrypted partition.
+Bring up _<device>_ in initramfs, _<device>_ should be the device name.
+This can be useful in host-only mode for resume support when your swap is on
+LVM an encrypted partition.
 
 *mdadmconf=*"__{yes|no}__"::
-    Include local _/etc/mdadm.conf_ (default=no).
+Include local _/etc/mdadm.conf_ (default=no).
 
 *lvmconf=*"__{yes|no}__"::
-    Include local _/etc/lvm/lvm.conf_ (default=no).
+Include local _/etc/lvm/lvm.conf_ (default=no).
 
 *fscks=*" __<fsck tools>__ "::
-    Add a space-separated list of fsck tools. If nothing is specified, the
-    default is: "umount mount /sbin/fsck* xfs_db xfs_check xfs_repair e2fsck
-    jfs_fsck btrfsck". The installation is opportunistic
-    (non-existing tools are ignored).
+Add a space-separated list of fsck tools.
++
+If nothing is specified, the default is `umount mount /sbin/fsck* xfs_db xfs_check xfs_repair e2fsck jfs_fsck btrfsck`.
++
+The installation is opportunistic (non-existing tools are ignored).
 
 *nofscks=*"__{yes|no}__"::
-    If specified, inhibit installation of any fsck tools (default=no).
+If specified, inhibit installation of any fsck tools (default=no).
 
 *ro_mnt=*"__{yes|no}__"::
-    Mount _/_ and _/usr_ read-only by default (default=no).
+Mount _/_ and _/usr_ read-only by default (default=no).
 
 *kernel_cmdline=*"__parameters__"::
-    Specify default kernel command line parameters. Despite
-    its name, this command only sets initrd parameters.
+Specify default kernel command line parameters. Despite
+its name, this command only sets initrd parameters.
 
 *kernel_only=*"__{yes|no}__"::
-    Only install kernel drivers and firmware files (default=no).
+Only install kernel drivers and firmware files (default=no).
 
 *no_kernel=*"__{yes|no}__"::
-    Do not install kernel drivers and firmware files (default=no).
+Do not install kernel drivers and firmware files (default=no).
 
 *acpi_override=*"__{yes|no}__"::
-    [WARNING] ONLY USE THIS IF YOU KNOW WHAT YOU ARE DOING! +
-    Override BIOS provided ACPI tables. For further documentation read
-    Documentation/acpi/initrd_table_override.txt in the kernel sources.
-    Search for ACPI table files (must have .aml suffix) in acpi_table_dir=
-    directory (see below) and add them to a separate uncompressed cpio
-    archive. This cpio archive gets glued (concatenated, uncompressed one
-    must be the first one) to the compressed cpio archive. The first,
-    uncompressed cpio archive is for data which the kernel must be able
-    to access very early (and cannot make use of uncompress algorithms yet)
-    like microcode or ACPI tables (default=no).
++
+CAUTION: Only use this if you know what you are doing!
++
+Override BIOS provided ACPI tables. For further documentation read
+link:https://www.kernel.org/doc/Documentation/acpi/initrd_table_override.txt[Documentation/acpi/initrd_table_override.txt]
+in the kernel sources.  Search for ACPI table files (must have `.aml` suffix)
+in `acpi_table_dir=` directory (see below) and add them to a separate
+uncompressed cpio archive.
++
+This cpio archive gets glued (concatenated,
+uncompressed one must be the first one) to the compressed cpio archive. The
+first, uncompressed cpio archive is for data which the kernel must be able to
+access very early (and cannot make use of uncompress algorithms yet) like
+microcode or ACPI tables
++
+(default=no).
 
 *acpi_table_dir=*"__<dir>__"::
-    Directory to search for ACPI tables if acpi_override= is set to yes.
+Directory to search for ACPI tables if acpi_override= is set to yes.
 
 *early_microcode=*"{yes|no}"::
-    Combine early microcode with ramdisk (default=yes).
+Combine early microcode with ramdisk (default=yes).
 
 *stdloglvl*="__\{0-6\}__"::
-    Specify logging level for standard error (default=4).
-
-[NOTE]
-===============================
-Logging levels:
-----
-    0 - suppress any messages
-    1 - only fatal errors
-    2 - all errors
-    3 - warnings
-    4 - info
-    5 - debug info (here starts lots of output)
-    6 - trace info (and even more)
-----
-===============================
+Specify logging level for standard error (default=4).
++
+.Logging Levels
+[cols="1,1"]
+|===
+| 0 | suppress any messages
+| 1 | only fatal errors
+| 2 | all errors
+| 3 | warnings
+| 4 | info
+| 5 | debug info (here starts lots of output)
+| 6 | trace info (and even more)
+|===
 
 *sysloglvl*="__\{0-6\}__"::
-    Specify logging level for syslog (default=0).
+Specify logging level for syslog (default=0).
 
 *fileloglvl=*"__\{0-6\}__"::
-    Specify logging level for logfile (default=4).
+Specify logging level for logfile (default=4).
 
 *logfile=*"__<file>__"::
-    Path to logfile.
+Path to logfile.
 
 *sshkey=*"__<file>__"::
-    SSH key file used with ssh-client module.
+SSH key file used with ssh-client module.
 
 *show_modules=*"__{yes|no}__"::
-    Print the name of the included modules to standard output during build
-    (default=no).
+Print the name of the included modules to standard output during build
+(default=no).
 
 *i18n_vars=*"__<variable mapping>__"::
-    Distribution specific variable mapping.
-    See dracut/modules.d/10i18n/README for a detailed description.
+Distribution specific variable mapping.
+See dracut/modules.d/10i18n/README for a detailed description.
 
 *i18n_default_font=*"__<fontname>__"::
-    The font <fontname> to install, if not specified otherwise.
-    Default is "eurlatgr".
+The font <fontname> to install, if not specified otherwise.
+Default is "eurlatgr".
 
 *i18n_install_all=*"__{yes|no}__"::
-    Install everything regardless of generic or host-only mode (default=no).
+Install everything regardless of generic or host-only mode (default=no).
 
 *reproducible=*"__{yes|no}__"::
-    Create reproducible images (default=no).
+Create reproducible images (default=no).
 
 *noimageifnotneeded=*"__{yes|no}__"::
-    Do not create an image in host-only mode, if no kernel driver is needed
-    and no /etc/cmdline/*.conf will be generated into the initramfs
-    (default=no).
+Do not create an image in host-only mode, if no kernel driver is needed
+and no `/etc/cmdline/*.conf` will be generated into the initramfs
+(default=no).
 
 *loginstall=*"__<directory>__"::
-    Log all files installed from the host to _<directory>_.
+Log all files installed from the host to _<directory>_.
 
 *uefi=*"__{yes|no}__"::
-    Instead of creating an initramfs image, dracut will create an UEFI
-    executable, which can be executed by an UEFI BIOS (default=no).
-    The default output filename is
-    _<EFI>/EFI/Linux/linux-$kernel$-<MACHINE_ID>-<BUILD_ID>.efi_.
-    <EFI> might be _/efi_, _/boot_ or _/boot/efi_ depending on where the ESP
-    partition is mounted. The <BUILD_ID> is taken from BUILD_ID in
-    _/usr/lib/os-release_ or if it exists _/etc/os-release_ and is left out,
-    if BUILD_ID is non-existent or empty.
+Instead of creating an initramfs image, dracut will create an UEFI
+executable, which can be executed by an UEFI BIOS (default=no).
++
+The default output filename is
+_<EFI>/EFI/Linux/linux-$kernel$-<MACHINE_ID>-<BUILD_ID>.efi_.
+<EFI> might be _/efi_, _/boot_ or _/boot/efi_ depending on where the ESP
+partition is mounted. The `<BUILD_ID>` is taken from `BUILD_ID` in
+_/usr/lib/os-release_ or if it exists _/etc/os-release_ and is left out,
+if `BUILD_ID` is non-existent or empty.
 
 *machine_id=*"__{yes|no}__"::
-    Affects the default output filename of the UEFI executable, including the
-    <MACHINE_ID> part (default=yes).
+Affects the default output filename of the UEFI executable, including the
+`<MACHINE_ID>` part (default=yes).
 
 *uefi_stub=*"_<file>_"::
-    Specifies the UEFI stub loader, which will load the attached kernel,
-    initramfs and kernel command line and boots the kernel. The default is
-    _/lib/systemd/boot/efi/linux<EFI-MACHINE-TYPE-NAME>.efi.stub_.
+Specifies the UEFI stub loader, which will load the attached kernel,
+initramfs and kernel command line and boots the kernel. The default is
+_/lib/systemd/boot/efi/linux<EFI-MACHINE-TYPE-NAME>.efi.stub_.
 
 *uefi_splash_image=*"_<file>_"::
-    Specifies the UEFI stub loader's splash image. Requires bitmap (**.bmp**)
-    image format.
+Specifies the UEFI stub loader's splash image. Requires bitmap (**.bmp**)
+image format.
 
 *uefi_secureboot_cert=*"_<file>_", *uefi_secureboot_key=*"_<file>_"::
-    Specifies a certificate and corresponding key, which are used to sign the
-    created UEFI executable.
-    Requires both certificate and key need to be specified and _sbsign_ to be
-    installed.
+Specifies a certificate and corresponding key, which are used to sign the
+created UEFI executable.
+Requires both certificate and key need to be specified and _sbsign_ to be
+installed.
 
 *uefi_secureboot_engine=*"_parameter_"::
-    Specifies an engine to use when signing the created UEFI executable. E.g. "pkcs11"
+Specifies an engine to use when signing the created UEFI
+executable. E.g. "pkcs11"
 
 *kernel_image=*"_<file>_"::
-    Specifies the kernel image, which to include in the UEFI executable. The
-    default is _/lib/modules/<KERNEL-VERSION>/vmlinuz_ or
-    _/boot/vmlinuz-<KERNEL-VERSION>_.
+Specifies the kernel image, which to include in the UEFI executable. The
+default is _/lib/modules/<KERNEL-VERSION>/vmlinuz_ or
+_/boot/vmlinuz-<KERNEL-VERSION>_.
 
 *sbat=*"__parameters__"::
-    Specifies the SBAT parameters, which to include in the UEFI executable. By default
-    the default SBAT string added is "sbat,1,SBAT Version,sbat,1,
-    https://github.com/rhboot/shim/blob/main/SBAT.md".
+Specifies the SBAT parameters, which to include in the UEFI executable. By
+default the default SBAT string added is `+sbat,1,SBAT
+Version,sbat,1,https://github.com/rhboot/shim/blob/main/SBAT.md+`.
 
 *enhanced_cpio=*"__{yes|no}__"::
-    Attempt to use the dracut-cpio binary, which optimizes archive creation for
-    copy-on-write filesystems (default=no).
-    When specified, initramfs archives are also padded to ensure optimal data
-    alignment for extent sharing. To retain reflink data deduplication benefits,
-    this should be used alongside the **compress="cat"** and **do_strip="no"**
-    parameters, with initramfs source files, **tmpdir** staging area and
-    destination all on the same copy-on-write capable filesystem.
+Attempt to use the dracut-cpio binary, which optimizes archive creation for
+copy-on-write filesystems (default=no).
++
+When specified, initramfs archives are also padded to ensure optimal data
+alignment for extent sharing. To retain reflink data deduplication benefits,
+this should be used alongside the **compress="cat"** and **do_strip="no"**
+parameters, with initramfs source files, **tmpdir** staging area and
+destination all on the same copy-on-write capable file-system.
 
 *parallel=*"__{yes|no}__"::
-   If set to _yes_, try to execute tasks in parallel (currently only supported
-   for _--regenerate-all_).
+If set to _yes_, try to execute tasks in parallel (currently only supported
+for _--regenerate-all_).
 
 *initrdname=*"_<filepattern>_"::
-    Specifies the file name for the generated initramfs if it is not set otherwise.
-    The initrdname configuration option is required to match the _initr*$\{kernel\}*_
-    file pattern and only one file with this pattern should exists in the
-    directory where initramfs is loaded from. Defaults to _initramfs-$\{kernel\}.img_.
+Specifies the file name for the generated initramfs if it is not set otherwise.
++
+The initrdname configuration option is required to match the
+_initr*$\{kernel\}*_ file pattern and only one file with this pattern should
+exists in the directory where initramfs is loaded from.
++
+Defaults to _initramfs-$\{kernel\}.img_.
 
-Files
------
+== Files
 _/etc/dracut.conf_::
-    Old configuration file. You better use your own file in
-    _/etc/dracut.conf.d/_.
+Old configuration file. It is recommended to use individual files in
+_/etc/dracut.conf.d/_.
 
 _/etc/dracut.conf.d/_::
-    Any _/etc/dracut.conf.d/*.conf_ file can override the values in
-    _/etc/dracut.conf_. The configuration files are read in alphanumerical
-    order.
+Any _/etc/dracut.conf.d/*.conf_ file can override the values in
+_/etc/dracut.conf_. The configuration files are read in alphanumerical
+order.
 
-AUTHOR
-------
+== AUTHOR
 Harald Hoyer
 
-See Also
---------
+== See Also
 man:dracut[8] man:dracut.cmdline[7]
