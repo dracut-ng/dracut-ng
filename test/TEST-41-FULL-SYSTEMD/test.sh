@@ -143,7 +143,7 @@ EOF
         optional_modules="$optional_modules systemd-pcrphase"
     fi
     test_dracut \
-        -a "resume dracut-systemd systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup $optional_modules" \
+        -a "resume dracut-systemd systemd-emergency systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup $optional_modules" \
         --add-drivers "btrfs" \
         "$TESTDIR"/initramfs.testing
 
@@ -158,6 +158,16 @@ EOF
             printf "\n *** systemd units included in initrd from mkinitcpio but not from dracut:%s\n\n" "${mkinitcpio_units}"
             exit 1
         fi
+
+        # verify that in this configuration, dracut does not modify any native systemd service files and ensures compatibility with mkinitcpio
+        (cd "$TESTDIR"/mkinitcpio.*/root/usr/lib/systemd/system/ && find . -type f > /tmp/systemd-mkinitcpio)
+
+        while read -r unit; do
+            if ! diff -q "$TESTDIR"/mkinitcpio.*/root/usr/lib/systemd/system/"$unit" "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/systemd/system/"$unit"; then
+                exit 1
+            fi
+        done < /tmp/systemd-mkinitcpio
+
     fi
 }
 
