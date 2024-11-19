@@ -125,9 +125,9 @@ killall_proc_mountpoint() {
 getcmdline() {
     local _line
     local _i
-    local CMDLINE_ETC_D
-    local CMDLINE_ETC
-    local CMDLINE_PROC
+    local CMDLINE_ETC_D=''
+    local CMDLINE_ETC=''
+    local CMDLINE_PROC=''
     unset _line
 
     if [ -e /etc/cmdline ]; then
@@ -152,7 +152,7 @@ getcmdline() {
 
 getarg() {
     debug_off
-    local _deprecated _newoption
+    local _deprecated='' _newoption=''
     CMDLINE=$(getcmdline)
     export CMDLINE
     while [ $# -gt 0 ]; do
