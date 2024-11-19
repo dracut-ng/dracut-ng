@@ -33,7 +33,7 @@ run_server() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -net socket,listen=127.0.0.1:12350 \
-        -net nic,macaddr=52:54:01:12:34:56,model=virtio \
+        -net nic,macaddr=52:54:00:42:00:01,model=virtio \
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
         -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=LABEL=dracut rootfstype=ext4 rw console=ttyS0,115200n81 $SERVER_DEBUG" \
         -initrd "$TESTDIR"/initramfs.server \

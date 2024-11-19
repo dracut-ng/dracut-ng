@@ -54,15 +54,15 @@ udevadm settle
 
 ip link show
 
-wait_for_if_link enx525401123456
-wait_for_if_link enx525401123457
-wait_for_if_link enx525401123458
-wait_for_if_link enx525401123459
+wait_for_if_link enx525400420001
+wait_for_if_link enx525400420002
+wait_for_if_link enx525400420003
+wait_for_if_link enx525400420004
 
-ip link set dev enx525401123456 name net1
-ip link set dev enx525401123457 name net2
-ip link set dev enx525401123458 name net3
-ip link set dev enx525401123459 name net4
+ip link set dev enx525400420001 name net1
+ip link set dev enx525400420002 name net2
+ip link set dev enx525400420003 name net3
+ip link set dev enx525400420004 name net4
 
 modprobe -b -q 8021q && modprobe -b -q bonding
 : > /dev/watchdog
