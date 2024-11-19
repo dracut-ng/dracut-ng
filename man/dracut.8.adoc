@@ -116,7 +116,7 @@ example:
     parameter can be specified multiple times.
     This option forces dracut to only include the specified dracut modules.
     In most cases the "--add" option is what you want to use.
-    This option is not recomended to use (use at your own risk).
+    This option is not recommended to use (use at your own risk).
 +
 [NOTE]
 ===============================
@@ -133,7 +133,7 @@ example:
     suffix. This parameter can be specified multiple times.
     This option forces dracut to only include the specified kernel modules.
     In most cases the "--add-drivers" option is what you want to use.
-    This option is not recomended to use (use at your own risk).
+    This option is not recommended to use (use at your own risk).
 +
 [NOTE]
 ===============================
