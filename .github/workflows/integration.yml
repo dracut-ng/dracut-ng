@@ -214,38 +214,30 @@ jobs:
               uses: actions/checkout@v4
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: USE_NETWORK=${{ matrix.network }} ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
-#    network-advanced:
-#        name: ${{ matrix.test }} on ${{ matrix.container }}
-#        runs-on: ubuntu-latest
-#        timeout-minutes: 20
-#        concurrency:
-#            group: network-iscsi-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
-#            cancel-in-progress: true
-#        strategy:
-#            fail-fast: false
-#            matrix:
-#                container:
-#                    - arch
-#                    - debian
-#                    - fedora
-#                    - gentoo
-#                    - opensuse
-#                    - ubuntu
-#                ]
-#                test: [ "70","71","72" ]
-#                include:
-#                  - network: ""
-#                  - # on debian run tests with systemd-networkd
-#                    container: "debian"
-#                    network: "systemd-networkd"
-#                  - # on openSUSE run tests with network-legacy
-#                    container: "opensuse"
-#                    network: "network-legacy"
-#        container:
-#            image: ghcr.io/dracut-ng/${{ matrix.container }}
-#            options: '--device=/dev/kvm'
-#        steps:
-#            - name: "Checkout Repository"
-#              uses: actions/checkout@v4
-#            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-#              run: USE_NETWORK=${{ matrix.network }} ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    network-advanced:
+        needs: basic
+        name: ${{ matrix.test }} on ${{ matrix.container }}
+        runs-on: ubuntu-latest
+        timeout-minutes: 20
+        concurrency:
+            group: network-iscsi-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                container:
+                    - opensuse
+                test:
+                    - "70"
+                include:
+                  - # on openSUSE run tests with network-legacy
+                    container: "opensuse"
+                    network: "network-legacy"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            options: '--device=/dev/kvm'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v4
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: USE_NETWORK=${{ matrix.network }} ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
