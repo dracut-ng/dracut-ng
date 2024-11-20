@@ -2,7 +2,7 @@
 
 # called by dracut
 depends() {
-    echo udev-rules shell-interpreter
+    echo udev-rules
     return 0
 }
 
