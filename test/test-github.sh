@@ -9,6 +9,14 @@ if [ "$V" = "2" ]; then set -x; fi
 
 [[ -d ${0%/*} ]] && cd "${0%/*}"/../
 
+# remove dracut modules that are being tested
+(
+    cd modules.d
+    for dir in *; do
+        rm -rf /usr/lib/dracut/modules.d/[0-9][0-9]"${dir/#[0-9][0-9]/}"
+    done
+)
+
 # disable building documentation by default
 [ -z "$enable_documentation" ] && export enable_documentation=no
 
