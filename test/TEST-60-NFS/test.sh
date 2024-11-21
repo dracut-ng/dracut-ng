@@ -175,14 +175,6 @@ test_nfsv3() {
     client_test "NFSv3 root=dhcp DHCP proto:IP:path,options" 52:54:00:12:34:07 \
         "root=dhcp" 192.168.50.3 wsize=4096 || return 1
 
-    client_test "NFSv3 Overlayfs root=nfs:..." 52:54:00:12:34:04 \
-        "root=nfs:192.168.50.1:/nfs/client rd.live.overlay.overlayfs=1" \
-        192.168.50.1 -wsize=4096 || return 1
-
-    client_test "NFSv3 Live Overlayfs root=nfs:..." 52:54:00:12:34:04 \
-        "root=nfs:192.168.50.1:/nfs/client rd.live.image rd.live.overlay.overlayfs=1" \
-        192.168.50.1 -wsize=4096 || return 1
-
     return 0
 }
 
@@ -202,6 +194,12 @@ test_nfsv4() {
 
     client_test "NFSv4 root=dhcp DHCP proto:IP:path,options" 52:54:00:12:34:87 \
         "root=dhcp" 192.168.50.3 wsize=4096 || return 1
+
+    client_test "NFSv4 Overlayfs root=nfs4:..." 52:54:00:12:34:84 \
+        "root=nfs4:192.168.50.1:/client rd.live.overlay.overlayfs=1 " 192.168.50.1 -wsize=4096 || return 1
+
+    client_test "NFSv4 Live Overlayfs root=nfs4:..." 52:54:00:12:34:84 \
+        "root=nfs4:192.168.50.1:/client rd.live.image rd.live.overlay.overlayfs=1" 192.168.50.1 -wsize=4096 || return 1
 
     return 0
 }
