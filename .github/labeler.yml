@@ -189,7 +189,7 @@ systemd-veritysetup:
 
 systemd-emergency:
   - changed-files:
-    - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-emergency/*'
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-emergency/*'
 
 caps:
   - changed-files:
