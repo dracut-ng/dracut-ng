@@ -43,7 +43,7 @@ getargs 'rd.break=pre-shutdown' && emergency_shell --shutdown pre-shutdown "Brea
 
 source_hook pre-shutdown
 
-warn "Killing all remaining processes"
+info "Killing all remaining processes"
 
 killall_proc_mountpoint /oldroot || sleep 0.2
 
@@ -78,7 +78,7 @@ umount_a() {
         local ret=$?
         if [ $ret -eq 0 ]; then
             _did_umount="y"
-            warn "Unmounted $mp."
+            info "Unmounted $mp."
         elif [ $ret -eq 137 ]; then
             _timed_out_umounts="$_timed_out_umounts $mp "
             warn "Unmounting $mp timed out."
