@@ -1616,7 +1616,7 @@ static int install_dependent_module(struct kmod_module *mod, int *err)
                 if (*err == 0) {
                         *err = kmod_module_get_weakdeps(mod, &modweak);
                         if (*err == 0)
-                                *err = install_dependent_modules(ctx, modweak, NULL);
+                                *err = install_dependent_modules(modweak);
                 }
 #endif
         } else {
@@ -1710,7 +1710,7 @@ static int install_module(struct kmod_module *mod)
         if (ret == 0) {
                 ret = kmod_module_get_weakdeps(mod, &modweak);
                 if (ret == 0)
-                        ret = install_dependent_modules(ctx, modweak, NULL);
+                        ret = install_dependent_modules(modweak);
         }
 #endif
 
