@@ -230,9 +230,9 @@ jobs:
                 test:
                     - "70"
                 include:
-                  - # on openSUSE run tests with network-legacy
-                    container: "opensuse"
-                    network: "network-legacy"
+                    # on openSUSE run tests with network-legacy
+                    - container: "opensuse"
+                      network: "network-legacy"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm'
