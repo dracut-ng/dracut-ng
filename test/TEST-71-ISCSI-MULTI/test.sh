@@ -11,8 +11,6 @@ run_server() {
     # Start server first
     echo "iSCSI TEST SETUP: Starting DHCP/iSCSI server"
     echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-    echo "$ ss"
-    ss
     echo "$ ls -alh $TESTDIR"
     ls -alh "$TESTDIR"
     echo "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
