@@ -3,8 +3,8 @@ name: Release
 
 on:  # yamllint disable-line rule:truthy
   schedule:
-    ## Schedule the job to run on Apr-1, Aug-1, Dec-1
-    - cron: '0 0 1 APR,AUG,DEC *'
+    ## Schedule the job quarterly to run on Feb-1, May-1, Aug-1, and Nov-1
+    - cron: '0 0 1 FEB,MAY,AUG,NOV *'
   workflow_dispatch:
     inputs:
       tag:
