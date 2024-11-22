@@ -63,7 +63,7 @@ check() {
 
 # called by dracut
 depends() {
-    echo bash rootfs-block network
+    echo rootfs-block network
     return 0
 }
 
