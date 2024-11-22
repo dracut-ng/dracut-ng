@@ -10,17 +10,6 @@ fi
 echo "TESTDIR=\"$TESTDIR\"" > .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
 export TESTDIR
 
-# inspired by kernel version detection in lsinitrd.sh
-
-# Some test containers do not include systemd-detect-virt, so let's just assume
-# we are running inside a container already
-
-# shellcheck disable=SC2012
-[[ $KVERSION ]] || KVERSION="$(cd /lib/modules && ls -1 | tail -1)"
-# shellcheck disable=SC2012
-[[ $KVERSION ]] || KVERSION="$(cd /usr/lib/modules && ls -1 | tail -1)"
-[[ $KVERSION ]] || KVERSION="$(uname -r)"
-
 [ -z "$USE_NETWORK" ] && USE_NETWORK="network"
 [ -z "$TEST_FSTYPE" ] && TEST_FSTYPE="ext4"
 
@@ -97,36 +86,56 @@ ovmf_code() {
     done
 }
 
-VMLINUZ=${VMLINUZ-"/lib/modules/${KVERSION}/vmlinuz"}
-if ! [ -f "$VMLINUZ" ]; then
-    VMLINUZ="/lib/modules/${KVERSION}/vmlinux"
-fi
+determine_kernel_version() {
+    # inspired by kernel version detection in lsinitrd.sh
 
-if ! [ -f "$VMLINUZ" ]; then
-    [[ -f /etc/machine-id ]] && read -r MACHINE_ID < /etc/machine-id
+    # Some test containers do not include systemd-detect-virt, so let's just assume
+    # we are running inside a container already
 
-    if [[ $MACHINE_ID ]] && { [[ -d /boot/${MACHINE_ID} ]] || [[ -L /boot/${MACHINE_ID} ]]; }; then
-        VMLINUZ="/boot/${MACHINE_ID}/$KVERSION/linux"
-    elif [ -f "/boot/vmlinuz-${KVERSION}" ]; then
-        VMLINUZ="/boot/vmlinuz-${KVERSION}"
-    elif [ -f "/boot/vmlinux-${KVERSION}" ]; then
-        VMLINUZ="/boot/vmlinux-${KVERSION}"
-    elif [ -f "/boot/kernel-${KVERSION}" ]; then
-        VMLINUZ="/boot/kernel-${KVERSION}"
+    # shellcheck disable=SC2012
+    [[ $KVERSION ]] || KVERSION="$(cd /lib/modules && ls -1 | tail -1)"
+    # shellcheck disable=SC2012
+    [[ $KVERSION ]] || KVERSION="$(cd /usr/lib/modules && ls -1 | tail -1)"
+    [[ $KVERSION ]] || KVERSION="$(uname -r)"
+}
+
+set_vmlinux_env() {
+    VMLINUZ=${VMLINUZ-"/lib/modules/${KVERSION}/vmlinuz"}
+    if ! [ -f "$VMLINUZ" ]; then
+        VMLINUZ="/lib/modules/${KVERSION}/vmlinux"
     fi
-fi
 
-if ! [ -f "$VMLINUZ" ]; then
-    VMLINUZ=$(find /boot/vmlinuz-* -type f 2> /dev/null | tail -1)
-fi
+    if ! [ -f "$VMLINUZ" ]; then
+        [[ -f /etc/machine-id ]] && read -r MACHINE_ID < /etc/machine-id
 
-if ! [ -f "$VMLINUZ" ]; then
-    echo "Could not find a Linux kernel version $KVERSION to test with!" >&2
-    echo "Please install linux." >&2
-    exit 1
-fi
+        if [[ $MACHINE_ID ]] && { [[ -d /boot/${MACHINE_ID} ]] || [[ -L /boot/${MACHINE_ID} ]]; }; then
+            VMLINUZ="/boot/${MACHINE_ID}/$KVERSION/linux"
+        elif [ -f "/boot/vmlinuz-${KVERSION}" ]; then
+            VMLINUZ="/boot/vmlinuz-${KVERSION}"
+        elif [ -f "/boot/vmlinux-${KVERSION}" ]; then
+            VMLINUZ="/boot/vmlinux-${KVERSION}"
+        elif [ -f "/boot/kernel-${KVERSION}" ]; then
+            VMLINUZ="/boot/kernel-${KVERSION}"
+        fi
+    fi
 
-export VMLINUZ
+    if ! [ -f "$VMLINUZ" ]; then
+        VMLINUZ=$(find /boot/vmlinuz-* -type f 2> /dev/null | tail -1)
+    fi
+
+    if ! [ -f "$VMLINUZ" ]; then
+        echo "Could not find a Linux kernel version $KVERSION to test with!" >&2
+        echo "Please install linux." >&2
+        exit 1
+    fi
+
+    export VMLINUZ
+}
+
+set_test_envonment_variables() {
+    determine_kernel_version
+    set_vmlinux_env
+}
 
 command -v test_check &> /dev/null || test_check() {
     :
@@ -220,11 +229,13 @@ while (($# > 0)); do
     case $1 in
         --run)
             echo "TEST RUN: $TEST_DESCRIPTION"
+            set_test_envonment_variables
             test_check && test_run
             exit $?
             ;;
         --setup)
             echo "TEST SETUP: $TEST_DESCRIPTION"
+            set_test_envonment_variables
             test_check && test_setup
             exit $?
             ;;
@@ -236,6 +247,7 @@ while (($# > 0)); do
             exit $?
             ;;
         --all)
+            set_test_envonment_variables
             if ! test_check 2 &> test${TEST_RUN_ID:+-$TEST_RUN_ID}.log; then
                 if [ "$V" -ge 1 ]; then
                     cat test${TEST_RUN_ID:+-$TEST_RUN_ID}.log
