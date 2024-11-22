@@ -813,12 +813,14 @@ lvm_internal_dev() {
 
 btrfs_devs() {
     local _mp="$1"
-    btrfs device usage "$_mp" \
-        | while read -r _dev _; do
-            str_starts "$_dev" "/" || continue
-            _dev=${_dev%,}
-            printf -- "%s\n" "$_dev"
-        done
+    if command -v btrfs > /dev/null; then
+        btrfs device usage "$_mp" \
+            | while read -r _dev _; do
+                str_starts "$_dev" "/" || continue
+                _dev=${_dev%,}
+                printf -- "%s\n" "$_dev"
+            done
+    fi
 }
 
 zfs_devs() {
