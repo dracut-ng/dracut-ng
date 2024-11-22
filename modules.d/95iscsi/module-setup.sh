@@ -227,8 +227,7 @@ install() {
             "$systemdsystemunitdir"/iscsid.service \
             "$systemdsystemunitdir"/iscsid.socket \
             "$systemdsystemunitdir"/iscsiuio.service \
-            "$systemdsystemunitdir"/iscsiuio.socket \
-            iscsiadm iscsid
+            "$systemdsystemunitdir"/iscsiuio.socket
 
         for i in \
             iscsid.socket \
