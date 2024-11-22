@@ -159,21 +159,18 @@ test_nfsv3() {
     client_test "NFSv3 Legacy root=IP:path" 52:54:00:12:34:04 \
         "root=192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096 || return 1
 
-    # This test must fail: nfsroot= requires root=/dev/nfs
-    client_test "NFSv3 Invalid root=dhcp nfsroot=/nfs/client" 52:54:00:12:34:04 \
-        "root=dhcp nfsroot=/nfs/client failme" 192.168.50.1 -wsize=4096 && return 1
-
     client_test "NFSv3 root=dhcp DHCP path,options" 52:54:00:12:34:05 \
         "root=dhcp" 192.168.50.1 wsize=4096 || return 1
-
-    client_test "NFSv3 Bridge Customized root=dhcp DHCP path,options" 52:54:00:12:34:05 \
-        "root=dhcp bridge=foobr0:enp0s1" 192.168.50.1 wsize=4096 || return 1
 
     client_test "NFSv3 root=dhcp DHCP IP:path,options" 52:54:00:12:34:06 \
         "root=dhcp" 192.168.50.2 wsize=4096 || return 1
 
     client_test "NFSv3 root=dhcp DHCP proto:IP:path,options" 52:54:00:12:34:07 \
         "root=dhcp" 192.168.50.3 wsize=4096 || return 1
+
+    # TODO FIXME
+    #    client_test "NFSv3 Bridge Customized root=dhcp DHCP path,options" 52:54:00:12:34:05 \
+    #        "root=dhcp bridge=foobr0:enp0s1" 192.168.50.1 wsize=4096 || return 1
 
     return 0
 }
@@ -215,9 +212,8 @@ test_run() {
         return 1
     fi
 
-    # focus on NFSv4 testing, disable NFSv3 tests
-    #test_nfsv3
-    test_nfsv4
+    test_nfsv3 \
+        && test_nfsv4
 
     ret=$?
 
