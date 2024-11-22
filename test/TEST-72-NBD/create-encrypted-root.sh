@@ -23,10 +23,9 @@ udevadm settle
 cryptsetup luksClose /dev/mapper/dracut_crypt_test
 udevadm settle
 sleep 1
-eval "$(udevadm info --query=property --name=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root | while read -r line || [ -n "$line" ]; do [ "$line" != "${line#*ID_FS_UUID*}" ] && echo "$line"; done)"
 {
     echo "dracut-root-block-created"
-    echo "ID_FS_UUID=$ID_FS_UUID"
+    udevadm info --query=property --name=/dev/disk/by-id/ata-disk_root --property=ID_FS_UUID
 } | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
 sync
 poweroff -f

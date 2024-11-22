@@ -77,13 +77,12 @@ if [ -e /dev/md0 ]; then
     mdadm --detail --export /dev/md0 | grep -F MD_UUID > /tmp/mduuid
     . /tmp/mduuid
     udevadm settle
-    eval "$(udevadm info --query=property --name=/dev/md0 | while read -r line || [ -n "$line" ]; do [ "$line" != "${line#*ID_FS_UUID*}" ] && echo "$line"; done)"
 fi
 
 {
     echo "dracut-root-block-created"
     echo "MD_UUID=$MD_UUID"
-    echo "ID_FS_UUID=$ID_FS_UUID"
+    udevadm info --query=property --name=/dev/md0 --property=ID_FS_UUID
 } | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
 
 sync
