@@ -319,8 +319,8 @@ test_setup() {
         inst_simple "${PKGLIBDIR}/modules.d/45net-lib/net-lib.sh" "/lib/net-lib.sh"
         inst_simple "${PKGLIBDIR}/modules.d/95nfs/nfs-lib.sh" "/lib/nfs-lib.sh"
         inst_binary "${PKGLIBDIR}/dracut-util" "/usr/bin/dracut-util"
-        ln -s dracut-util "${initdir}/usr/bin/dracut-getarg"
-        ln -s dracut-util "${initdir}/usr/bin/dracut-getargs"
+        ln -sf dracut-util "${initdir}/usr/bin/dracut-getarg"
+        ln -sf dracut-util "${initdir}/usr/bin/dracut-getargs"
 
         inst ./client-init.sh /sbin/init
         inst_simple /etc/os-release

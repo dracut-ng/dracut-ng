@@ -24,8 +24,8 @@ install() {
     inst_multiple -o "${_terminfodir}/l/linux"
 
     inst_binary "${dracutbasedir}/dracut-util" "/usr/bin/dracut-util"
-    ln -s dracut-util "${initdir}/usr/bin/dracut-getarg"
-    ln -s dracut-util "${initdir}/usr/bin/dracut-getargs"
+    ln -sf dracut-util "${initdir}/usr/bin/dracut-getarg"
+    ln -sf dracut-util "${initdir}/usr/bin/dracut-getargs"
 
     inst_script "${dracutbasedir}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh"
     inst_script "${dracutbasedir}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh"

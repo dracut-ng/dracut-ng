@@ -15,9 +15,8 @@ install() {
     inst_multiple -o findmnt less kmod
 
     inst_binary "${dracutbasedir}/dracut-util" "/usr/bin/dracut-util"
-
-    ln -s dracut-util "${initdir}/usr/bin/dracut-getarg"
-    ln -s dracut-util "${initdir}/usr/bin/dracut-getargs"
+    ln -sf dracut-util "${initdir}/usr/bin/dracut-getarg"
+    ln -sf dracut-util "${initdir}/usr/bin/dracut-getargs"
 
     # add common users in /etc/passwd, it will be used by nfs/ssh currently
     # use password for hostonly images to facilitate secure sulogin in emergency console
