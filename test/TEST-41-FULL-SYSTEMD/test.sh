@@ -33,7 +33,7 @@ client_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -smbios type=11,value=io.systemd.credential:key=test \
-        -append "$TEST_KERNEL_CMDLINE systemd.unit=testsuite.target systemd.mask=systemd-firstboot systemd.mask=systemd-vconsole-setup root=LABEL=dracut mount.usr=LABEL=dracutusr mount.usrfstype=btrfs mount.usrflags=subvol=usr,ro $client_opts $DEBUGOUT" \
+        -append "$TEST_KERNEL_CMDLINE systemd.unit=testsuite.target systemd.mask=systemd-firstboot systemd.mask=systemd-sysusers systemd.mask=systemd-vconsole-setup root=LABEL=dracut mount.usr=LABEL=dracutusr mount.usrfstype=btrfs mount.usrflags=subvol=usr,ro $client_opts $DEBUGOUT" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     if ! test_marker_check; then
@@ -69,7 +69,7 @@ test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
-        -a systemd \
+        -a "systemd systemd-udevd systemd-journald systemd-tmpfiles systemd-cryptsetup" \
         -i "${PKGLIBDIR}/modules.d/80test-root/test-init.sh" "/sbin/test-init.sh" \
         -i ./test-init.sh /sbin/test-init \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
