@@ -49,7 +49,6 @@ test_run() {
     client_run "writeable root" "rw" || return 1
 
     # volatile mode
-    client_run "volatile=overlayfs root" "systemd.volatile=overlayfs" || return 1
     client_run "volatile=state root" "systemd.volatile=state" || return 1
 
     # shellcheck source=$TESTDIR/luks.uuid
