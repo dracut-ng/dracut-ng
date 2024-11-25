@@ -29,7 +29,6 @@ test_run() {
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
     qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1
     qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-3.img disk3
 
     test_marker_reset
     "$testdir"/run-qemu \
@@ -77,7 +76,6 @@ test_setup() {
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
     qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1 1
     qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-3.img disk3 1
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
