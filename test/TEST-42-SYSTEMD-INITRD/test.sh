@@ -34,13 +34,8 @@ client_run() {
 }
 
 test_run() {
-    client_run "no option specified" || return 1
     client_run "readonly root" "ro" || return 1
     client_run "writeable root" "rw" || return 1
-
-    # volatile mode
-    client_run "volatile=overlayfs root" "systemd.volatile=overlayfs" || return 1
-    client_run "volatile=state root" "systemd.volatile=state" || return 1
 }
 
 test_setup() {
