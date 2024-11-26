@@ -15,6 +15,11 @@ depends() {
 }
 
 # called by dracut
+installkernel() {
+    instmods nf_tables nfnetlink nft_fwd_netdev
+}
+
+# called by dracut
 install() {
     local _nm_version
 
