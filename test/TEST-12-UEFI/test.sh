@@ -9,6 +9,12 @@ test_check() {
         return 1
     fi
 
+    local arch=${DRACUT_ARCH:-$(uname -m)}
+    if [[ ! ${arch} =~ ^(x86_64|i.86|aarch64|riscv64)$ ]]; then
+        echo "Architecture '$arch' not supported to create a UEFI executable... Skipping" >&2
+        return 1
+    fi
+
     [[ -n "$(ovmf_code)" ]]
 }
 
