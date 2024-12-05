@@ -26,10 +26,10 @@ ARG DISTRIBUTION
 # Packages to pass the BASIC test
 RUN apk add --no-cache \
     asciidoc \
-    dracut \
     dracut-tests \
     file \
     gcc \
+    iputils \
     kmod \
     kmod-dev \
     linux-virt \
@@ -45,7 +45,6 @@ if [ "$DISTRIBUTION" = "alpine:edge" ] ; then \
     cpio \
     cryptsetup \
     device-mapper \
-    dhclient \
     dmraid \
     elogind \
     gpg \
