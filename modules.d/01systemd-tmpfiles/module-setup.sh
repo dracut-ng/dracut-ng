@@ -27,6 +27,7 @@ install() {
         "$tmpfilesdir/static-nodes-permissions.conf" \
         "$tmpfilesdir/systemd-tmp.conf" \
         "$tmpfilesdir/systemd.conf" \
+        "$tmpfilesdir/20-systemd-stub.conf" \
         "$tmpfilesdir/var.conf" \
         "$systemdsystemunitdir"/systemd-tmpfiles-clean.service \
         "$systemdsystemunitdir/systemd-tmpfiles-clean.service.d/*.conf" \
