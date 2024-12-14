@@ -113,6 +113,7 @@ jobs:
                     - arch
                     - fedora
                     - gentoo
+                    - opensuse
                     - ubuntu
                 test:
                     - "40"
