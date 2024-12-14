@@ -61,10 +61,21 @@ test_setup() {
     trap "$(shopt -p globstar)" RETURN
     shopt -q -s globstar
 
+    local dracut_modules="resume systemd-udevd systemd-journald systemd-tmpfiles systemd-cryptsetup systemd-emergency systemd-ac-power systemd-coredump systemd-creds systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup"
+    if [ -f /usr/lib/systemd/systemd-battery-check ]; then
+        dracut_modules="$dracut_modules systemd-battery-check"
+    fi
+    if [ -f /usr/lib/systemd/systemd-bsod ]; then
+        dracut_modules="$dracut_modules systemd-bsod"
+    fi
+    if [ -f /usr/lib/systemd/systemd-pcrextend ]; then
+        dracut_modules="$dracut_modules systemd-pcrphase"
+    fi
+
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
-        -a "systemd systemd-udevd systemd-journald systemd-tmpfiles systemd-cryptsetup" \
+        -a "$dracut_modules" \
         -i "${PKGLIBDIR}/modules.d/80test-root/test-init.sh" "/sbin/test-init.sh" \
         -i ./test-init.sh /sbin/test-init \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
@@ -127,18 +138,8 @@ EOF
 
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
 
-    local optional_modules
-    if [ -f /usr/lib/systemd/systemd-battery-check ]; then
-        optional_modules="$optional_modules systemd-battery-check"
-    fi
-    if [ -f /usr/lib/systemd/systemd-bsod ]; then
-        optional_modules="$optional_modules systemd-bsod"
-    fi
-    if [ -f /usr/lib/systemd/systemd-pcrextend ]; then
-        optional_modules="$optional_modules systemd-pcrphase"
-    fi
     test_dracut \
-        -a "resume dracut-systemd systemd-emergency systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup $optional_modules" \
+        -a "dracut-systemd $dracut_modules" \
         --add-drivers "btrfs" \
         "$TESTDIR"/initramfs.testing
 
