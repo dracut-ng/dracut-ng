@@ -16,7 +16,6 @@ install() {
     inst_simple "$moddir/sysusers-dracut.conf" "$systemdsystemunitdir/systemd-sysusers.service.d/sysusers-dracut.conf"
 
     inst_sysusers basic.conf
-    inst_sysusers systemd.conf
 
     inst_multiple -o \
         "$systemdsystemunitdir"/systemd-sysusers.service \
