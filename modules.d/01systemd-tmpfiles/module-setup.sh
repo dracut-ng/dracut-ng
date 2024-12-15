@@ -45,8 +45,6 @@ install() {
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
-            /etc/group \
-            /etc/passwd \
             "$tmpfilesconfdir/*.conf" \
             "$systemdsystemconfdir"/systemd-tmpfiles-clean.service \
             "$systemdsystemconfdir/systemd-tmpfiles-clean.service.d/*.conf" \
