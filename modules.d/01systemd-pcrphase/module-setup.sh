@@ -11,10 +11,6 @@ check() {
         return 1
     fi
 
-    if [[ $hostonly ]]; then
-        return 255
-    fi
-
     return 0
 }
 
