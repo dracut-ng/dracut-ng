@@ -32,6 +32,7 @@ RUN pacman --noconfirm -Syu \
     gcc \
     jq \
     linux \
+    linux-firmware \
     lvm2 \
     make \
     mdadm \
