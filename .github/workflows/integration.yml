@@ -121,7 +121,7 @@ jobs:
                     - "42"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
-            options: '--device=/dev/kvm'
+            options: '--device=/dev/kvm --privileged'
         steps:
             - name: "Checkout Repository"
               uses: actions/checkout@v4

@@ -143,6 +143,14 @@ EOF
         --add-drivers "btrfs" \
         "$TESTDIR"/initramfs.testing
 
+    if command -v mkosi &> /dev/null; then
+        mkdir -p "$TESTDIR"/mkosi
+        chmod u+s /usr/bin/bwrap
+        pacman --noconfirm -Syu filesystem
+        mkosi-initrd --debug --kernel-version "$KVERSION" -t directory -o mkosi -O "$TESTDIR"/mkosi
+        find "$TESTDIR"/mkosi
+    fi
+
     if command -v mkinitcpio &> /dev/null; then
         find "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/systemd/system/ -printf "%f\n" | sort | uniq > systemd-dracut
         mkinitcpio -k "$KVERSION" --builddir "$TESTDIR" --save -A systemd
