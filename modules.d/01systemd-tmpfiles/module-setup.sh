@@ -21,8 +21,6 @@ install() {
     # Excluding "$tmpfilesdir/x11.conf", belongs in separated x11 module
 
     inst_multiple -o \
-        /usr/lib/group \
-        /usr/lib/passwd \
         "$tmpfilesdir/etc.conf" \
         "$tmpfilesdir/static-nodes-permissions.conf" \
         "$tmpfilesdir/systemd-tmp.conf" \
@@ -45,8 +43,6 @@ install() {
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
-            /etc/group \
-            /etc/passwd \
             "$tmpfilesconfdir/*.conf" \
             "$systemdsystemconfdir"/systemd-tmpfiles-clean.service \
             "$systemdsystemconfdir/systemd-tmpfiles-clean.service.d/*.conf" \
