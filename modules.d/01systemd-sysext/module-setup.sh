@@ -26,6 +26,11 @@ depends() {
 # Install the required file(s) and directories for the module in the initramfs.
 install() {
 
+    local _suffix=
+
+    # systemd >= v258
+    [[ -e "$systemdsystemunitdir"/systemd-sysext-initrd.service ]] && _suffix="-initrd"
+
     # It's intended to work only with raw binary disk images contained in
     # regular files, but not with directory trees.
 
@@ -35,10 +40,10 @@ install() {
         "/var/lib/extensions/*.raw" \
         "/etc/extension-release.d/extension-release.*" \
         "/usr/lib/extension-release.d/extension-release.*" \
-        "$systemdsystemunitdir"/systemd-confext.service \
-        "$systemdsystemunitdir/systemd-confext.service.d/*.conf" \
-        "$systemdsystemunitdir"/systemd-sysext.service \
-        "$systemdsystemunitdir/systemd-sysext.service.d/*.conf" \
+        "$systemdsystemunitdir"/systemd-confext${_suffix}.service \
+        "$systemdsystemunitdir/systemd-confext${_suffix}.service.d/*.conf" \
+        "$systemdsystemunitdir"/systemd-sysext${_suffix}.service \
+        "$systemdsystemunitdir/systemd-sysext${_suffix}.service.d/*.conf" \
         systemd-confext systemd-sysext
 
     # Enable systemd type unit(s)
@@ -52,10 +57,10 @@ install() {
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
             "/etc/extensions/*.raw" \
-            "$systemdsystemconfdir"/systemd-confext.service \
-            "$systemdsystemconfdir/systemd-confext.service.d/*.conf" \
-            "$systemdsystemconfdir"/systemd-sysext.service \
-            "$systemdsystemconfdir/systemd-sysext.service.d/*.conf"
+            "$systemdsystemconfdir"/systemd-confext${_suffix}.service \
+            "$systemdsystemconfdir/systemd-confext${_suffix}.service.d/*.conf" \
+            "$systemdsystemconfdir"/systemd-sysext${_suffix}.service \
+            "$systemdsystemconfdir/systemd-sysext${_suffix}.service.d/*.conf"
     fi
 
 }
