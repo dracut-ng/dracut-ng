@@ -7,7 +7,6 @@
 
 # Not installed
 # - dmraid (no longer maintained, https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1056944)
-# - plymouth-themes (not yet working with dracut, https://bugs.launchpad.net/ubuntu/+source/dracut/+bug/1596220)
 # - iscsiuio, open-iscsi (not yet working with dracut, https://bugs.launchpad.net/ubuntu/+source/open-iscsi/+bug/2072484)
 # - busybox-static
 
@@ -33,6 +32,7 @@ RUN if [ "${DISTRIBUTION}" ! = "debian:latest" ] ; then \
 # extra packages for sid, rolling, devel
 RUN if [ "$DISTRIBUTION" = "debian:sid" ] || [ "${DISTRIBUTION}" = "ubuntu:rolling" ] || [ "${DISTRIBUTION}" = "ubuntu:devel" ] ; then \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
+    plymouth-themes \
     systemd-cryptsetup \
     systemd-repart \
     ; fi
