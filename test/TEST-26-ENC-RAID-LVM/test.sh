@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2034
-TEST_DESCRIPTION="root filesystem on LVM on encrypted partitions of a RAID-5"
+TEST_DESCRIPTION="root filesystem on LVM on encrypted partitions of a RAID"
 
 # Uncomment this to debug failures
 #DEBUGFAIL="rd.shell rd.break" # udev.log-priority=debug
