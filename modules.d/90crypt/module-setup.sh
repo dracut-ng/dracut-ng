@@ -136,7 +136,13 @@ install() {
                 done
             fi
         done < "$dracutsysrootdir"/etc/crypttab > "$initdir"/etc/crypttab
-        mark_hostonly /etc/crypttab
+
+        # Remove empty /etc/crypttab to allow creating it later
+        if [ -s "$initdir"/etc/crypttab ]; then
+            mark_hostonly /etc/crypttab
+        else
+            rm -rf "$initdir"/etc/crypttab
+        fi
     fi
 
     inst_simple "$moddir/crypt-lib.sh" "/lib/dracut-crypt-lib.sh"
