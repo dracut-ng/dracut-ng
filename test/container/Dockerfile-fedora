@@ -87,13 +87,10 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     && dnf -y update && dnf clean all
 
 # CentOS Stream ships only qemu-kvm, but it disables the KVM accel when it's not available
-# force non-hostonly mode, but keep all the other config
-# this workaround is needed to pass crypt tests with rd.auto
 RUN \
 if [[ "${DISTRIBUTION}" =~ "centos:" ]]; then \
     [[ -e /usr/bin/qemu-kvm ]] || ln -sf /usr/libexec/qemu-kvm /usr/bin/qemu-kvm ;\
     [[ -e /usr/bin/qemu-system-$(uname -m) ]] || ln -sv /usr/libexec/qemu-kvm /usr/bin/qemu-system-$(uname -m) ;\
-    echo 'hostonly="no"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf ;\
     update-crypto-policies --no-reload --set FIPS ;\
 else \
     fips-mode-setup --enable ;\
