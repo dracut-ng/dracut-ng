@@ -44,7 +44,7 @@ RUN \
     btrfs-progs \
     ca-certificates \
     cargo \
-    console-setup \
+    console-data \
     cpio \
     cryptsetup \
     docbook \
@@ -60,6 +60,7 @@ RUN \
     isc-dhcp-client \
     isc-dhcp-server \
     jq \
+    kbd \
     kmod \
     libkmod-dev \
     linux-image-generic \
