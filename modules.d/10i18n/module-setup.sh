@@ -117,6 +117,9 @@ install() {
     install_base() {
         inst_multiple setfont loadkeys kbd_mode stty
 
+        # loadkeys might require ckbcomp
+        inst_multiple -o ckbcomp
+
         if ! dracut_module_included "systemd"; then
             inst "${moddir}"/console_init.sh /lib/udev/console_init
             inst_rules "${moddir}"/10-console.rules
