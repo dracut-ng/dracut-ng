@@ -143,10 +143,26 @@ EOF
         --add-drivers "btrfs" \
         "$TESTDIR"/initramfs.testing
 
+    if command -v mkosi-initrd &> /dev/null; then
+        mkosi-initrd --kernel-version "$KVERSION" -t directory -o mkosi -O "$TESTDIR"
+
+        find "$TESTDIR"/mkosi/usr/lib/systemd/system/initrd.target.wants/ -printf "%f\n" | sort | uniq > systemd-mkosi
+        find "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/systemd/system/initrd.target.wants/ -printf "%f\n" | sort | uniq > systemd-dracut
+
+        # fail the test if mkosi installs some services that dracut does not
+        mkosi_units=$(comm -23 systemd-mkosi systemd-dracut)
+
+        if [ -n "$mkosi_units" ]; then
+            printf "\n *** systemd units included in initrd from mkosi-initrd but not from dracut:%s\n\n" "${mkosi_units}"
+            exit 1
+        fi
+    fi
+
     if command -v mkinitcpio &> /dev/null; then
-        find "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/systemd/system/ -printf "%f\n" | sort | uniq > systemd-dracut
         mkinitcpio -k "$KVERSION" --builddir "$TESTDIR" --save -A systemd
+
         find "$TESTDIR"/mkinitcpio.*/root/usr/lib/systemd/system/ -printf "%f\n" | sort | uniq > systemd-mkinitcpio
+        find "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/systemd/system/ -printf "%f\n" | sort | uniq > systemd-dracut
 
         # fail the test if mkinitcpio installs some services that dracut does not
         mkinitcpio_units=$(comm -23 systemd-mkinitcpio systemd-dracut)
