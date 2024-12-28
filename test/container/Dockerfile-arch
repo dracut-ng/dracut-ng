@@ -1,6 +1,6 @@
 # Test coverage provided by this container:
 # - xfs, ntfs-3g
-# - mkinitcpio, mkosi
+# - mkinitcpio
 # - sbsigntools
 # - qrencode (systemd-bsod)
 # - rdma out of tree dracut module
@@ -32,12 +32,10 @@ RUN pacman --noconfirm -Syu \
     gcc \
     jq \
     linux \
-    linux-firmware \
     lvm2 \
     make \
     mdadm \
     mkinitcpio \
-    mkosi \
     multipath-tools \
     nbd \
     networkmanager \
