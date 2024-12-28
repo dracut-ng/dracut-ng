@@ -1,5 +1,6 @@
 # Test coverage provided by this container:
 # - network-legacy
+# - mkosi-initrd
 # - hmaccalc (fido)
 # - rdma out of tree dracut module
 
@@ -18,10 +19,12 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     dbus-broker \
     dhcp-client \
     dhcp-server \
+    distribution-gpg-keys \
     dmraid \
     e2fsprogs \
     erofs-utils \
     gcc \
+    git \
     hmaccalc \
     iproute \
     iputils \
@@ -53,4 +56,5 @@ RUN dnf -y install --setopt=install_weak_deps=False \
 
 # force non-hostonly mode, but keep all the other config
 RUN \
-  echo 'hostonly="no"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf
+  echo 'hostonly="no"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf \
+  && cd / && git clone https://github.com/systemd/mkosi && ln -s /mkosi/bin/mkosi /usr/bin/mkosi && ln -s /mkosi/bin/mkosi-initrd /usr/bin/mkosi-initrd
