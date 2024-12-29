@@ -35,6 +35,7 @@ RUN zypper --non-interactive install --no-recommends \
     lvm2 \
     make \
     mdadm \
+    mkosi-initrd \
     nbd \
     NetworkManager \
     nfs-utils \
@@ -56,5 +57,4 @@ RUN zypper --non-interactive install --no-recommends \
 
 # force non-hostonly mode, but keep all the other config
 RUN \
-  echo 'hostonly="no"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf \
-  && cd / && git clone https://github.com/systemd/mkosi && ln -s /mkosi/bin/mkosi /usr/bin/mkosi && ln -s /mkosi/bin/mkosi-initrd /usr/bin/mkosi-initrd
+  echo 'hostonly="no"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf
