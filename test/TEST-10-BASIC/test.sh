@@ -11,18 +11,13 @@ test_run() {
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
     qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root
 
-    if [ "$TEST_FSTYPE" = "zfs" ]; then
-        TEST_KERNEL_CMDLINE+=" root=ZFS=dracut/root "
-    else
-        TEST_KERNEL_CMDLINE+=" root=LABEL=dracut "
-        # test fips mode
-        [ -f /usr/share/crypto-policies/default-fips-config ] && TEST_KERNEL_CMDLINE+=" fips=1 rd.fips.skipkernel boot=LABEL=dracut "
-    fi
-
     test_marker_reset
+
+    # shellcheck disable=SC2046
+    # zfs requires specifying root argument
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE" \
+        $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-append root=ZFS=dracut/root"; fi) \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     test_marker_check || return 1
@@ -65,6 +60,7 @@ test_setup() {
 
     # shellcheck disable=SC2046
     test_dracut \
+        --kernel-cmdline "$TEST_KERNEL_CMDLINE root=LABEL=dracut" \
         $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "--add-drivers ${TEST_FSTYPE}"; fi) \
         "$TESTDIR"/initramfs.testing
 }
