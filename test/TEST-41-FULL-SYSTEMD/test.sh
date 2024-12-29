@@ -144,6 +144,10 @@ EOF
         "$TESTDIR"/initramfs.testing
 
     if command -v mkosi-initrd &> /dev/null; then
+        rm -rf /mkosi /usr/bin/mkosi*
+        zypper --non-interactive install --no-recommends mkosi-initrd
+        rm -rf /usr/bin/bwrap
+
         mkosi-initrd --kernel-version "$KVERSION" -t directory -o mkosi -O "$TESTDIR"
 
         find "$TESTDIR"/mkosi/usr/lib/systemd/system/initrd.target.wants/ -printf "%f\n" | sort | uniq > systemd-mkosi
