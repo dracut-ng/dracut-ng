@@ -149,6 +149,12 @@ EOF
         find "$TESTDIR"/mkosi/usr/lib/systemd/system/initrd.target.wants/ -printf "%f\n" | sort | uniq > systemd-mkosi
         find "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/systemd/system/initrd.target.wants/ -printf "%f\n" | sort | uniq > systemd-dracut
 
+        echo mkosi
+        cat "$TESTDIR"/mkosi/etc/passwd
+
+        echo dracut
+        cat "$TESTDIR"/initrd/dracut.*/initramfs/etc/passwd
+
         # fail the test if mkosi installs some services that dracut does not
         mkosi_units=$(comm -23 systemd-mkosi systemd-dracut)
 
