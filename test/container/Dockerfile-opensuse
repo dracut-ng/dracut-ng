@@ -6,9 +6,6 @@
 
 FROM registry.opensuse.org/opensuse/tumbleweed:latest
 
-# prefer running tests with btrfs
-ENV TEST_FSTYPE=btrfs
-
 # Install needed packages for the dracut CI container
 RUN zypper --non-interactive install --no-recommends \
     asciidoc \
@@ -54,7 +51,5 @@ RUN zypper --non-interactive install --no-recommends \
     util-linux-systemd \
     && zypper --non-interactive dist-upgrade --no-recommends && zypper --non-interactive clean
 
-# force non-hostonly mode, but keep all the other config
 RUN \
-  echo 'hostonly="no"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf \
-  && cd / && git clone https://github.com/systemd/mkosi && ln -s /mkosi/bin/mkosi /usr/bin/mkosi && ln -s /mkosi/bin/mkosi-initrd /usr/bin/mkosi-initrd
+  cd / && git clone https://github.com/systemd/mkosi && ln -s /mkosi/bin/mkosi /usr/bin/mkosi && ln -s /mkosi/bin/mkosi-initrd /usr/bin/mkosi-initrd
