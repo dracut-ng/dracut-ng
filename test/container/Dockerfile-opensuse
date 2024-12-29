@@ -4,13 +4,13 @@
 # - hmaccalc (fido)
 # - rdma out of tree dracut module
 
-FROM registry.opensuse.org/opensuse/tumbleweed-dnf:latest
+FROM registry.opensuse.org/opensuse/tumbleweed:latest
 
 # prefer running tests with btrfs
 ENV TEST_FSTYPE=btrfs
 
 # Install needed packages for the dracut CI container
-RUN dnf -y install --setopt=install_weak_deps=False \
+RUN zypper --non-interactive install --no-recommends \
     asciidoc \
     bash-completion \
     btrfsprogs \
@@ -52,7 +52,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     tpm2.0-tools \
     /usr/bin/qemu-system-$(uname -m) \
     util-linux-systemd \
-    && dnf -y update && dnf clean all
+    && zypper --non-interactive dist-upgrade --no-recommends && zypper --non-interactive clean
 
 # force non-hostonly mode, but keep all the other config
 RUN \
