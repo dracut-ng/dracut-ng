@@ -128,7 +128,7 @@ test_setup() {
         -I "grep" \
         $(if command -v mdadm > /dev/null; then echo "-a mdraid"; fi) \
         $(if command -v cryptsetup > /dev/null; then echo "-a crypt -I cryptsetup"; fi) \
-        $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "-I mkfs.${TEST_FSTYPE}"; fi) \
+        $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "-I mkfs.${TEST_FSTYPE} --add-drivers ${TEST_FSTYPE}"; fi) \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
 
@@ -163,7 +163,7 @@ test_setup() {
         -a "lvm" \
         $(if command -v mdadm > /dev/null; then echo "-a mdraid"; fi) \
         $(if command -v cryptsetup > /dev/null; then echo "-a crypt"; fi) \
-        $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; fi) \
+        $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "--add-drivers ${TEST_FSTYPE}"; fi) \
         -i "/tmp/crypttab" "/etc/crypttab" \
         -i "/tmp/key" "/etc/key" \
         "$TESTDIR"/initramfs.testing

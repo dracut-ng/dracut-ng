@@ -46,7 +46,7 @@ test_setup() {
     # shellcheck disable=SC2046
     "$DRACUT" -N -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
-        $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "-I mkfs.${TEST_FSTYPE}"; fi) \
+        $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "-I mkfs.${TEST_FSTYPE} --add-drivers ${TEST_FSTYPE}"; fi) \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
 
@@ -65,7 +65,7 @@ test_setup() {
 
     # shellcheck disable=SC2046
     test_dracut \
-        $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; fi) \
+        $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "--add-drivers ${TEST_FSTYPE}"; fi) \
         "$TESTDIR"/initramfs.testing
 }
 
