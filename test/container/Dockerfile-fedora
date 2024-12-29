@@ -21,6 +21,9 @@ FROM ${REGISTRY}/${DISTRIBUTION}
 # export ARG
 ARG DISTRIBUTION
 
+# prefer running tests with btrfs
+ENV TEST_FSTYPE=btrfs
+
 RUN \
 if [[ "${DISTRIBUTION}" =~ "centos:" ]]; then \
     dnf config-manager --set-enabled crb; \
