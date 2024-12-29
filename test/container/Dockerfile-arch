@@ -1,5 +1,5 @@
 # Test coverage provided by this container:
-# - xfs, ntfs-3g
+# - ntfs-3g
 # - mkinitcpio
 # - sbsigntools
 # - qrencode (systemd-bsod)
@@ -13,8 +13,8 @@
 
 FROM docker.io/archlinux
 
-# prefer running tests with xfs
-ENV TEST_FSTYPE=xfs
+# prefer running tests with btrfs
+ENV TEST_FSTYPE=btrfs
 
 RUN pacman --noconfirm -Syu \
     asciidoc \
@@ -56,5 +56,4 @@ RUN pacman --noconfirm -Syu \
     systemd-ukify \
     tgt \
     tpm2-tools \
-    xfsprogs \
     && yes | pacman -Scc

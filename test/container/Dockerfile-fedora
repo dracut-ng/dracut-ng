@@ -1,6 +1,7 @@
 # Test coverage provided by this container:
 # - arm64
 # - hostonly
+# - xfs
 # - memstrack
 # - ndctl (for nvdimm)
 # - fcoe-utils (Fibre Channel over Ethernet)
@@ -21,8 +22,8 @@ FROM ${REGISTRY}/${DISTRIBUTION}
 # export ARG
 ARG DISTRIBUTION
 
-# prefer running tests with btrfs
-ENV TEST_FSTYPE=btrfs
+# prefer running tests with xfs
+ENV TEST_FSTYPE=xfs
 
 RUN \
 if [[ "${DISTRIBUTION}" =~ "centos:" ]]; then \
@@ -87,6 +88,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     systemd-resolved \
     systemd-ukify \
     tpm2-tools \
+    xfsprogs \
     && dnf -y update && dnf clean all
 
 # CentOS Stream ships only qemu-kvm, but it disables the KVM accel when it's not available
