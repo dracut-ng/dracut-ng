@@ -15,6 +15,10 @@ elif [ "$TEST_FSTYPE" = "btrfs" ]; then
     TEST_KERNEL_CMDLINE+=" root=LABEL=root "
 else
     TEST_KERNEL_CMDLINE+=" root=LABEL=root "
+
+    # test fips mode
+    [ -f /usr/share/crypto-policies/default-fips-config ] && TEST_KERNEL_CMDLINE+=" fips=1 rd.fips.skipkernel boot=LABEL=root "
+
     export USE_LVM=1
     command -v mdadm > /dev/null && export HAVE_RAID=1
     command -v cryptsetup > /dev/null && export HAVE_CRYPT=1
