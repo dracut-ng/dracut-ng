@@ -120,8 +120,11 @@ install() {
     mkdir -m 0755 -p "$initdir/var/lib/nfs"
     mkdir -m 0755 -p "$initdir/var/lib/nfs/rpc_pipefs"
     mkdir -m 0770 -p "$initdir/var/lib/rpcbind"
-    [ -d "/var/lib/nfs/statd/sm" ] && mkdir -m 0755 -p "$initdir/var/lib/nfs/statd/sm"
-    [ -d "/var/lib/nfs/sm" ] && mkdir -m 0755 -p "$initdir/var/lib/nfs/sm"
+
+    # use the same directory permissions as the host
+    [ -d "/var/lib/nfs/statd" ] && cp -a --attributes-only "$dracutsysrootdir"/var/lib/nfs/statd "${initdir}"/var/lib/nfs/ && rm -rf "${initdir}"/var/lib/nfs/statd/*
+    [ -d "/var/lib/nfs/statd/sm" ] && cp -a --attributes-only "$dracutsysrootdir"/var/lib/nfs/statd/sm "${initdir}"/var/lib/nfs/statd/ && rm -rf "${initdir}"/var/lib/nfs/statd/sm/*
+    [ -d "/var/lib/nfs/sm" ] && cp -a --attributes-only "$dracutsysrootdir"/var/lib/nfs/sm "${initdir}"/var/lib/nfs/ && rm -rf "${initdir}"/var/lib/nfs/sm/*
 
     # Rather than copy the passwd file in, just set a user for rpcbind
     # We'll save the state and restart the daemon from the root anyway
