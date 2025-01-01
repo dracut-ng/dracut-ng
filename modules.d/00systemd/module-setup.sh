@@ -96,9 +96,7 @@ install() {
             /etc/hostname \
             /etc/nsswitch.conf \
             /etc/machine-id \
-            /etc/machine-info \
-            /etc/vconsole.conf \
-            /etc/locale.conf
+            /etc/machine-info
     fi
 
     if ! [[ -e "$initdir/etc/machine-id" ]]; then
