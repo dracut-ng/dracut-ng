@@ -8,11 +8,33 @@ depends() {
 
 # called by dracut
 install() {
-    inst_multiple mount mknod mkdir sleep chown \
-        sed ls flock cp mv dmesg rm ln rmmod mkfifo umount readlink setsid \
-        modprobe chmod tr
+    inst_multiple \
+        chmod \
+        cp \
+        dmesg \
+        flock \
+        ln \
+        ls \
+        mkdir \
+        mkfifo \
+        mknod \
+        modprobe \
+        mount \
+        mv \
+        readlink \
+        rm \
+        rmmod \
+        sed \
+        setsid \
+        sleep \
+        tr \
+        umount
 
-    inst_multiple -o findmnt less kmod
+    inst_multiple -o \
+        chown \
+        findmnt \
+        kmod \
+        less
 
     inst_binary "${dracutbasedir}/dracut-util" "/usr/bin/dracut-util"
 
