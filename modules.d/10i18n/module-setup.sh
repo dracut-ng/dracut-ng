@@ -117,17 +117,29 @@ install() {
     install_base() {
         inst_multiple setfont loadkeys kbd_mode stty
 
-        if ! dracut_module_included "systemd"; then
-            inst "${moddir}"/console_init.sh /lib/udev/console_init
-            inst_rules "${moddir}"/10-console.rules
-            inst_hook cmdline 20 "${moddir}/parse-i18n.sh"
-        fi
-
         if [[ ${kbddir} != "/usr/share" ]]; then
             inst_dir /usr/share
             for _src in "${KBDSUBDIRS[@]}"; do
                 [ ! -e "${initdir}/usr/share/${_src}" ] && ln -s "${kbddir}/${_src}" "${initdir}/usr/share/${_src}"
             done
+        fi
+
+        if dracut_module_included "systemd"; then
+            # https://github.com/dracutdevs/dracut/issues/796
+            [[ -f $dracutsysrootdir${VCONFIG_CONF} ]] && inst_simple ${VCONFIG_CONF}
+
+            inst_rules 90-vconsole.rules
+
+            if [[ -e "$systemdsystemunitdir"/systemd-vconsole-setup.service ]]; then
+                inst_multiple -o \
+                    "$systemdutildir"/systemd-vconsole-setup \
+                    "$systemdsystemunitdir"/systemd-vconsole-setup.service \
+                    "$systemdsystemunitdir"/sysinit.target.wants/systemd-vconsole-setup.service
+            fi
+        else
+            inst "${moddir}"/console_init.sh /lib/udev/console_init
+            inst_rules "${moddir}"/10-console.rules
+            inst_hook cmdline 20 "${moddir}/parse-i18n.sh"
         fi
     }
 
@@ -290,21 +302,6 @@ install() {
 
     if checks; then
         install_base
-
-        if dracut_module_included "systemd"; then
-            # https://github.com/dracutdevs/dracut/issues/796
-            [[ -f $dracutsysrootdir${VCONFIG_CONF} ]] && inst_simple ${VCONFIG_CONF}
-
-            inst_rules 90-vconsole.rules
-
-            if [[ -e "$systemdsystemunitdir"/systemd-vconsole-setup.service ]]; then
-                inst_multiple -o \
-                    "$systemdutildir"/systemd-vconsole-setup \
-                    "$systemdsystemunitdir"/systemd-vconsole-setup.service \
-                    "$systemdsystemunitdir"/sysinit.target.wants/systemd-vconsole-setup.service
-            fi
-
-        fi
 
         if [[ ${hostonly} ]] && ! [[ ${i18n_install_all} == "yes" ]]; then
             install_local_i18n || install_all_kbd
