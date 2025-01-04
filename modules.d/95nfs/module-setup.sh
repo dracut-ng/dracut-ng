@@ -94,8 +94,6 @@ install() {
         echo "alias nfs4 nfs" > "$initdir"/etc/modprobe.d/nfs.conf
     fi
 
-    inst_libdir_file 'libnfsidmap_nsswitch.so*' 'libnfsidmap/*.so' 'libnfsidmap*.so*'
-
     _nsslibs=$(
         cat "$dracutsysrootdir"/{,usr/}etc/nsswitch.conf 2> /dev/null \
             | sed -e '/^#/d' -e 's/^.*://' -e 's/\[NOTFOUND=return\]//' \
@@ -140,4 +138,6 @@ install() {
     done
 
     dracut_need_initqueue
+
+    inst_libdir_file 'libnfsidmap_nsswitch.so*' 'libnfsidmap/*.so' 'libnfsidmap*.so*'
 }
