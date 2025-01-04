@@ -20,7 +20,7 @@ depends() {
 install() {
     inst_simple /etc/os-release
 
-    inst_multiple mkdir ln dd stty mount poweroff umount setsid sync cat grep
+    inst_multiple mkdir ln dd mount poweroff umount setsid sync cat grep
 
     inst_script "$moddir/test-init.sh" "/sbin/init"
 
