@@ -164,6 +164,13 @@ install() {
         # shellcheck disable=SC1090
         [ -f "$dracutsysrootdir"$VCONFIG_CONF ] && . "$dracutsysrootdir"$VCONFIG_CONF
 
+        if dracut_module_included "systemd" && [[ -f $dracutsysrootdir${I18N_CONF} ]]; then
+            inst_simple ${I18N_CONF}
+        else
+            mksubdirs "${initdir}"${I18N_CONF}
+            print_vars LC_ALL LANG >> "${initdir}"${I18N_CONF}
+        fi
+
         shopt -q -s nocasematch
         if [[ ${UNICODE} ]]; then
             if [[ ${UNICODE} == YES || ${UNICODE} == 1 ]]; then
@@ -252,13 +259,6 @@ install() {
             inst_simple "${kbddir}"/unimaps/"${FONT_UNIMAP}".uni
         fi
 
-        if dracut_module_included "systemd" && [[ -f $dracutsysrootdir${I18N_CONF} ]]; then
-            inst_simple ${I18N_CONF}
-        else
-            mksubdirs "${initdir}"${I18N_CONF}
-            print_vars LC_ALL LANG >> "${initdir}"${I18N_CONF}
-        fi
-
         if ! dracut_module_included "systemd"; then
             mksubdirs "${initdir}"${VCONFIG_CONF}
             print_vars KEYMAP EXT_KEYMAPS UNICODE FONT FONT_MAP FONT_UNIMAP >> "${initdir}"${VCONFIG_CONF}
@@ -280,7 +280,7 @@ install() {
 
         [[ "$kbddir" ]] || return 1
 
-        [[ -f $dracutsysrootdir$I18N_CONF && -f $dracutsysrootdir$VCONFIG_CONF ]] \
+        [[ -f $dracutsysrootdir$I18N_CONF ]] \
             || [[ ! ${hostonly} || ${i18n_vars} ]] || {
             derror 'i18n_vars not set!  Please set up i18n_vars in ' \
                 'configuration file.'
