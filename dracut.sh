@@ -1357,7 +1357,11 @@ if [[ $early_microcode == yes ]] || { [[ $acpi_override == yes ]] && [[ -d $acpi
     mkdir "$early_cpio_dir"
 fi
 
-[[ "$dracutsysrootdir" ]] || [[ "$noexec" ]] || export DRACUT_RESOLVE_LAZY="1"
+if ${DRACUT_LDD:-ldd} "${dracutsysrootdir}/bin/sh" | grep -q musl &> /dev/null; then
+    musl=1
+fi
+
+[[ "$dracutsysrootdir" ]] || [[ "$noexec" ]] || [[ "$musl" ]] || export DRACUT_RESOLVE_LAZY="1"
 
 if [[ $print_cmdline ]]; then
     stdloglvl=0
