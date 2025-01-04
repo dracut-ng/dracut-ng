@@ -145,6 +145,7 @@ install() {
         fi
     fi
 
+    inst_multiple -o stty
     inst_simple "$moddir/crypt-lib.sh" "/lib/dracut-crypt-lib.sh"
     inst_script "$moddir/crypt-run-generator.sh" "/sbin/crypt-run-generator"
 
