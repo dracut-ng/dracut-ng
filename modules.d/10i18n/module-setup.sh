@@ -4,6 +4,12 @@
 check() {
     [[ "$mount_needs" ]] && return 1
 
+    [[ -f $dracutsysrootdir"/etc/locale.conf" ]] \
+        || [[ ! ${hostonly} || ${i18n_vars} ]] || {
+        derror 'i18n_vars not set!  Please set up i18n_vars in ' \
+            'configuration file.'
+    }
+
     require_binaries setfont loadkeys kbd_mode || return 1
 
     return 0
@@ -280,11 +286,6 @@ install() {
 
         [[ "$kbddir" ]] || return 1
 
-        [[ -f $dracutsysrootdir$I18N_CONF ]] \
-            || [[ ! ${hostonly} || ${i18n_vars} ]] || {
-            derror 'i18n_vars not set!  Please set up i18n_vars in ' \
-                'configuration file.'
-        }
         return 0
     }
 
