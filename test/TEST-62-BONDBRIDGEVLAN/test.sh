@@ -63,9 +63,6 @@ run_server() {
         -pidfile "$TESTDIR"/server.pid -daemonize || return 1
     chmod 644 -- "$TESTDIR"/server.pid || return 1
 
-    # Cleanup the terminal if we have one
-    tty -s && stty sane
-
     if ! [[ $SERIAL ]]; then
         wait_for_server_startup || return 1
     else
@@ -245,7 +242,7 @@ test_setup() {
             [[ -f $srcmods/$_f ]] && inst_simple "$srcmods/$_f" "/lib/modules/$kernel/$_f"
         done
 
-        inst_multiple sh ls shutdown poweroff stty cat ps ln ip \
+        inst_multiple sh ls shutdown poweroff cat ps ln ip \
             dmesg mkdir cp ping exportfs \
             modprobe rpc.nfsd rpc.mountd \
             /etc/services sleep mount chmod
@@ -295,7 +292,7 @@ test_setup() {
         export initdir=$TESTDIR/overlay/source/nfs/client
         # shellcheck disable=SC1090
         . "$PKGLIBDIR"/dracut-init.sh
-        inst_multiple sh shutdown poweroff stty cat ps ln ip \
+        inst_multiple sh shutdown poweroff cat ps ln ip \
             mount dmesg mkdir cp ping grep ls sort dd sed basename
         for _terminfodir in /lib/terminfo /etc/terminfo /usr/share/terminfo; do
             [[ -f ${_terminfodir}/l/linux ]] && break

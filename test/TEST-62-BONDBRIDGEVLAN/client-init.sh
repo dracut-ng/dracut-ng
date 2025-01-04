@@ -5,7 +5,6 @@ strstr() { [ "${1#*"$2"*}" != "$1" ]; }
 CMDLINE=$(while read -r line; do echo "$line"; done < /proc/cmdline)
 export TERM=linux
 export PS1='initramfs-test:\w\$ '
-stty sane
 echo "made it to the rootfs! Powering down."
 
 testnum=$(grep -Eo "rd.dracut.test.num=[^[:space:]]+" /proc/cmdline | sed -nr 's/.*=(.*)/\1/p')

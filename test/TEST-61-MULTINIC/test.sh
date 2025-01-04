@@ -41,9 +41,6 @@ run_server() {
 
     chmod 644 -- "$TESTDIR"/server.pid || return 1
 
-    # Cleanup the terminal if we have one
-    tty -s && stty sane
-
     if ! [[ $SERIAL ]]; then
         wait_for_server_startup || return 1
     else
@@ -196,7 +193,7 @@ test_setup() {
             chmod 777 var/lib/rpcbind var/lib/nfs
         )
 
-        inst_multiple sh ls shutdown poweroff stty cat ps ln ip \
+        inst_multiple sh ls shutdown poweroff cat ps ln ip \
             dmesg mkdir cp exportfs \
             modprobe rpc.nfsd rpc.mountd \
             sleep mount chmod rm
@@ -253,7 +250,7 @@ test_setup() {
             mkdir -p dev sys proc etc run root usr var/lib/nfs/rpc_pipefs
         )
 
-        inst_multiple sh shutdown poweroff stty cat ps ln ip dd \
+        inst_multiple sh shutdown poweroff cat ps ln ip dd \
             mount dmesg mkdir cp grep setsid ls cat sync
         for _terminfodir in /lib/terminfo /etc/terminfo /usr/share/terminfo; do
             if [ -f "${_terminfodir}"/l/linux ]; then

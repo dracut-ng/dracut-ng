@@ -48,9 +48,6 @@ run_server() {
         -pidfile "$TESTDIR"/server.pid -daemonize || return 1
     chmod 644 "$TESTDIR"/server.pid || return 1
 
-    # Cleanup the terminal if we have one
-    tty -s && stty sane
-
     if ! [[ $SERIAL ]]; then
         wait_for_server_startup || return 1
     else

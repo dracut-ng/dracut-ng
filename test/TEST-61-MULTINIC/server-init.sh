@@ -5,7 +5,6 @@ export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 export TERM=linux
 export PS1='nfstest-server:\w\$ '
 : > /dev/watchdog
-stty sane
 echo "made it to the rootfs!"
 echo server > /proc/sys/kernel/hostname
 
