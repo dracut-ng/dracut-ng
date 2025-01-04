@@ -4,7 +4,7 @@
 check() {
     [[ "$mount_needs" ]] && return 1
 
-    require_binaries setfont loadkeys kbd_mode || return 1
+    require_binaries loadkeys setfont || return 1
 
     return 0
 }
@@ -115,7 +115,13 @@ install() {
     }
 
     install_base() {
-        inst_multiple setfont loadkeys kbd_mode stty
+        inst_multiple \
+            loadkeys \
+            setfont
+
+        inst_multiple -o \
+            kbd_mode \
+            stty
 
         if [[ ${kbddir} != "/usr/share" ]]; then
             inst_dir /usr/share
