@@ -33,7 +33,7 @@ client_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -smbios type=11,value=io.systemd.credential:key=test \
-        -append "$TEST_KERNEL_CMDLINE systemd.unit=testsuite.target systemd.mask=systemd-firstboot systemd.mask=systemd-sysusers systemd.mask=systemd-vconsole-setup root=LABEL=dracut mount.usr=LABEL=dracutusr mount.usrfstype=btrfs mount.usrflags=subvol=usr,ro $client_opts $DEBUGOUT" \
+        -append "$TEST_KERNEL_CMDLINE systemd.unit=testsuite.target systemd.mask=systemd-sysusers root=LABEL=dracut mount.usr=LABEL=dracutusr mount.usrflags=subvol=usr $client_opts $DEBUGOUT" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     if ! test_marker_check; then
