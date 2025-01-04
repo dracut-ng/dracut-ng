@@ -888,21 +888,6 @@ gateway_for_iface() {
         | sed -n "s/^default via \([0-9a-z.:]\{1,\}\) dev $ifname .*\$/\1/p"
 }
 
-# This works only for ifcfg-style network configuration!
-bootproto_for_iface() {
-    local ifname=$1
-    local dir
-
-    # follow ifcfg settings for boot protocol
-    for dir in network-scripts network; do
-        [ -f "/etc/sysconfig/$dir/ifcfg-$ifname" ] && {
-            sed -n "s/BOOTPROTO=[\"']\?\([[:alnum:]]\{1,\}\)[\"']\?.*\$/\1/p" \
-                "/etc/sysconfig/$dir/ifcfg-$ifname"
-            return
-        }
-    done
-}
-
 is_unbracketed_ipv6_address() {
     strglob "$1" '*:*' && ! strglob "$1" '\[*:*\]'
 }
@@ -928,40 +913,21 @@ ip_params_for_remote_addr() {
         [[ $ifmac ]] && printf 'ifname=%s:%s ' "${ifname}" "${ifmac}"
     fi
 
-    bootproto=$(bootproto_for_iface "$ifname")
-    case $bootproto in
-        dhcp | dhcp6 | auto6) ;;
-        dhcp4)
-            bootproto=dhcp
-            ;;
-        static* | "")
-            bootproto=
-            ;;
-        *)
-            derror "bootproto \"$bootproto\" is unsupported by dracut, trying static configuration"
-            bootproto=
-            ;;
-    esac
-    if [[ $bootproto ]]; then
-        printf 'ip=%s:%s ' "${ifname}" "${bootproto}"
-    else
-        local_addr=$(local_addr_for_remote_addr "$remote_addr")
-        [[ $local_addr ]] || {
-            berror "failed to determine local address to connect to $remote_addr"
-            return 1
-        }
-        peer=$(peer_for_addr "$local_addr")
-        # Set peer or netmask, but not both
-        [[ $peer ]] || netmask=$(netmask_for_addr "$local_addr")
-        gateway=$(gateway_for_iface "$ifname" "$local_addr")
-        # Quote IPv6 addresses with brackets
-        is_unbracketed_ipv6_address "$local_addr" && local_addr="[$local_addr]"
-        is_unbracketed_ipv6_address "$peer" && peer="[$peer]"
-        is_unbracketed_ipv6_address "$gateway" && gateway="[$gateway]"
-        printf 'ip=%s:%s:%s:%s::%s:none ' \
-            "${local_addr}" "${peer}" "${gateway}" "${netmask}" "${ifname}"
-    fi
-
+    local_addr=$(local_addr_for_remote_addr "$remote_addr")
+    [[ $local_addr ]] || {
+        berror "failed to determine local address to connect to $remote_addr"
+        return 1
+    }
+    peer=$(peer_for_addr "$local_addr")
+    # Set peer or netmask, but not both
+    [[ $peer ]] || netmask=$(netmask_for_addr "$local_addr")
+    gateway=$(gateway_for_iface "$ifname" "$local_addr")
+    # Quote IPv6 addresses with brackets
+    is_unbracketed_ipv6_address "$local_addr" && local_addr="[$local_addr]"
+    is_unbracketed_ipv6_address "$peer" && peer="[$peer]"
+    is_unbracketed_ipv6_address "$gateway" && gateway="[$gateway]"
+    printf 'ip=%s:%s:%s:%s::%s:none ' \
+        "${local_addr}" "${peer}" "${gateway}" "${netmask}" "${ifname}"
 }
 
 # block_is_nbd <maj:min>
