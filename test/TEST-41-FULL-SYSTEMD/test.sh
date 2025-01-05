@@ -62,6 +62,11 @@ test_setup() {
     shopt -q -s globstar
 
     local dracut_modules="resume systemd-udevd systemd-journald systemd-tmpfiles systemd-cryptsetup systemd-emergency systemd-ac-power systemd-coredump systemd-creds systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup"
+
+    if [ -f /usr/bin/dbus-broker ]; then
+        dracut_modules="$dracut_modules dbus-broker systemd-hostnamed systemd-portabled systemd-timedated"
+    fi
+
     if [ -f /usr/lib/systemd/systemd-battery-check ]; then
         dracut_modules="$dracut_modules systemd-battery-check"
     fi
