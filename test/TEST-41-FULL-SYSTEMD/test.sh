@@ -67,6 +67,10 @@ test_setup() {
         dracut_modules="$dracut_modules dbus-broker systemd-hostnamed systemd-portabled systemd-timedated"
     fi
 
+    if [ -f /usr/lib/systemd/systemd-networkd ]; then
+        dracut_modules="$dracut_modules systemd-networkd"
+    fi
+
     if [ -f /usr/lib/systemd/systemd-battery-check ]; then
         dracut_modules="$dracut_modules systemd-battery-check"
     fi
