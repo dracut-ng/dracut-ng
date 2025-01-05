@@ -45,6 +45,7 @@ RUN zypper --non-interactive install --no-recommends \
     swtpm \
     systemd-boot \
     systemd-experimental \
+    systemd-portable \
     tgt \
     tpm2.0-tools \
     /usr/bin/qemu-system-$(uname -m) \
