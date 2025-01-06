@@ -33,7 +33,7 @@ client_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -smbios type=11,value=io.systemd.credential:key=test \
-        -append "$TEST_KERNEL_CMDLINE systemd.unit=testsuite.target systemd.mask=systemd-sysusers root=LABEL=dracut mount.usr=LABEL=dracutusr mount.usrflags=subvol=usr $client_opts $DEBUGOUT" \
+        -append "$TEST_KERNEL_CMDLINE systemd.unit=testsuite.target root=LABEL=dracut mount.usr=LABEL=dracutusr mount.usrflags=subvol=usr $client_opts $DEBUGOUT" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     if ! test_marker_check; then
@@ -44,15 +44,17 @@ client_run() {
 }
 
 test_run() {
-    client_run "readonly root" "ro" || return 1
+    # mask services that require rw
+    client_run "readonly root" "ro systemd.mask=systemd-sysusers systemd.mask=systemd-timesyncd systemd.mask=systemd-resolved" || return 1
+
     client_run "writeable root" "rw" || return 1
 
     # shellcheck source=$TESTDIR/luks.uuid
     . "$TESTDIR"/luks.uuid
 
     # luks
-    client_run "encrypted root with rd.luks.uuid" "root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID rd.luks.key=/run/credentials/@system/key" || return 1
-    client_run "encrypted root with rd.luks.name" "root=/dev/mapper/crypt rd.luks.name=$ID_FS_UUID=crypt rd.luks.key=/run/credentials/@system/key" || return 1
+    client_run "encrypted root with rd.luks.uuid" "rw root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID rd.luks.key=/run/credentials/@system/key" || return 1
+    client_run "encrypted root with rd.luks.name" "rw root=/dev/mapper/crypt rd.luks.name=$ID_FS_UUID=crypt rd.luks.key=/run/credentials/@system/key" || return 1
     return 0
 }
 
@@ -68,7 +70,11 @@ test_setup() {
     fi
 
     if [ -f /usr/lib/systemd/systemd-networkd ]; then
-        dracut_modules="$dracut_modules systemd-networkd"
+        if [ -f /usr/bin/dbus-broker ]; then
+            dracut_modules="$dracut_modules systemd-network-management"
+        else
+            dracut_modules="$dracut_modules systemd-networkd"
+        fi
     fi
 
     if [ -f /usr/lib/systemd/systemd-battery-check ]; then
