@@ -23,24 +23,23 @@ RUN zypper --non-interactive install --no-recommends \
     gcc \
     git \
     hmaccalc \
-    iproute \
+    iproute2 \
     iputils \
     iscsiuio \
     kbd \
-    kernel \
+    kernel-vanilla \
     libkmod-devel \
     lvm2 \
     make \
     mdadm \
     nbd \
     NetworkManager \
-    nfs-utils \
+    nfs-kernel-server \
     open-iscsi \
     parted \
     pciutils \
-    procps \
     python3-pefile \
-    qemu-kvm \
+    qemu \
     squashfs \
     swtpm \
     systemd-boot \
@@ -48,7 +47,6 @@ RUN zypper --non-interactive install --no-recommends \
     systemd-portable \
     tgt \
     tpm2.0-tools \
-    /usr/bin/qemu-system-$(uname -m) \
     util-linux-systemd \
     && zypper --non-interactive dist-upgrade --no-recommends
 
