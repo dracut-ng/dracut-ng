@@ -141,7 +141,7 @@ install() {
         if [ -s "$initdir"/etc/crypttab ]; then
             mark_hostonly /etc/crypttab
         else
-            rm -rf "$initdir"/etc/crypttab
+            rm -f "$initdir"/etc/crypttab
         fi
     fi
 
