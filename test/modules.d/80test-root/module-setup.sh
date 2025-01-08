@@ -23,6 +23,4 @@ install() {
     inst_multiple mkdir ln dd mount poweroff umount setsid sync cat grep
 
     inst_script "$moddir/test-init.sh" "/sbin/init"
-
-    inst_multiple -o plymouth
 }
