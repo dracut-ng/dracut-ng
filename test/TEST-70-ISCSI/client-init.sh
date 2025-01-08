@@ -1,7 +1,6 @@
 #!/bin/sh
 
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
-command -v plymouth > /dev/null 2>&1 && plymouth --quit
 exec > /dev/console 2>&1
 
 echo "made it to the rootfs! Powering down."
