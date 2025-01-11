@@ -29,4 +29,11 @@ fi
 
 echo "made it to the rootfs!"
 echo "Powering down."
-poweroff -f
+
+if [ -f /usr/lib/systemctl ]; then
+    # graceful poweroff
+    systemctl poweroff
+else
+    # force immediate poweroff
+    poweroff -f
+fi
