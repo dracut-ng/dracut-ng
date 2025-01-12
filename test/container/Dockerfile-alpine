@@ -6,7 +6,7 @@
 # - elogind (instead of logind)
 # - busybox default shell (no dash installed)
 # - gzip compression
-# - clang
+# - dbus-daemon
 
 # Not installed
 # - cargo (to increase coverage)

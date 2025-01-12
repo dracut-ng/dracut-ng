@@ -2,6 +2,7 @@
 # - glibc/systemd or musl/openrc
 # - systemd-networkd
 # - bash
+# - dbus-daemon
 
 # Not installed
 # - NetworkManager (to increase coverage)

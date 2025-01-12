@@ -4,6 +4,7 @@
 # - sbsigntools
 # - qrencode (systemd-bsod)
 # - rdma out of tree dracut module
+# - both dbus-daemon and dbus-broker
 
 # Not installed
 # - busybox (no need, tested elsewhere)
