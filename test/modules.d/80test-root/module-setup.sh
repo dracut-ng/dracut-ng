@@ -22,12 +22,13 @@ install() {
 
     inst_multiple mkdir ln dd mount poweroff umount setsid sync cat grep
 
-    inst_script "$moddir/test-init.sh" "/sbin/init"
-
     if dracut_module_included "systemd"; then
         inst_simple "$moddir/testsuite.target" "${systemdsystemunitdir}/testsuite.target"
         inst_simple "$moddir/testsuite.service" "${systemdsystemunitdir}/testsuite.service"
         $SYSTEMCTL -q --root "$initdir" add-wants testsuite.target "testsuite.service"
         ln_r "${systemdsystemunitdir}/testsuite.target" "${systemdsystemunitdir}/default.target"
+        inst_script "$moddir/test-init.sh" "/sbin/test-init"
+    else
+        inst_script "$moddir/test-init.sh" "/sbin/init"
     fi
 }

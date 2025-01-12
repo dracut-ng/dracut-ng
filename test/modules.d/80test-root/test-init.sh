@@ -18,6 +18,10 @@ grep -q '^tmpfs /run tmpfs' /proc/self/mounts \
 
 exec > /dev/console 2>&1
 
+if command -v systemctl > /dev/null 2>&1; then
+    systemctl --failed --no-legend --no-pager >> /run/failed
+fi
+
 if [ -s /run/failed ]; then
     echo "**************************FAILED**************************"
     cat /run/failed
