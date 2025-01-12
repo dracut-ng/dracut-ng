@@ -33,7 +33,7 @@ client_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -smbios type=11,value=io.systemd.credential:key=test \
-        -append "$TEST_KERNEL_CMDLINE systemd.unit=testsuite.target root=LABEL=dracut mount.usr=LABEL=dracutusr mount.usrflags=subvol=usr $client_opts $DEBUGOUT" \
+        -append "$TEST_KERNEL_CMDLINE root=LABEL=dracut mount.usr=LABEL=dracutusr mount.usrflags=subvol=usr $client_opts $DEBUGOUT" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     if ! test_marker_check; then
@@ -93,14 +93,9 @@ test_setup() {
         -a "$dracut_modules" \
         -i "${PKGLIBDIR}/modules.d/80test-root/test-init.sh" "/sbin/test-init.sh" \
         -i ./test-init.sh /sbin/test-init \
-        -i ./testsuite.target /etc/systemd/system/testsuite.target \
-        -i ./testsuite.service /etc/systemd/system/testsuite.service \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
 
-    mkdir -p "$TESTDIR"/overlay/source && cp -a "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.* && export initdir=$TESTDIR/overlay/source
-
-    mkdir -p "$initdir"/etc/systemd/system/testsuite.target.wants
-    ln -fs ../testsuite.service "$initdir"/etc/systemd/system/testsuite.target.wants/testsuite.service
+    mkdir -p "$TESTDIR"/overlay/source && cp -a "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
