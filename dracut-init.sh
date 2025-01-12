@@ -636,10 +636,10 @@ inst_libdir_file() {
 
 # install sysusers files
 inst_sysusers() {
-    inst_multiple -o "$sysusers/$*"
+    inst_multiple -o "$sysusers/$*" "$sysusers/acct-*-$*"
 
     if [[ $hostonly ]]; then
-        inst_multiple -H -o "$sysusersconfdir/$*"
+        inst_multiple -H -o "$sysusersconfdir/$*" "$sysusers/acct-*-$*"
     fi
 }
 
