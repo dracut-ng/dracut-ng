@@ -4,6 +4,7 @@
 # - mawk (instead of gawk)
 # - zstd compression
 # - verbose logging for tests
+# - dbus-daemon
 
 # Not installed
 # - dmraid (no longer maintained, https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1056944)

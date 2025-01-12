@@ -13,6 +13,7 @@
 # - nss-softokn, kdumpbase out of tree dracut modules
 # - fips
 # - ignition
+# - dbus-broker
 
 ARG DISTRIBUTION=fedora
 ARG REGISTRY=registry.fedoraproject.org
@@ -50,7 +51,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     cifs-utils \
     cryptsetup \
     crypto-policies-scripts \
-    dbus-daemon \
     device-mapper-multipath \
     dracut-live \
     e2fsprogs \

@@ -7,6 +7,7 @@
 # - zfs and zfs out of tree dracut module
 # - gzip compression
 # - clang
+# - dbus-daemon
 
 FROM ghcr.io/void-linux/void-glibc-full
 
