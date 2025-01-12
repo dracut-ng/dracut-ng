@@ -93,33 +93,11 @@ test_setup() {
         -a "$dracut_modules" \
         -i "${PKGLIBDIR}/modules.d/80test-root/test-init.sh" "/sbin/test-init.sh" \
         -i ./test-init.sh /sbin/test-init \
+        -i ./testsuite.target /etc/systemd/system/testsuite.target \
+        -i ./testsuite.service /etc/systemd/system/testsuite.service \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
 
     mkdir -p "$TESTDIR"/overlay/source && cp -a "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.* && export initdir=$TESTDIR/overlay/source
-
-    # setup the testsuite target
-    mkdir -p "$initdir"/etc/systemd/system
-    cat > "$initdir"/etc/systemd/system/testsuite.target << EOF
-[Unit]
-Description=Testsuite target
-Requires=basic.target
-After=basic.target
-Conflicts=rescue.target
-AllowIsolate=yes
-EOF
-
-    # setup the testsuite service
-    cat > "$initdir"/etc/systemd/system/testsuite.service << EOF
-[Unit]
-Description=Testsuite service
-After=basic.target
-
-[Service]
-ExecStart=/sbin/test-init
-Type=oneshot
-StandardInput=tty
-StandardOutput=tty
-EOF
 
     mkdir -p "$initdir"/etc/systemd/system/testsuite.target.wants
     ln -fs ../testsuite.service "$initdir"/etc/systemd/system/testsuite.target.wants/testsuite.service
