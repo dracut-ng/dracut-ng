@@ -63,11 +63,7 @@ test_setup() {
     trap "$(shopt -p globstar)" RETURN
     shopt -q -s globstar
 
-    local dracut_modules="resume systemd-udevd systemd-journald systemd-tmpfiles systemd-cryptsetup systemd-emergency systemd-ac-power systemd-coredump systemd-creds systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup"
-
-    if [ -f /usr/bin/dbus-broker ]; then
-        dracut_modules="$dracut_modules dbus-broker systemd-hostnamed systemd-portabled systemd-timedated"
-    fi
+    local dracut_modules="resume systemd-udevd systemd-journald systemd-tmpfiles systemd-cryptsetup systemd-emergency systemd-ac-power systemd-coredump systemd-creds systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup systemd-hostnamed systemd-portabled systemd-timedated"
 
     if [ -f /usr/lib/systemd/systemd-networkd ]; then
         if [ -f /usr/bin/dbus-broker ]; then

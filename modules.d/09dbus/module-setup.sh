@@ -10,19 +10,22 @@ check() {
 
 # Module dependency requirements.
 depends() {
-    local _module
-    # Add a dbus meta dependency based on the module in use.
-    for _module in dbus-daemon dbus-broker; do
-        if dracut_module_included "$_module"; then
-            echo "$_module"
+    for module in dbus-broker dbus-daemon; do
+        if dracut_module_included "$module"; then
+            echo "$module"
             return 0
         fi
     done
 
-    if check_module "dbus-broker"; then
-        echo "dbus-broker"
-        return 0
-    fi
+    for module in dbus-broker dbus-daemon; do
+        # install the first viable module, unless there omitted
+        module_check $module > /dev/null 2>&1
+        if [[ $? == 255 ]] && ! [[ " $omit_dracutmodules " == *\ $module\ * ]] && check_module "$module"; then
+            echo "$module"
+            return 0
+        fi
+    done
+
     echo "dbus-daemon"
     return 0
 }
