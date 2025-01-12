@@ -91,8 +91,6 @@ test_setup() {
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "$dracut_modules" \
-        -i "${PKGLIBDIR}/modules.d/80test-root/test-init.sh" "/sbin/test-init.sh" \
-        -i ./test-init.sh /sbin/test-init \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
 
     mkdir -p "$TESTDIR"/overlay/source && cp -a "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
