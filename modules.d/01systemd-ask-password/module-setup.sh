@@ -43,7 +43,6 @@ install() {
     inst_multiple -o \
         "$systemdsystemunitdir"/systemd-ask-password-console.path \
         "$systemdsystemunitdir"/systemd-ask-password-console.service \
-        "$systemdsystemunitdir"/multi-user.target.wants/systemd-ask-password-wall.path \
         "$systemdsystemunitdir"/sysinit.target.wants/systemd-ask-password-console.path \
         systemd-ask-password \
         systemd-tty-ask-password-agent
