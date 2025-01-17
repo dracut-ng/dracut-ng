@@ -154,7 +154,7 @@ jobs:
     arm64:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }} on arm64
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04-arm
         timeout-minutes: 20
         concurrency:
             group: arm64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
@@ -167,15 +167,14 @@ jobs:
                     - fedora-arm64
                 test:
                     - "80"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            options: '--privileged'
         steps:
-            - name: Set up QEMU
-              uses: docker/setup-qemu-action@v3
-              with:
-                  platforms: 'linux/arm64'
             - name: "Checkout Repository"
               uses: actions/checkout@v4
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: docker run --platform linux/arm64 '--device=/dev/kvm' -v $PWD:/w ghcr.io/dracut-ng/${{ matrix.container }} /w/test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     network:
         needs: basic
         # all nfs based on default networking
