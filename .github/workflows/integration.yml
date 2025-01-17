@@ -163,8 +163,12 @@ jobs:
             fail-fast: false
             matrix:
                 container:
+                    - alpine
                     - debian
                     - fedora
+                    - opensuse
+                    - ubuntu
+                    - void
                 test:
                     - "80"
         container:
