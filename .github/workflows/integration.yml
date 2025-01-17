@@ -41,7 +41,7 @@ jobs:
                 test:
                     - "10"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
@@ -90,7 +90,7 @@ jobs:
                     - "80"
                     - "81"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
@@ -120,7 +120,7 @@ jobs:
                     - "41"
                     - "42"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
             options: '--device=/dev/kvm --privileged'
         steps:
             - name: "Checkout Repository"
@@ -144,7 +144,7 @@ jobs:
                 test:
                     - "82"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
@@ -163,12 +163,12 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - debian-arm64
-                    - fedora-arm64
+                    - debian
+                    - fedora
                 test:
                     - "80"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-arm
             options: '--privileged'
         steps:
             - name: "Checkout Repository"
@@ -207,7 +207,7 @@ jobs:
                     - container: "opensuse"
                       network: "network-legacy"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
@@ -234,7 +234,7 @@ jobs:
                     - container: "opensuse"
                       network: "network-legacy"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
