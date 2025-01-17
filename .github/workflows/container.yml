@@ -24,22 +24,28 @@ permissions:
 jobs:
     amd64:
         if: github.repository == 'dracut-ng/dracut-ng' || vars.CONTAINER == 'enabled'
-        name: ${{ matrix.config.tag }} on ${{ matrix.config.platform }}
-        runs-on: ubuntu-latest
+        name: ${{ matrix.config.tag }} on ${{ matrix.architecture.platform }}
         concurrency:
-            group: amd64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.tag }}
+            group: amd64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.tag }}-${{ matrix.architecture.platform }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
             matrix:
+                architecture:
+                    - {platform: 'linux/amd64', runner: 'ubuntu-24.04'}
+                    - {platform: 'linux/arm64', runner: 'ubuntu-24.04-arm'}
                 config:
-                    - {dockerfile: 'Dockerfile-debian', tag: 'debian:latest', platform: 'linux/amd64'}
-                    - {dockerfile: 'Dockerfile-fedora', tag: 'fedora:latest', platform: 'linux/amd64'}
-                    - {dockerfile: 'Dockerfile-opensuse', tag: 'opensuse:latest', platform: 'linux/amd64'}
-                    - {dockerfile: 'Dockerfile-arch', tag: 'arch:latest', platform: 'linux/amd64'}
-                    - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:latest', platform: 'linux/amd64'}
-                    - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:latest', platform: 'linux/amd64'}
-                    - {dockerfile: 'Dockerfile-void', tag: 'void:latest', platform: 'linux/amd64'}
+                    - {dockerfile: 'Dockerfile-debian', tag: 'debian:latest'}
+                    - {dockerfile: 'Dockerfile-fedora', tag: 'fedora:latest'}
+                    - {dockerfile: 'Dockerfile-opensuse', tag: 'opensuse:latest'}
+                    - {dockerfile: 'Dockerfile-arch', tag: 'arch:latest'}
+                    - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:latest'}
+                    - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:latest'}
+                    - {dockerfile: 'Dockerfile-void', tag: 'void:latest'}
+                exclude:
+                   - config: {dockerfile: 'Dockerfile-arch', tag: 'arch:latest'}
+                     architecture: {platform: 'linux/arm64', runner: 'ubuntu-24.04-arm'}
+        runs-on: ${{ matrix.architecture.runner }}
         steps:
             - name: Check out the repo
               uses: actions/checkout@v4
@@ -59,4 +65,4 @@ jobs:
                   file: test/container/${{ matrix.config.dockerfile }}
                   tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}
                   push: ${{ github.event_name == 'push' ||  github.event_name == 'schedule' }}
-                  platforms: ${{ matrix.config.platform }}
+                  platforms: ${{ matrix.architecture.platform }}
