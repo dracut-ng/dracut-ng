@@ -32,8 +32,8 @@ jobs:
             fail-fast: false
             matrix:
                 architecture:
-                    - {platform: 'linux/amd64', runner: 'ubuntu-24.04'}
-                    - {platform: 'linux/arm64', runner: 'ubuntu-24.04-arm'}
+                    - {platform: 'linux/amd64', runner: 'ubuntu-24.04', tag: 'amd'}
+                    - {platform: 'linux/arm64', runner: 'ubuntu-24.04-arm', tag: 'arm'}
                 config:
                     - {dockerfile: 'Dockerfile-debian', tag: 'debian:latest'}
                     - {dockerfile: 'Dockerfile-fedora', tag: 'fedora:latest'}
@@ -63,6 +63,6 @@ jobs:
               uses: docker/build-push-action@v6
               with:
                   file: test/container/${{ matrix.config.dockerfile }}
-                  tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}
+                  tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}-${{ matrix.architecture.tag }}
                   push: ${{ github.event_name == 'push' ||  github.event_name == 'schedule' }}
                   platforms: ${{ matrix.architecture.platform }}
