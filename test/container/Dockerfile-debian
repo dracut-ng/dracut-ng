@@ -79,7 +79,9 @@ RUN \
     pcscd \
     pkg-config \
     procps \
+    qemu-efi-aarch64 \
     qemu-kvm \
+    qemu-system \
     rng-tools5 \
     squashfs-tools \
     swtpm \

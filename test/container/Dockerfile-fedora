@@ -38,7 +38,7 @@ else \
     dhcp-server \
     dmraid \
     nbd \
-    /usr/bin/qemu-system-$(uname -m) \
+    qemu \
     scsi-target-utils \
     systemd-networkd \
 ; fi
