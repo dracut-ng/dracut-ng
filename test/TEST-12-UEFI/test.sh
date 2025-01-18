@@ -4,6 +4,10 @@
 TEST_DESCRIPTION="UEFI boot"
 
 test_check() {
+
+/usr/bin/qemu-system-aarch64  –machine help
+echo hello
+
     if ! type -p mksquashfs &> /dev/null; then
         echo "Test needs mksquashfs... Skipping"
         return 1
@@ -30,12 +34,21 @@ client_run() {
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
     qemu_add_drive disk_index disk_args "$TESTDIR"/squashfs.img root
 
+    truncate -s 64m /tmp/varstore.img
+    truncate -s 64m /tmp/efi.img
+    dd if=/usr/share/qemu-efi-aarch64/QEMU_EFI.fd of=/tmp/efi.img conv=notrunc
+    ls -la /usr/share/qemu-efi-aarch64/
+
+    qemu-system-aarch64 -machine help
+    qemu-system-aarch64 -M virt -cpu help
+
     test_marker_reset
     "$testdir"/run-qemu "${disk_args[@]}" -net none \
         -drive file=fat:rw:"$TESTDIR"/ESP,format=vvfat,label=EFI \
         -global driver=cfi.pflash01,property=secure,value=on \
         -smbios type=11,value=io.systemd.stub.kernel-cmdline-extra="$client_opts" \
-        -drive if=pflash,format=raw,unit=0,file="$(ovmf_code)",readonly=on
+        -drive if=pflash,format=raw,file="/tmp/efi.img",readonly=on \
+        -drive if=pflash,format=raw,file="/tmp/varstore.img"
     test_marker_check || return 1
 }
 

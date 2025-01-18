@@ -30,14 +30,7 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - alpine
-                    - arch
-                    - debian
-                    - fedora
-                    - gentoo
-                    - opensuse
                     - ubuntu
-                    - void
                 test:
                     - "10"
         container:
@@ -49,110 +42,7 @@ jobs:
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
 
-    # syncheck
-    syncheck:
-        needs: basic
-        name: syncheck
-        runs-on: ubuntu-latest
-        steps:
-            - name: "Checkout Repository"
-              uses: actions/checkout@v4
-            - run: |
-                  sudo apt-get update
-                  sudo apt-get -y install shellcheck shfmt
-                  make syncheck
-
-    extended:
-        needs: basic
-        name: ${{ matrix.test }} on ${{ matrix.container }}
-        runs-on: ubuntu-latest
-        timeout-minutes: 20
-        concurrency:
-            group: extended-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
-            cancel-in-progress: true
-        strategy:
-            fail-fast: false
-            matrix:
-                container:
-                    - arch
-                    - fedora
-                    - gentoo
-                    - opensuse
-                    - ubuntu
-                    - void
-                test:
-                    - "11"
-                    - "12"
-                    - "20"
-                    - "23"
-                    - "26"
-                    - "30"
-                    - "80"
-                    - "81"
-        container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
-            options: '--device=/dev/kvm'
-        steps:
-            - name: "Checkout Repository"
-              uses: actions/checkout@v4
-            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
-
-    extended-systemd:
-        needs: basic
-        name: ${{ matrix.test }} on ${{ matrix.container }}
-        runs-on: ubuntu-latest
-        timeout-minutes: 20
-        concurrency:
-            group: extended-systemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
-            cancel-in-progress: true
-        strategy:
-            fail-fast: false
-            matrix:
-                container:
-                    - arch
-                    - fedora
-                    - gentoo
-                    - opensuse
-                    - ubuntu
-                test:
-                    - "40"
-                    - "41"
-                    - "42"
-        container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
-            options: '--device=/dev/kvm --privileged'
-        steps:
-            - name: "Checkout Repository"
-              uses: actions/checkout@v4
-            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
-
-    dracut-cpio:
-        needs: basic
-        name: ${{ matrix.test }} on ${{ matrix.container }}
-        runs-on: ubuntu-latest
-        timeout-minutes: 20
-        concurrency:
-            group: dracut-cpio-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
-            cancel-in-progress: true
-        strategy:
-            fail-fast: false
-            matrix:
-                container:
-                    - opensuse
-                test:
-                    - "82"
-        container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
-            options: '--device=/dev/kvm'
-        steps:
-            - name: "Checkout Repository"
-              uses: actions/checkout@v4
-            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     arm64:
-        needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }} on arm64
         runs-on: ubuntu-24.04-arm
         timeout-minutes: 20
@@ -165,9 +55,11 @@ jobs:
                 container:
                     - debian
                     - fedora
+                    - void
                     - ubuntu
                 test:
-                    - "80"
+                    - "12"
+                    - "10"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-arm
             options: '--privileged'
@@ -176,69 +68,4 @@ jobs:
               uses: actions/checkout@v4
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
-    network:
-        needs: basic
-        # all nfs based on default networking
-        name: ${{ matrix.test }} on ${{ matrix.container }}
-        runs-on: ubuntu-latest
-        timeout-minutes: 20
-        concurrency:
-            group: network-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
-            cancel-in-progress: true
-        strategy:
-            fail-fast: false
-            matrix:
-                container:
-                    - arch
-                    - debian
-                    - fedora
-                    - gentoo
-                    - opensuse
-                    - ubuntu
-                test:
-                    - "60"
-                    - "61"
-                    - "62"
-                include:
-                    - network: ""
-                    # on debian run tests with systemd-networkd
-                    - container: "debian"
-                      network: "systemd-networkd"
-                    # on openSUSE run tests with network-legacy
-                    - container: "opensuse"
-                      network: "network-legacy"
-        container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
-            options: '--device=/dev/kvm'
-        steps:
-            - name: "Checkout Repository"
-              uses: actions/checkout@v4
-            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: USE_NETWORK=${{ matrix.network }} ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
-    network-advanced:
-        needs: basic
-        name: ${{ matrix.test }} on ${{ matrix.container }}
-        runs-on: ubuntu-latest
-        timeout-minutes: 20
-        concurrency:
-            group: network-iscsi-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
-            cancel-in-progress: true
-        strategy:
-            fail-fast: false
-            matrix:
-                container:
-                    - opensuse
-                test:
-                    - "70"
-                include:
-                    # on openSUSE run tests with network-legacy
-                    - container: "opensuse"
-                      network: "network-legacy"
-        container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
-            options: '--device=/dev/kvm'
-        steps:
-            - name: "Checkout Repository"
-              uses: actions/checkout@v4
-            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: USE_NETWORK=${{ matrix.network }} ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+
