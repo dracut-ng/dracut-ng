@@ -49,7 +49,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     parted \
     pkg-config \
     plymouth \
-    qemu-system-amd64 \
+    qemu \
     squashfs-tools \
     systemd-boot-efistub \
     ncurses-base \
