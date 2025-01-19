@@ -117,6 +117,8 @@ set_vmlinux_env() {
             VMLINUZ="/boot/vmlinux-${KVERSION}"
         elif [ -f "/boot/kernel-${KVERSION}" ]; then
             VMLINUZ="/boot/kernel-${KVERSION}"
+        elif [ -f "/boot/Image-${KVERSION}" ]; then
+            VMLINUZ="/boot/Image-${KVERSION}"
         fi
     fi
 

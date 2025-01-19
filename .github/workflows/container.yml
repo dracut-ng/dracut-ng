@@ -47,10 +47,6 @@ jobs:
                      architecture: {platform: 'linux/arm64'}
                    - config: {tag: 'arch:latest'}
                      architecture: {platform: 'linux/arm64'}
-                   - config: {tag: 'opensuse:latest'}
-                     architecture: {platform: 'linux/arm64'}
-                   - config: {tag: 'void:latest'}
-                     architecture: {platform: 'linux/arm64'}
         runs-on: ${{ matrix.architecture.runner }}
         steps:
             - name: Check out the repo
