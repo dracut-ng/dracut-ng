@@ -164,6 +164,7 @@ jobs:
                 container:
                     - debian
                     - fedora
+                    - opensuse
                     - ubuntu
                 test:
                     - "10"
