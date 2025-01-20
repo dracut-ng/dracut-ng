@@ -166,6 +166,7 @@ jobs:
                     - fedora
                     - opensuse
                     - ubuntu
+                    - void
                 test:
                     - "10"
         container:
