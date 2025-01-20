@@ -1,4 +1,5 @@
 # Test coverage provided by this container:
+# - arm64
 # - network-legacy
 # - mkosi-initrd
 # - hmaccalc (fido)
