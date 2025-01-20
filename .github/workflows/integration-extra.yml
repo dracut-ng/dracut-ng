@@ -80,6 +80,7 @@ jobs:
                     - void
                 test:
                     - "10"
+                    - "30"
                     - "80"
                     - "81"
         container:
