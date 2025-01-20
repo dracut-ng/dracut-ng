@@ -21,7 +21,6 @@ RUN pacman --noconfirm -Syu \
     asciidoc \
     bluez \
     btrfs-progs \
-    busybox \
     cargo \
     cpio \
     dhclient \
