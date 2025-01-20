@@ -103,16 +103,13 @@ test_setup() {
     mksquashfs "$TESTDIR"/rootfs/ "$TESTDIR"/testdir/rootfs.img -quiet
 
     # Create the blank file to use as a root filesystem
-    declare -a disk_args=()
-    declare -i disk_index=0
     qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 1
 
     sfdisk "$TESTDIR"/root.img << EOF
 2048,652688
 EOF
 
-    sync
-    dd if=/dev/zero of="$TESTDIR"/ext4.img bs=512 count=652688 status=none && sync
+    sync && dd if=/dev/zero of="$TESTDIR"/ext4.img bs=512 count=652688 status=none && sync
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/rootfs/ "$TESTDIR"/ext4.img && sync
     dd if="$TESTDIR"/ext4.img of="$TESTDIR"/root.img bs=512 seek=2048 conv=noerror,sync,notrunc
 

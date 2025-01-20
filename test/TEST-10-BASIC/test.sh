@@ -23,7 +23,8 @@ test_setup() {
         --add-confdir test-root \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
 
-    dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync
+    # Create the blank file to use as a root filesystem
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 1
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync
 
     test_dracut \
