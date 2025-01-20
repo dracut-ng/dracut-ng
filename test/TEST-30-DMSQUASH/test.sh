@@ -37,7 +37,7 @@ test_run() {
 
     test_marker_check || return 1
 
-    # Run the erofs test only if mkfs.ntfs is available
+    # Run the erofs test only if mkfs.erofs is available
     if [[ "$EROFS" ]]; then
         test_marker_reset
         "$testdir"/run-qemu \
@@ -158,8 +158,7 @@ EOF
 
     test_dracut \
         --no-hostonly \
-        --add "bash dmsquash-live-autooverlay qemu" \
-        --omit "systemd" \
+        --modules "dmsquash-live-autooverlay" \
         --drivers "ntfs3" \
         --install "mkfs.ext4" \
         --include /tmp/ntfs3.rules /lib/udev/rules.d/ntfs3.rules \
