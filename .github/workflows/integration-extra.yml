@@ -62,3 +62,31 @@ jobs:
               uses: actions/checkout@v4
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    arm64:
+        name: ${{ matrix.test }} on ${{ matrix.container }} on arm64
+        runs-on: ubuntu-24.04-arm
+        timeout-minutes: 20
+        concurrency:
+            group: arm64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                container:
+                    - debian
+                    - fedora
+                    - opensuse
+                    - ubuntu
+                    - void
+                test:
+                    - "10"
+                    - "80"
+                    - "81"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-arm
+            options: '--privileged'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v4
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
