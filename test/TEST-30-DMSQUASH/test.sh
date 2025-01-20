@@ -87,7 +87,7 @@ test_run() {
         "${disk_args[@]}" \
         -boot order=d \
         -append "init=/sbin/init-persist rd.live.image rd.live.overlay.overlayfs=1 rd.live.overlay=LABEL=persist rd.live.dir=testdir root=LABEL=dracut console=ttyS0,115200n81 quiet rd.info rd.shell=0 panic=1 oops=panic softlockup_panic=1 $DEBUGFAIL" \
-        -initrd "$TESTDIR"/initramfs.testing-autooverlay
+        -initrd "$TESTDIR"/initramfs.testing
 
     rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
     [ "$rootPartitions" -eq 2 ] || return 1
@@ -158,19 +158,12 @@ EOF
 
     test_dracut \
         --no-hostonly \
-        --add "bash dmsquash-live qemu" \
+        --add "bash dmsquash-live-autooverlay qemu" \
         --omit "systemd" \
         --drivers "ntfs3" \
         --install "mkfs.ext4" \
         --include /tmp/ntfs3.rules /lib/udev/rules.d/ntfs3.rules \
         "$TESTDIR"/initramfs.testing
-
-    test_dracut \
-        --no-hostonly \
-        --add "bash dmsquash-live-autooverlay qemu" \
-        --omit "systemd" \
-        --install "mkfs.ext4" \
-        "$TESTDIR"/initramfs.testing-autooverlay
 }
 
 # shellcheck disable=SC1090
