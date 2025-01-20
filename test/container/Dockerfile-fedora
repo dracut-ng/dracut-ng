@@ -33,7 +33,6 @@ if [[ "${DISTRIBUTION}" =~ "centos:" ]]; then \
 else \
     dnf -y install --setopt=install_weak_deps=False \
     btrfs-progs \
-    busybox \
     dhcp-client \
     dhcp-server \
     dmraid \
