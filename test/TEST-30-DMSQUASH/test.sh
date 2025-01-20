@@ -91,16 +91,16 @@ test_setup() {
         --add-confdir test-root \
         -i ./test-init.sh /sbin/init-persist \
         -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
-    mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
+    mkdir -p "$TESTDIR"/rootfs && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/rootfs && rm -rf "$TESTDIR"/dracut.*
 
     # test to make sure /proc /sys and /dev is not needed inside the generated initrd
-    rm -rf "$TESTDIR"/dracut.*/initramfs/proc "$TESTDIR"/dracut.*/initramfs/sys "$TESTDIR"/dracut.*/initramfs/dev
+    rm -rf "$TESTDIR"/rootfs/proc "$TESTDIR"/rootfs/sys "$TESTDIR"/rootfs/dev
 
-    # seep up test run
-    rm -rf "$TESTDIR"/overlay/source/usr/lib/firmware
+    # speed up test run
+    rm -rf "$TESTDIR"/rootfs/usr/lib/firmware
 
     mkdir -p "$TESTDIR"/testdir
-    mksquashfs "$TESTDIR"/overlay/source/ "$TESTDIR"/testdir/rootfs.img -quiet
+    mksquashfs "$TESTDIR"/rootfs/ "$TESTDIR"/testdir/rootfs.img -quiet
 
     # Create the blank file to use as a root filesystem
     declare -a disk_args=()
@@ -113,7 +113,7 @@ EOF
 
     sync
     dd if=/dev/zero of="$TESTDIR"/ext4.img bs=512 count=652688 status=none && sync
-    mkfs.ext4 -q -L dracut -d "$TESTDIR"/overlay/source/ "$TESTDIR"/ext4.img && sync
+    mkfs.ext4 -q -L dracut -d "$TESTDIR"/rootfs/ "$TESTDIR"/ext4.img && sync
     dd if="$TESTDIR"/ext4.img of="$TESTDIR"/root.img bs=512 seek=2048 conv=noerror,sync,notrunc
 
     # erofs drive
@@ -121,7 +121,7 @@ EOF
 
     # Write the erofs compressed filesystem to the partition
     if command -v mkfs.erofs; then
-        mkfs.erofs "$TESTDIR"/root_erofs.img "$TESTDIR"/overlay/source/
+        mkfs.erofs "$TESTDIR"/root_erofs.img "$TESTDIR"/rootfs/
     fi
 
     test_dracut \
