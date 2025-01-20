@@ -1,4 +1,5 @@
 # Test coverage provided by this container:
+# - arm64
 # - dash default shell (instead of bash)
 # - runit (instead of systemd)
 # - eudev (instead of systemd-udev)
