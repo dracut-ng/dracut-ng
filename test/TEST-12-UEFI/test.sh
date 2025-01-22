@@ -20,8 +20,6 @@ test_check() {
 
 client_run() {
     local test_name="$1"
-    shift
-    local client_opts="$*"
 
     echo "CLIENT TEST START: $test_name"
 
@@ -34,13 +32,12 @@ client_run() {
     "$testdir"/run-qemu "${disk_args[@]}" -net none \
         -drive file=fat:rw:"$TESTDIR"/ESP,format=vvfat,label=EFI \
         -global driver=cfi.pflash01,property=secure,value=on \
-        -smbios type=11,value=io.systemd.stub.kernel-cmdline-extra="$client_opts" \
         -drive if=pflash,format=raw,unit=0,file="$(ovmf_code)",readonly=on
     test_marker_check || return 1
 }
 
 test_run() {
-    client_run "readonly root" "ro rd.skipfsck" || return 1
+    client_run "UEFI with UKI and squashfs root" || return 1
 }
 
 test_setup() {
