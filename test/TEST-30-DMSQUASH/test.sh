@@ -25,6 +25,7 @@ client_run() {
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
     qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root
     qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root_iso.img root_iso
 
     test_marker_reset
     "$testdir"/run-qemu \
@@ -48,18 +49,23 @@ test_run() {
     fi
 
     client_run "live" "rd.live.image" || return 1
-    client_run "livedir" "rd.live.image rd.live.dir=testdir" || return 1
+    client_run "livedir" "rd.live.image rd.live.dir=LiveOS" || return 1
 
     # Run the erofs test only if mkfs.erofs is available
     if command -v mkfs.erofs &> /dev/null; then
         client_run "erofs" "root=live:/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_erofs" || return 1
     fi
 
+    # Run the iso test only if xorriso is available
+    if command -v xorriso &> /dev/null; then
+        client_run "iso" "iso-scan/filename=linux.iso root=live:/dev/disk/by-label/ISO" || return 1
+    fi
+
     test_marker_reset
     rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
     [ "$rootPartitions" -eq 1 ] || return 1
 
-    client_run "autooverlay" "init=/sbin/init-persist rd.live.image rd.live.overlay=LABEL=persist rd.live.dir=testdir" || return 1
+    client_run "autooverlay" "init=/sbin/init-persist rd.live.image rd.live.overlay=LABEL=persist rd.live.dir=LiveOS" || return 1
 
     rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
     [ "$rootPartitions" -eq 2 ] || return 1
@@ -90,8 +96,8 @@ test_setup() {
     # speed up test run
     rm -rf "$TESTDIR"/rootfs/usr/lib/firmware
 
-    mkdir -p "$TESTDIR"/testdir
-    mksquashfs "$TESTDIR"/rootfs/ "$TESTDIR"/testdir/rootfs.img -quiet
+    mkdir -p "$TESTDIR"/live/LiveOS
+    mksquashfs "$TESTDIR"/rootfs/ "$TESTDIR"/live/LiveOS/rootfs.img -quiet
 
     # Create the blank file to use as a root filesystem
     declare -a disk_args=()
@@ -113,6 +119,16 @@ EOF
     # Write the erofs compressed filesystem to the partition
     if command -v mkfs.erofs &> /dev/null; then
         mkfs.erofs "$TESTDIR"/root_erofs.img "$TESTDIR"/rootfs/
+    fi
+
+    # iso drive
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root_iso.img root_iso 1
+
+    # Write the iso to the partition
+    if command -v xorriso &> /dev/null; then
+        mkdir "$TESTDIR"/iso
+        xorriso -as mkisofs -output "$TESTDIR"/iso/linux.iso "$TESTDIR"/live/ -volid "ISO" -iso-level 3
+        mkfs.ext4 -q -L dracut_iso -d "$TESTDIR"/iso/ "$TESTDIR"/root_iso.img && sync
     fi
 
     test_dracut \
