@@ -63,4 +63,5 @@ if [ "$DISTRIBUTION" = "alpine:edge" ] ; then \
     squashfs-tools \
     util-linux-misc \
     util-linux-login \
+    xorriso \
 ; fi
