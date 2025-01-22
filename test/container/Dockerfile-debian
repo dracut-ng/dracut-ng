@@ -94,6 +94,7 @@ RUN \
     tgt \
     thin-provisioning-tools \
     tpm2-tools \
+    xorriso \
     zstd \
     && apt-get clean \
     && chmod a+r /boot/vmlinu*

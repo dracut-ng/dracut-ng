@@ -55,5 +55,6 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     systemd-boot-efistub \
     ncurses-base \
     ukify \
+    xorriso \
     zfs \
     && rm -rf /var/cache/xbps

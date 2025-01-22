@@ -49,6 +49,7 @@ RUN zypper --non-interactive install --no-recommends \
     tgt \
     tpm2.0-tools \
     util-linux-systemd \
+    xorriso \
     && zypper --non-interactive dist-upgrade --no-recommends
 
 # install mkosi from source
