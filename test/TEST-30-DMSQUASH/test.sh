@@ -43,11 +43,6 @@ client_run() {
 test_run() {
     client_run "overlayfs" "" || return 1
 
-    # The remaining subtests are not yet passing on arm, bail out
-    if [[ ${DRACUT_ARCH:-$(uname -m)} == arm* || ${DRACUT_ARCH:-$(uname -m)} == aarch64 ]]; then
-        return 0
-    fi
-
     client_run "live" "rd.live.image" || return 1
     client_run "livedir" "rd.live.image rd.live.dir=LiveOS" || return 1
 
