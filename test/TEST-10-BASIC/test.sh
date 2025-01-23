@@ -27,7 +27,6 @@ test_setup() {
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync
 
     test_dracut \
-        --omit systemd \
         --kernel-cmdline "$TEST_KERNEL_CMDLINE root=LABEL=dracut" \
         "$TESTDIR"/initramfs.testing
 }
