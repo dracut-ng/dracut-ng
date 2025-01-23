@@ -206,7 +206,7 @@ test_setup() {
 
     # Make server's dracut image
     "$DRACUT" \
-        -a "rootfs-block test kernel-modules network-legacy" \
+        -a "test network-legacy" \
         -d "piix ide-gd_mod ata_piix ext4 sd_mod drbg virtio_net virtio_pci virtio_scsi" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i ./wait-if-server.sh /lib/dracut/hooks/pre-mount/99-wait-if-server.sh \
