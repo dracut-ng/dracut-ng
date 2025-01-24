@@ -12,6 +12,7 @@ test_run() {
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
+        -append "$TEST_KERNEL_CMDLINE root=LABEL=dracut" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     test_marker_check || return 1
@@ -26,8 +27,7 @@ test_setup() {
     dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync
 
-    test_dracut \
-        --kernel-cmdline "$TEST_KERNEL_CMDLINE root=LABEL=dracut" \
+    test_dracut --no-hostonly \
         "$TESTDIR"/initramfs.testing
 }
 

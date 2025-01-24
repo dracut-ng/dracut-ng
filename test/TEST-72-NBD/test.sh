@@ -335,7 +335,7 @@ test_setup() {
         "$TESTDIR"/initramfs.testing
 
     "$DRACUT" -N -i "$TESTDIR"/overlay / \
-        -a "test rootfs-block kernel-modules network-legacy ${SERVER_DEBUG:+debug}" \
+        -a "test network-legacy ${SERVER_DEBUG:+debug}" \
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod drbg virtio_net" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \

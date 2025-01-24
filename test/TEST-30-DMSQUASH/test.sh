@@ -30,7 +30,7 @@ client_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$client_opts" \
+        -append "$TEST_KERNEL_CMDLINE rd.live.overlay.overlayfs=1 root=live:/dev/disk/by-label/dracut $client_opts" \
         -initrd "$TESTDIR"/initramfs.testing
 
     if ! test_marker_check; then
@@ -129,7 +129,6 @@ EOF
     test_dracut \
         --no-hostonly \
         --modules "dmsquash-live-autooverlay" \
-        --kernel-cmdline "$TEST_KERNEL_CMDLINE rd.live.overlay.overlayfs=1 root=live:/dev/disk/by-label/dracut" \
         "$TESTDIR"/initramfs.testing
 }
 
