@@ -28,7 +28,6 @@ test_setup() {
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync
 
     test_dracut \
-        --omit systemd \
         "$TESTDIR"/initramfs.testing
 }
 
