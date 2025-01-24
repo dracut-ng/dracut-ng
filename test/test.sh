@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # convenience script for development to run integration tests
-# runs test-github.sh in a container
+# runs test-container.sh in a container
 
 set -e
 
@@ -52,4 +52,4 @@ TARGETS='clean all install check' "$PODMAN" run --rm -it \
     -e V -e TESTS -e TEST_RUN_ID -e TARGETS -e MAKEFLAGS \
     -v "$PWD"/:/z \
     "$CONTAINER" \
-    /z/test/test-github.sh
+    /z/test/test-container.sh
