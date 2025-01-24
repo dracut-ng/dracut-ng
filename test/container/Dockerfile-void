@@ -9,6 +9,7 @@
 # - gzip compression
 # - clang
 # - dbus-daemon
+# - network: network-legacy, network-manager
 
 # Not installed
 # - kernel-install is not available

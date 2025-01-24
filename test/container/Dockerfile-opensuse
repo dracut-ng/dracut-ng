@@ -6,6 +6,7 @@
 # - hmaccalc (fido)
 # - rdma out of tree dracut module
 # - dbus-broker
+# - network: network-legacy, network-manager
 
 FROM registry.opensuse.org/opensuse/tumbleweed:latest
 
