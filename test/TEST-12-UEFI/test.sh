@@ -64,12 +64,12 @@ test_setup() {
         ukify build \
             --linux="$VMLINUZ" \
             --initrd="$TESTDIR"/initramfs.testing \
-            --cmdline='root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root' \
+            --cmdline="$TEST_KERNEL_CMDLINE root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root" \
             --output="$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
     else
         echo "Using dracut to create UKI"
         test_dracut \
-            --kernel-cmdline 'root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root' \
+            --kernel-cmdline "$TEST_KERNEL_CMDLINE root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root" \
             --drivers 'squashfs' \
             --uefi \
             "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
