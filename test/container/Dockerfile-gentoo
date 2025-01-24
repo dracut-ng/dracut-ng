@@ -3,6 +3,7 @@
 # - systemd-networkd
 # - bash
 # - dbus-daemon
+# - network: network-legacy, systemd-networkd
 
 # Not installed
 # - NetworkManager (to increase coverage)

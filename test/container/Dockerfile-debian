@@ -5,6 +5,7 @@
 # - zstd compression
 # - verbose logging for tests
 # - dbus-daemon
+# - network: network-legacy, network-manager, systemd-networkd
 
 # Not installed
 # - iscsiuio, open-iscsi (not yet working with dracut, https://bugs.launchpad.net/ubuntu/+source/open-iscsi/+bug/2072484)

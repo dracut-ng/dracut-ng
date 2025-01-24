@@ -7,6 +7,7 @@
 # - busybox default shell (no dash installed)
 # - gzip compression
 # - dbus-daemon
+# - network: none
 
 # Not installed
 # - cargo (to increase coverage)
@@ -30,7 +31,6 @@ RUN apk add --no-cache \
     dracut-tests \
     file \
     gcc \
-    iputils \
     kmod \
     kmod-dev \
     linux-virt \
@@ -48,7 +48,6 @@ if [ "$DISTRIBUTION" = "alpine:edge" ] ; then \
     device-mapper \
     elogind \
     gpg \
-    iputils \
     jq \
     kbd \
     keyutils \

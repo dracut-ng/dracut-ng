@@ -6,6 +6,7 @@
 # - rdma out of tree dracut module
 # - both dbus-daemon and dbus-broker
 # - dmraid (not activly maintained)
+# - network: network-legacy, network-manager, systemd-networkd
 
 # Not installed
 # - busybox (no need, tested elsewhere)
