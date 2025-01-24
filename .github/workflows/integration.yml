@@ -47,7 +47,7 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v4
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
 
     # syncheck
     syncheck:
@@ -96,7 +96,7 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v4
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
 
     extended-systemd:
         needs: basic
@@ -126,7 +126,7 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v4
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
 
     dracut-cpio:
         needs: basic
@@ -150,7 +150,7 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v4
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     network:
         needs: basic
         # all nfs based on default networking
@@ -189,7 +189,7 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v4
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: USE_NETWORK=${{ matrix.network }} ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     network-advanced:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
@@ -216,4 +216,4 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v4
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: USE_NETWORK=${{ matrix.network }} ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}

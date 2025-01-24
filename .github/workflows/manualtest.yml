@@ -78,4 +78,4 @@ jobs:
               with:
                   fetch-depth: 0
             - name: "${{ matrix.container }} ${{ matrix.test }}"
-              run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
