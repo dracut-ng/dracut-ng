@@ -1,5 +1,6 @@
 # Test coverage provided by this container:
 # - arm64
+# - default hostonly
 # - network-legacy
 # - mkosi-initrd
 # - hmaccalc (fido)
@@ -18,7 +19,6 @@ RUN zypper --non-interactive install --no-recommends \
     dhcp-client \
     dhcp-server \
     distribution-gpg-keys \
-    dmraid \
     e2fsprogs \
     erofs-utils \
     gcc \

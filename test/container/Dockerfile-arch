@@ -5,6 +5,7 @@
 # - qrencode (systemd-bsod)
 # - rdma out of tree dracut module
 # - both dbus-daemon and dbus-broker
+# - dmraid (not activly maintained)
 
 # Not installed
 # - busybox (no need, tested elsewhere)

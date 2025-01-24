@@ -1,6 +1,6 @@
 # Test coverage provided by this container:
 # - arm64
-# - hostonly
+# - default hostonly
 # - xfs
 # - memstrack
 # - ndctl (for nvdimm)
@@ -35,7 +35,6 @@ else \
     btrfs-progs \
     dhcp-client \
     dhcp-server \
-    dmraid \
     nbd \
     qemu \
     scsi-target-utils \
