@@ -10,6 +10,7 @@
 # - dash (to increase coverage)
 # - rng-tools (to increase coverage)
 # - ntfs3g (to keep container small)
+# - xorriso (to keep container small, no .iso generation)
 
 ARG OPTION=systemd
 
@@ -80,7 +81,6 @@ if [ "$OPTION" = "systemd" ] ; then \
     sys-devel/flex \
     sys-fs/btrfs-progs \
     sys-fs/cryptsetup \
-    sys-fs/dmraid \
     sys-fs/mdadm \
     sys-fs/multipath-tools \
     sys-fs/squashfs-tools \

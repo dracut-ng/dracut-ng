@@ -7,7 +7,6 @@
 # - dbus-daemon
 
 # Not installed
-# - dmraid (no longer maintained, https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1056944)
 # - iscsiuio, open-iscsi (not yet working with dracut, https://bugs.launchpad.net/ubuntu/+source/open-iscsi/+bug/2072484)
 # - busybox-static
 

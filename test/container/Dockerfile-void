@@ -4,11 +4,14 @@
 # - runit (instead of systemd)
 # - eudev (instead of systemd-udev)
 # - elogind (instead of logind)
-# - uki (without systemd)
+# - UEFI boot, UKI (without systemd)
 # - zfs and zfs out of tree dracut module
 # - gzip compression
 # - clang
 # - dbus-daemon
+
+# Not installed
+# - kernel-install is not available
 
 FROM ghcr.io/void-linux/void-glibc-full
 
@@ -27,7 +30,6 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     cryptsetup \
     dhclient \
     dhcp \
-    dmraid \
     e2fsprogs \
     edk2-ovmf \
     elfutils \
