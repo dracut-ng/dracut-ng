@@ -44,8 +44,8 @@ test_setup() {
     mkdir -p "$BOOT_ROOT/$machine_id/$KVERSION" /run/kernel/
     echo 'initrd_generator=dracut' >> /run/kernel/install.conf
 
-    mkdir -p /usr/lib/dracut/dracut.conf.d
-    echo 'add_dracutmodules+=" test "' >> /usr/lib/dracut/dracut.conf.d/extra.conf
+    # enable test dracut config
+    cp /usr/lib/dracut/test/dracut.conf.d/test/test.conf /usr/lib/dracut/dracut.conf.d/
 
     kernel-install add-all
     mv "$BOOT_ROOT/$machine_id/$KVERSION"/initrd "$TESTDIR"/initramfs.testing
