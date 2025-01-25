@@ -10,7 +10,7 @@ on:  # yamllint disable-line rule:truthy
 
     pull_request:
         paths:
-            - '.github/workflows/integration-extra-amd64.yml'
+            - '.github/workflows/integration-extra-arm64.yml'
 
 jobs:
     arm64:

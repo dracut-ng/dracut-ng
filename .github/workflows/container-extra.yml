@@ -27,7 +27,7 @@ jobs:
     amd64:
         if: github.repository == 'dracut-ng/dracut-ng' || vars.CONTAINER == 'enabled'
         name: ${{ matrix.config.tag }} on ${{ matrix.config.platform }}
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         concurrency:
             group: amd64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.tag }}
             cancel-in-progress: true

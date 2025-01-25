@@ -21,7 +21,7 @@ jobs:
     basic:
         # run this test on all containers
         name: ${{ matrix.test }} on ${{ matrix.container }}
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
             group: basic-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
@@ -53,7 +53,7 @@ jobs:
     syncheck:
         needs: basic
         name: syncheck
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         steps:
             - name: "Checkout Repository"
               uses: actions/checkout@v4
@@ -65,7 +65,7 @@ jobs:
     extended:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
             group: extended-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
@@ -101,7 +101,7 @@ jobs:
     extended-systemd:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
             group: extended-systemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
@@ -131,7 +131,7 @@ jobs:
     kernel-install:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
             group: kernel-install-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
@@ -155,7 +155,7 @@ jobs:
     dracut-cpio:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
             group: dracut-cpio-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
@@ -179,7 +179,7 @@ jobs:
         needs: basic
         # all nfs based on default networking
         name: ${{ matrix.test }} on ${{ matrix.container }}
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
             group: network-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
@@ -217,7 +217,7 @@ jobs:
     network-advanced:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
             group: network-iscsi-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
