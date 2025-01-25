@@ -38,7 +38,7 @@ env:
 
 jobs:
     matrix:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         outputs:
             registry: ${{ steps.set-matrix.outputs.registry }}
             container: ${{ steps.set-matrix.outputs.container }}
@@ -59,7 +59,7 @@ jobs:
                    || ( tests=$(find test -type d -a -name "TEST-*" | cut -d\- -f2 | sed -z 's/\n/","/g' ); echo "tests=[\"${tests%??}]" >> $GITHUB_OUTPUT )
     test:
         needs: matrix
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
             group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
