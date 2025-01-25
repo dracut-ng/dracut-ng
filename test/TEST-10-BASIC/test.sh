@@ -10,7 +10,7 @@ test_run() {
 
     test_marker_reset
 
-    "$testdir"/run-qemu \
+    "$testdir"/run-qemu -nic none \
         "${disk_args[@]}" \
         -append "$TEST_KERNEL_CMDLINE root=LABEL=dracut" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
@@ -28,7 +28,6 @@ test_setup() {
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync
 
     test_dracut \
-        --omit systemd \
         "$TESTDIR"/initramfs.testing
 }
 
