@@ -18,8 +18,7 @@ if [[ -z $basedir ]]; then basedir="$(realpath ../..)"; fi
 DRACUT=${DRACUT-dracut}
 PKGLIBDIR=${PKGLIBDIR-$basedir}
 
-# systemd on arm64 on GitHub CI needs the 60 sec timeout
-TEST_KERNEL_CMDLINE+=" rd.retry=10 rd.timeout=60 rd.info rd.shell=0 panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot $DEBUGFAIL "
+TEST_KERNEL_CMDLINE+=" panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot $DEBUGFAIL "
 
 if [[ $V != "1" && $V != "2" ]]; then
     TEST_KERNEL_CMDLINE+="quiet "
