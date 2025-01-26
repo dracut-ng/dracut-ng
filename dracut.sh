@@ -270,6 +270,13 @@ Creates initial ramdisk images for preloading modules
                         Specify the compressor and compressor specific options
                          used by mksquashfs if squash module is called when
                          building the initramfs.
+  --handle-precompress=<no|decomp|split>
+                        Control how already-compressed modules and firmware
+                         files are handled. "decomp" will decompress
+                         already-compressed files before adding them to the
+                         initramfs; "split" will split the files into a
+                         separate cpio archive that is not compressed.
+                         "no" does neither.
   --enhanced-cpio       Attempt to reflink cpio file data using dracut-cpio.
   --list-modules        List all available dracut modules.
   -M, --show-modules    Print included module's name to standard output during
@@ -756,6 +763,11 @@ while :; do
             PARMS_TO_STORE+=" '$2'"
             shift
             ;;
+        --handle-precompress)
+            handle_precompress_l="$2"
+            PARMS_TO_STORE+=" '$2'"
+            shift
+            ;;
         --prefix)
             prefix_l="$2"
             PARMS_TO_STORE+=" '$2'"
@@ -1147,6 +1159,7 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $INITRD_COMPRESS ]] && compress=$INITRD_COMPRESS
 [[ $compress_l ]] && compress=$compress_l
 [[ $squash_compress_l ]] && squash_compress=$squash_compress_l
+[[ $handle_precompress_l ]] && handle_precompress=$handle_precompress_l || handle_precompress="split"
 [[ $enhanced_cpio_l ]] && enhanced_cpio=$enhanced_cpio_l
 [[ $show_modules_l ]] && show_modules=$show_modules_l
 [[ $nofscks_l ]] && nofscks="yes"
@@ -2478,14 +2491,23 @@ create_cpio_file_lists() {
     local rootdir="$1"
     local compressed_files_manifest="$2"
     local uncompressed_files_manifest="$3"
+    local COMPRESS_PATTERN=(-name '*.gz' -o -name '*.xz' -o -name '*.zst' -o -path './early_cpio')
 
+    if [[ $handle_precompress != split ]]; then
+        # If we are not splitting the cpio, we do not need to create a separate
+        # manifest for compressed files.
+        compressed_files_manifest="$uncompressed_files_manifest"
+    else
+        # Inject an early_cpio marker file
+        echo 2 > "$rootdir"/early_cpio
+    fi
     (
         cd "$rootdir" || exit 1
-        find . -name '*.gz' -o -name '*.xz' -o -name '*.zst'
+        find . "${COMPRESS_PATTERN[@]}"
     ) | add_directories | LC_ALL=C sort | uniq > "$compressed_files_manifest"
     (
         cd "$rootdir" || exit 1
-        find . \( ! -type d ! -name '*.gz' ! -name '*.xz' ! -name '*.zst' \) -o \( -type d -empty \)
+        find . \( ! -type d ! \( "${COMPRESS_PATTERN[@]}" \) \) -o \( -type d -empty \)
     ) | add_directories | LC_ALL=C sort | uniq > "$uncompressed_files_manifest"
 }
 
@@ -2637,7 +2659,7 @@ if [[ -n $enhanced_cpio ]]; then
         $compress < "$cpio_outfile" >> "${DRACUT_TMPDIR}/initramfs.img" \
             && rm "$cpio_outfile"
     ); then
-        dfatal "dracut-cpio: creation of $outfile failed"
+        dfatal "dracut-cpio: write $outfile for main portion failed"
         exit 1
     fi
     unset cpio_outfile
@@ -2660,7 +2682,7 @@ else
         cpio -o ${CPIO_REPRODUCIBLE:+--reproducible} ${cpio_owner:+-R "$cpio_owner"} -H newc --quiet \
             < "$UNCOMPRESSED_FILES_MANIFEST" | $compress >> "${DRACUT_TMPDIR}/initramfs.img"
     ); then
-        dfatal "Creation of $outfile failed"
+        dfatal "Write $outfile for main portion failed"
         exit 1
     fi
 fi

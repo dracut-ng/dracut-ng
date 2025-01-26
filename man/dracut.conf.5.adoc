@@ -138,6 +138,18 @@ compressors and compressor specific options.
 If squash module is not called when building the initramfs,
 this option will not take effect.
 
+*handle_precompress=*"__{no|split|decomp}__"::
+Specify how to handle already-compressed firmware and kernel modules.
++
+If set to "no", do not handle pre-compressed files.
++
+If set to "split", split the pre-compressed files into a separate cpio archive
+that will not be compressed.  This saves time and almost does not cost extra space.
++
+If set to "decomp", decompress the pre-compressed files before they are put into
+the initramfs.  This makes the final compression step able to actually find
+a way to compress these modules, possibly saving some space at the cost of time.
+
 *do_strip=*"__{yes|no}__"::
 Strip binaries in the initramfs (default=yes).
 
