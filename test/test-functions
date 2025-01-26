@@ -9,6 +9,7 @@ if [[ -z $TESTDIR ]] || [[ ! -d $TESTDIR ]]; then
 fi
 echo "TESTDIR=\"$TESTDIR\"" > .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
 export TESTDIR
+export BOOT_ROOT="$TESTDIR"
 
 [ -z "$USE_NETWORK" ] && USE_NETWORK="network"
 [ -z "$TEST_FSTYPE" ] && TEST_FSTYPE="ext4"
@@ -17,6 +18,9 @@ if [[ -z $basedir ]]; then basedir="$(realpath ../..)"; fi
 
 DRACUT=${DRACUT-dracut}
 PKGLIBDIR=${PKGLIBDIR-$basedir}
+
+[[ -f /etc/machine-id ]] && read -r TOKEN < /etc/machine-id
+[ -z "$TOKEN" ] && . /etc/os-release && TOKEN="$ID"
 
 TEST_KERNEL_CMDLINE+=" panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot $DEBUGFAIL "
 
