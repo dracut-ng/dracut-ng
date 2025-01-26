@@ -140,7 +140,10 @@ jobs:
             fail-fast: false
             matrix:
                 container:
+                    - arch
                     - fedora
+                    - gentoo
+                    - opensuse
                 test:
                     - "43"
         container:
