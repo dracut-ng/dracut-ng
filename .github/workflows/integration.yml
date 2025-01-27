@@ -30,18 +30,18 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - alpine
-                    - arch
-                    - debian
-                    - fedora
-                    - gentoo
-                    - opensuse
-                    - ubuntu
-                    - void
+                    - alpine:latest
+                    - arch:latest
+                    - debian:latest
+                    - fedora:latest
+                    - gentoo:latest
+                    - opensuse:latest
+                    - ubuntu:rolling
+                    - void:latest
                 test:
                     - "10"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
@@ -74,12 +74,12 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - arch
-                    - fedora
-                    - gentoo
-                    - opensuse
-                    - ubuntu
-                    - void
+                    - arch:latest
+                    - fedora:latest
+                    - gentoo:latest
+                    - opensuse:latest
+                    - ubuntu:rolling
+                    - void:latest
                 test:
                     - "11"
                     - "12"
@@ -90,7 +90,7 @@ jobs:
                     - "80"
                     - "81"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
@@ -110,18 +110,18 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - arch
-                    - fedora
-                    - gentoo
-                    - opensuse
-                    - ubuntu
+                    - arch:latest
+                    - fedora:latest
+                    - gentoo:latest
+                    - opensuse:latest
+                    - ubuntu:rolling
                 test:
                     - "40"
                     - "41"
                     - "42"
                     - "43"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm --privileged'
         steps:
             - name: "Checkout Repository"
@@ -141,11 +141,11 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - opensuse
+                    - opensuse:latest
                 test:
                     - "82"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
@@ -165,12 +165,12 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - arch
-                    - debian
-                    - fedora
-                    - gentoo
-                    - opensuse
-                    - ubuntu
+                    - arch:latest
+                    - debian:latest
+                    - fedora:latest
+                    - gentoo:latest
+                    - opensuse:latest
+                    - ubuntu:rolling
                 test:
                     - "60"
                     - "61"
@@ -178,13 +178,13 @@ jobs:
                 include:
                     - network: ""
                     # on debian run tests with systemd-networkd
-                    - container: "debian"
+                    - container: "debian:latest"
                       network: "systemd-networkd"
                     # on openSUSE run tests with network-legacy
-                    - container: "opensuse"
+                    - container: "opensuse:latest"
                       network: "network-legacy"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
@@ -203,15 +203,15 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - opensuse
+                    - opensuse:latest
                 test:
                     - "70"
                 include:
                     # on openSUSE run tests with network-legacy
-                    - container: "opensuse"
+                    - container: "opensuse:latest"
                       network: "network-legacy"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
