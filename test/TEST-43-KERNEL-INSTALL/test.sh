@@ -31,7 +31,7 @@ test_run() {
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=LABEL=dracut" \
+        -append "$TEST_KERNEL_CMDLINE" \
         -initrd "$BOOT_ROOT/$TOKEN/$KVERSION"/initrd || return 1
 
     test_marker_check || return 1
@@ -41,7 +41,7 @@ test_run() {
     # rescue (non-hostonly) boot
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=LABEL=dracut" \
+        -append "$TEST_KERNEL_CMDLINE" \
         -initrd "$BOOT_ROOT/$TOKEN"/0-rescue/initrd || return 1
 
     test_marker_check || return 1
