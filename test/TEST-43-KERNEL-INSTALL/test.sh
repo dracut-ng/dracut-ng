@@ -35,6 +35,16 @@ test_run() {
         -initrd "$BOOT_ROOT/$TOKEN/$KVERSION"/initrd || return 1
 
     test_marker_check || return 1
+
+    test_marker_reset
+
+    # rescue (non-hostonly) boot
+    "$testdir"/run-qemu \
+        "${disk_args[@]}" \
+        -append "$TEST_KERNEL_CMDLINE root=LABEL=dracut" \
+        -initrd "$BOOT_ROOT/$TOKEN"/0-rescue/initrd || return 1
+
+    test_marker_check || return 1
 }
 
 test_setup() {
@@ -53,8 +63,11 @@ test_setup() {
     # enable test dracut config
     cp /usr/lib/dracut/test/dracut.conf.d/test/test.conf /usr/lib/dracut/dracut.conf.d/
 
+    # enable rescue boot config
+    cp /usr/lib/dracut/dracut.conf.d/rescue/50-rescue.conf /usr/lib/dracut/dracut.conf.d/
+
     # using kernell-install to invoke dracut
-    mkdir -p "$BOOT_ROOT/$TOKEN/$KVERSION"
+    mkdir -p "$BOOT_ROOT/$TOKEN/$KVERSION" "$BOOT_ROOT/loader/entries" "$BOOT_ROOT/$TOKEN/0-rescue/loader/entries"
     kernel-install add-all
 }
 
