@@ -9,15 +9,9 @@ test_check() {
     (command -v zfs || (command -v lvm && command -v "mkfs.$TEST_FSTYPE")) &> /dev/null
 }
 
-if [ "$TEST_FSTYPE" = "zfs" ]; then
-    TEST_KERNEL_CMDLINE+=" root=ZFS=dracut/root "
-elif [ "$TEST_FSTYPE" = "btrfs" ]; then
-    TEST_KERNEL_CMDLINE+=" root=LABEL=root "
-else
-    TEST_KERNEL_CMDLINE+=" root=LABEL=root "
-
+if [ "$TEST_FSTYPE" != "zfs" ] && [ "$TEST_FSTYPE" != "btrfs" ]; then
     # test fips mode
-    [ -f /usr/share/crypto-policies/default-fips-config ] && TEST_KERNEL_CMDLINE+=" fips=1 rd.fips.skipkernel boot=LABEL=root "
+    [ -f /usr/share/crypto-policies/default-fips-config ] && TEST_KERNEL_CMDLINE+=" fips=1 rd.fips.skipkernel boot=LABEL=dracut "
 
     export USE_LVM=1
     command -v mdadm > /dev/null && export HAVE_RAID=1
@@ -44,6 +38,10 @@ client_run() {
     if ! grep -qF 'degraded' "$test_name"; then
         # only add disk2 if RAID is NOT degraded
         qemu_add_drive disk_index disk_args "$TESTDIR/${disk}-2.img" disk2
+    fi
+
+    if [ "$TEST_FSTYPE" = "zfs" ]; then
+        TEST_KERNEL_CMDLINE+=" root=ZFS=dracut/root "
     fi
 
     test_marker_reset

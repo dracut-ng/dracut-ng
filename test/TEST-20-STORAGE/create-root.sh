@@ -10,7 +10,7 @@ if [ "$TEST_FSTYPE" = "zfs" ]; then
     zpool create dracut mirror /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
     zfs create dracut/root
 elif [ "$TEST_FSTYPE" = "btrfs" ]; then
-    mkfs.btrfs -q -draid1 -mraid1 -L root /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
+    mkfs.btrfs -q -draid1 -mraid1 -L dracut /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
     udevadm settle
     btrfs device scan
 else
@@ -51,7 +51,7 @@ else
 
     lvm vgchange --ignoremonitoring -ay
 
-    eval "mkfs.${TEST_FSTYPE} -q -L root /dev/dracut/root"
+    eval "mkfs.${TEST_FSTYPE} -q -L dracut /dev/dracut/root"
 fi
 
 udevadm settle

@@ -12,7 +12,7 @@ test_run() {
 
     "$testdir"/run-qemu -nic none \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=LABEL=dracut" \
+        -append "$TEST_KERNEL_CMDLINE" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     test_marker_check || return 1
