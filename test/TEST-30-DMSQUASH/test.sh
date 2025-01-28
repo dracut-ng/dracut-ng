@@ -128,8 +128,7 @@ EOF
 
     test_dracut \
         --no-hostonly \
-        --modules "dmsquash-live-autooverlay" \
-        "$TESTDIR"/initramfs.testing
+        --modules "dmsquash-live-autooverlay"
 }
 
 # shellcheck disable=SC1090

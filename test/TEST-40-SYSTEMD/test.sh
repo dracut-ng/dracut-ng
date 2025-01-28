@@ -62,8 +62,7 @@ test_setup() {
     test_dracut \
         --omit-drivers 'a b c d e f g h i j k l m n o p q r s t u v w x y z' \
         -i ./systemd-analyze.sh /lib/dracut/hooks/pre-pivot/00-systemd-analyze.sh \
-        -i "/bin/true" "/usr/bin/man" \
-        "$TESTDIR"/initramfs.testing
+        -i "/bin/true" "/usr/bin/man"
 }
 
 # shellcheck disable=SC1090

@@ -126,8 +126,7 @@ test_setup() {
     # force add all available dracut modules that are dependent on systemd
     test_dracut \
         -a "dracut-systemd $dracut_modules" \
-        --add-drivers "btrfs" \
-        "$TESTDIR"/initramfs.testing
+        --add-drivers "btrfs"
 
     if command -v mkosi-initrd &> /dev/null; then
         mkosi-initrd --kernel-version "$KVERSION" -t directory -o mkosi -O "$TESTDIR"

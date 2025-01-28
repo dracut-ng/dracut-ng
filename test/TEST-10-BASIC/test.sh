@@ -27,8 +27,7 @@ test_setup() {
     dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync
 
-    test_dracut \
-        "$TESTDIR"/initramfs.testing
+    test_dracut
 }
 
 # shellcheck disable=SC1090

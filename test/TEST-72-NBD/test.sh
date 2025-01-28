@@ -331,8 +331,7 @@ test_setup() {
         -a "${USE_NETWORK}" \
         -i "./client.link" "/etc/systemd/network/01-client.link" \
         -i "/tmp/crypttab" "/etc/crypttab" \
-        -i "/tmp/key" "/etc/key" \
-        "$TESTDIR"/initramfs.testing
+        -i "/tmp/key" "/etc/key"
 
     "$DRACUT" -N -i "$TESTDIR"/overlay / \
         -a "test network-legacy ${SERVER_DEBUG:+debug}" \

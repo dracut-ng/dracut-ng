@@ -58,8 +58,7 @@ test_setup() {
     if command -v ukify &> /dev/null; then
         echo "Using ukify to create UKI"
         test_dracut --no-uefi \
-            --drivers 'squashfs' \
-            "$TESTDIR"/initramfs.testing
+            --drivers 'squashfs'
 
         ukify build \
             --linux="$VMLINUZ" \

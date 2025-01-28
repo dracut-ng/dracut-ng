@@ -218,8 +218,7 @@ test_setup() {
         --no-hostonly --no-hostonly-cmdline \
         --add "$USE_NETWORK" \
         --include "./client.link" "/etc/systemd/network/01-client.link" \
-        --kernel-cmdline "rw rd.auto" \
-        "$TESTDIR"/initramfs.testing
+        --kernel-cmdline "rw rd.auto"
 }
 
 test_cleanup() {

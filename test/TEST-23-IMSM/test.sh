@@ -94,8 +94,7 @@ test_setup() {
     echo "$MD_UUID" > "$TESTDIR"/mduuid
 
     test_dracut \
-        -a "lvm mdraid" \
-        "$TESTDIR"/initramfs.testing
+        -a "lvm mdraid"
 }
 
 # shellcheck disable=SC1090
