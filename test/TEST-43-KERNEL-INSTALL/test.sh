@@ -8,17 +8,15 @@ test_check() {
         return 1
     fi
 
-    if ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ]; then
-        echo "This test assumes that kernel-install can find the kernel at /usr/lib/modules/$KVERSION/vmlinuz"
-        return 1
-    fi
-
     if ! command -v kernel-install > /dev/null; then
         echo "This test needs kernel-install to run."
         return 1
     fi
 
-    command -v systemctl &> /dev/null
+    if [[ $(kernel-install --version | grep -oP '(?<=systemd )\d+') -lt 255 ]]; then
+        echo "This test requires support for kernel-install add-all (v255)"
+        return 1
+    fi
 }
 
 test_run() {
@@ -56,6 +54,10 @@ test_setup() {
 
     dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync
+
+    # workaround needed for Debian/Ubuntu based distros
+    ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ] && ln -sf /boot/vmlinuz /usr/lib/modules/"$KVERSION"/vmlinuz
+    ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ] && ln -sf /boot/vmlinuz-"$KVERSION" /usr/lib/modules/"$KVERSION"/vmlinuz
 
     mkdir -p /run/kernel
     echo 'initrd_generator=dracut' >> /run/kernel/install.conf
