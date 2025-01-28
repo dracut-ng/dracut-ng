@@ -53,3 +53,8 @@ RUN zypper --non-interactive install --no-recommends \
     util-linux-systemd \
     xorriso \
     && zypper --non-interactive dist-upgrade --no-recommends
+
+# workaround for openSUSE on arm64
+RUN \
+    KVERSION="$(cd /lib/modules && ls -1 | tail -1)" \
+    && if [ "$(arch)"="aarch64" ] && [ -e /usr/lib/modules/"$KVERSION"/Image ]; then ln -sf /usr/lib/modules/"$KVERSION"/Image /usr/lib/modules/"$KVERSION"/vmlinuz; fi

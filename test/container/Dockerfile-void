@@ -60,4 +60,5 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     ukify \
     xorriso \
     zfs \
-    && rm -rf /var/cache/xbps
+    && rm -rf /var/cache/xbps \
+    && rm -rf /usr/lib/firmware
