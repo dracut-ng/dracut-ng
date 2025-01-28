@@ -30,7 +30,11 @@ jobs:
                     - ubuntu
                     - void
                 test:
+                    - "10"
+                    - "30"
                     - "43"
+                    - "80"
+                    - "81"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-arm
             options: '--privileged'
