@@ -167,8 +167,7 @@ test_setup() {
         $(if command -v cryptsetup > /dev/null; then echo "-a crypt"; fi) \
         $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "--add-drivers ${TEST_FSTYPE}"; fi) \
         -i "/tmp/crypttab" "/etc/crypttab" \
-        -i "/tmp/key" "/etc/key" \
-        "$TESTDIR"/initramfs.testing
+        -i "/tmp/key" "/etc/key"
 }
 
 # shellcheck disable=SC1090

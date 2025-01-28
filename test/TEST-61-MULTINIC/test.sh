@@ -336,8 +336,7 @@ test_setup() {
     # Make client's dracut image
     test_dracut \
         --no-hostonly --no-hostonly-cmdline \
-        -a "${USE_NETWORK}" \
-        "$TESTDIR"/initramfs.testing
+        -a "${USE_NETWORK}"
 
     (
         # shellcheck disable=SC2031

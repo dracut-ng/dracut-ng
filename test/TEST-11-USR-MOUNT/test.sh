@@ -82,8 +82,7 @@ test_setup() {
     fi
 
     test_dracut \
-        -d "btrfs" \
-        "$TESTDIR"/initramfs.testing
+        -d "btrfs"
 }
 
 # shellcheck disable=SC1090

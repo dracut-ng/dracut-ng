@@ -62,7 +62,7 @@ test_dracut() {
 
     "$DRACUT" \
         "${TEST_DRACUT_ARGS_ARRAY[@]}" \
-        "$@" || return 1
+        "$@" "$TESTDIR"/initramfs.testing || return 1
 }
 
 # Wait for the server QEMU has been started up.
