@@ -34,6 +34,7 @@ RUN zypper --non-interactive install --no-recommends \
     lvm2 \
     make \
     mdadm \
+    mkosi-initrd \
     nbd \
     NetworkManager \
     nfs-kernel-server \
@@ -52,12 +53,3 @@ RUN zypper --non-interactive install --no-recommends \
     util-linux-systemd \
     xorriso \
     && zypper --non-interactive dist-upgrade --no-recommends
-
-# install mkosi from source
-RUN \
-  cd / \
-  && git clone https://github.com/systemd/mkosi \
-  && ln -s /mkosi/bin/mkosi /usr/bin/mkosi \
-  && ln -s /mkosi/bin/mkosi-initrd /usr/bin/mkosi-initrd \
-  && zypper --non-interactive remove busybox-diffutils busybox-less \
-  && /usr/bin/mkosi dependencies | xargs zypper --non-interactive install
