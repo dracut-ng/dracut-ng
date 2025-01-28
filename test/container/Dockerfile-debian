@@ -102,5 +102,5 @@ RUN \
 # workaround for kernel-install
 RUN \
     KVERSION="$(cd /lib/modules && ls -1 | tail -1)" \
-    ; ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ] && ln -sf /boot/vmlinuz /usr/lib/modules/"$KVERSION"/vmlinuz  \
-    ; ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ] && ln -sf /boot/vmlinuz-"$KVERSION" /usr/lib/modules/"$KVERSION"/vmlinuz
+    ; if ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ]; then ln -sf /boot/vmlinuz /usr/lib/modules/"$KVERSION"/vmlinuz; fi  \
+    ; if ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ]; then ln -sf /boot/vmlinuz-"$KVERSION" /usr/lib/modules/"$KVERSION"/vmlinuz; fi
