@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=SC2034
-TEST_DESCRIPTION="UEFI boot"
+TEST_DESCRIPTION="UEFI boot (ukify, kernel-install)"
 
 test_check() {
     if ! type -p mksquashfs &> /dev/null; then
@@ -50,6 +50,40 @@ test_setup() {
 
     mkdir -p "$TESTDIR"/ESP/EFI/BOOT "$TESTDIR"/dracut.conf.d
 
+    # This is the preferred way to build uki with dracut on a systenmd based system
+    # Currently this only works in a few distributions and architectures, but it is here
+    # for reference
+    if command -v systemd-detect-virt &> /dev/null && systemd-detect-virt -c &> /dev/null \
+        && command -v kernel-install &> /dev/null \
+        && command -v systemctl &> /dev/null \
+        && command -v ukify &> /dev/null \
+        && [[ $(kernel-install --version | grep -oP '(?<=systemd )\d+') -gt 254 ]]; then
+
+        echo "Using ukify via kernel-install to create UKI"
+
+        mkdir -p /etc/kernel
+
+        {
+            echo 'initrd_generator=dracut'
+            echo 'layout=uki'
+            echo 'uki_generator=ukify'
+        } >> /etc/kernel/install.conf
+
+        echo "$TEST_KERNEL_CMDLINE root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root" >> /etc/kernel/cmdline
+
+        # enable test dracut config
+        cp "${basedir}"/dracut.conf.d/test/* "${basedir}"/dracut.conf.d/uki-virt/* /usr/lib/dracut/dracut.conf.d/
+        echo 'add_drivers+=" squashfs "' >> /usr/lib/dracut/dracut.conf.d/extra.conf
+
+        # using kernell-install to invoke dracut
+        mkdir -p "$BOOT_ROOT/$TOKEN/$KVERSION" "$BOOT_ROOT/loader/entries"
+        kernel-install add-all
+
+        mv "$TESTDIR"/EFI/Linux/*.efi "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
+
+        return 0
+    fi
+
     # test with the reference uki config when systemd is available
     if command -v systemctl &> /dev/null; then
         cp "${basedir}"/dracut.conf.d/uki-virt/* "$TESTDIR"/dracut.conf.d/
@@ -73,10 +107,6 @@ test_setup() {
             --uefi \
             "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
     fi
-}
-
-test_cleanup() {
-    return 0
 }
 
 # shellcheck disable=SC1090
