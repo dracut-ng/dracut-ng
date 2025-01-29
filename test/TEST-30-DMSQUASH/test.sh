@@ -88,9 +88,6 @@ test_setup() {
     # test to make sure /proc /sys and /dev is not needed inside the generated initrd
     rm -rf "$TESTDIR"/rootfs/proc "$TESTDIR"/rootfs/sys "$TESTDIR"/rootfs/dev
 
-    # speed up test run
-    rm -rf "$TESTDIR"/rootfs/usr/lib/firmware
-
     mkdir -p "$TESTDIR"/live/LiveOS
     mksquashfs "$TESTDIR"/rootfs/ "$TESTDIR"/live/LiveOS/rootfs.img -quiet
 

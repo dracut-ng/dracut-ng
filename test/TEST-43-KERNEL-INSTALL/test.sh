@@ -55,13 +55,6 @@ test_setup() {
     dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync
 
-    # workaround for openSUSE on arm64
-    [ -e /usr/lib/modules/"$KVERSION"/Image ] && ln -sf /usr/lib/modules/"$KVERSION"/Image /usr/lib/modules/"$KVERSION"/vmlinuz
-
-    # workaround needed for Debian/Ubuntu based distros
-    ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ] && ln -sf /boot/vmlinuz /usr/lib/modules/"$KVERSION"/vmlinuz
-    ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ] && ln -sf /boot/vmlinuz-"$KVERSION" /usr/lib/modules/"$KVERSION"/vmlinuz
-
     mkdir -p /run/kernel
     echo 'initrd_generator=dracut' >> /run/kernel/install.conf
 
