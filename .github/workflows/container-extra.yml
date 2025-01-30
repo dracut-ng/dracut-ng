@@ -26,23 +26,33 @@ permissions:
 jobs:
     amd64:
         if: github.repository == 'dracut-ng/dracut-ng' || vars.CONTAINER == 'enabled'
-        name: ${{ matrix.config.tag }} on ${{ matrix.config.platform }}
-        runs-on: ubuntu-24.04
+        name: ${{ matrix.config.tag }} on ${{ matrix.architecture.platform }}
+        runs-on: ${{ matrix.architecture.runner }}
         concurrency:
-            group: amd64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.tag }}
+            group: amd64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.tag }}-${{ matrix.architecture.platform }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
             matrix:
+                architecture:
+                    - {platform: 'linux/amd64', runner: 'ubuntu-24.04', tag: 'amd'}
+                    - {platform: 'linux/arm64', runner: 'ubuntu-24.04-arm', tag: 'arm'}
                 config:
-                    - {dockerfile: 'Dockerfile-debian', tag: 'debian:sid', platform: 'linux/amd64'}
-                    - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:devel', platform: 'linux/amd64'}
-                    - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:rolling', platform: 'linux/amd64'}
-                    - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:edge', platform: 'linux/amd64'}
-                    - {dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:latest', platform: 'linux/amd64', option: 'systemd'}
-                    - {dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:amd64-openrc', platform: 'linux/amd64', option: 'amd64-openrc'}
-                    - {dockerfile: 'Dockerfile-fedora', tag: 'fedora:rawhide', platform: 'linux/amd64', registry: 'registry.fedoraproject.org'}
-                    - {dockerfile: 'Dockerfile-fedora', tag: 'centos:stream10-development', platform: 'linux/amd64', registry: 'quay.io/centos'}
+                    - {dockerfile: 'Dockerfile-debian', tag: 'debian:sid'}
+                    - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:devel'}
+                    - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:rolling'}
+                    - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:edge'}
+                    - {dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:latest', option: 'systemd'}
+                    - {dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:amd64-openrc', option: 'amd64-openrc'}
+                    - {dockerfile: 'Dockerfile-fedora', tag: 'fedora:rawhide', registry: 'registry.fedoraproject.org'}
+                    - {dockerfile: 'Dockerfile-fedora', tag: 'centos:stream10-development', registry: 'quay.io/centos'}
+                exclude:
+                   - config: {tag: 'alpine:edge'}
+                     architecture: {platform: 'linux/arm64'}
+                   - config: {tag: 'arch:latest'}
+                     architecture: {platform: 'linux/arm64'}
+                   - config: {tag: 'gentoo:amd64-openrc'}
+                     architecture: {platform: 'linux/arm64'}
         steps:
             - name: Check out the repo
               uses: actions/checkout@v4
@@ -60,9 +70,9 @@ jobs:
               uses: docker/build-push-action@v6
               with:
                   file: test/container/${{ matrix.config.dockerfile }}
-                  tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}-amd
+                  tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}-${{ matrix.architecture.tag }}
                   push: ${{ github.event_name == 'push' ||  github.event_name == 'schedule' }}
-                  platforms: ${{ matrix.config.platform }}
+                  platforms: ${{ matrix.architecture.platform }}
                   build-args: |
                       DISTRIBUTION=${{ matrix.config.tag }}
                       REGISTRY=${{ matrix.config.registry }}
