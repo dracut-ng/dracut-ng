@@ -38,13 +38,13 @@ man7pages = man/dracut.cmdline.7 \
 man8pages = man/dracut.8 \
             man/dracut-catimages.8 \
             modules.d/98dracut-systemd/dracut-cmdline.service.8 \
-            modules.d/98dracut-systemd/dracut-initqueue.service.8 \
             modules.d/98dracut-systemd/dracut-mount.service.8 \
             modules.d/98dracut-systemd/dracut-shutdown.service.8 \
             modules.d/98dracut-systemd/dracut-pre-mount.service.8 \
             modules.d/98dracut-systemd/dracut-pre-pivot.service.8 \
             modules.d/98dracut-systemd/dracut-pre-trigger.service.8 \
-            modules.d/98dracut-systemd/dracut-pre-udev.service.8
+            modules.d/98dracut-systemd/dracut-pre-udev.service.8 \
+            modules.d/99initqueue/dracut-initqueue.service.8
 
 manpages = $(man1pages) $(man5pages) $(man7pages) $(man8pages)
 
@@ -198,7 +198,6 @@ endif
 		mkdir -p $(DESTDIR)$(systemdsystemunitdir)/initrd.target.wants; \
 		for i in \
 		    dracut-cmdline.service \
-		    dracut-initqueue.service \
 		    dracut-mount.service \
 		    dracut-pre-mount.service \
 		    dracut-pre-pivot.service \
@@ -208,7 +207,10 @@ endif
 			ln -srf $(DESTDIR)$(pkglibdir)/modules.d/98dracut-systemd/$$i $(DESTDIR)$(systemdsystemunitdir); \
 			ln -sf ../$$i \
 			$(DESTDIR)$(systemdsystemunitdir)/initrd.target.wants/$$i; \
-		done \
+		done; \
+		ln -srf $(DESTDIR)$(pkglibdir)/modules.d/99initqueue/dracut-initqueue.service $(DESTDIR)$(systemdsystemunitdir); \
+		ln -sf ../dracut-initqueue.service \
+		$(DESTDIR)$(systemdsystemunitdir)/initrd.target.wants/dracut-initqueue.service; \
 	fi
 	if [ -f src/install/dracut-install ]; then \
 		install -m 0755 src/install/dracut-install $(DESTDIR)$(pkglibdir)/dracut-install; \

@@ -2,7 +2,7 @@
 
 # called by dracut
 depends() {
-    echo base fs-lib
+    echo base fs-lib initqueue
 }
 
 cmdline_journal() {
