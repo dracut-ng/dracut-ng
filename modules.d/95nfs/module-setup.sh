@@ -33,7 +33,7 @@ check() {
 # called by dracut
 depends() {
     # We depend on network modules being loaded
-    echo network
+    echo network initqueue
 }
 
 # called by dracut
@@ -136,8 +136,6 @@ install() {
         grep -sE '^(nogroup|rpc|nobody):' "${dracutsysrootdir}/${_confdir}/group" \
             >> "$initdir/${_confdir}/group"
     done
-
-    dracut_need_initqueue
 
     inst_libdir_file 'libnfsidmap_nsswitch.so*' 'libnfsidmap/*.so' 'libnfsidmap*.so*'
 }
