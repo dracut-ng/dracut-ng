@@ -125,6 +125,10 @@ code, there are no specific types or categories for dracut modules.
 | Extended Verification Module and https://repology.org/project/ima-evm-utils[ima-evm-utils]
 |
 
+| initqueue
+| queue for the initramfs boot process
+| library
+
 | kernel-modules
 | kernel modules for root filesystems and other boot-time devices
 | kernel

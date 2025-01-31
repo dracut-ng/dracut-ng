@@ -38,6 +38,12 @@ check() {
 }
 
 # called by dracut
+depends() {
+    echo initqueue
+    return 0
+}
+
+# called by dracut
 cmdline() {
     local _resume
 
