@@ -1,5 +1,134 @@
 [Rendered view](https://github.com/dracut-ng/dracut-ng/blob/master/NEWS.md)
 
+dracut-ng-106
+=============
+
+#### Bug Fixes
+
+*   check if xx-lib.sh is needed before executing ([8b71a80e](https://github.com/dracut-ng/dracut-ng/commit/8b71a80edfca725e8aa281a4f91c55ff6234cc82))
+*   check if dracut-lib.sh is needed before executing ([8f249c2b](https://github.com/dracut-ng/dracut-ng/commit/8f249c2b3ed37f2fbd356c12e71a8b27ff2d87a5))
+*   add bash dependency when bash scripts are used in the module ([3a04a139](https://github.com/dracut-ng/dracut-ng/commit/3a04a139700ffc7fe7a4897bb6067ebc46972874))
+*   initqueue -> /sbin/initqueue ([6f9b5a52](https://github.com/dracut-ng/dracut-ng/commit/6f9b5a52307011cec016b06c2caf96c2788a52eb))
+*   set initrd-release in the base module ([41f9e8f9](https://github.com/dracut-ng/dracut-ng/commit/41f9e8f9acde08ab5ebf9f33cff627f3192bb8b9))
+*   remove extra bracket ([512215c7](https://github.com/dracut-ng/dracut-ng/commit/512215c79ef433cf5e29daa64ca3632c7532e091))
+* **01fips-crypto-policies:**  use /bin in shebang ([f7ca0f3e](https://github.com/dracut-ng/dracut-ng/commit/f7ca0f3ef3c7635cee334ad7d5a82b74b989c44c))
+* **35network-manager:**
+  *  install nftables kernel modules needed ([fca71490](https://github.com/dracut-ng/dracut-ng/commit/fca714903c634ad5d1a90b425bc4231aa5e358e2))
+  *  install nft binary during module installation ([a6264d17](https://github.com/dracut-ng/dracut-ng/commit/a6264d1726d9a89ecb8b45c6215768755dcb8ba7))
+* **ENC-RAID-LVM:**  correct test name and remove obsolete step ([90f46fcb](https://github.com/dracut-ng/dracut-ng/commit/90f46fcbab236a603c5554c75416db5d1199cee9))
+* **Makefile:**
+  *  remove irrelevant testcases ([5b58bbea](https://github.com/dracut-ng/dracut-ng/commit/5b58bbead35fb5d09c44f9e98219bf7b9ed93ff5))
+  *  path for make clean ([a81782ce](https://github.com/dracut-ng/dracut-ng/commit/a81782ce44a46cf9880a1da42c70bfad15ce8cb4))
+* **base:**
+  *  fallback when shell-interpreter is not included ([7f13ea21](https://github.com/dracut-ng/dracut-ng/commit/7f13ea21834f0e080675d6750af4d866b84e5c9f))
+  *  remove fallback for shell selection ([e139edb8](https://github.com/dracut-ng/dracut-ng/commit/e139edb87cf8d5a6199bf53d78f16664fb27155f))
+* **crypt:**  crypt-lib.sh optionally depends on stty ([4532fb0f](https://github.com/dracut-ng/dracut-ng/commit/4532fb0f420a28026b91abda2ca0cc2e69aecca2))
+* **dm:**  remove 59-persistent-storage-dm.rules ([d2ade8a6](https://github.com/dracut-ng/dracut-ng/commit/d2ade8a6bf084c4cfb104dc9eff9917ea9bb9110))
+* **dmsquash-live-root.sh:**  support images with non-existing /proc ([e37c67f6](https://github.com/dracut-ng/dracut-ng/commit/e37c67f6f573ca5a15e88e5899e92ce1a8582bac))
+* **docs:**  correct spelling mistake of recommended ([4e03ac7c](https://github.com/dracut-ng/dracut-ng/commit/4e03ac7cdc41bb8d26a4e44d4202564fde704dee))
+* **dracut:**  rework timeout for devices added via --mount and --add-device ([c79fc8fd](https://github.com/dracut-ng/dracut-ng/commit/c79fc8fd0d4b9aaa8e753296cbafdb1f82781d08))
+* **dracut-functions.sh:**
+  *  check_kernel_module go one dir further up ([16abd45f](https://github.com/dracut-ng/dracut-ng/commit/16abd45f8227841697d2d8b1e5ab1a8237ad38df))
+  *  check for modules in --kmoddir, not in --sysroot ([b90eda4b](https://github.com/dracut-ng/dracut-ng/commit/b90eda4b431af23d1101f1ea68b656929c6a82b2))
+* **dracut-init:**  add compatibility with Debian/Ubuntu for libdirs detection ([8809b246](https://github.com/dracut-ng/dracut-ng/commit/8809b2468aa2e3fd2ce4ff99f1cc4d400a190cf2))
+* **dracut-lib:**  initialize getcmdline/getarg local variables ([fc18d0b3](https://github.com/dracut-ng/dracut-ng/commit/fc18d0b317f463dc16351104ba260a08955694ff))
+* **dracut-systemd:**
+  *  check SYSTEMD_SULOGIN_FORCE before allowing passwordless ([27024d67](https://github.com/dracut-ng/dracut-ng/commit/27024d67f96b5ee0ad7260e3c6796375a56467e5))
+  *  check systemd-cryptsetup before including ([484a8a23](https://github.com/dracut-ng/dracut-ng/commit/484a8a23f11146f3360622b91f453f33e5fff0c2))
+  *  unquote variable in udev conf ([3b753bf7](https://github.com/dracut-ng/dracut-ng/commit/3b753bf7b7d6cf69f8ece5d6e591e66c1cbaa791))
+* **dracut.sh:**
+  *  do not add cmdline for force_drivers if --kernel-only ([95fe9048](https://github.com/dracut-ng/dracut-ng/commit/95fe904812ff4f192e56cf498983e3264c8135b4))
+  *  ensure abs path for objcopy args ([1579bb0c](https://github.com/dracut-ng/dracut-ng/commit/1579bb0c77d9e1e4599623a165c54a0dccdaf875))
+* **fips-crypto-policies:**  improve check for module inclusion ([1ef60f9f](https://github.com/dracut-ng/dracut-ng/commit/1ef60f9fcfb57f79532604c1ea1920ace7c21e99))
+* **i18n:**  make /etc/vconsole.conf optional ([1246c4a1](https://github.com/dracut-ng/dracut-ng/commit/1246c4a176847e8be4cfb2dd82ef1ddc9462c012))
+* **img-lib:**  trim required binaries ([755c5c52](https://github.com/dracut-ng/dracut-ng/commit/755c5c522e54a71207d075ebcba8fc83f6799e01))
+* **iscsi:**
+  *  attempt iSCSI login before all interfaces are up ([f30cf46e](https://github.com/dracut-ng/dracut-ng/commit/f30cf46e5bb8919c15245325e095103c2624884e))
+  *  don't require network setup for bnx2i ([cc2c48a0](https://github.com/dracut-ng/dracut-ng/commit/cc2c48a0b3b97781e7e10e8fc9bd0a74c4c5bce2))
+  *  do not install services when not using systemd ([87fefd3c](https://github.com/dracut-ng/dracut-ng/commit/87fefd3cab7f9c611dc74a7ebc230228a7682e84))
+  *  remove duplicate inst_multiple calls for iscsiadm and iscsid ([73cdd31c](https://github.com/dracut-ng/dracut-ng/commit/73cdd31c1b086fd847affa8defc212f1186e51db))
+  *  include /usr/lib/open-iscsi/startup-checks.sh if needed ([7fe7fa94](https://github.com/dracut-ng/dracut-ng/commit/7fe7fa943748c6b746e762ab263084eb7d15a63e))
+* **kernel-network-modules:**  if running inside vm, include qemu-net ([2ecdda2d](https://github.com/dracut-ng/dracut-ng/commit/2ecdda2d28f165d26cbdb82c9fe3a2f7bab71c52))
+* **lsinitrd:**  improve KERNEL_VERSION detection ([37ce14fb](https://github.com/dracut-ng/dracut-ng/commit/37ce14fb0215c031090cac890c1c6dabcf183714))
+* **lvmthinpool-monitor:**  make sure systemd is included ([359e1e9a](https://github.com/dracut-ng/dracut-ng/commit/359e1e9a50ff77345696a8088f613c6418886cf1))
+* **nfs:**
+  *  do not set DRACUT_RESOLVE_LAZY for musl ([9060fe6b](https://github.com/dracut-ng/dracut-ng/commit/9060fe6b2eda894235464fbd2aa1ba2b279971c7))
+  *  use the same directory set ownership and permissions as the host ([6c3b8b2f](https://github.com/dracut-ng/dracut-ng/commit/6c3b8b2f297657920a022e52e68c8b0c192acbbe))
+* **pcsc:**  add libpcsclite_real.so.* ([bfa00c2a](https://github.com/dracut-ng/dracut-ng/commit/bfa00c2a03b07efae5a826aa881317acea9a4ec6))
+* **plymouth:**
+  *  change severity of shutdown log messages ([62c79128](https://github.com/dracut-ng/dracut-ng/commit/62c79128dac8cc2cbc5422dc7b871de1e7a54467))
+  *  silence warnings ([85bb1bc6](https://github.com/dracut-ng/dracut-ng/commit/85bb1bc6344065884bb85d6638400632f3bf3010))
+  *  do not depend on dpkg-architecture ([1b374931](https://github.com/dracut-ng/dracut-ng/commit/1b374931126cc1cc4d731930c4b0ee520a4abbf6))
+* **qemu-net:**  align check logic between qemu modules ([bb7425b8](https://github.com/dracut-ng/dracut-ng/commit/bb7425b8102f46928327bc762f653b2660643c34))
+* **rngd:**  do not include the module if we can not start the service ([3c727b60](https://github.com/dracut-ng/dracut-ng/commit/3c727b602d36d52960420ebaba1147152a603ceb))
+* **shell-interpreter:**  move later in the module ordering ([8f247f2f](https://github.com/dracut-ng/dracut-ng/commit/8f247f2faae48d2250e0ed82cef95911f0735073))
+* **systemd:**
+  *  systemd dlopens libbpf ([659c2681](https://github.com/dracut-ng/dracut-ng/commit/659c268198ec9895292695b658b47d9e588513d6))
+  *  include dmi-sysfs ([817dd612](https://github.com/dracut-ng/dracut-ng/commit/817dd61252f535412f488f0a05361abdfaeedbcd))
+* **systemd-ask-password:**  do not half-install systemd-ask-password-wall ([d8d11852](https://github.com/dracut-ng/dracut-ng/commit/d8d118523f0ed74427beccec4857a92fe5ffdf7e))
+* **systemd-networkd:**  depend on net-lib ([80e9d891](https://github.com/dracut-ng/dracut-ng/commit/80e9d891dbe4b9d9244fc801dcec0dac52d16de3))
+* **systemd-pcrphase:**  include systemd-pcrphase in hostonly mode ([ea6a47ed](https://github.com/dracut-ng/dracut-ng/commit/ea6a47ede7d9c5b268bd51aac3808d8b3979a962))
+* **systemd-sysext:**  install new initrd-specific units ([68a09b43](https://github.com/dracut-ng/dracut-ng/commit/68a09b43e95a760b7f2b055e91e394dba7b968c8))
+* **systemd-sysuser:**  add support for Gentoo ([1c5f45a2](https://github.com/dracut-ng/dracut-ng/commit/1c5f45a24b34e3fb81e29f44de451bd1f9638203))
+* **systemd-sysusers:**  systemd.conf no longer exists ([8f30a001](https://github.com/dracut-ng/dracut-ng/commit/8f30a001a221f5ea668cd1bdab43f813c97b98a8))
+* **systemd-tmpfiles:**
+  *  passwd and group file management ([4e520c88](https://github.com/dracut-ng/dracut-ng/commit/4e520c88d9826cc1ed7b759472f747de35fc0eee))
+  *  copy 20-systemd-stub.conf into the initrd ([0df92885](https://github.com/dracut-ng/dracut-ng/commit/0df928856150e674ce4cb04c0ceafae71d18d55b))
+* **test:**  running tests on bare metal fail with syntax error ([e26a4ab9](https://github.com/dracut-ng/dracut-ng/commit/e26a4ab9b3156660c84c2d8d39177218ec2d6bdf))
+* **test-root:**  dracut-getarg and dracut-lib are no longer used for test-root ([97e502c4](https://github.com/dracut-ng/dracut-ng/commit/97e502c444c4c19ee3892d36953138ac9e1a37c6))
+
+#### Performance
+
+* **base:**  /etc/initrd-release is only for systemd ([5bf724fa](https://github.com/dracut-ng/dracut-ng/commit/5bf724fa217ccd6011be4341d30eca05427b3415))
+* **hwdb:**  only include when another module requires it in hostonly ([7766da60](https://github.com/dracut-ng/dracut-ng/commit/7766da60f5dc045b5b709849a211bebf8077162e))
+* **systemd:**  remove crypto API kernel modules ([fa45d844](https://github.com/dracut-ng/dracut-ng/commit/fa45d84469b915ede2e72111d658df18bfb60a27))
+
+#### Features
+
+*   default config profile ([8c15bb61](https://github.com/dracut-ng/dracut-ng/commit/8c15bb6150934aa5ede384c6976e509ac2bf3215))
+*   systemd-battery-check dracut module ([7cf47b26](https://github.com/dracut-ng/dracut-ng/commit/7cf47b26fe2e8a1a6fcac301db74ae3dbbf523b0))
+*   create a documentation site ([77e0571c](https://github.com/dracut-ng/dracut-ng/commit/77e0571c29256e6951cc9a48c0d2ff5015a5f6b3))
+* **Makefile:**
+  *  roll cleaninstall target into the install target ([9825dd7b](https://github.com/dracut-ng/dracut-ng/commit/9825dd7b271f7fa6f5d784a6de34eee3250e9a68))
+  *  cleaninstall target ([dc40daa8](https://github.com/dracut-ng/dracut-ng/commit/dc40daa81d5a09221803c0a4ea37b359931463c6))
+* **base:**  create /proc if it does not exists ([ff370f55](https://github.com/dracut-ng/dracut-ng/commit/ff370f5517ee860d51f4f27089f99a738b0ba5a1))
+* **configure:**
+  *  allow dracut-cpio to be disabled ([4a4ab928](https://github.com/dracut-ng/dracut-ng/commit/4a4ab928a49e81e02104ec5466160664e59c3965))
+  *  let's build dracut-cpio if cargo is installed ([89a86dcb](https://github.com/dracut-ng/dracut-ng/commit/89a86dcb0a3248606824de50f5c63f61cfe0369c))
+* **crypt:**  remove empty /etc/crypttab to allow creating it later ([23ef35d3](https://github.com/dracut-ng/dracut-ng/commit/23ef35d3eddb49bd09df15a8f3f28244e1a4fa70))
+* **dmsquash-live:**  add support for rd.live.overlay.nouserconfirmprompt ([6ac1033c](https://github.com/dracut-ng/dracut-ng/commit/6ac1033c8d59e2324f56a2c453f14a0318cc7190))
+* **dracut-init.sh:**  give --force-add precedence over --omit ([a0d92d39](https://github.com/dracut-ng/dracut-ng/commit/a0d92d39891e4a8b61ff3a75ba46688306a1016a))
+* **dracut-systemd:**  install dracut-* into /usr/bin ([00902e25](https://github.com/dracut-ng/dracut-ng/commit/00902e25bb4b2a25a03c9ddec6b4c4c9f802650d))
+* **dracut.install:**  force hostonly for kernel-install plugin ([17706f9a](https://github.com/dracut-ng/dracut-ng/commit/17706f9a8781385769929e0407e5808c5c8c7e46))
+* **fips:**  include openssl's fips.so and openssl.cnf ([97c5d43c](https://github.com/dracut-ng/dracut-ng/commit/97c5d43ceb9d65bc0970f1e7ad44bc43bc93fc26))
+* **livenet:**  get live image size from TFTP servers ([93df9ad2](https://github.com/dracut-ng/dracut-ng/commit/93df9ad26122d3d4c0120e19c8da78b7cc69e653))
+* **lsinitrd.sh:**  look for initrd in /usr/lib/modules/ ([f01eec69](https://github.com/dracut-ng/dracut-ng/commit/f01eec692d222232c821426f453d3c66411ee34e))
+* **nvmf:**  enable other shells (dash) not just bash ([43707cab](https://github.com/dracut-ng/dracut-ng/commit/43707cabc86ab1d4a7f040ccfa2d2d673d00ce0e))
+* **systemd-battery-check:**  always include the module if possible ([961daa9d](https://github.com/dracut-ng/dracut-ng/commit/961daa9db49023c091fa87c86561ecb7eb371678))
+* **systemd-emergency:**  install rescue and emergency targets ([be7e87fb](https://github.com/dracut-ng/dracut-ng/commit/be7e87fbb7d7122cdc6386bac4e7bc5d32c6ad2f))
+* **systemd-sysusers:**  run systemd-sysusers as part of the build process ([f3dacc01](https://github.com/dracut-ng/dracut-ng/commit/f3dacc013d90bd2c0bbfa04f5f9b167b65298440))
+
+#### Contributors
+
+- Jo Zzsi <jozzsicsataban@gmail.com>
+- Benjamin Drung <benjamin.drung@canonical.com>
+- Ian Wienand <iwienand@redhat.com>
+- Laszlo Gombos <laszlo.gombos@gmail.com>
+- Antonio Alvarez Feijoo <antonio.feijoo@suse.com>
+- Pavel Valena <pvalena@redhat.com>
+- dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+- Martin Wilck <mwilck@suse.de>
+- Fernando Fernandez Mancera <ffmancera@riseup.net>
+- Jochen Sprickerhof <git@jochen.sprickerhof.de>
+- Andrew Ammerlaan <andrewammerlaan@gentoo.org>
+- David Härdeman <david@hardeman.nu>
+- George Mileka <gmileka@microsoft.com>
+- Manuel Fombuena <fombuena@outlook.com>
+- Mike Gilbert <floppym@gentoo.org>
+- Nowa Ammerlaan <andrewammerlaan@gentoo.org>
+- Nowa Ammerlaan <nowa@gentoo.org>
+- Patrick Schleizer <adrelanos@whonix.org>
+
 dracut-ng-105
 =============
 
