@@ -288,6 +288,8 @@ Creates initial ramdisk images for preloading modules
   --uefi-splash-image [FILE]
                         Use [FILE] as a splash image when creating an UEFI
                          executable. Requires bitmap (.bmp) image format.
+  --dtb [FILE]          Use [FILE] as the devicetree (.dtb) when creating an
+                         UEFI executable.
   --kernel-image [FILE] Location of the kernel image.
   --sbat [PARAMETERS]   The SBAT parameters to be added to .sbat.
                          The string "sbat,1,SBAT Version,sbat,1,
@@ -477,6 +479,7 @@ rearrange_params() {
             --long no-uefi \
             --long uefi-stub: \
             --long uefi-splash-image: \
+            --long dtb: \
             --long kernel-image: \
             --long sbat: \
             --long no-hostonly-i18n \
@@ -860,6 +863,11 @@ while :; do
             PARMS_TO_STORE+=" '$2'"
             shift
             ;;
+        --dtb)
+            dtb_l="$2"
+            PARMS_TO_STORE+=" '$2'"
+            shift
+            ;;
         --kernel-image)
             kernel_image_l="$2"
             PARMS_TO_STORE+=" '$2'"
@@ -1120,6 +1128,7 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $uefi_l ]] && uefi=$uefi_l
 [[ $uefi_stub_l ]] && uefi_stub=$(path_rel_to_abs "$uefi_stub_l")
 [[ $uefi_splash_image_l ]] && uefi_splash_image=$(path_rel_to_abs "$uefi_splash_image_l")
+[[ $dtb_l ]] && dtb=$(path_rel_to_abs "$dtb_l")
 [[ $kernel_image_l ]] && kernel_image=$(path_rel_to_abs "$kernel_image_l")
 [[ $sbat_l ]] && sbat="$sbat_l"
 [[ $machine_id_l ]] && machine_id="$machine_id_l"
@@ -2607,6 +2616,15 @@ if [[ $uefi == yes ]]; then
         unset uefi_splash_image
     fi
 
+    if [[ -s ${dracutsysrootdir}${dtb} ]]; then
+        dtb="${dracutsysrootdir}${dtb}"
+        dtb_offs=${offs}
+        offs=$((offs + $(stat -Lc%s "$dtb")))
+        offs=$((offs + "$align" - offs % "$align"))
+    else
+        unset dtb
+    fi
+
     echo "$SBAT_DEFAULT" > "$sbat_out"
     if [[ -n $sbat ]]; then
         echo "$sbat" | sed "/${SBAT_DEFAULT//\//\\/}/d" >> "$sbat_out"
@@ -2621,6 +2639,7 @@ if [[ $uefi == yes ]]; then
     offs=$((offs + $(stat -Lc%s "$kernel_image")))
     offs=$((offs + "$align" - offs % "$align"))
     uefi_initrd_offs="${offs}"
+
 
     base_image=$(pe_get_image_base "$uefi_stub")
     if [[ $? -eq 1 ]]; then
@@ -2637,6 +2656,7 @@ if [[ $uefi == yes ]]; then
         ${uefi_osrelease:+--add-section .osrel="$uefi_osrelease" --change-section-vma .osrel=$(printf 0x%x "$uefi_osrelease_offs")} \
         ${uefi_cmdline:+--add-section .cmdline="$uefi_cmdline" --change-section-vma .cmdline=$(printf 0x%x "$uefi_cmdline_offs")} \
         ${uefi_splash_image:+--add-section .splash="$uefi_splash_image" --change-section-vma .splash=$(printf 0x%x "$uefi_splash_offs")} \
+        ${dtb:+--add-section .dtb="$dtb" --change-section-vma .dtb=$(printf 0x%x "$dtb_offs")} \
         --add-section .sbat="$sbat_out" --change-section-vma .sbat="$(printf 0x%x "$uefi_sbat_offs")" \
         --add-section .linux="$kernel_image" --change-section-vma .linux="$(printf 0x%x "$uefi_linux_offs")" \
         --add-section .initrd="${DRACUT_TMPDIR}/initramfs.img" --change-section-vma .initrd="$(printf 0x%x "$uefi_initrd_offs")" \
