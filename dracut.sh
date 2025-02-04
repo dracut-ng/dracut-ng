@@ -1324,10 +1324,10 @@ if findmnt --raw -n --target "$tmpdir" --output=options | grep -q noexec; then
     noexec=1
 fi
 
-DRACUT_TMPDIR="$(mktemp -p "$TMPDIR/" -d -t dracut.XXXXXX)"
+DRACUT_TMPDIR="$(mktemp -p "$TMPDIR/" -d -t dracut.dXXXXXX)"
 readonly DRACUT_TMPDIR
 [ -d "$DRACUT_TMPDIR" ] || {
-    printf "%s\n" "dracut[F]: mktemp -p '$TMPDIR/' -d -t dracut.XXXXXX failed." >&2
+    printf "%s\n" "dracut[F]: mktemp -p '$TMPDIR/' -d -t dracut.dXXXXXX failed." >&2
     exit 1
 }
 
