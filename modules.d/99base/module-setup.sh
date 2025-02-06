@@ -50,6 +50,7 @@ install() {
     grep '^root:' "$initdir/etc/passwd" > /dev/null 2>&1 || echo "root:$pwshadow:0:0::/root:/bin/sh" >> "$initdir/etc/passwd"
     grep '^nobody:' "$dracutsysrootdir"/etc/passwd >> "$initdir/etc/passwd"
 
+    [[ $hostonly ]] && sed -i '/^root:/d' "$initdir/etc/shadow"
     [[ $hostonly ]] && grep '^root:' "$dracutsysrootdir"/etc/shadow >> "$initdir/etc/shadow"
 
     # install our scripts and hooks
