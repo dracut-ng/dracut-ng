@@ -40,6 +40,6 @@ Dependencies for the generated initramfs:
 |linux-kernel (debian 12) | 6.1
 |bash (debian 12)         | 5.2
 |eudev (alpine/void)      | 3.2.14
-|busybox (alpine)         | 1.36
+|busybox (alpine)         | 1.37
 |qemu (debian 12)         | 7.2
 |===

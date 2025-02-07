@@ -1,6 +1,6 @@
 # Test coverage provided by this container:
 # - arm64
-# - hostonly
+# - default hostonly
 # - xfs
 # - memstrack
 # - ndctl (for nvdimm)
@@ -14,6 +14,7 @@
 # - fips
 # - ignition
 # - dbus-broker
+# - network: network-legacy, network-manager
 
 ARG DISTRIBUTION=fedora
 ARG REGISTRY=registry.fedoraproject.org
@@ -33,14 +34,11 @@ if [[ "${DISTRIBUTION}" =~ "centos:" ]]; then \
 else \
     dnf -y install --setopt=install_weak_deps=False \
     btrfs-progs \
-    busybox \
     dhcp-client \
     dhcp-server \
-    dmraid \
     nbd \
-    /usr/bin/qemu-system-$(uname -m) \
+    qemu \
     scsi-target-utils \
-    systemd-networkd \
 ; fi
 
 RUN dnf -y install --setopt=install_weak_deps=False \
@@ -90,6 +88,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     systemd-ukify \
     tpm2-tools \
     xfsprogs \
+    xorriso \
     && dnf -y update && dnf clean all
 
 # CentOS Stream ships only qemu-kvm, but it disables the KVM accel when it's not available

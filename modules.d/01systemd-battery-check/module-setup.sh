@@ -7,8 +7,7 @@ check() {
     # If the binary(s) requirements are not fulfilled the module can't be installed
     require_binaries "$systemdutildir"/systemd-battery-check || return 1
 
-    # Return 255 to only include the module, if another module requires it.
-    return 255
+    return 0
 }
 
 # Module dependency requirements.

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # shellcheck disable=SC2034
-TEST_DESCRIPTION="UEFI boot"
+TEST_DESCRIPTION="UEFI boot (ukify, kernel-install)"
 
 test_check() {
     if ! type -p mksquashfs &> /dev/null; then
@@ -20,8 +20,6 @@ test_check() {
 
 client_run() {
     local test_name="$1"
-    shift
-    local client_opts="$*"
 
     echo "CLIENT TEST START: $test_name"
 
@@ -34,13 +32,12 @@ client_run() {
     "$testdir"/run-qemu "${disk_args[@]}" -net none \
         -drive file=fat:rw:"$TESTDIR"/ESP,format=vvfat,label=EFI \
         -global driver=cfi.pflash01,property=secure,value=on \
-        -smbios type=11,value=io.systemd.stub.kernel-cmdline-extra="$client_opts" \
         -drive if=pflash,format=raw,unit=0,file="$(ovmf_code)",readonly=on
     test_marker_check || return 1
 }
 
 test_run() {
-    client_run "readonly root" "ro rd.skipfsck" || return 1
+    client_run "UEFI with UKI and squashfs root" || return 1
 }
 
 test_setup() {
@@ -53,6 +50,40 @@ test_setup() {
 
     mkdir -p "$TESTDIR"/ESP/EFI/BOOT "$TESTDIR"/dracut.conf.d
 
+    # This is the preferred way to build uki with dracut on a systenmd based system
+    # Currently this only works in a few distributions and architectures, but it is here
+    # for reference
+    if command -v systemd-detect-virt &> /dev/null && systemd-detect-virt -c &> /dev/null \
+        && command -v kernel-install &> /dev/null \
+        && command -v systemctl &> /dev/null \
+        && command -v ukify &> /dev/null \
+        && [[ $(kernel-install --version | grep -oP '(?<=systemd )\d+') -gt 254 ]]; then
+
+        echo "Using ukify via kernel-install to create UKI"
+
+        mkdir -p /etc/kernel
+
+        {
+            echo 'initrd_generator=dracut'
+            echo 'layout=uki'
+            echo 'uki_generator=ukify'
+        } >> /etc/kernel/install.conf
+
+        echo "$TEST_KERNEL_CMDLINE root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root" >> /etc/kernel/cmdline
+
+        # enable test dracut config
+        cp "${basedir}"/dracut.conf.d/test/* "${basedir}"/dracut.conf.d/uki-virt/* /usr/lib/dracut/dracut.conf.d/
+        echo 'add_drivers+=" squashfs "' >> /usr/lib/dracut/dracut.conf.d/extra.conf
+
+        # using kernell-install to invoke dracut
+        mkdir -p "$BOOT_ROOT/$TOKEN/$KVERSION" "$BOOT_ROOT/loader/entries"
+        kernel-install add-all
+
+        mv "$TESTDIR"/EFI/Linux/*.efi "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
+
+        return 0
+    fi
+
     # test with the reference uki config when systemd is available
     if command -v systemctl &> /dev/null; then
         cp "${basedir}"/dracut.conf.d/uki-virt/* "$TESTDIR"/dracut.conf.d/
@@ -61,26 +92,21 @@ test_setup() {
     if command -v ukify &> /dev/null; then
         echo "Using ukify to create UKI"
         test_dracut --no-uefi \
-            --drivers 'squashfs' \
-            "$TESTDIR"/initramfs.testing
+            --drivers 'squashfs'
 
         ukify build \
             --linux="$VMLINUZ" \
             --initrd="$TESTDIR"/initramfs.testing \
-            --cmdline='root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root' \
+            --cmdline="$TEST_KERNEL_CMDLINE root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root" \
             --output="$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
     else
         echo "Using dracut to create UKI"
         test_dracut \
-            --kernel-cmdline 'root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root' \
+            --kernel-cmdline "$TEST_KERNEL_CMDLINE root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root" \
             --drivers 'squashfs' \
             --uefi \
             "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
     fi
-}
-
-test_cleanup() {
-    return 0
 }
 
 # shellcheck disable=SC1090

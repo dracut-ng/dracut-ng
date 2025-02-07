@@ -395,8 +395,7 @@ test_setup() {
     # Make client's dracut image
     test_dracut \
         --no-hostonly --no-hostonly-cmdline \
-        -a "dmsquash-live ${USE_NETWORK}" \
-        "$TESTDIR"/initramfs.testing
+        -a "dmsquash-live ${USE_NETWORK}"
 
     (
         # shellcheck disable=SC2031
@@ -409,7 +408,7 @@ test_setup() {
     )
     # Make server's dracut image
     "$DRACUT" -i "$TESTDIR"/overlay / \
-        -a "bash rootfs-block kernel-modules watchdog qemu network-legacy ${SERVER_DEBUG:+debug}" \
+        -a "network-legacy ${SERVER_DEBUG:+debug}" \
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod i6300esb virtio_net" \
         --no-hostonly-cmdline -N \
         -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1

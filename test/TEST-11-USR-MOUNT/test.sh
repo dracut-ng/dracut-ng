@@ -29,7 +29,7 @@ client_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=LABEL=dracut $client_opts" \
+        -append "$TEST_KERNEL_CMDLINE $client_opts" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     if ! test_marker_check; then
@@ -82,8 +82,7 @@ test_setup() {
     fi
 
     test_dracut \
-        -d "btrfs" \
-        "$TESTDIR"/initramfs.testing
+        -d "btrfs"
 }
 
 # shellcheck disable=SC1090

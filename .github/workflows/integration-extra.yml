@@ -16,7 +16,7 @@ jobs:
     basic:
         # run this test on all containers
         name: ${{ matrix.test }} on ${{ matrix.container }}
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
             group: basic-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
@@ -25,21 +25,21 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - alpine
+                    - alpine:latest
                     - alpine:edge
-                    - arch
-                    - debian
+                    - arch:latest
+                    - debian:latest
                     - debian:sid
-                    - fedora
+                    - fedora:latest
                     - fedora:rawhide
                     - centos:stream10-development
-                    - gentoo
+                    - gentoo:latest
                     - gentoo:amd64-openrc
-                    - opensuse
-                    - ubuntu
+                    - opensuse:latest
+                    - ubuntu:latest
                     - ubuntu:devel
                     - ubuntu:rolling
-                    - void
+                    - void:latest
                 test:
                     - "10"
                     - "11"
@@ -51,14 +51,15 @@ jobs:
                     - "40"
                     - "41"
                     - "42"
+                    - "43"
                     - "80"
                     - "81"
                     - "82"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm --privileged'
         steps:
             - name: "Checkout Repository"
               uses: actions/checkout@v4
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}

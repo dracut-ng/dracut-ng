@@ -36,4 +36,4 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v4
             - name: doc on "${{ matrix.container }}"
-              run: TARGETS=all enable_documentation=yes ./test/test-github.sh
+              run: TARGETS=all enable_documentation=yes ./test/test-container.sh

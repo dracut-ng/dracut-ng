@@ -1,5 +1,5 @@
 # Test coverage provided by this container:
-# - hostonly
+# - default hostonly
 # - musl (instead of glibc)
 # - openrc (instead of systemd)
 # - eudev (instead of systemd-udev)
@@ -7,6 +7,7 @@
 # - busybox default shell (no dash installed)
 # - gzip compression
 # - dbus-daemon
+# - network: none
 
 # Not installed
 # - cargo (to increase coverage)
@@ -14,7 +15,8 @@
 # - ntfs-3g (not enabled with linux-virt)
 # - erofs-utils (not enabled with linux-virt)
 # - multipath-tools (does not work well)
-# - ovmf (systemd-boot-efistub is not available)
+# - ovmf (systemd-boot-efistub, UEFI, UKI is not available)
+# - kernel-install is not available
 # - networkmanager (does not work with dracut)
 
 ARG DISTRIBUTION=alpine
@@ -29,7 +31,6 @@ RUN apk add --no-cache \
     dracut-tests \
     file \
     gcc \
-    iputils \
     kmod \
     kmod-dev \
     linux-virt \
@@ -45,10 +46,8 @@ if [ "$DISTRIBUTION" = "alpine:edge" ] ; then \
     cpio \
     cryptsetup \
     device-mapper \
-    dmraid \
     elogind \
     gpg \
-    iputils \
     jq \
     kbd \
     keyutils \
@@ -63,4 +62,5 @@ if [ "$DISTRIBUTION" = "alpine:edge" ] ; then \
     squashfs-tools \
     util-linux-misc \
     util-linux-login \
+    xorriso \
 ; fi

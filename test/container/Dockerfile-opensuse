@@ -1,9 +1,12 @@
 # Test coverage provided by this container:
+# - arm64
+# - default hostonly
 # - network-legacy
 # - mkosi-initrd
 # - hmaccalc (fido)
 # - rdma out of tree dracut module
 # - dbus-broker
+# - network: network-legacy, network-manager
 
 FROM registry.opensuse.org/opensuse/tumbleweed:latest
 
@@ -17,7 +20,6 @@ RUN zypper --non-interactive install --no-recommends \
     dhcp-client \
     dhcp-server \
     distribution-gpg-keys \
-    dmraid \
     e2fsprogs \
     erofs-utils \
     gcc \
@@ -32,6 +34,7 @@ RUN zypper --non-interactive install --no-recommends \
     lvm2 \
     make \
     mdadm \
+    mkosi-initrd \
     nbd \
     NetworkManager \
     nfs-kernel-server \
@@ -48,13 +51,10 @@ RUN zypper --non-interactive install --no-recommends \
     tgt \
     tpm2.0-tools \
     util-linux-systemd \
+    xorriso \
     && zypper --non-interactive dist-upgrade --no-recommends
 
-# install mkosi from source
+# workaround for openSUSE on arm64
 RUN \
-  cd / \
-  && git clone https://github.com/systemd/mkosi \
-  && ln -s /mkosi/bin/mkosi /usr/bin/mkosi \
-  && ln -s /mkosi/bin/mkosi-initrd /usr/bin/mkosi-initrd \
-  && zypper --non-interactive remove busybox-diffutils busybox-less \
-  && /usr/bin/mkosi dependencies | xargs zypper --non-interactive install
+    KVERSION="$(cd /lib/modules && ls -1 | tail -1)" \
+    && if [ "$(arch)"="aarch64" ] && [ -e /usr/lib/modules/"$KVERSION"/Image ]; then ln -sf /usr/lib/modules/"$KVERSION"/Image /usr/lib/modules/"$KVERSION"/vmlinuz; fi

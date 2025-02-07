@@ -5,9 +5,9 @@
 # - zstd compression
 # - verbose logging for tests
 # - dbus-daemon
+# - network: network-legacy, network-manager, systemd-networkd
 
 # Not installed
-# - dmraid (no longer maintained, https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1056944)
 # - iscsiuio, open-iscsi (not yet working with dracut, https://bugs.launchpad.net/ubuntu/+source/open-iscsi/+bug/2072484)
 # - busybox-static
 
@@ -23,19 +23,14 @@ ENV V=2
 # Install dracut as a linux-initramfs-tool provider so that the default initramfs-tool package does not get installed
 RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --no-install-recommends dracut
 
-# extra packages for sid, ubuntu
-RUN if [ "${DISTRIBUTION}" ! = "debian:latest" ] ; then \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
-    network-manager \
-    systemd-ukify \
-    ; fi
-
 # extra packages for sid, rolling, devel
-RUN if [ "$DISTRIBUTION" = "debian:sid" ] || [ "${DISTRIBUTION}" = "ubuntu:rolling" ] || [ "${DISTRIBUTION}" = "ubuntu:devel" ] ; then \
+RUN if [ "$DISTRIBUTION" = "debian:sid" ] || [ "$DISTRIBUTION" = "ubuntu:rolling" ] || [ "$DISTRIBUTION" = "ubuntu:devel" ] ; then \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
     plymouth-themes \
+    network-manager \
     systemd-cryptsetup \
     systemd-repart \
+    systemd-ukify \
     ; fi
 
 RUN \
@@ -79,7 +74,9 @@ RUN \
     pcscd \
     pkg-config \
     procps \
+    qemu-efi-aarch64 \
     qemu-kvm \
+    qemu-system \
     rng-tools5 \
     squashfs-tools \
     swtpm \
@@ -92,6 +89,13 @@ RUN \
     tgt \
     thin-provisioning-tools \
     tpm2-tools \
+    xorriso \
     zstd \
     && apt-get clean \
     && chmod a+r /boot/vmlinu*
+
+# workaround for kernel-install
+RUN \
+    KVERSION="$(cd /lib/modules && ls -1 | tail -1)" \
+    ; if ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ]; then ln -sf /boot/vmlinuz /usr/lib/modules/"$KVERSION"/vmlinuz; fi  \
+    ; if ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ]; then ln -sf /boot/vmlinuz-"$KVERSION" /usr/lib/modules/"$KVERSION"/vmlinuz; fi

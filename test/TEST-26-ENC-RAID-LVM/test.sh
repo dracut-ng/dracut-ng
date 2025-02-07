@@ -100,8 +100,7 @@ test_setup() {
     test_dracut \
         -a "crypt lvm mdraid" \
         -i "/tmp/crypttab" "/etc/crypttab" \
-        -i "/tmp/key" "/etc/key" \
-        "$TESTDIR"/initramfs.testing
+        -i "/tmp/key" "/etc/key"
 }
 
 # shellcheck disable=SC1090

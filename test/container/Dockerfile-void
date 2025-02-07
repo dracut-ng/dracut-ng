@@ -1,13 +1,18 @@
 # Test coverage provided by this container:
+# - arm64
 # - dash default shell (instead of bash)
 # - runit (instead of systemd)
 # - eudev (instead of systemd-udev)
 # - elogind (instead of logind)
-# - uki (without systemd)
+# - UEFI boot, UKI (without systemd)
 # - zfs and zfs out of tree dracut module
 # - gzip compression
 # - clang
 # - dbus-daemon
+# - network: network-legacy, network-manager
+
+# Not installed
+# - kernel-install is not available
 
 FROM ghcr.io/void-linux/void-glibc-full
 
@@ -26,7 +31,6 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     cryptsetup \
     dhclient \
     dhcp \
-    dmraid \
     e2fsprogs \
     edk2-ovmf \
     elfutils \
@@ -49,10 +53,12 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     parted \
     pkg-config \
     plymouth \
-    qemu-system-amd64 \
+    qemu \
     squashfs-tools \
     systemd-boot-efistub \
     ncurses-base \
     ukify \
+    xorriso \
     zfs \
-    && rm -rf /var/cache/xbps
+    && rm -rf /var/cache/xbps \
+    && rm -rf /usr/lib/firmware

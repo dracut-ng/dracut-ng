@@ -33,7 +33,7 @@ client_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -smbios type=11,value=io.systemd.credential:key=test \
-        -append "$TEST_KERNEL_CMDLINE root=LABEL=dracut mount.usr=LABEL=dracutusr mount.usrflags=subvol=usr $client_opts $DEBUGOUT" \
+        -append "$TEST_KERNEL_CMDLINE mount.usr=LABEL=dracutusr mount.usrflags=subvol=usr $client_opts $DEBUGOUT" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
     if ! test_marker_check; then
@@ -123,10 +123,10 @@ test_setup() {
 
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
 
+    # force add all available dracut modules that are dependent on systemd
     test_dracut \
         -a "dracut-systemd $dracut_modules" \
-        --add-drivers "btrfs" \
-        "$TESTDIR"/initramfs.testing
+        --add-drivers "btrfs"
 
     if command -v mkosi-initrd &> /dev/null; then
         mkosi-initrd --kernel-version "$KVERSION" -t directory -o mkosi -O "$TESTDIR"

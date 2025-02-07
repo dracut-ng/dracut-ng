@@ -12,7 +12,7 @@ lvm vgcreate dracut /dev/mapper/dracut_crypt_test
 lvm lvcreate --yes -l 100%FREE -n root dracut
 lvm vgchange -ay
 udevadm settle
-mkfs.ext4 -q -L dracut -j /dev/dracut/root
+mkfs.ext4 -q -L dracut /dev/dracut/root
 mkdir -p /sysroot
 mount -t ext4 /dev/dracut/root /sysroot
 cp -a -t /sysroot /source/*
