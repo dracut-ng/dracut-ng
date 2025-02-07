@@ -72,7 +72,7 @@ test_setup() {
         dracut_modules="$dracut_modules dbus-daemon"
     fi
 
-    if [ -f /usr/lib/systemd/systemd-networkd ]; then
+    if [ -f /usr/lib/systemd/systemd-networkd ] && [ -e "${PKGLIBDIR}/modules.d/00systemd-network-management/module-setup.sh" ]; then
         dracut_modules="$dracut_modules systemd-network-management"
     fi
 
