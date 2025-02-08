@@ -15,5 +15,5 @@ check() {
 install() {
     inst_sysusers basic.conf
 
-    systemd-sysusers --root="$initdir"
+    systemd-sysusers --root="$initdir" > /dev/null
 }
