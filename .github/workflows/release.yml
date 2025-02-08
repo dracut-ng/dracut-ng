@@ -25,11 +25,3 @@ jobs:
 
       - name: Build
         run: bash ${GITHUB_WORKSPACE}/tools/release.sh ${{ inputs.tag }}
-
-      - name: Release
-        if: ${{ env.new_version }}
-        uses: softprops/action-gh-release@v2.2.1
-        with:
-          tag_name: ${{ env.new_version }}
-          name: dracut-${{ env.new_version }}
-          body_path: ${{ github.workspace }}/release.md

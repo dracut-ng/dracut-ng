@@ -58,7 +58,7 @@ if [ -z "$(git config --get user.name)" ]; then
 fi
 
 if [ -z "$(git config --get user.email)" ]; then
-    git config user.email "<dracutng@gombos.dev>"
+    git config user.email "<dracutng@localhost.localdomain>"
 fi
 
 # Check in AUTHORS and NEWS.md
@@ -69,17 +69,4 @@ if ! git push -u origin release; then
     exit $?
 fi
 
-# Tag the release, validate the tag and push
-KEYS=$(gpg --list-secret-keys --keyid-format=long 2> /dev/null)
-
-if [ -z "$KEYS" ]; then
-    echo "Could not find gpg or gpg secrets, not signing the git tag."
-    git tag "$NEW_VERSION" -m "$NEW_VERSION"
-else
-    git tag -s "$NEW_VERSION" -m "$NEW_VERSION"
-    git tag -v "$NEW_VERSION"
-fi
-
-# export new version to Github Action
-# release will not be generated if pushing the tag failed
-git push --tags && echo "new_version=${NEW_VERSION,,}" >> "${GITHUB_ENV}"
+# tagging and release genaration is no longer automated
