@@ -56,7 +56,6 @@ install() {
     # use password for hostonly images to facilitate secure sulogin in emergency console
     [[ $hostonly ]] && pwshadow='x'
     grep '^root:' "$initdir/etc/passwd" > /dev/null 2>&1 || echo "root:$pwshadow:0:0::/root:/bin/sh" >> "$initdir/etc/passwd"
-    grep '^nobody:' "$dracutsysrootdir"/etc/passwd >> "$initdir/etc/passwd"
 
     [[ $hostonly ]] && grep '^root:' "$dracutsysrootdir"/etc/shadow >> "$initdir/etc/shadow"
 
