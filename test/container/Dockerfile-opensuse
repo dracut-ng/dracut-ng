@@ -4,7 +4,7 @@
 # - network-legacy
 # - mkosi-initrd
 # - hmaccalc (fido)
-# - rdma out of tree dracut module
+# - sshd, rdma out of tree dracut module
 # - dbus-broker
 # - network: network-legacy, network-manager
 
@@ -19,6 +19,7 @@ RUN zypper --non-interactive install --no-recommends \
     cryptsetup \
     dhcp-client \
     dhcp-server \
+    dracut-sshd \
     distribution-gpg-keys \
     e2fsprogs \
     erofs-utils \
