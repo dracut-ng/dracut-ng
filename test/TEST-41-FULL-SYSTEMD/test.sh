@@ -52,11 +52,16 @@ test_run() {
     # shellcheck source=$TESTDIR/luks.uuid
     . "$TESTDIR"/luks.uuid
 
-    # luks
-    client_run "encrypted root with rd.luks.uuid" "type=11,value=io.systemd.credential:key=test" \
-        "rw root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID rd.luks.key=/run/credentials/@system/key" || return 1
-    client_run "encrypted root with rd.luks.name" "type=11,value=io.systemd.credential:key=test" \
-        "rw root=/dev/mapper/crypt rd.luks.name=$ID_FS_UUID=crypt rd.luks.key=/run/credentials/@system/key" || return 1
+    if "$testdir"/run-qemu --supports -smbios; then
+        # luks
+        client_run "encrypted root with rd.luks.uuid" "type=11,value=io.systemd.credential:key=test" \
+            "rw root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID rd.luks.key=/run/credentials/@system/key" || return 1
+        client_run "encrypted root with rd.luks.name" "type=11,value=io.systemd.credential:key=test" \
+            "rw root=/dev/mapper/crypt rd.luks.name=$ID_FS_UUID=crypt rd.luks.key=/run/credentials/@system/key" || return 1
+    else
+        echo "CLIENT TEST: encrypted root with rd.luks.uuid [SKIPPED]"
+        echo "CLIENT TEST: encrypted root with rd.luks.name [SKIPPED]"
+    fi
     return 0
 }
 
