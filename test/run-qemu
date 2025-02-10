@@ -21,6 +21,12 @@ QEMU_CPU="${QEMU_CPU:-max}"
     exit 1
 }
 
+if test "${1-}" = "--supports"; then
+    option="$2"
+    "$BIN" -help | grep -q "^$option"
+    exit 0
+fi
+
 case "$ARCH" in
     aarch64 | arm64)
         ARGS+=(-M "virt,gic-version=max")

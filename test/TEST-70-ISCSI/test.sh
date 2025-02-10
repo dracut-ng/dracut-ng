@@ -90,11 +90,15 @@ do_test_run() {
         "rd.iscsi.initiator=$initiator" \
         || return 1
 
-    run_client "root=ibft" "ibft.table" \
-        "root=LABEL=singleroot" \
-        "rd.iscsi.ibft=1" \
-        "rd.iscsi.firmware=1" \
-        || return 1
+    if "$testdir"/run-qemu --supports -acpitable; then
+        run_client "root=ibft" "ibft.table" \
+            "root=LABEL=singleroot" \
+            "rd.iscsi.ibft=1" \
+            "rd.iscsi.firmware=1" \
+            || return 1
+    else
+        echo "CLIENT TEST: root=ibft [SKIPPED]"
+    fi
 
     echo "All tests passed [OK]"
     return 0
