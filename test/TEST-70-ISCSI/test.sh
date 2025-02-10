@@ -40,7 +40,8 @@ run_server() {
 
 run_client() {
     local test_name=$1
-    shift
+    local acpitable_file=$2
+    shift 2
     echo "CLIENT TEST START: $test_name"
 
     declare -a disk_args=()
@@ -53,7 +54,7 @@ run_client() {
         -net nic,macaddr=52:54:00:12:34:00,model=virtio \
         -net nic,macaddr=52:54:00:12:34:01,model=virtio \
         -net socket,connect=127.0.0.1:12330 \
-        -acpitable file=ibft.table \
+        ${acpitable_file:+-acpitable "file=${acpitable_file}"} \
         -append "$TEST_KERNEL_CMDLINE $*" \
         -initrd "$TESTDIR"/initramfs.testing
 
@@ -70,18 +71,18 @@ run_client() {
 do_test_run() {
     initiator=$(iscsi-iname)
 
-    run_client "root=dhcp" \
+    run_client "root=dhcp" "" \
         "root=/dev/root netroot=dhcp ip=enp0s1:dhcp" \
         "rd.iscsi.initiator=$initiator" \
         || return 1
 
-    run_client "netroot=iscsi target0" \
+    run_client "netroot=iscsi target0" "" \
         "root=LABEL=singleroot netroot=iscsi:192.168.50.1::::iqn.2009-06.dracut:target0" \
         "ip=192.168.50.101::192.168.50.1:255.255.255.0:iscsi-1:enp0s1:off" \
         "rd.iscsi.initiator=$initiator" \
         || return 1
 
-    run_client "netroot=iscsi target1 target2" \
+    run_client "netroot=iscsi target1 target2" "" \
         "root=LABEL=sysroot" \
         "ip=dhcp" \
         "netroot=iscsi:192.168.51.1::::iqn.2009-06.dracut:target1" \
@@ -89,7 +90,7 @@ do_test_run() {
         "rd.iscsi.initiator=$initiator" \
         || return 1
 
-    run_client "root=ibft" \
+    run_client "root=ibft" "ibft.table" \
         "root=LABEL=singleroot" \
         "rd.iscsi.ibft=1" \
         "rd.iscsi.firmware=1" \
