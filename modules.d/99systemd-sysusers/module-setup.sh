@@ -2,6 +2,9 @@
 # This file is part of dracut.
 # SPDX-License-Identifier: GPL-2.0-or-later
 
+# This module should be orders afer all modules that depends on it
+# This is to make sure that all inst_sysusers calls are in place before systemd-sysusers is called.
+
 # Prerequisite check(s) for module.
 check() {
     # If the binary(s) requirements are not fulfilled the module can't be installed.
