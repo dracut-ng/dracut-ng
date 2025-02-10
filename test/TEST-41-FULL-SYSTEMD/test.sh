@@ -17,7 +17,8 @@ test_check() {
 #DEBUGOUT="quiet systemd.log_level=debug systemd.log_target=console loglevel=77  rd.info rd.debug"
 client_run() {
     local test_name="$1"
-    shift
+    local smbios="$2"
+    shift 2
     local client_opts="$*"
 
     echo "CLIENT TEST START: $test_name"
@@ -31,8 +32,7 @@ client_run() {
 
     test_marker_reset
     "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -smbios type=11,value=io.systemd.credential:key=test \
+        "${disk_args[@]}" ${smbios:+-smbios "${smbios}"} \
         -append "$TEST_KERNEL_CMDLINE mount.usr=LABEL=dracutusr mount.usrflags=subvol=usr $client_opts $DEBUGOUT" \
         -initrd "$TESTDIR"/initramfs.testing || return 1
 
@@ -45,16 +45,18 @@ client_run() {
 
 test_run() {
     # mask services that require rw
-    client_run "readonly root" "ro systemd.mask=systemd-sysusers systemd.mask=systemd-timesyncd systemd.mask=systemd-resolved" || return 1
+    client_run "readonly root" "" "ro systemd.mask=systemd-sysusers systemd.mask=systemd-timesyncd systemd.mask=systemd-resolved" || return 1
 
-    client_run "writeable root" "rw" || return 1
+    client_run "writeable root" "" "rw" || return 1
 
     # shellcheck source=$TESTDIR/luks.uuid
     . "$TESTDIR"/luks.uuid
 
     # luks
-    client_run "encrypted root with rd.luks.uuid" "rw root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID rd.luks.key=/run/credentials/@system/key" || return 1
-    client_run "encrypted root with rd.luks.name" "rw root=/dev/mapper/crypt rd.luks.name=$ID_FS_UUID=crypt rd.luks.key=/run/credentials/@system/key" || return 1
+    client_run "encrypted root with rd.luks.uuid" "type=11,value=io.systemd.credential:key=test" \
+        "rw root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID rd.luks.key=/run/credentials/@system/key" || return 1
+    client_run "encrypted root with rd.luks.name" "type=11,value=io.systemd.credential:key=test" \
+        "rw root=/dev/mapper/crypt rd.luks.name=$ID_FS_UUID=crypt rd.luks.key=/run/credentials/@system/key" || return 1
     return 0
 }
 
