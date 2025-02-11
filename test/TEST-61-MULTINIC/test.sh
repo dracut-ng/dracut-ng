@@ -130,46 +130,46 @@ test_client() {
     client_test "MULTINIC root=nfs BOOTIF=" \
         00 01 02 \
         "root=nfs:192.168.50.1:/nfs/client BOOTIF=52-54-00-12-34-00" \
-        "enp0s1" || return 1
+        "lan0" || return 1
 
-    client_test "MULTINIC root=nfs BOOTIF= ip=enp0s3:dhcp" \
+    client_test "MULTINIC root=nfs BOOTIF= ip=lan2:dhcp" \
         00 01 02 \
-        "root=nfs:192.168.50.1:/nfs/client BOOTIF=52-54-00-12-34-00 ip=enp0s2:dhcp" \
-        "enp0s1 enp0s2" || return 1
+        "root=nfs:192.168.50.1:/nfs/client BOOTIF=52-54-00-12-34-00 ip=lan1:dhcp" \
+        "lan0 lan1" || return 1
 
     # PXE Style BOOTIF= with dhcp root-path
     client_test "MULTINIC root=dhcp BOOTIF=" \
         00 01 02 \
         "root=dhcp BOOTIF=52-54-00-12-34-02" \
-        "enp0s3" || return 1
+        "lan2" || return 1
 
     # Multinic case, where only one nic works
     client_test "MULTINIC root=nfs ip=dhcp" \
         FF 00 FE \
         "root=nfs:192.168.50.1:/nfs/client ip=dhcp" \
-        "enp0s2" || return 1
+        "lan0" || return 1
 
     # Require two interfaces
-    client_test "MULTINIC root=nfs ip=enp0s2:dhcp ip=enp0s3:dhcp bootdev=enp0s2" \
+    client_test "MULTINIC root=nfs ip=lan1:dhcp ip=lan2:dhcp bootdev=lan1" \
         00 01 02 \
-        "root=nfs:192.168.50.1:/nfs/client ip=enp0s2:dhcp ip=enp0s3:dhcp bootdev=enp0s2" \
-        "enp0s2 enp0s3" || return 1
+        "root=nfs:192.168.50.1:/nfs/client ip=lan1:dhcp ip=lan2:dhcp bootdev=lan1" \
+        "lan1 lan2" || return 1
 
     # Require three interfaces with dhcp root-path
-    client_test "MULTINIC root=dhcp ip=enp0s1:dhcp ip=enp0s2:dhcp ip=enp0s3:dhcp bootdev=enp0s3" \
+    client_test "MULTINIC root=dhcp ip=lan0:dhcp ip=lan1:dhcp ip=lan2:dhcp bootdev=lan2" \
         00 01 02 \
-        "root=dhcp ip=enp0s1:dhcp ip=enp0s2:dhcp ip=enp0s3:dhcp bootdev=enp0s3" \
-        "enp0s1 enp0s2 enp0s3" || return 1
+        "root=dhcp ip=lan0:dhcp ip=lan1:dhcp ip=lan2:dhcp bootdev=lan2" \
+        "lan0 lan1 lan2" || return 1
 
     client_test "MULTINIC bonding" \
         00 01 02 \
-        "root=nfs:192.168.50.1:/nfs/client ip=bond0:dhcp  bond=bond0:enp0s1,enp0s2,enp0s3:mode=balance-rr" \
+        "root=nfs:192.168.50.1:/nfs/client ip=bond0:dhcp  bond=bond0:lan0,lan1,lan2:mode=balance-rr" \
         "bond0" || return 1
 
     # bridge, where only one interface is actually connected
     client_test "MULTINIC bridging" \
         00 01 02 \
-        "root=nfs:192.168.50.1:/nfs/client ip=bridge0:dhcp::52:54:00:12:34:00 bridge=bridge0:enp0s1,enp0s5,enp0s6" \
+        "root=nfs:192.168.50.1:/nfs/client ip=bridge0:dhcp::52:54:00:12:34:00 bridge=bridge0:lan0,lan98,lan99" \
         "bridge0" || return 1
     return 0
 }
@@ -329,7 +329,13 @@ test_setup() {
         inst_multiple poweroff shutdown
         inst_hook shutdown-emergency 000 ./hard-off.sh
         inst_hook emergency 000 ./hard-off.sh
-        inst_simple ./client.link /etc/systemd/network/01-client.link
+        inst_simple ./client-persistent-lan0.link /etc/systemd/network/01-persistent-lan0.link
+        inst_simple ./client-persistent-lan1.link /etc/systemd/network/01-persistent-lan1.link
+        inst_simple ./client-persistent-lan2.link /etc/systemd/network/01-persistent-lan2.link
+        inst_simple ./client-persistent-lan98.link /etc/systemd/network/01-persistent-lan98.link
+        inst_simple ./client-persistent-lan99.link /etc/systemd/network/01-persistent-lan99.link
+        inst_simple ./client-persistent-lan254.link /etc/systemd/network/01-persistent-lan254.link
+        inst_simple ./client-persistent-lan255.link /etc/systemd/network/01-persistent-lan255.link
 
         inst_binary awk
     )
@@ -343,7 +349,7 @@ test_setup() {
         export initdir="$TESTDIR"/overlay
         # shellcheck disable=SC1090
         . "$PKGLIBDIR"/dracut-init.sh
-        rm "$initdir"/etc/systemd/network/01-client.link
+        rm "$initdir"/etc/systemd/network/01-persistent-lan*.link
         inst_simple ./server.link /etc/systemd/network/01-server.link
         inst_hook pre-mount 99 ./wait-if-server.sh
     )
