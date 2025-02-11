@@ -3,7 +3,7 @@
 command -v wait_for_dev > /dev/null || . /lib/dracut-dev-lib.sh
 
 export DRACUT_SYSTEMD
-export NEWROOT
+export NEWROOT="${NEWROOT-}"
 if [ -n "$NEWROOT" ]; then
     [ -d "$NEWROOT" ] || mkdir -p -m 0755 "$NEWROOT"
 fi
