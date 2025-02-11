@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # This file is part of dracut.
 # SPDX-License-Identifier: GPL-2.0-or-later
+set -u
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="kernel cpio extraction tests for dracut-cpio"

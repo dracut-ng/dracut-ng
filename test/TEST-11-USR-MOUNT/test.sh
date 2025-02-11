@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -u
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on a btrfs filesystem with /usr subvolume"

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -u
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on LVM PV on a isw dmraid"
 

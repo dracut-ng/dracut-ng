@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -u
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="kernel-install with root filesystem on ext4 filesystem"
 
