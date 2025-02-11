@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Check which virtualization technology to use
 # We prefer kvm, kqemu, userspace in that order.
+set -eu
 
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 ARCH="${ARCH-$(uname -m)}"
@@ -19,6 +20,12 @@ QEMU_CPU="${QEMU_CPU:-max}"
     echo "Please install kvm or qemu." >&2
     exit 1
 }
+
+if test "${1-}" = "--supports"; then
+    option="$2"
+    "$BIN" -help | grep -q "^$option"
+    exit 0
+fi
 
 case "$ARCH" in
     aarch64 | arm64)
