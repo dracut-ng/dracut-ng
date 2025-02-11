@@ -72,13 +72,13 @@ do_test_run() {
     initiator=$(iscsi-iname)
 
     run_client "root=dhcp" "" \
-        "root=/dev/root netroot=dhcp ip=enp0s1:dhcp" \
+        "root=/dev/root netroot=dhcp ip=lan0:dhcp" \
         "rd.iscsi.initiator=$initiator" \
         || return 1
 
     run_client "netroot=iscsi target0" "" \
         "root=LABEL=singleroot netroot=iscsi:192.168.50.1::::iqn.2009-06.dracut:target0" \
-        "ip=192.168.50.101::192.168.50.1:255.255.255.0:iscsi-1:enp0s1:off" \
+        "ip=192.168.50.101::192.168.50.1:255.255.255.0:iscsi-1:lan0:off" \
         "rd.iscsi.initiator=$initiator" \
         || return 1
 
@@ -222,7 +222,8 @@ test_setup() {
     test_dracut \
         --no-hostonly --no-hostonly-cmdline \
         --add "$USE_NETWORK" \
-        --include "./client.link" "/etc/systemd/network/01-client.link" \
+        --include "./client-persistent-lan0.link" "/etc/systemd/network/01-persistent-lan0.link" \
+        --include "./client-persistent-lan1.link" "/etc/systemd/network/01-persistent-lan1.link" \
         --kernel-cmdline "rw rd.auto"
 }
 

@@ -67,8 +67,8 @@ do_test_run() {
     initiator=$(iscsi-iname)
     run_client "netroot=iscsi target1 target2" \
         "root=LABEL=sysroot" \
-        "ip=192.168.50.101:::255.255.255.0::enp0s1:off" \
-        "ip=192.168.51.101:::255.255.255.0::enp0s2:off" \
+        "ip=192.168.50.101:::255.255.255.0::lan0:off" \
+        "ip=192.168.51.101:::255.255.255.0::lan1:off" \
         "netroot=iscsi:192.168.51.1::::iqn.2009-06.dracut:target1" \
         "netroot=iscsi:192.168.50.1::::iqn.2009-06.dracut:target2" \
         "rd.iscsi.initiator=$initiator" \
@@ -76,8 +76,8 @@ do_test_run() {
 
     run_client "netroot=iscsi target1 target2 rd.iscsi.waitnet=0" \
         "root=LABEL=sysroot" \
-        "ip=192.168.50.101:::255.255.255.0::enp0s1:off" \
-        "ip=192.168.51.101:::255.255.255.0::enp0s2:off" \
+        "ip=192.168.50.101:::255.255.255.0::lan0:off" \
+        "ip=192.168.51.101:::255.255.255.0::lan1:off" \
         "netroot=iscsi:192.168.51.1::::iqn.2009-06.dracut:target1" \
         "netroot=iscsi:192.168.50.1::::iqn.2009-06.dracut:target2" \
         "rd.iscsi.firmware" \
@@ -87,8 +87,8 @@ do_test_run() {
 
     run_client "netroot=iscsi target1 target2 rd.iscsi.waitnet=0 rd.iscsi.testroute=0" \
         "root=LABEL=sysroot" \
-        "ip=192.168.50.101:::255.255.255.0::enp0s1:off" \
-        "ip=192.168.51.101:::255.255.255.0::enp0s2:off" \
+        "ip=192.168.50.101:::255.255.255.0::lan0:off" \
+        "ip=192.168.51.101:::255.255.255.0::lan1:off" \
         "netroot=iscsi:192.168.51.1::::iqn.2009-06.dracut:target1" \
         "netroot=iscsi:192.168.50.1::::iqn.2009-06.dracut:target2" \
         "rd.iscsi.firmware" \
@@ -98,8 +98,8 @@ do_test_run() {
 
     run_client "netroot=iscsi target1 target2 rd.iscsi.waitnet=0 rd.iscsi.testroute=0 default GW" \
         "root=LABEL=sysroot" \
-        "ip=192.168.50.101::192.168.50.1:255.255.255.0::enp0s1:off" \
-        "ip=192.168.51.101::192.168.51.1:255.255.255.0::enp0s2:off" \
+        "ip=192.168.50.101::192.168.50.1:255.255.255.0::lan0:off" \
+        "ip=192.168.51.101::192.168.51.1:255.255.255.0::lan1:off" \
         "netroot=iscsi:192.168.51.1::::iqn.2009-06.dracut:target1" \
         "netroot=iscsi:192.168.50.1::::iqn.2009-06.dracut:target2" \
         "rd.iscsi.firmware" \
@@ -223,7 +223,8 @@ test_setup() {
     test_dracut \
         --no-hostonly --no-hostonly-cmdline \
         --add "$USE_NETWORK" \
-        -i "./client.link" "/etc/systemd/network/01-client.link"
+        -i ./client-persistent-lan0.link /etc/systemd/network/01-persistent-lan0.link \
+        -i ./client-persistent-lan1.link /etc/systemd/network/01-persistent-lan1.link
 
     # Make server's dracut image
     "$DRACUT" -i "$TESTDIR"/overlay / \
