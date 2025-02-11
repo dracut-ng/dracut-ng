@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -eu
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem over multiple iSCSI with $USE_NETWORK"
@@ -26,11 +27,11 @@ run_server() {
         -net socket,listen=127.0.0.1:12331 \
         -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_serverroot rootfstype=ext4 rw console=ttyS0,115200n81 $SERVER_DEBUG" \
         -initrd "$TESTDIR"/initramfs.server \
-        -pidfile "$TESTDIR"/server.pid -daemonize || return 1
-    chmod 644 "$TESTDIR"/server.pid || return 1
+        -pidfile "$TESTDIR"/server.pid -daemonize
+    chmod 644 "$TESTDIR"/server.pid
 
     if ! [[ $SERIAL ]]; then
-        wait_for_server_startup || return 1
+        wait_for_server_startup
     else
         echo Sleeping 10 seconds to give the server a head start
         sleep 10
@@ -71,8 +72,7 @@ do_test_run() {
         "ip=192.168.51.101:::255.255.255.0::enp0s2:off" \
         "netroot=iscsi:192.168.51.1::::iqn.2009-06.dracut:target1" \
         "netroot=iscsi:192.168.50.1::::iqn.2009-06.dracut:target2" \
-        "rd.iscsi.initiator=$initiator" \
-        || return 1
+        "rd.iscsi.initiator=$initiator"
 
     run_client "netroot=iscsi target1 target2 rd.iscsi.waitnet=0" \
         "root=LABEL=sysroot" \
@@ -82,8 +82,7 @@ do_test_run() {
         "netroot=iscsi:192.168.50.1::::iqn.2009-06.dracut:target2" \
         "rd.iscsi.firmware" \
         "rd.iscsi.initiator=$initiator" \
-        "rd.iscsi.waitnet=0" \
-        || return 1
+        "rd.iscsi.waitnet=0"
 
     run_client "netroot=iscsi target1 target2 rd.iscsi.waitnet=0 rd.iscsi.testroute=0" \
         "root=LABEL=sysroot" \
@@ -93,8 +92,7 @@ do_test_run() {
         "netroot=iscsi:192.168.50.1::::iqn.2009-06.dracut:target2" \
         "rd.iscsi.firmware" \
         "rd.iscsi.initiator=$initiator" \
-        "rd.iscsi.waitnet=0 rd.iscsi.testroute=0" \
-        || return 1
+        "rd.iscsi.waitnet=0 rd.iscsi.testroute=0"
 
     run_client "netroot=iscsi target1 target2 rd.iscsi.waitnet=0 rd.iscsi.testroute=0 default GW" \
         "root=LABEL=sysroot" \
@@ -104,8 +102,7 @@ do_test_run() {
         "netroot=iscsi:192.168.50.1::::iqn.2009-06.dracut:target2" \
         "rd.iscsi.firmware" \
         "rd.iscsi.initiator=$initiator" \
-        "rd.iscsi.waitnet=0 rd.iscsi.testroute=0" \
-        || return 1
+        "rd.iscsi.waitnet=0 rd.iscsi.testroute=0"
 
     echo "All tests passed [OK]"
     return 0
@@ -148,7 +145,7 @@ test_setup() {
         --add-confdir test-root \
         -I "ip grep setsid" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.root "$KVERSION"
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/nfs/rpc_pipefs
     cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
@@ -163,7 +160,7 @@ test_setup() {
         -I "setsid blockdev" \
         -i ./create-client-root.sh /lib/dracut/hooks/initqueue/01-create-client-root.sh \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
     rm -rf -- "$TESTDIR"/overlay
 
     declare -a disk_args=()
@@ -177,8 +174,8 @@ test_setup() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "root=/dev/fakeroot rw rootfstype=ext4 quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-    test_marker_check dracut-root-block-created || return 1
+        -initrd "$TESTDIR"/initramfs.makeroot
+    test_marker_check dracut-root-block-created
     rm -- "$TESTDIR"/marker.img
 
     rm -rf -- "$TESTDIR"/overlay
@@ -190,7 +187,7 @@ test_setup() {
         --install-optional "/etc/netconfig dhcpd /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
         -i /tmp/config /etc/nbd-server/config \
         -i "./dhcpd.conf" "/etc/dhcpd.conf" \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.root "$KVERSION"
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/dhcpd "$TESTDIR"/overlay/source/etc/iscsi
@@ -203,7 +200,7 @@ test_setup() {
     "$DRACUT" -N -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
     rm -rf -- "$TESTDIR"/overlay
 
     declare -a disk_args=()
@@ -216,8 +213,8 @@ test_setup() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "root=/dev/dracut/root rw rootfstype=ext4 quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-    test_marker_check dracut-root-block-created || return 1
+        -initrd "$TESTDIR"/initramfs.makeroot
+    test_marker_check dracut-root-block-created
     rm -- "$TESTDIR"/marker.img
 
     # Make client's dracut image
@@ -233,7 +230,7 @@ test_setup() {
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.server "$KVERSION"
 }
 
 test_cleanup() {

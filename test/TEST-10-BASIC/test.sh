@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -eu
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on ext4 filesystem"
 
@@ -14,16 +15,16 @@ test_run() {
     "$testdir"/run-qemu -nic none \
         "${disk_args[@]}" \
         -append "$TEST_KERNEL_CMDLINE" \
-        -initrd "$TESTDIR"/initramfs.testing || return 1
+        -initrd "$TESTDIR"/initramfs.testing
 
-    test_marker_check || return 1
+    test_marker_check
 }
 
 test_setup() {
     # create root filesystem
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.root "$KVERSION"
 
     dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync

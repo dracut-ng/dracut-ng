@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # This file is part of dracut.
 # SPDX-License-Identifier: GPL-2.0-or-later
+set -eu
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="test skipcpio"
@@ -65,8 +66,7 @@ test_run() {
 }
 
 test_setup() {
-    CPIO_TESTDIR=$(mktemp --directory -p "$TESTDIR" cpio-test.XXXXXXXXXX) \
-        || return 1
+    CPIO_TESTDIR=$(mktemp --directory -p "$TESTDIR" cpio-test.XXXXXXXXXX)
     export CPIO_TESTDIR
     return 0
 }
