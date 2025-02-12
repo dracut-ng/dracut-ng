@@ -59,9 +59,7 @@ test_run() {
 
         INVALIDKEYS=("key" "4" "5" "6" "key8" "9" '"' "baz")
         for key in "${INVALIDKEYS[@]}"; do
-            val=$(./dracut-getarg "$key")
-            # shellcheck disable=SC2181
-            if (($? == 0)); then
+            if val=$(./dracut-getarg "$key"); then
                 echo "key '$key' should not be found"
                 ret=$((ret + 1))
             fi
