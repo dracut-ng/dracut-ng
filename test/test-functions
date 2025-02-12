@@ -11,7 +11,6 @@ echo "TESTDIR=\"$TESTDIR\"" > .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
 export TESTDIR
 export BOOT_ROOT="$TESTDIR"
 
-[ -z "$USE_NETWORK" ] && USE_NETWORK="network"
 [ -z "$TEST_FSTYPE" ] && TEST_FSTYPE="ext4"
 
 if [[ -z $basedir ]]; then basedir="$(realpath ../..)"; fi

@@ -3,6 +3,8 @@
 # ex: ts=8 sw=4 sts=4 et filetype=sh
 set -e
 
+[ -z "${USE_NETWORK-}" ] && USE_NETWORK="network"
+
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on NFS with bridging/bonding/vlan with $USE_NETWORK"
 

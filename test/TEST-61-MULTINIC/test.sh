@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+[ -z "${USE_NETWORK-}" ] && USE_NETWORK="network"
+
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on NFS with multiple nics with $USE_NETWORK"
 
