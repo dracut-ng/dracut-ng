@@ -225,7 +225,7 @@ qemu_add_drive() {
         -device "scsi-hd,bus=scsi${index}.0,drive=drive-data${index},id=data${index},${bootindex:+bootindex=$bootindex,}serial=${name}" \
         ')'
 
-    [ $(("${1}++")) -ne 0 ]
+    : $(("${1}++"))
 }
 
 test_marker_reset() {
