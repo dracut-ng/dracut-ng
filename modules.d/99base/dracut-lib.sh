@@ -340,7 +340,7 @@ splitsep() {
 }
 
 setdebug() {
-    [ -f /usr/lib/initrd-release ] || return
+    [ -f /usr/lib/initrd-release ] || return 0
     if [ -z "$RD_DEBUG" ]; then
         if [ -e /proc/cmdline ]; then
             RD_DEBUG=no
