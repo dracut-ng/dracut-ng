@@ -19,7 +19,9 @@ if [[ -z $basedir ]]; then basedir="$(realpath ../..)"; fi
 DRACUT=${DRACUT-dracut}
 PKGLIBDIR=${PKGLIBDIR-$basedir}
 
-[[ -f /etc/machine-id ]] && read -r TOKEN < /etc/machine-id
+if [[ -f /etc/machine-id ]]; then
+    read -r TOKEN < /etc/machine-id || true
+fi
 [ -z "$TOKEN" ] && . /etc/os-release && TOKEN="$ID"
 
 TEST_KERNEL_CMDLINE+=" root=LABEL=dracut panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot $DEBUGFAIL "
