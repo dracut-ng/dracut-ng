@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on NBD with $USE_NETWORK"
@@ -45,11 +46,11 @@ run_server() {
         -net socket,listen=127.0.0.1:12340 \
         -append "panic=1 oops=panic softlockup_panic=1 rd.luks=0 systemd.crash_reboot quiet root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_serverroot rootfstype=ext4 rw console=ttyS0,115200n81 $SERVER_DEBUG" \
         -initrd "$TESTDIR"/initramfs.server \
-        -pidfile "$TESTDIR"/server.pid -daemonize || return 1
-    chmod 644 "$TESTDIR"/server.pid || return 1
+        -pidfile "$TESTDIR"/server.pid -daemonize
+    chmod 644 "$TESTDIR"/server.pid
 
     if ! [[ $SERIAL ]]; then
-        wait_for_server_startup || return 1
+        wait_for_server_startup
     else
         echo Sleeping 10 seconds to give the server a head start
         sleep 10
@@ -127,39 +128,39 @@ client_run() {
     # The default is ext4,errors=continue so use that to determine
     # if our options were parsed and used
     client_test "NBD root=nbd:IP:port" 52:54:00:12:34:00 \
-        "root=nbd:192.168.50.1:raw rd.luks=0" || return 1
+        "root=nbd:192.168.50.1:raw rd.luks=0"
 
     client_test "NBD root=nbd:IP:port::fsopts" 52:54:00:12:34:00 \
         "root=nbd:192.168.50.1:raw::errors=panic rd.luks=0" \
-        ext4 errors=panic || return 1
+        ext4 errors=panic
 
     client_test "NBD root=nbd:IP:port:fstype" 52:54:00:12:34:00 \
-        "root=nbd:192.168.50.1:raw:ext4 rd.luks=0" ext4 || return 1
+        "root=nbd:192.168.50.1:raw:ext4 rd.luks=0" ext4
 
     client_test "NBD root=nbd:IP:port:fstype:fsopts" 52:54:00:12:34:00 \
         "root=nbd:192.168.50.1:raw:ext4:errors=panic rd.luks=0" \
-        ext4 errors=panic || return 1
+        ext4 errors=panic
 
     # DHCP root-path parsing
 
     client_test "NBD root=/dev/root netroot=dhcp DHCP root-path nbd:srv:port" 52:54:00:12:34:01 \
-        "root=/dev/root netroot=dhcp ip=dhcp rd.luks=0" || return 1
+        "root=/dev/root netroot=dhcp ip=dhcp rd.luks=0"
 
     # BROKEN
     #client_test "NBD root=/dev/root netroot=dhcp DHCP root-path nbd:srv:port:fstype" \
-    #    52:54:00:12:34:02 "root=/dev/root netroot=dhcp ip=dhcp rd.luks=0" ext2 || return 1
+    #    52:54:00:12:34:02 "root=/dev/root netroot=dhcp ip=dhcp rd.luks=0" ext2
 
     client_test "NBD root=/dev/root netroot=dhcp DHCP root-path nbd:srv:port::fsopts" \
-        52:54:00:12:34:03 "root=/dev/root netroot=dhcp ip=dhcp rd.luks=0" ext4 errors=panic || return 1
+        52:54:00:12:34:03 "root=/dev/root netroot=dhcp ip=dhcp rd.luks=0" ext4 errors=panic
 
     # BROKEN
     #client_test "NBD root=/dev/root netroot=dhcp DHCP root-path nbd:srv:port:fstype:fsopts" \
-    #    52:54:00:12:34:04 "root=/dev/root netroot=dhcp ip=dhcp rd.luks=0" ext2 errors=panic || return 1
+    #    52:54:00:12:34:04 "root=/dev/root netroot=dhcp ip=dhcp rd.luks=0" ext2 errors=panic
 
     # netroot handling
 
     client_test "NBD netroot=nbd:IP:port" 52:54:00:12:34:00 \
-        "root=LABEL=dracut netroot=nbd:192.168.50.1:raw ip=dhcp rd.luks=0" || return 1
+        "root=LABEL=dracut netroot=nbd:192.168.50.1:raw ip=dhcp rd.luks=0"
 
     # Encrypted root handling via LVM/LUKS over NBD
 
@@ -168,14 +169,14 @@ client_run() {
 
     client_test "NBD root=LABEL=dracut netroot=nbd:IP:port" \
         52:54:00:12:34:00 \
-        "root=LABEL=dracut rd.luks.uuid=$ID_FS_UUID rd.lv.vg=dracut ip=dhcp netroot=nbd:192.168.50.1:encrypted" || return 1
+        "root=LABEL=dracut rd.luks.uuid=$ID_FS_UUID rd.lv.vg=dracut ip=dhcp netroot=nbd:192.168.50.1:encrypted"
 
     # XXX This should be ext4,errors=panic but that doesn't currently
     # XXX work when you have a real root= line in addition to netroot=
     # XXX How we should work here needs clarification
     #    client_test "NBD root=LABEL=dracut netroot=dhcp (w/ fstype and opts)" \
     #                52:54:00:12:34:05 \
-    #                "root=LABEL=dracut rd.luks.uuid=$ID_FS_UUID rd.lv.vg=dracut netroot=dhcp" || return 1
+    #                "root=LABEL=dracut rd.luks.uuid=$ID_FS_UUID rd.lv.vg=dracut netroot=dhcp"
 
     if [[ -s server.pid ]]; then
         kill -TERM "$(cat "$TESTDIR"/server.pid)"
@@ -191,7 +192,7 @@ make_encrypted_root() {
         --add-confdir test-root \
         -I "ip grep" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.root "$KVERSION"
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
     cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
 
@@ -205,7 +206,7 @@ make_encrypted_root() {
         -I "cryptsetup" \
         -i ./create-encrypted-root.sh /lib/dracut/hooks/initqueue/01-create-encrypted-root.sh \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
     rm -rf -- "$TESTDIR"/overlay
 
     declare -a disk_args=()
@@ -217,8 +218,8 @@ make_encrypted_root() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "root=/dev/fakeroot rw quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-    test_marker_check dracut-root-block-created || return 1
+        -initrd "$TESTDIR"/initramfs.makeroot
+    test_marker_check dracut-root-block-created
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
 }
 
@@ -228,7 +229,7 @@ make_client_root() {
         --add-confdir test-root \
         -I "ip" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.root "$KVERSION"
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
     cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
 
@@ -241,7 +242,7 @@ make_client_root() {
         -i ./create-client-root.sh /lib/dracut/hooks/initqueue/01-create-client-root.sh \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
 
     declare -a disk_args=()
     declare -i disk_index=0
@@ -252,8 +253,8 @@ make_client_root() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "root=/dev/dracut/root rw quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-    test_marker_check dracut-root-block-created || return 1
+        -initrd "$TESTDIR"/initramfs.makeroot
+    test_marker_check dracut-root-block-created
     rm -fr "$TESTDIR"/overlay
 }
 
@@ -280,7 +281,7 @@ EOF
         -i /tmp/config /etc/nbd-server/config \
         -i "./dhcpd.conf" "/etc/dhcpd.conf" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.root "$KVERSION"
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/dhcpd "$TESTDIR"/overlay/source/etc/nbd-server
@@ -296,7 +297,7 @@ EOF
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
 
     declare -a disk_args=()
     # shellcheck disable=SC2034  # disk_index used in qemu_add_drive
@@ -308,15 +309,15 @@ EOF
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "root=/dev/dracut/root rw rootfstype=ext4 quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-    test_marker_check dracut-root-block-created || return 1
+        -initrd "$TESTDIR"/initramfs.makeroot
+    test_marker_check dracut-root-block-created
     rm -fr "$TESTDIR"/overlay
 }
 
 test_setup() {
-    make_encrypted_root || return 1
-    make_client_root || return 1
-    make_server_root || return 1
+    make_encrypted_root
+    make_client_root
+    make_server_root
 
     rm -fr "$TESTDIR"/overlay
     # Make the test image
@@ -339,7 +340,7 @@ test_setup() {
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod drbg virtio_net" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
-        -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.server "$KVERSION"
 }
 
 kill_server() {

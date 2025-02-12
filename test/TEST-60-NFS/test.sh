@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on NFS with $USE_NETWORK"
@@ -32,11 +33,11 @@ run_server() {
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
         -append "panic=1 oops=panic softlockup_panic=1 root=LABEL=dracut rootfstype=ext4 rw console=ttyS0,115200n81 $SERVER_DEBUG" \
         -initrd "$TESTDIR"/initramfs.server \
-        -pidfile "$TESTDIR"/server.pid -daemonize || return 1
-    chmod 644 "$TESTDIR"/server.pid || return 1
+        -pidfile "$TESTDIR"/server.pid -daemonize
+    chmod 644 "$TESTDIR"/server.pid
 
     if ! [[ $SERIAL ]]; then
-        wait_for_server_startup || return 1
+        wait_for_server_startup
     else
         echo Sleeping 10 seconds to give the server a head start
         sleep 10
@@ -127,47 +128,47 @@ test_nfsv3() {
     # NFSv4: last octet starts at 0x80 and works up
 
     client_test "NFSv3 root=dhcp DHCP path only" 52:54:00:12:34:00 \
-        "root=dhcp" 192.168.50.1 -wsize=4096 || return 1
+        "root=dhcp" 192.168.50.1 -wsize=4096
 
     client_test "NFSv3 Legacy root=/dev/nfs nfsroot=IP:path" 52:54:00:12:34:01 \
-        "root=/dev/nfs nfsroot=192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096 || return 1
+        "root=/dev/nfs nfsroot=192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096
 
     client_test "NFSv3 Legacy root=/dev/nfs DHCP path only" 52:54:00:12:34:00 \
-        "root=/dev/nfs" 192.168.50.1 -wsize=4096 || return 1
+        "root=/dev/nfs" 192.168.50.1 -wsize=4096
 
     client_test "NFSv3 Legacy root=/dev/nfs DHCP IP:path" 52:54:00:12:34:01 \
-        "root=/dev/nfs" 192.168.50.2 -wsize=4096 || return 1
+        "root=/dev/nfs" 192.168.50.2 -wsize=4096
 
     client_test "NFSv3 root=dhcp DHCP IP:path" 52:54:00:12:34:01 \
-        "root=dhcp" 192.168.50.2 -wsize=4096 || return 1
+        "root=dhcp" 192.168.50.2 -wsize=4096
 
     client_test "NFSv3 root=dhcp DHCP proto:IP:path" 52:54:00:12:34:02 \
-        "root=dhcp" 192.168.50.3 -wsize=4096 || return 1
+        "root=dhcp" 192.168.50.3 -wsize=4096
 
     client_test "NFSv3 root=dhcp DHCP proto:IP:path:options" 52:54:00:12:34:03 \
-        "root=dhcp" 192.168.50.3 wsize=4096 || return 1
+        "root=dhcp" 192.168.50.3 wsize=4096
 
     client_test "NFSv3 root=nfs:..." 52:54:00:12:34:04 \
-        "root=nfs:192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096 || return 1
+        "root=nfs:192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096
 
     client_test "NFSv3 Bridge root=nfs:..." 52:54:00:12:34:04 \
-        "root=nfs:192.168.50.1:/nfs/client bridge net.ifnames=0" 192.168.50.1 -wsize=4096 || return 1
+        "root=nfs:192.168.50.1:/nfs/client bridge net.ifnames=0" 192.168.50.1 -wsize=4096
 
     client_test "NFSv3 Legacy root=IP:path" 52:54:00:12:34:04 \
-        "root=192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096 || return 1
+        "root=192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096
 
     client_test "NFSv3 root=dhcp DHCP path,options" 52:54:00:12:34:05 \
-        "root=dhcp" 192.168.50.1 wsize=4096 || return 1
+        "root=dhcp" 192.168.50.1 wsize=4096
 
     client_test "NFSv3 root=dhcp DHCP IP:path,options" 52:54:00:12:34:06 \
-        "root=dhcp" 192.168.50.2 wsize=4096 || return 1
+        "root=dhcp" 192.168.50.2 wsize=4096
 
     client_test "NFSv3 root=dhcp DHCP proto:IP:path,options" 52:54:00:12:34:07 \
-        "root=dhcp" 192.168.50.3 wsize=4096 || return 1
+        "root=dhcp" 192.168.50.3 wsize=4096
 
     # TODO FIXME
     #    client_test "NFSv3 Bridge Customized root=dhcp DHCP path,options" 52:54:00:12:34:05 \
-    #        "root=dhcp bridge=foobr0:enp0s1" 192.168.50.1 wsize=4096 || return 1
+    #        "root=dhcp bridge=foobr0:enp0s1" 192.168.50.1 wsize=4096
 
     return 0
 }
@@ -178,22 +179,22 @@ test_nfsv4() {
     # switch_root
 
     client_test "NFSv4 root=dhcp DHCP proto:IP:path" 52:54:00:12:34:82 \
-        "root=dhcp" 192.168.50.3 -wsize=4096 || return 1
+        "root=dhcp" 192.168.50.3 -wsize=4096
 
     client_test "NFSv4 root=dhcp DHCP proto:IP:path:options" 52:54:00:12:34:83 \
-        "root=dhcp" 192.168.50.3 wsize=4096 || return 1
+        "root=dhcp" 192.168.50.3 wsize=4096
 
     client_test "NFSv4 root=nfs4:..." 52:54:00:12:34:84 \
-        "root=nfs4:192.168.50.1:/client" 192.168.50.1 -wsize=4096 || return 1
+        "root=nfs4:192.168.50.1:/client" 192.168.50.1 -wsize=4096
 
     client_test "NFSv4 root=dhcp DHCP proto:IP:path,options" 52:54:00:12:34:87 \
-        "root=dhcp" 192.168.50.3 wsize=4096 || return 1
+        "root=dhcp" 192.168.50.3 wsize=4096
 
     client_test "NFSv4 Overlayfs root=nfs4:..." 52:54:00:12:34:84 \
-        "root=nfs4:192.168.50.1:/client rd.live.overlay.overlayfs=1 " 192.168.50.1 -wsize=4096 || return 1
+        "root=nfs4:192.168.50.1:/client rd.live.overlay.overlayfs=1 " 192.168.50.1 -wsize=4096
 
     client_test "NFSv4 Live Overlayfs root=nfs4:..." 52:54:00:12:34:84 \
-        "root=nfs4:192.168.50.1:/client rd.live.image rd.live.overlay.overlayfs=1" 192.168.50.1 -wsize=4096 || return 1
+        "root=nfs4:192.168.50.1:/client rd.live.image rd.live.overlay.overlayfs=1" 192.168.50.1 -wsize=4096
 
     return 0
 }
@@ -362,7 +363,7 @@ test_setup() {
         -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
     rm -rf -- "$TESTDIR"/server
 
     declare -a disk_args=()
@@ -375,8 +376,8 @@ test_setup() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "root=/dev/dracut/root rw rootfstype=ext4 quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-    test_marker_check dracut-root-block-created || return 1
+        -initrd "$TESTDIR"/initramfs.makeroot
+    test_marker_check dracut-root-block-created
 
     # Make an overlay with needed tools for the test harness
     (
@@ -411,7 +412,7 @@ test_setup() {
         -a "network-legacy ${SERVER_DEBUG:+debug}" \
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod i6300esb virtio_net" \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.server "$KVERSION"
 }
 
 test_cleanup() {

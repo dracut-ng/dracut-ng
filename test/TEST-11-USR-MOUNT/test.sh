@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on a btrfs filesystem with /usr subvolume"
@@ -30,7 +31,7 @@ client_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "$TEST_KERNEL_CMDLINE $client_opts" \
-        -initrd "$TESTDIR"/initramfs.testing || return 1
+        -initrd "$TESTDIR"/initramfs.testing
 
     if ! test_marker_check; then
         echo "CLIENT TEST END: $test_name [FAILED]"
@@ -40,9 +41,9 @@ client_run() {
 }
 
 test_run() {
-    client_run "no option specified" || return 1
-    client_run "readonly root" "ro" || return 1
-    client_run "writeable root" "rw" || return 1
+    client_run "no option specified"
+    client_run "readonly root" "ro"
+    client_run "writeable root" "rw"
 }
 
 test_setup() {
@@ -50,7 +51,7 @@ test_setup() {
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -i ./fstab /etc/fstab \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.root "$KVERSION"
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     # second, install the files needed to make the root filesystem
@@ -61,7 +62,7 @@ test_setup() {
         --add-confdir test-makeroot \
         -I "mkfs.btrfs" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
 
     # Create the blank file to use as a root filesystem
     declare -a disk_args=()
@@ -75,7 +76,7 @@ test_setup() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "root=/dev/dracut/root quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
+        -initrd "$TESTDIR"/initramfs.makeroot
 
     if ! test_marker_check dracut-root-block-created; then
         echo "Could not create root filesystem"

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # This file is part of dracut.
 # SPDX-License-Identifier: GPL-2.0-or-later
+set -e
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="kernel cpio extraction tests for dracut-cpio"
@@ -38,14 +39,14 @@ EOF
         -daemonize -pidfile "$tdir/vm.pid" \
         -serial "file:$tdir/console.out" \
         -append "panic=1 oops=panic softlockup_panic=1 console=ttyS0 rd.shell=1" \
-        -initrd "$tdir/initramfs" || return 1
+        -initrd "$tdir/initramfs"
 
     timeout=120
     while [[ -f $tdir/vm.pid ]] \
         && ps -p "$(head -n1 "$tdir/vm.pid")" > /dev/null; do
         echo "$timeout - awaiting VM shutdown"
         sleep 1
-        [[ $((timeout--)) -le 0 ]] && return 1
+        [[ $((timeout--)) -gt 0 ]]
     done
 
     cat "$tdir/console.out"
@@ -58,15 +59,14 @@ test_run() {
 
     # dracut-cpio is typically used with compression and strip disabled, to
     # increase the chance of (reflink) extent sharing.
-    test_dracut_cpio "simple" "--no-compress" "--nostrip" || return 1
+    test_dracut_cpio "simple" "--no-compress" "--nostrip"
     # dracut-cpio should still work fine with compression and stripping enabled
-    test_dracut_cpio "compress" "--gzip" "--nostrip" || return 1
-    test_dracut_cpio "strip" "--gzip" "--strip" || return 1
+    test_dracut_cpio "compress" "--gzip" "--nostrip"
+    test_dracut_cpio "strip" "--gzip" "--strip"
 }
 
 test_setup() {
-    CPIO_TESTDIR=$(mktemp --directory -p "$TESTDIR" cpio-test.XXXXXXXXXX) \
-        || return 1
+    CPIO_TESTDIR=$(mktemp --directory -p "$TESTDIR" cpio-test.XXXXXXXXXX)
     export CPIO_TESTDIR
     return 0
 }

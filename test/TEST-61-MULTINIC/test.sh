@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on NFS with multiple nics with $USE_NETWORK"
@@ -37,12 +38,12 @@ run_server() {
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
         -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=LABEL=dracut rootfstype=ext4 rw console=ttyS0,115200n81 $SERVER_DEBUG" \
         -initrd "$TESTDIR"/initramfs.server \
-        -pidfile "$TESTDIR"/server.pid -daemonize || return 1
+        -pidfile "$TESTDIR"/server.pid -daemonize
 
-    chmod 644 -- "$TESTDIR"/server.pid || return 1
+    chmod 644 -- "$TESTDIR"/server.pid
 
     if ! [[ $SERIAL ]]; then
-        wait_for_server_startup || return 1
+        wait_for_server_startup
     else
         echo Sleeping 10 seconds to give the server a head start
         sleep 10
@@ -78,7 +79,7 @@ client_test() {
         -device virtio-net-pci,netdev=n1,mac=52:54:00:12:34:98 \
         -device virtio-net-pci,netdev=n2,mac=52:54:00:12:34:99 \
         -append "$TEST_KERNEL_CMDLINE $cmdline ro init=/sbin/init systemd.log_target=console" \
-        -initrd "$TESTDIR"/initramfs.testing || return 1
+        -initrd "$TESTDIR"/initramfs.testing
 
     {
         read -r OK
@@ -130,47 +131,47 @@ test_client() {
     client_test "MULTINIC root=nfs BOOTIF=" \
         00 01 02 \
         "root=nfs:192.168.50.1:/nfs/client BOOTIF=52-54-00-12-34-00" \
-        "lan0" || return 1
+        "lan0"
 
     client_test "MULTINIC root=nfs BOOTIF= ip=lan2:dhcp" \
         00 01 02 \
         "root=nfs:192.168.50.1:/nfs/client BOOTIF=52-54-00-12-34-00 ip=lan1:dhcp" \
-        "lan0 lan1" || return 1
+        "lan0 lan1"
 
     # PXE Style BOOTIF= with dhcp root-path
     client_test "MULTINIC root=dhcp BOOTIF=" \
         00 01 02 \
         "root=dhcp BOOTIF=52-54-00-12-34-02" \
-        "lan2" || return 1
+        "lan2"
 
     # Multinic case, where only one nic works
     client_test "MULTINIC root=nfs ip=dhcp" \
         FF 00 FE \
         "root=nfs:192.168.50.1:/nfs/client ip=dhcp" \
-        "lan0" || return 1
+        "lan0"
 
     # Require two interfaces
     client_test "MULTINIC root=nfs ip=lan1:dhcp ip=lan2:dhcp bootdev=lan1" \
         00 01 02 \
         "root=nfs:192.168.50.1:/nfs/client ip=lan1:dhcp ip=lan2:dhcp bootdev=lan1" \
-        "lan1 lan2" || return 1
+        "lan1 lan2"
 
     # Require three interfaces with dhcp root-path
     client_test "MULTINIC root=dhcp ip=lan0:dhcp ip=lan1:dhcp ip=lan2:dhcp bootdev=lan2" \
         00 01 02 \
         "root=dhcp ip=lan0:dhcp ip=lan1:dhcp ip=lan2:dhcp bootdev=lan2" \
-        "lan0 lan1 lan2" || return 1
+        "lan0 lan1 lan2"
 
     client_test "MULTINIC bonding" \
         00 01 02 \
         "root=nfs:192.168.50.1:/nfs/client ip=bond0:dhcp  bond=bond0:lan0,lan1,lan2:mode=balance-rr" \
-        "bond0" || return 1
+        "bond0"
 
     # bridge, where only one interface is actually connected
     client_test "MULTINIC bridging" \
         00 01 02 \
         "root=nfs:192.168.50.1:/nfs/client ip=bridge0:dhcp::52:54:00:12:34:00 bridge=bridge0:lan0,lan98,lan99" \
-        "bridge0" || return 1
+        "bridge0"
     return 0
 }
 
@@ -302,7 +303,7 @@ test_setup() {
         -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
     rm -rf -- "$TESTDIR"/overlay
 
     declare -a disk_args=()
@@ -315,8 +316,8 @@ test_setup() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "root=/dev/dracut/root rw rootfstype=ext4 quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-    test_marker_check dracut-root-block-created || return 1
+        -initrd "$TESTDIR"/initramfs.makeroot
+    test_marker_check dracut-root-block-created
 
     # Make an overlay with needed tools for the test harness
     (
@@ -358,7 +359,7 @@ test_setup() {
         -m "bash rootfs-block kernel-modules watchdog qemu network-legacy ${SERVER_DEBUG:+debug}" \
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod nfsv2 nfsv3 nfsv4 nfs_acl nfs_layout_nfsv41_files nfsd i6300esb virtio_net" \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.server "$KVERSION"
 
 }
 
