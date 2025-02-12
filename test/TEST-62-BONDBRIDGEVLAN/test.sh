@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # -*- mode: shell-script; indent-tabs-mode: nil; sh-basic-offset: 4; -*-
 # ex: ts=8 sw=4 sts=4 et filetype=sh
+set -e
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on NFS with bridging/bonding/vlan with $USE_NETWORK"
@@ -60,11 +61,11 @@ run_server() {
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
         -append "panic=1 oops=panic softlockup_panic=1 root=LABEL=dracut rootfstype=ext4 rw console=ttyS0,115200n81" \
         -initrd "$TESTDIR"/initramfs.server \
-        -pidfile "$TESTDIR"/server.pid -daemonize || return 1
-    chmod 644 -- "$TESTDIR"/server.pid || return 1
+        -pidfile "$TESTDIR"/server.pid -daemonize
+    chmod 644 -- "$TESTDIR"/server.pid
 
     if ! [[ $SERIAL ]]; then
-        wait_for_server_startup || return 1
+        wait_for_server_startup
     else
         echo Sleeping 10 seconds to give the server a head start
         sleep 10
@@ -101,7 +102,7 @@ client_test() {
         ifname=net5:52:54:00:12:34:05
         $cmdline rd.net.timeout.dhcp=30
         rw init=/sbin/init" \
-        -initrd "$TESTDIR"/initramfs.testing || return 1
+        -initrd "$TESTDIR"/initramfs.testing
 
     {
         read -r OK _
@@ -114,7 +115,7 @@ client_test() {
             [[ $line == END ]] && break
             CONF+="$line "
         done
-    } < "$TESTDIR"/client.img || return 1
+    } < "$TESTDIR"/client.img
 
     if [[ $check != "$CONF" ]]; then
         echo "Expected: '$check'"
@@ -168,8 +169,7 @@ rd.neednet=1
 root=nfs:192.168.50.1:/nfs/client
 bootdev=net1
 " \
-        "net1 net2.0004 net2.3 vlan0001 vlan2 PING1=0 PING2=0 PING3=0 PING4=0 PING5=0 ${NETCONF}EOF " \
-        || return 1
+        "net1 net2.0004 net2.3 vlan0001 vlan2 PING1=0 PING2=0 PING3=0 PING4=0 PING5=0 ${NETCONF}EOF "
 
     ### TEST 2: bond
     if [ "$USE_NETWORK" = network-legacy ]; then
@@ -187,8 +187,7 @@ rd.neednet=1
 root=nfs:192.168.51.1:/nfs/client
 bootdev=bond0
 " \
-        "bond0 PING1=0 NET3=0 NET4=0 ${NETCONF}EOF " \
-        || return 1
+        "bond0 PING1=0 NET3=0 NET4=0 ${NETCONF}EOF "
 
     ### TEST 3: bridge
     if [ "$USE_NETWORK" = network-legacy ]; then
@@ -206,8 +205,7 @@ rd.neednet=1
 root=nfs:192.168.50.1:/nfs/client
 bootdev=br0
 " \
-        "br0 PING1=0 NET1=0 NET5=0 ${NETCONF}EOF " \
-        || return 1
+        "br0 PING1=0 NET1=0 NET5=0 ${NETCONF}EOF "
 
     kill_server
     return 0
@@ -348,7 +346,7 @@ test_setup() {
         -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
 
     declare -a disk_args=()
     # shellcheck disable=SC2034  # disk_index used in qemu_add_drive
@@ -360,8 +358,8 @@ test_setup() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "root=/dev/dracut/root rw rootfstype=ext4 quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-    test_marker_check dracut-root-block-created || return 1
+        -initrd "$TESTDIR"/initramfs.makeroot
+    test_marker_check dracut-root-block-created
     rm -- "$TESTDIR"/marker.img
     rm -fr "$TESTDIR"/overlay
 
@@ -396,7 +394,7 @@ test_setup() {
         -m "rootfs-block kernel-modules watchdog qemu network network-legacy ${SERVER_DEBUG:+debug}" \
         -d "ipvlan macvlan af_packet piix ide-gd_mod ata_piix ext4 sd_mod nfsv2 nfsv3 nfsv4 nfs_acl nfs_layout_nfsv41_files nfsd virtio-net i6300esb" \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.server "$KVERSION"
 }
 
 kill_server() {

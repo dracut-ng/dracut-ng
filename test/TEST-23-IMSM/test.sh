@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on LVM PV on a isw dmraid"
 
@@ -23,7 +24,7 @@ client_run() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "$TEST_KERNEL_CMDLINE $* root=LABEL=root" \
-        -initrd "$TESTDIR"/initramfs.testing || return 1
+        -initrd "$TESTDIR"/initramfs.testing
 
     if ! test_marker_check; then
         echo "CLIENT TEST END: $* [FAIL]"
@@ -41,14 +42,14 @@ test_run() {
         return 1
     fi
 
-    client_run rd.auto rd.md.imsm=0 || return 1
-    client_run rd.md.uuid="$MD_UUID" rd.dm=0 || return 1
+    client_run rd.auto rd.md.imsm=0
+    client_run rd.md.uuid="$MD_UUID" rd.dm=0
     # This test succeeds, because the mirror parts are found without
     # assembling the mirror itself, which is what we want
     client_run rd.md.uuid="$MD_UUID" rd.md=0 rd.md.imsm failme && return 1
     client_run rd.md.uuid="$MD_UUID" rd.md=0 failme && return 1
     # the following test hangs on newer md
-    client_run rd.md.uuid="$MD_UUID" rd.dm=0 rd.md.imsm rd.md.conf=0 || return 1
+    client_run rd.md.uuid="$MD_UUID" rd.dm=0 rd.md.imsm rd.md.conf=0
     return 0
 }
 
@@ -56,7 +57,7 @@ test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.root "$KVERSION"
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     # second, install the files needed to make the root filesystem
@@ -69,7 +70,7 @@ test_setup() {
         -d "piix ide-gd_mod ata_piix ext4 sd_mod dm-multipath dm-crypt dm-round-robin faulty linear multipath raid0 raid10 raid1 raid456" \
         -I "grep sfdisk realpath" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
 
     # Create the blank files to use as a root filesystem
     declare -a disk_args=()
@@ -83,8 +84,8 @@ test_setup() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "root=/dev/dracut/root quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-    test_marker_check dracut-root-block-created || return 1
+        -initrd "$TESTDIR"/initramfs.makeroot
+    test_marker_check dracut-root-block-created
     eval "$(grep -F --binary-files=text -m 1 MD_UUID "$TESTDIR"/marker.img)"
 
     if [[ -z $MD_UUID ]]; then

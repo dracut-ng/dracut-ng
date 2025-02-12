@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on LVM on encrypted partitions of a RAID"
 
@@ -35,7 +36,7 @@ test_run() {
         "${disk_args[@]}" \
         -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root ro rd.auto rootwait $LUKSARGS" \
         -initrd "$TESTDIR"/initramfs.testing
-    test_marker_check || return 1
+    test_marker_check
     echo "CLIENT TEST END: [OK]"
 
     test_marker_reset
@@ -45,7 +46,7 @@ test_run() {
         "${disk_args[@]}" \
         -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rd.auto" \
         -initrd "$TESTDIR"/initramfs.testing
-    test_marker_check || return 1
+    test_marker_check
     echo "CLIENT TEST END: [OK]"
 
     return 0
@@ -55,7 +56,7 @@ test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.root "$KVERSION"
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     # second, install the files needed to make the root filesystem
@@ -68,7 +69,7 @@ test_setup() {
         -a "bash crypt lvm mdraid" \
         -I "grep cryptsetup" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
 
     # Create the blank files to use as a root filesystem
     declare -a disk_args=()
@@ -81,8 +82,8 @@ test_setup() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "root=/dev/fakeroot quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-    test_marker_check dracut-root-block-created || return 1
+        -initrd "$TESTDIR"/initramfs.makeroot
+    test_marker_check dracut-root-block-created
     cryptoUUIDS=$(grep -F --binary-files=text -m 3 ID_FS_UUID "$TESTDIR"/marker.img)
     for uuid in $cryptoUUIDS; do
         eval "$uuid"
