@@ -1,5 +1,5 @@
 ---
-name: Daily Integration Tests (amd64)
+name: Daily Integration Tests (arm64)
 
 on:  # yamllint disable-line rule:truthy
     schedule:
