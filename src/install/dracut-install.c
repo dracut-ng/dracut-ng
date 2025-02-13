@@ -1703,7 +1703,7 @@ static void find_suppliers_for_sys_node(Hashmap *suppliers, const char *node_pat
 
 static void find_suppliers(struct kmod_ctx *ctx)
 {
-        _cleanup_fts_close_ FTS *fts;
+        _cleanup_fts_close_ FTS *fts = NULL;
         char *paths[] = { "/sys/devices/platform", NULL };
         fts = fts_open(paths, FTS_NOSTAT | FTS_PHYSICAL, NULL);
 
