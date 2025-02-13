@@ -244,6 +244,10 @@ iscsi:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]iscsi/*'
 
+isoscan:
+    - changed-files:
+          - any-glob-to-any-file: 'modules.d/[0-9][0-9]isoscan/*'
+
 kernel-modules:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]kernel-modules/*'
