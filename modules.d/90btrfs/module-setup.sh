@@ -18,7 +18,7 @@ check() {
 
 # called by dracut
 depends() {
-    echo udev-rules
+    echo udev-rules initqueue
     return 0
 }
 
