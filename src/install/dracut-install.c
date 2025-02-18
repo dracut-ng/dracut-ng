@@ -23,8 +23,10 @@
 #define _GNU_SOURCE
 #endif
 #include <ctype.h>
+#include <elf.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <fnmatch.h>
 #include <getopt.h>
 #include <glob.h>
 #include <libgen.h>
@@ -43,6 +45,11 @@
 #include <regex.h>
 #include <sys/utsname.h>
 #include <sys/xattr.h>
+#include <sys/mman.h>
+
+#ifdef HAVE_SYSTEMD
+#include <systemd/sd-json.h>
+#endif
 
 #include "log.h"
 #include "hashmap.h"
@@ -167,6 +174,25 @@ static inline void destroy_hashmap(Hashmap **hashmap)
 }
 
 #define _cleanup_destroy_hashmap_ _cleanup_(destroy_hashmap)
+
+/* Check whether the given key exists in the hash before duplicating and
+   inserting it. Assumes the value has already been duplicated and is no longer
+   needed if the insertion fails. */
+static int hashmap_put_strdup_key(Hashmap *h, const char *key, char *value)
+{
+        if (hashmap_get(h, key))
+                return 0;
+
+        char *nkey = strdup(key);
+
+        if (nkey && hashmap_put(h, nkey, value) != -ENOMEM)
+                return 0;
+
+        log_error("Out of memory");
+        free(nkey);
+        free(value);
+        return -ENOMEM;
+}
 
 static size_t dir_len(char const *file)
 {
@@ -515,7 +541,7 @@ static char *get_real_file(const char *src, bool fullyresolve)
         if (lstat(fullsrcpath, &sb) < 0)
                 return NULL;
 
-        switch (sb.st_mode & S_IFMT) {
+        switch (sb.st_mode &S_IFMT) {
         case S_IFDIR:
         case S_IFREG:
                 return strdup(fullsrcpath);
@@ -559,18 +585,328 @@ static char *get_real_file(const char *src, bool fullyresolve)
         return TAKE_PTR(abspath);
 }
 
-static int resolve_deps(const char *src)
+/* Check that the ELF header (ehdr) matches the other given ELF header in bits,
+   endianness, OS ABI, and soname, where B is 64 or 32 bit. The SYSV and GNU OS
+   ABIs are compatible, so allow either. Returns libpath if there is a match. */
+#define CHECK_LIB_MATCH_FOR_BITS(B, match) do { \
+        if (!match) \
+                goto finish; \
+\
+        Elf##B##_Ehdr *ehdr = (Elf##B##_Ehdr *)map; \
+        if (ehdr->e_ident[EI_CLASS] == match->e_ident[EI_CLASS] && \
+            ehdr->e_ident[EI_DATA] == match->e_ident[EI_DATA] && \
+            (ehdr->e_ident[EI_OSABI] == match->e_ident[EI_OSABI] || \
+             ehdr->e_ident[EI_OSABI] == ELFOSABI_SYSV || \
+             ehdr->e_ident[EI_OSABI] == ELFOSABI_GNU) && \
+            ehdr->e_machine == match->e_machine) { \
+                if (strcmp(basename, soname) == 0) { \
+                        munmap(map, sb.st_size); \
+                        return libpath; \
+                } \
+        } \
+} while (0)
+
+/* Check that the given path (dirname + basename) with the given soname matches
+   the given (64 or 32 bit) ELF header. Returns the path if there is a match. */
+static char *check_lib_match(const char *dirname, const char *basename, const char *soname, const Elf64_Ehdr *match64,
+                             const Elf32_Ehdr *match32)
+{
+        char *libpath = NULL;
+        _asprintf(&libpath, "%s/%s", dirname, basename);
+
+        _cleanup_close_ int fd = open(libpath, O_RDONLY | O_CLOEXEC);
+        if (fd < 0)
+                goto finish2;
+
+        struct stat sb;
+        if (fstat(fd, &sb) < 0)
+                goto finish2;
+
+        void *map = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+        if (map == MAP_FAILED)
+                goto finish2;
+
+        unsigned char *e_ident = (unsigned char *)map;
+        if (e_ident[EI_MAG0] != ELFMAG0 ||
+            e_ident[EI_MAG1] != ELFMAG1 ||
+            e_ident[EI_MAG2] != ELFMAG2 ||
+            e_ident[EI_MAG3] != ELFMAG3)
+                goto finish;
+
+        switch (e_ident[EI_CLASS]) {
+        case ELFCLASS32:
+                CHECK_LIB_MATCH_FOR_BITS(32, match32);
+                break;
+        case ELFCLASS64:
+                CHECK_LIB_MATCH_FOR_BITS(64, match64);
+                break;
+        }
+
+finish:
+        munmap(map, sb.st_size);
+finish2:
+        free(libpath);
+        return NULL;
+}
+
+/* Search the given library directory (within the sysroot) for a library
+   matching the given soname and (64 or 32 bit) ELF header. Returns the path
+   (with the sysroot) if there is a match. */
+static char *search_libdir(const char *libdir, const char *soname, const Elf64_Ehdr *match64, const Elf32_Ehdr *match32)
+{
+        _cleanup_free_ char *sysroot_libdir;
+        _asprintf(&sysroot_libdir, "%s%s", sysrootdir ?: "", libdir);
+        log_debug("Searching '%s' to find %s", sysroot_libdir, soname);
+
+        /* First check for a filename matching the soname. This is likely to
+           succeed and is very much faster than checking the sonames of every
+           library in the directory below. */
+        char *res = check_lib_match(sysroot_libdir, soname, soname, match64, match32);
+        if (res)
+                return res;
+
+        _cleanup_closedir_ DIR *dirp = opendir(sysroot_libdir);
+        if (!dirp)
+                return NULL;
+
+        struct dirent *entry;
+        while ((entry = readdir(dirp)) != NULL) {
+                if (entry->d_type != DT_REG && entry->d_type != DT_LNK)
+                        continue;
+
+                if (fnmatch("*.so*", entry->d_name, 0) != 0)
+                        continue;
+
+                res = check_lib_match(sysroot_libdir, entry->d_name, soname, match64, match32);
+                if (res)
+                        return res;
+        }
+
+        return NULL;
+}
+
+/* Read the given ldconf file(s) (within the sysroot, can be a glob pattern) to
+   search for a library matching the given soname and (64 or 32 bit) ELF header.
+   Returns the path (with the sysroot) if there is a match. */
+static char *search_via_ldconf(const char *conf_pattern, const char *soname, const Elf64_Ehdr *match64,
+                               const Elf32_Ehdr *match32)
+{
+        char line[PATH_MAX];
+        const char *include_prefix = "include ";
+        size_t include_prefix_len = strlen(include_prefix);
+
+        _cleanup_free_ char *sysroot_conf_pattern = NULL;
+        _asprintf(&sysroot_conf_pattern, "%s%s", sysrootdir ?: "", conf_pattern);
+        log_debug("Reading '%s' to find %s", sysroot_conf_pattern, soname);
+
+        _cleanup_globfree_ glob_t globbuf;
+        if (glob(sysroot_conf_pattern, 0, NULL, &globbuf) == 0) {
+                for (size_t i = 0; i < globbuf.gl_pathc; i++) {
+                        char *conf_path = globbuf.gl_pathv[i];
+                        _cleanup_fclose_ FILE *file = fopen(conf_path, "r");
+                        if (!file) {
+                                log_error("ERROR: cannot open '%s': %m", conf_path);
+                                return NULL;
+                        }
+
+                        const char *conf_dir = dirname(conf_path);
+
+                        while (fgets(line, sizeof(line), file)) {
+                                /* glibc and musl separate with newlines. */
+                                char *newline = strchr(line, '\n');
+                                if (newline)
+                                        *newline = '\0';
+
+                                /* musl also separates with colons. Do the same
+                                   with glibc for simplicity. */
+                                char *colon = strchr(line, ':');
+                                if (colon)
+                                        *colon = '\0';
+
+                                /* Ignore any comments. */
+                                char *comment = strchr(line, '#');
+                                if (comment)
+                                        *comment = '\0';
+
+                                /* Skip empty lines. */
+                                if (line[0] == '\0')
+                                        continue;
+
+                                char *result;
+                                if (strncmp(line, include_prefix, include_prefix_len) == 0) {
+                                        const char *include_path = line + include_prefix_len;
+                                        /* include directives can be absolute or
+                                           relative. Prepend the current file's
+                                           directory if relative. */
+                                        if (include_path[0] == '/') {
+                                                result = search_via_ldconf(include_path, soname, match64, match32);
+                                        } else {
+                                                _cleanup_free_ char *abs_include_path = NULL;
+                                                _asprintf(&abs_include_path, "%s/%s", conf_dir + sysrootdirlen, include_path);
+                                                result = search_via_ldconf(abs_include_path, soname, match64, match32);
+                                        }
+                                } else {
+                                        result = search_libdir(line, soname, match64, match32);
+                                }
+                                if (result)
+                                        return result;
+                        }
+                }
+        }
+
+        return NULL;
+}
+
+/* Expand $ORIGIN and $LIB variables in the given R(UN)PATH entry. $ORIGIN
+   expands to the directory of the given src path. $LIB expands to lib if
+   match64 is NULL or lib64 otherwise. Returns a newly allocated string even if
+   no expansion was necessary. */
+static char *expand_runpath(char *input, const char *src, const Elf64_Ehdr *match64)
+{
+        regex_t regex;
+        regmatch_t rmatch[3]; /* 0: full match, 1: without brackets, 2: with brackets */
+
+        if (regcomp(&regex, "\\$([A-Z]+|\\{([A-Z]+)\\})", REG_EXTENDED) != 0) {
+                log_error("ERROR: Could not compile RUNPATH regex");
+                return NULL;
+        }
+
+        char *result = NULL, *current = input;
+        int offset = 0;
+
+        while (regexec(&regex, current + offset, 3, rmatch, 0) == 0) {
+                char *varname = NULL;
+                _cleanup_free_ char *varval = NULL;
+                size_t varname_len, varval_len;
+
+                /* Determine which group matched, with or without brackets. */
+                int rgroup = rmatch[1].rm_so != -1 ? 1 : 2;
+                varname_len = rmatch[rgroup].rm_eo - rmatch[rgroup].rm_so;
+                varname = current + offset + rmatch[rgroup].rm_so;
+
+                if (strncmp(varname, "ORIGIN", varname_len) == 0) {
+                        varval = dirname_malloc(src);
+                } else if (strncmp(varname, "LIB", varname_len) == 0) {
+                        varval = strdup(match64 ? "lib64" : "lib");
+                } else {
+                        /* If the variable is unrecognised, leave it as-is. */
+                        offset += rmatch[0].rm_eo;
+                        continue;
+                }
+
+                if (!varval)
+                        goto oom;
+
+                varval_len = strlen(varval);
+                size_t prefix_len = offset + rmatch[0].rm_so;
+                size_t suffix_len = strlen(current) - (offset + rmatch[0].rm_eo);
+
+                char *replaced = realloc(result, prefix_len + varval_len + suffix_len + 1);
+                if (!replaced)
+                        goto oom;
+
+                result = replaced;
+                strcpy(result + prefix_len, varval);
+                strcpy(result + prefix_len + varval_len, current + offset + rmatch[0].rm_eo);
+
+                current = result;
+                offset = prefix_len + varval_len;
+        }
+
+        regfree(&regex);
+        return result ?: strdup(current);
+
+oom:
+        log_error("Out of memory");
+        free(result);
+        regfree(&regex);
+        return NULL;
+}
+
+/* Adjust the endianness of the given value of the given SIZE using ELF header
+   ehdr. The size sadly cannot be determined automatically using sizeof because
+   that is expanded using the C compiler rather than the preprocessor. */
+#define ELF_BYTESWAP(SIZE, value) (ehdr->e_ident[EI_DATA] == ELFDATA2MSB ? be##SIZE##toh(value) : le##SIZE##toh(value))
+
+/* Get a pointer to the ELF header map's section header string table, where B is
+   64 or 32 bit. Sanity checks the ELF structure to avoid crashes. */
+#define PARSE_ELF_START(B, map) \
+        Elf##B##_Ehdr *ehdr = (Elf##B##_Ehdr *)map; \
+\
+        if (sizeof(Elf##B##_Ehdr) > src_len || \
+            ELF_BYTESWAP(B, ehdr->e_shoff) > src_len || \
+            ELF_BYTESWAP(16, ehdr->e_shstrndx) >= ELF_BYTESWAP(16, ehdr->e_shnum)) \
+                break; \
+\
+        Elf##B##_Shdr *shdr = (Elf##B##_Shdr *)((char *)map + ELF_BYTESWAP(B, ehdr->e_shoff)); \
+        const char *shstrtab = (char *)map + ELF_BYTESWAP(B, shdr[ELF_BYTESWAP(16, ehdr->e_shstrndx)].sh_offset);
+
+/* Expand the R(UN)PATH of the ELF header map and search it for a library
+   matching soname and match64/match32. map must point to the same header as
+   match64/match32. Returns the path (with the sysroot) if there is a match. */
+#define FIND_LIBRARY_RUNPATH_FOR_BITS(B, map) do { \
+        PARSE_ELF_START(B, map); \
+        bool seen_runpath = false; \
+\
+        for (size_t i = 0; i < ELF_BYTESWAP(16, ehdr->e_shnum); i++) { \
+                if (strcmp(&shstrtab[ELF_BYTESWAP(32, shdr[i].sh_name)], ".dynamic") != 0) \
+                        continue; \
+\
+                Elf##B##_Dyn *dyn = (Elf##B##_Dyn *)((char *)map + ELF_BYTESWAP(B, shdr[i].sh_offset)); \
+                for (Elf##B##_Dyn *d = dyn; ELF_BYTESWAP(32, d->d_tag) != DT_NULL; d++) { \
+                        if (ELF_BYTESWAP(B, d->d_tag) == DT_RUNPATH) \
+                                seen_runpath = true; /* RUNPATH has precedence over RPATH. */ \
+                        else if (seen_runpath || ELF_BYTESWAP(B, d->d_tag) != DT_RPATH) \
+                                continue; \
+\
+                        char *runpath = (char *)map + ELF_BYTESWAP(B, shdr[ELF_BYTESWAP(32, shdr[i].sh_link)].sh_offset) + ELF_BYTESWAP(B, d->d_un.d_val); \
+                        _cleanup_free_ char *expanded = expand_runpath(runpath, src, match64); \
+                        if (!expanded) \
+                                continue; \
+\
+                        for (char *token = strtok(expanded, ":"); token; token = strtok(NULL, ":")) { \
+                                char *res = search_libdir(token, soname, match64, match32); \
+                                if (res) \
+                                        return res; \
+                        } \
+                } \
+        } \
+} while (0)
+
+/* Given an soname and (64 or 32 bit) ELF header, search for a matching library
+   in the R(UN)PATH of that header, the directories referenced by ldconf files,
+   and some default locations. src must be the path (with the sysroot) to the
+   ELF file and src_len must be that file's length in bytes. Returns the path
+   (with the sysroot) if there is a match. */
+static char *find_library(const char *soname, const char *src, size_t src_len, const Elf64_Ehdr *match64,
+                          const Elf32_Ehdr *match32)
+{
+        if (match64)
+                FIND_LIBRARY_RUNPATH_FOR_BITS(64, match64);
+        else if (match32)
+                FIND_LIBRARY_RUNPATH_FOR_BITS(32, match32);
+
+        /* There is no definitive way to determine the libc so just check for
+           musl and glibc ldconf files. musl hardcodes its default locations. It
+           is impossible to determine glibc's default locations, but this set is
+           practically universal. It is safe to check lib64 for 32-bit libraries
+           because we include the class (64-bit or 32-bit) when matching. */
+        return search_via_ldconf("/etc/ld-musl-*.path", soname, match64, match32) ?:
+               search_via_ldconf("/etc/ld.so.conf", soname, match64, match32) ?:
+               search_libdir("/lib64", soname, match64, match32) ?:
+               search_libdir("/usr/lib64", soname, match64, match32) ?:
+               search_libdir("/usr/local/lib64", soname, match64, match32) ?:
+               search_libdir("/lib", soname, match64, match32) ?:
+               search_libdir("/usr/lib", soname, match64, match32) ?:
+               search_libdir("/usr/local/lib", soname, match64, match32);
+}
+
+static int resolve_deps_ldd(const char *src, const char *fullsrcpath)
 {
         int ret = 0, err;
 
         _cleanup_free_ char *buf = NULL;
         size_t linesize = LINE_MAX + 1;
-        _cleanup_free_ char *fullsrcpath = NULL;
-
-        fullsrcpath = get_real_file(src, true);
-        log_debug("resolve_deps('%s') -> get_real_file('%s', true) = '%s'", src, src, fullsrcpath);
-        if (!fullsrcpath)
-                return 0;
 
         buf = malloc(linesize);
         if (buf == NULL)
@@ -700,6 +1036,195 @@ static int resolve_deps(const char *src)
                 return err;
         } else
                 return ret;
+}
+
+#ifdef HAVE_SYSTEMD
+
+/* Parse the given .note.dlopen JSON (https://systemd.io/ELF_DLOPEN_METADATA/)
+   in the given note index and find each dependent library, ensuring it matches
+   the given (64 or 32 bit) ELF header. Each library found is added to deps.
+   Dependencies already found in this chain must be given in pdeps. Failure to
+   parse the JSON or find a library is considered non-fatal. */
+static void resolve_deps_dlopen_parse_json(Hashmap *pdeps, Hashmap *deps, const char *fullsrcpath, size_t src_len,
+                                           const char *json, size_t note_idx, const Elf64_Ehdr *match64, const Elf32_Ehdr *match32)
+{
+        _cleanup_(sd_json_variant_unrefp) sd_json_variant *dlopen_json = NULL;
+        if (sd_json_parse(json, 0, &dlopen_json, NULL, NULL) != 0 || !sd_json_variant_is_array(dlopen_json)) {
+                log_warning("WARNING: .note.dlopen entry #%zd is not a JSON array in '%s'", note_idx, fullsrcpath);
+                return;
+        }
+
+        for (size_t entry_idx = 0; entry_idx < sd_json_variant_elements(dlopen_json); entry_idx++) {
+                sd_json_variant *entry = sd_json_variant_by_index(dlopen_json, entry_idx);
+                sd_json_variant *sonames = sd_json_variant_by_key(entry, "soname");
+                if (!sonames || !sd_json_variant_is_array(sonames)) {
+                        log_warning("WARNING: soname array missing from .note.dlopen entry #%zd.%zd in '%s'", note_idx, entry_idx, fullsrcpath);
+                        return;
+                }
+
+                for (size_t soname_idx = 0; soname_idx < sd_json_variant_elements(sonames); soname_idx++) {
+                        sd_json_variant *soname_json = sd_json_variant_by_index(sonames, soname_idx);
+                        if (!sd_json_variant_is_string(soname_json)) {
+                                log_warning("WARNING: soname #%zd of .note.dlopen entry #%zd.%zd is not a string in '%s'", soname_idx, note_idx,
+                                            entry_idx, fullsrcpath);
+                                return;
+                        }
+
+                        const char *soname = sd_json_variant_string(soname_json);
+                        if (hashmap_get(pdeps, soname))
+                                continue;
+
+                        char *library = find_library(soname, fullsrcpath, src_len, match64, match32);
+                        if (!library || hashmap_put_strdup_key(deps, soname, library) < 0)
+                                log_warning("WARNING: could not locate dlopen dependency %s requested by '%s'", soname, fullsrcpath);
+                }
+        }
+}
+
+/* Given the ELF header map, also represented by match64/match32 and where B is
+   64 or 32 bit, check .note.dlopen entries for dependencies. See above. */
+#define RESOLVE_DEPS_DLOPEN_FOR_BITS(B, match64, match32) do { \
+        PARSE_ELF_START(B, map); \
+        size_t note_idx = -1; \
+\
+        for (size_t i = 0; i < ELF_BYTESWAP(16, ehdr->e_shnum); i++) { \
+                if ((char*)shdr + i * sizeof(Elf##B##_Shdr) > (char*)map + src_len) \
+                        break; \
+                if (strcmp(&shstrtab[ELF_BYTESWAP(32, shdr[i].sh_name)], ".note.dlopen") != 0) \
+                        continue; \
+\
+                const char *note_offset = (char *)map + ELF_BYTESWAP(B, shdr[i].sh_offset); \
+                const char *note_end = note_offset + ELF_BYTESWAP(32, shdr[i].sh_size); \
+\
+                if (note_offset < (char*)map || note_end > (char*)map + src_len || note_end < note_offset) \
+                        continue; \
+\
+                while (note_offset < note_end) { \
+                        Elf##B##_Nhdr *nhdr = (Elf##B##_Nhdr *)note_offset; \
+                        note_offset += sizeof(Elf##B##_Nhdr); \
+\
+                        /* We don't need the name, checking the type is enough. */ \
+                        note_offset += (ELF_BYTESWAP(32, nhdr->n_namesz) + 3) & ~3; /* Align to 4 bytes */ \
+\
+                        const char *note_desc = note_offset; \
+                        note_offset += (ELF_BYTESWAP(32, nhdr->n_descsz) + 3) & ~3; /* Align to 4 bytes */ \
+                        if (note_offset > (char*)map + src_len) \
+                                break; \
+\
+                        if (ELF_BYTESWAP(32, nhdr->n_type) != 0x407c0c0a) \
+                                continue; \
+\
+                        note_idx++; \
+                        resolve_deps_dlopen_parse_json(pdeps, deps, fullsrcpath, src_len, note_desc, note_idx, match64, match32); \
+                } \
+        } \
+} while (0)
+
+static int resolve_deps(const char *src, Hashmap *pdeps);
+
+static int resolve_deps_dlopen(const char *src, const char *fullsrcpath, Hashmap *pdeps)
+{
+        _cleanup_close_ int fd = open(fullsrcpath, O_RDONLY | O_CLOEXEC);
+        if (fd < 0) {
+                log_error("ERROR: cannot open '%s': %m", fullsrcpath);
+                return -errno;
+        }
+
+        struct stat sb;
+        if (fstat(fd, &sb) < 0) {
+                log_error("ERROR: cannot stat '%s': %m", fullsrcpath);
+                return -errno;
+        }
+
+        size_t src_len = sb.st_size;
+        void *map = mmap(NULL, src_len, PROT_READ, MAP_PRIVATE, fd, 0);
+        if (map == MAP_FAILED) {
+                log_error("ERROR: cannot mmap '%s': %m", fullsrcpath);
+                return -errno;
+        }
+
+        /* It would be easiest to blindly install dependencies as we find them
+           depth-first, but this does not work in practise. We need to track
+           which dependencies are already found to avoid loops. We also need to
+           install them breadth-first because of how RUNPATH works. systemd is a
+           good example. libsystemd-core depends on libsystemd-shared. Neither
+           is in the default library path, but libsystemd-core lacks a RUNPATH,
+           so it cannot find libsystemd-shared by itself. See for yourself with
+           ldd. It must be found in the context of an executable with a RUNPATH
+           that also depends on libsystemd-shared, such as systemd-executor. The
+           RUNPATH only applies to direct dependencies, not subdependencies, so
+           libsystemd-shared needs to be found as a direct dependency of
+           systemd-executor before we check libsystemd-core's dependencies.
+           Therefore, pdeps above holds the dependencies we have already found,
+           deps holds the dependencies found in this iteration, and ndeps is
+           used to combine them into the next iteration's pdeps. */
+        Hashmap *ndeps = hashmap_new(string_hash_func, string_compare_func);
+        Hashmap  *deps = hashmap_new(string_hash_func, string_compare_func);
+        int ret = 0;
+
+        unsigned char *e_ident = (unsigned char *)map;
+        if (e_ident[EI_MAG0] != ELFMAG0 ||
+            e_ident[EI_MAG1] != ELFMAG1 ||
+            e_ident[EI_MAG2] != ELFMAG2 ||
+            e_ident[EI_MAG3] != ELFMAG3)
+                goto finish;
+
+        switch (e_ident[EI_CLASS]) {
+        case ELFCLASS32:
+                RESOLVE_DEPS_DLOPEN_FOR_BITS(32, NULL, ehdr);
+                break;
+        case ELFCLASS64:
+                RESOLVE_DEPS_DLOPEN_FOR_BITS(64, ehdr, NULL);
+                break;
+        default:
+                log_error("ERROR: '%s' has an unknown ELF class", fullsrcpath);
+                ret = -1;
+        }
+
+        if (hashmap_merge(ndeps, pdeps) < 0 || hashmap_merge(ndeps, deps) < 0)
+                goto finish;
+
+        char *key, *library;
+        Iterator i;
+        HASHMAP_FOREACH(library, deps, i) {
+                ret += library_install(src, library);
+                ret += resolve_deps(library, ndeps);
+        }
+
+finish:
+        munmap(map, src_len);
+        hashmap_free(ndeps);
+
+        HASHMAP_FOREACH(library, deps, i) {
+                item_free(library);
+        }
+
+        while ((key = hashmap_steal_first_key(deps)))
+                item_free(key);
+
+        hashmap_free(deps);
+        return ret;
+}
+
+#endif
+
+/* Recursively check the given file for dependencies and install them. pdeps is
+   for dependencies already found in this chain and should initially be NULL.
+   Both ELF binaries and scripts with shebangs are handled. */
+static int resolve_deps(const char *src, Hashmap *pdeps)
+{
+        _cleanup_free_ char *fullsrcpath = NULL;
+
+        fullsrcpath = get_real_file(src, true);
+        log_debug("resolve_deps('%s') -> get_real_file('%s', true) = '%s'", src, src, fullsrcpath);
+        if (!fullsrcpath)
+                return 0;
+
+        return resolve_deps_ldd(src, fullsrcpath)
+#ifdef HAVE_SYSTEMD
+               ?: resolve_deps_dlopen(src, fullsrcpath, pdeps)
+#endif
+               ;
 }
 
 /* Install ".<filename>.hmac" file for FIPS self-checks */
@@ -878,9 +1403,9 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                 if (resolvedeps && S_ISREG(sb.st_mode) && (sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
                         log_debug("'%s' already exists, but checking for any deps", fulldstpath);
                         if (sysrootdirlen && (strncmp(fulldstpath, sysrootdir, sysrootdirlen) == 0))
-                                ret = resolve_deps(fulldstpath + sysrootdirlen);
+                                ret = resolve_deps(fulldstpath + sysrootdirlen, NULL);
                         else
-                                ret = resolve_deps(fullsrcpath);
+                                ret = resolve_deps(fullsrcpath, NULL);
                 } else
                         log_debug("'%s' already exists", fulldstpath);
         } else {
@@ -973,9 +1498,9 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                         if (resolvedeps) {
                                 /* ensure fullsrcpath contains sysrootdir */
                                 if (sysrootdirlen && (strncmp(fullsrcpath, sysrootdir, sysrootdirlen) == 0))
-                                        ret += resolve_deps(fullsrcpath + sysrootdirlen);
+                                        ret += resolve_deps(fullsrcpath + sysrootdirlen, NULL);
                                 else
-                                        ret += resolve_deps(fullsrcpath);
+                                        ret += resolve_deps(fullsrcpath, NULL);
                         }
                         if (arg_hmac) {
                                 /* copy .hmac files also */
@@ -1056,10 +1581,11 @@ static void usage(int status)
                "  -S --mod-filter-nosymbol  Exclude kernel modules by symbol regexp\n"
                "  -N --mod-filter-noname    Exclude kernel modules by name regexp\n"
                "\n"
-               "  -v --verbose      Show more output\n"
-               "     --debug        Show debug output\n"
-               "     --version      Show package version\n"
-               "  -h --help         Show this help\n"
+               "     --json-supported  Show whether this build supports JSON\n"
+               "  -v --verbose         Show more output\n"
+               "     --debug           Show debug output\n"
+               "     --version         Show package version\n"
+               "  -h --help            Show this help\n"
                "\n", program_invocation_short_name, program_invocation_short_name, program_invocation_short_name);
         exit(status);
 }
@@ -1074,7 +1600,8 @@ static int parse_argv(int argc, char *argv[])
                 ARG_MODALIAS,
                 ARG_KERNELDIR,
                 ARG_FIRMWAREDIRS,
-                ARG_DEBUG
+                ARG_DEBUG,
+                ARG_JSON_SUPPORTED,
         };
 
         static struct option const options[] = {
@@ -1102,6 +1629,7 @@ static int parse_argv(int argc, char *argv[])
                 {"silent", no_argument, NULL, ARG_SILENT},
                 {"kerneldir", required_argument, NULL, ARG_KERNELDIR},
                 {"firmwaredirs", required_argument, NULL, ARG_FIRMWAREDIRS},
+                {"json-supported", no_argument, NULL, ARG_JSON_SUPPORTED},
                 {NULL, 0, NULL, 0}
         };
 
@@ -1205,6 +1733,14 @@ static int parse_argv(int argc, char *argv[])
                 case 'h':
                         usage(EXIT_SUCCESS);
                         break;
+                case ARG_JSON_SUPPORTED:
+#ifdef HAVE_SYSTEMD
+                        puts("JSON is supported");
+                        return 0;
+#else
+                        puts("JSON is not supported");
+                        return -1;
+#endif
                 default:
                         usage(EXIT_FAILURE);
                 }
@@ -1291,7 +1827,7 @@ static int resolve_lazy(int argc, char **argv)
                 item = strdup(p);
                 hashmap_put(items, item, item);
 
-                ret += resolve_deps(src);
+                ret += resolve_deps(src, NULL);
         }
         return ret;
 }
