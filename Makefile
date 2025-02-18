@@ -53,7 +53,7 @@ manpages = $(man1pages) $(man5pages) $(man7pages) $(man8pages)
 all: dracut.pc dracut-install src/skipcpio/skipcpio dracut-util
 
 %.o : %.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(KMOD_CFLAGS) $< -o $@
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(KMOD_CFLAGS) $(SYSTEMD_CFLAGS) $(if $(SYSTEMD_LIBS),-DHAVE_SYSTEMD) $< -o $@
 
 DRACUT_INSTALL_OBJECTS = \
         src/install/dracut-install.o \
@@ -72,7 +72,7 @@ src/install/util.o: src/install/util.c src/install/util.h src/install/macro.h sr
 src/install/strv.o: src/install/strv.c src/install/strv.h src/install/util.h src/install/macro.h src/install/log.h
 
 src/install/dracut-install: $(DRACUT_INSTALL_OBJECTS)
-	$(CC) $(LDFLAGS) -o $@ $(DRACUT_INSTALL_OBJECTS) $(LDLIBS) $(FTS_LIBS) $(KMOD_LIBS)
+	$(CC) $(LDFLAGS) -o $@ $(DRACUT_INSTALL_OBJECTS) $(LDLIBS) $(FTS_LIBS) $(KMOD_LIBS) $(SYSTEMD_LIBS)
 
 dracut-install: src/install/dracut-install
 	ln -fs $< $@
