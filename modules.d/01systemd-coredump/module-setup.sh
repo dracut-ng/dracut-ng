@@ -44,10 +44,12 @@ install() {
 
     # Install library file(s)
     _arch=${DRACUT_ARCH:-$(uname -m)}
-    inst_libdir_file \
-        {"tls/$_arch/",tls/,"$_arch/",}"liblz4.so.*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"liblzma.so.*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libzstd.so.*"
+    if [[ ! $USE_SYSTEMD_DLOPEN_DEPS ]]; then
+        inst_libdir_file \
+            {"tls/$_arch/",tls/,"$_arch/",}"liblz4.so.*" \
+            {"tls/$_arch/",tls/,"$_arch/",}"liblzma.so.*" \
+            {"tls/$_arch/",tls/,"$_arch/",}"libzstd.so.*"
+    fi
 
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then

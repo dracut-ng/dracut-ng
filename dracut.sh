@@ -1561,6 +1561,17 @@ set_global_var "systemd" "modversion:systemdversion" "0"
 set_global_var "libkmod" "depmodd" "/usr/lib/depmod.d"
 set_global_var "libkmod" "depmodconfdir" "/etc/depmod.d"
 
+# Modules should check for JSON support in dracut-install before using it.
+DRACUT_INSTALL_JSON=
+$DRACUT_INSTALL --json-supported &> /dev/null && DRACUT_INSTALL_JSON=1
+
+# systemd started declaring its dlopen dependencies in v256. Checking for these
+# requires JSON support in dracut-install, provided by libsystemd v257. The
+# version in the sysroot may be different to the one used by dracut-install.
+USE_SYSTEMD_DLOPEN_DEPS=
+# shellcheck disable=SC2034 # USE_SYSTEMD_DLOPEN_DEPS is used in modules
+[[ $DRACUT_INSTALL_JSON && ${systemdversion%%.*} -ge 256 ]] && USE_SYSTEMD_DLOPEN_DEPS=1
+
 if [[ $no_kernel != yes ]] && [[ -d $srcmods ]]; then
     if ! [[ -f $srcmods/modules.dep ]]; then
         if [[ -n "$(find "$srcmods" -name '*.ko*')" ]]; then
