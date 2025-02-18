@@ -26,5 +26,7 @@ install() {
         "$systemdsystemunitdir"/initrd.target.wants/systemd-bsod.service \
         "$systemdutildir"/systemd-bsod
 
-    inst_libdir_file "libqrencode.so*"
+    if [[ ! $USE_SYSTEMD_DLOPEN_DEPS ]]; then
+        inst_libdir_file "libqrencode.so*"
+    fi
 }

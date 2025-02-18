@@ -46,6 +46,7 @@ RUN zypper --non-interactive install --no-recommends \
     squashfs \
     swtpm \
     systemd-boot \
+    systemd-devel \
     systemd-experimental \
     systemd-portable \
     tgt \

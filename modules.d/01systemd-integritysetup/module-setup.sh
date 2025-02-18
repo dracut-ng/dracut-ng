@@ -60,6 +60,7 @@ install() {
 
     # Install required libraries.
     _arch=${DRACUT_ARCH:-$(uname -m)}
-    inst_libdir_file {"tls/$_arch/",tls/,"$_arch/",}"libcryptsetup.so.*"
-
+    if [[ ! $USE_SYSTEMD_DLOPEN_DEPS ]]; then
+        inst_libdir_file {"tls/$_arch/",tls/,"$_arch/",}"libcryptsetup.so.*"
+    fi
 }
