@@ -15,5 +15,9 @@ check() {
 install() {
     inst_sysusers basic.conf
 
-    systemd-sysusers --root="$initdir" > /dev/null
+    # redirect stdout temporarily to FD 3 to use filter stderr
+    {
+        set -o pipefail
+        systemd-sysusers --root="$initdir" 2>&1 >&3 | grep -v "^Creating " >&2
+    } 3>&1
 }
