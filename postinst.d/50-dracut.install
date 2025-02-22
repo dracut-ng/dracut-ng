@@ -1,0 +1,96 @@
+#!/bin/bash
+
+ver=${1}
+img=${2}
+initrd="${INSTALLKERNEL_STAGING_AREA:-$(dirname "${img}")}/initrd"
+uki="${INSTALLKERNEL_STAGING_AREA:-$(dirname "${img}")}/uki.efi"
+tmp="${INSTALLKERNEL_STAGING_AREA:-$(dirname "${img}")}/dracut-tmp"
+
+# familiar helpers, we intentionally don't use Gentoo functions.sh
+die() {
+	echo -e " ${NOCOLOR-\e[1;31m*\e[0m }${*}" >&2
+	exit 1
+}
+
+einfo() {
+	echo -e " ${NOCOLOR-\e[1;32m*\e[0m }${*}"
+}
+
+ewarn() {
+	echo -e " ${NOCOLOR-\e[1;33m*\e[0m }${*}"
+}
+
+main() {
+	# re-define for subst to work
+	[[ -n ${NOCOLOR+yes} ]] && NOCOLOR=
+
+	if [[ -n "${INSTALLKERNEL_INITRD_GENERATOR}" &&
+		${INSTALLKERNEL_INITRD_GENERATOR} != dracut ]]; then
+			# We are not selected as the initrd generator
+			einfo "initrd_generator=${INSTALLKERNEL_INITRD_GENERATOR}, skipping dracut"
+			exit 0
+	fi
+
+	# do nothing if somehow dracut is not installed
+	[[ -x $(command -v dracut) ]] || { ewarn "dracut is not installed, not generating an initramfs" && exit 0; }
+
+	[[ ${EUID} -eq 0 ]] || die "Please run this script as root"
+
+	initramfs_gen_args=(
+		--add-confdir hostonly
+		--verbose
+		# if uefi=yes is used, dracut needs to locate the kernel image
+		--kernel-image "${img}"
+	)
+
+	if [[ ${INSTALLKERNEL_UKI_GENERATOR} == dracut ]]; then
+		einfo "Using dracut as the initramfs and UKI generator..."
+		initramfs_gen_args+=( --uefi )
+		out="${uki}"
+		if [[ -f $(dirname "${img}")/uki.efi ]]; then
+			einfo "There is an UKI image at the same place as the kernel, skipping generating a new one"
+			cp --reflink=auto "$(dirname "${img}")/uki.efi" "${uki}" || die
+			chown root:root "${uki}" || die
+			chmod 0600 "${uki}" || die
+			exit 0
+		fi
+	elif [[ ${INSTALLKERNEL_INITRD_GENERATOR} == dracut ]]; then
+		einfo "Using dracut as the initramfs generator..."
+		initramfs_gen_args+=( --no-uefi )
+		out="${initrd}"
+		if [[ -f $(dirname "${img}")/initrd ]]; then
+			einfo "There is an initramfs image at the same place as the kernel, skipping generating a new one"
+			cp --reflink=auto "$(dirname "${img}")/initrd" "${initrd}" || die
+			chown root:root "${initrd}" || die
+			chmod 0600 "${initrd}" || die
+			exit 0
+		fi
+	else
+		einfo "No install.conf preference set, falling back to dracut.conf..."
+		out="${tmp}"
+	fi
+
+	initramfs_gen_args+=(
+		# positional arguments
+		"${out}" "${ver}"
+	)
+
+	dracut "${initramfs_gen_args[@]}" || die "Failed to generate initramfs"
+
+	# Fallback path for if we don't know if we generated an initramfs or
+	# UKI. If dracut is used in uefi=yes mode, initrd will actually
+	# be a combined kernel+initramfs UEFI executable. We can easily
+	# recognize it by PE magic (vs cpio for a regular initramfs)
+	if [[ -s ${tmp} ]]; then
+		read -rn 2 magic <"${tmp}" || die "Cannot read ${tmp}"
+		if [[ ${magic} == MZ ]]; then
+			einfo "Combined UEFI kernel+initramfs executable found"
+			mv "${tmp}" "${uki}" || die "Failed to rename UKI"
+		else
+			einfo "Plain initramfs image found"
+			mv "${tmp}" "${initrd}" || die "Failed to rename initramfs"
+		fi
+	fi
+}
+
+main
