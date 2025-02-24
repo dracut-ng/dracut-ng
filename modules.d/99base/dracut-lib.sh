@@ -2,13 +2,13 @@
 
 command -v wait_for_dev > /dev/null || . /lib/dracut-dev-lib.sh
 
-export DRACUT_SYSTEMD
-export NEWROOT
+export DRACUT_SYSTEMD="${DRACUT_SYSTEMD-}"
+export NEWROOT="${NEWROOT-}"
 if [ -n "$NEWROOT" ]; then
     [ -d "$NEWROOT" ] || mkdir -p -m 0755 "$NEWROOT"
 fi
 
-if [ -z "$PREFIX" ]; then
+if [ -z "${PREFIX-}" ]; then
     if ! [ -d /run/initramfs ]; then
         mkdir -p -m 0755 /run/initramfs/log
         ln -sfn /run/initramfs/log /var/log
@@ -971,7 +971,7 @@ are_lists_eq() {
 }
 
 setmemdebug() {
-    if [ -z "$DEBUG_MEM_LEVEL" ]; then
+    if [ -z "${DEBUG_MEM_LEVEL-}" ]; then
         DEBUG_MEM_LEVEL=$(getargnum 0 0 5 rd.memdebug)
         export DEBUG_MEM_LEVEL
     fi
@@ -988,7 +988,7 @@ make_trace_mem() {
     shift
 
     prefix='[debug_mem]'
-    log_level=$DEBUG_MEM_LEVEL
+    log_level=${DEBUG_MEM_LEVEL-}
 
     if [ -z "$log_level" ] || [ "$log_level" -le 0 ]; then
         return
