@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 
-[ -z "$TEST_FSTYPE" ] && TEST_FSTYPE="ext4"
+[ -z "${TEST_FSTYPE-}" ] && TEST_FSTYPE="ext4"
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on multiple device $TEST_FSTYPE (on top of RAID and LUKS)"
@@ -60,18 +60,18 @@ test_run() {
     client_run "$TEST_FSTYPE" "disk" "rd.auto=1 rd.luks.crypttab=0 rd.md=0"
 
     # LVM-THIN
-    if [ -n "$USE_LVM" ]; then
+    if [ -n "${USE_LVM-}" ]; then
         client_run "$TEST_FSTYPE" "disk-thin" "rd.auto=1 rd.luks.crypttab=0 rd.md=0"
     fi
 
     # ignore crypttab with rd.luks.crypttab=0
-    if [ -n "$HAVE_RAID" ]; then
+    if [ -n "${HAVE_RAID-}" ]; then
         client_run "raid" "raid" "rd.auto=1 rd.luks.crypttab=0"
         client_run "degraded raid" "raid" "rd.auto=1 rd.luks.crypttab=0"
     fi
 
     # for encrypted test run - use raid-crypt.img drives instead of raid.img drives
-    if [ -n "$HAVE_CRYPT" ] && [ -n "$HAVE_RAID" ]; then
+    if [ -n "${HAVE_CRYPT-}" ] && [ -n "${HAVE_RAID-}" ]; then
         client_run "raid crypt" "raid-crypt" "rd.auto=1 "
         client_run "degraded raid crypt" "raid-crypt" "rd.auto=1 "
 
@@ -139,16 +139,16 @@ test_setup() {
     test_makeroot "$TEST_FSTYPE" "disk" "rd.md=0 rd.luks=0"
 
     # LVM-THIN
-    if [ -n "$USE_LVM" ]; then
+    if [ -n "${USE_LVM-}" ]; then
         test_makeroot "$TEST_FSTYPE" "disk-thin" "rd.md=0 rd.luks=0 test.thin"
     fi
 
-    if [ -n "$HAVE_RAID" ]; then
+    if [ -n "${HAVE_RAID-}" ]; then
         test_makeroot "raid" "raid" "rd.luks=0"
     fi
 
     # for encrypted test run - use raid-crypt.img drives instead of raid.img drives
-    if [ -n "$HAVE_CRYPT" ] && [ -n "$HAVE_RAID" ]; then
+    if [ -n "${HAVE_CRYPT-}" ] && [ -n "${HAVE_RAID-}" ]; then
         test_makeroot "raid-crypt" "raid-crypt" " "
 
         eval "$(grep -F --binary-files=text -m 1 MD_UUID "$TESTDIR"/marker.img)"
