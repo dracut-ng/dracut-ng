@@ -234,8 +234,8 @@ install() {
         {
             echo "[Unit]"
             echo "DefaultDependencies=no"
-            echo "Conflicts=shutdown.target"
-            echo "Before=shutdown.target"
+            echo "Conflicts=shutdown.target initrd-cleanup.service"
+            echo "Before=shutdown.target initrd-cleanup.service"
         } > "${initdir}/$systemdsystemunitdir/iscsid.service.d/dracut.conf"
 
         mkdir -p "${initdir}/$systemdsystemunitdir/iscsid.socket.d"
@@ -250,8 +250,8 @@ install() {
         {
             echo "[Unit]"
             echo "DefaultDependencies=no"
-            echo "Conflicts=shutdown.target"
-            echo "Before=shutdown.target"
+            echo "Conflicts=shutdown.target initrd-cleanup.service"
+            echo "Before=shutdown.target initrd-cleanup.service"
         } > "${initdir}/$systemdsystemunitdir/iscsiuio.service.d/dracut.conf"
 
         mkdir -p "${initdir}/$systemdsystemunitdir/iscsiuio.socket.d"
