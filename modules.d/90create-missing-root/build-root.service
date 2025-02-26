@@ -4,6 +4,7 @@ DefaultDependencies=no
 Wants=systemd-udev-settle.service
 After=systemd-udev-settle.service
 Before=sysroot.mount
+Before=systemd-cryptsetup@root.service
 ConditionKernelCommandLine=create_root.enable
 AssertPathExists=/etc/initrd-release
 

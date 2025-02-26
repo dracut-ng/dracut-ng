@@ -18,13 +18,30 @@ if [[ -z $create_root_encr ]]; then
     echo "Defaulting with create_root.encrypt=off"
     create_root_encr="off"
 fi
-# Only valid values are off
-if [[ $create_root_encr != "off" ]]; then
-    echo "Encrypt allowed options are create_root.encrypt={off}"
+# Only valid values are off and tpm2
+if [[ $create_root_encr != "off" && $create_root_encr != "tpm2" ]]; then
+    echo "Encrypt allowed options are create_root.encrypt={off/tpm2}"
     exit 1
 fi
 encrypt_option=$create_root_encr
 echo "Using create_root.encrypt=${create_root_encr}"
+
+create_root_pcrs_arg=$(getarg create_root.pcrs)
+create_root_pcrs=${create_root_pcrs_arg:-$NEW_ROOT_PCRS}
+tpm2_pcrs=""
+if [[ $create_root_pcrs =~ ^[0-9]+(\+[0-9]+)*$ ]]; then
+    echo "Using pcrs ${create_root_pcrs}"
+    tpm2_pcrs="--tpm2-pcrs=${create_root_pcrs}"
+elif [ -n "$create_root_pcrs" ]; then
+    echo "PCR allowed format: PCR[+PCR]"
+    echo "Not using pcrs."
+fi
+echo "Using create_root.pcrs=${create_root_pcrs}"
+systemd_repart_options=""
+if [[ $encrypt_option == "tpm2" && $tpm2_pcrs != "" ]]; then
+    systemd_repart_options="--tpm2-device=auto $tpm2_pcrs"
+fi
+echo "Using systemd_repart_options=${systemd_repart_options}"
 
 create_root_fs_arg=$(getarg create_root.fs)
 create_root_fs=${create_root_fs_arg:-$NEW_ROOT_FS}
@@ -81,7 +98,10 @@ Format=${root_fs}
 Encrypt=${encrypt_option}
 ${root_min_size}" > /etc/repart.d/encr.conf
 
-systemd-repart /dev/"$DNAME" --dry-run=no --no-pager --definitions=/etc/repart.d
+# For some reasons quoting systemd_repart_options make systemd-repart fail with
+# "invalid argument given".
+# shellcheck disable=SC2086
+systemd-repart /dev/"$DNAME" --dry-run=no --no-pager --definitions=/etc/repart.d $systemd_repart_options
 
 udevadm settle
 
@@ -93,6 +113,10 @@ fi
 
 # TODO: should this be another unit?
 root_dev="/dev/${ROOT}"
+if [[ $encrypt_option == "tpm2" ]]; then
+    /usr/lib/systemd/systemd-cryptsetup attach root /dev/gpt-auto-root-luks '' tpm2-measure-pcr=yes
+    root_dev="/dev/mapper/root"
+fi
 mount "$root_dev" "$NEWROOT"
 
 rm -rf "$NEWROOT"/lost+found
