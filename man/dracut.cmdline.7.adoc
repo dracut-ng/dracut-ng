@@ -883,7 +883,7 @@ iscsistart -b --param node.session.timeo.replacement_timeout=30
     up iSCSI connections. This parameter indicates that network setup can be
     skipped in the initramfs, which makes booting with iSCSI offload cards
     faster and more reliable. This parameter currently only has an effect for
-    _<transport_name>=bnx2i_.
+    _<transport_name>=bnx2i_ or _<transport_name>=qedi_.
 
 FCoE
 ~~~~

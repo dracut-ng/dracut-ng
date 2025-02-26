@@ -79,8 +79,9 @@ fi
 
 # iscsi_firmware does not need argument checking
 if [ -n "$iscsi_firmware" ]; then
-    if [ "$root" != "dhcp" ] && [ "$netroot" != "dhcp" ]; then
-        [ -z "$netroot" ] && [ "$iscsi_transport" != bnx2i ] && netroot=iscsi:
+    if [ "$root" != "dhcp" ] && [ -z "$netroot" ] \
+        && [ "$iscsi_transport" != bnx2i ] && [ "$iscsi_transport" != qedi ]; then
+        netroot=iscsi:
     fi
     modprobe -b -q iscsi_boot_sysfs 2> /dev/null
     modprobe -b -q iscsi_ibft
