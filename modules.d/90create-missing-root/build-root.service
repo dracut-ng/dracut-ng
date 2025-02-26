@@ -1,0 +1,16 @@
+[Unit]
+Description=Create missing root
+DefaultDependencies=no
+Wants=systemd-udev-settle.service
+After=systemd-udev-settle.service
+Before=sysroot.mount
+ConditionKernelCommandLine=create_root.enable
+AssertPathExists=/etc/initrd-release
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/build-root.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=sysinit.target
