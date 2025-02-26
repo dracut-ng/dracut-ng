@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="Full systemd serialization/deserialization test with /usr mount"
@@ -34,7 +34,7 @@ client_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" ${smbios:+-smbios "${smbios}"} \
-        -append "$TEST_KERNEL_CMDLINE mount.usr=LABEL=dracutusr mount.usrflags=subvol=usr $client_opts $DEBUGOUT" \
+        -append "$TEST_KERNEL_CMDLINE mount.usr=LABEL=dracutusr mount.usrflags=subvol=usr $client_opts ${DEBUGOUT-}" \
         -initrd "$TESTDIR"/initramfs.testing
 
     if ! test_marker_check; then

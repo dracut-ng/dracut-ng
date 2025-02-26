@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # This file is part of dracut.
 # SPDX-License-Identifier: GPL-2.0-or-later
-set -e
+set -eu
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="test skipcpio"
@@ -72,7 +72,7 @@ test_setup() {
 }
 
 test_cleanup() {
-    [ -d "$CPIO_TESTDIR" ] && rm -rf "$CPIO_TESTDIR"
+    [ -d "${CPIO_TESTDIR-}" ] && rm -rf "$CPIO_TESTDIR"
     return 0
 }
 

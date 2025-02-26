@@ -19,7 +19,7 @@
 #
 export LC_MESSAGES=C
 
-if [[ $EUID == "0" ]] && ! [[ $DRACUT_NO_XATTR ]]; then
+if [[ $EUID == "0" ]] && ! [[ ${DRACUT_NO_XATTR-} ]]; then
     export DRACUT_CP="cp --reflink=auto --sparse=auto --preserve=mode,timestamps,xattr,links -dfr"
 else
     export DRACUT_CP="cp --reflink=auto --sparse=auto --preserve=mode,timestamps,links -dfr"
@@ -31,7 +31,7 @@ is_func() {
     [[ "$(type -t "$1")" == "function" ]]
 }
 
-if ! [[ $dracutbasedir ]]; then
+if ! [[ ${dracutbasedir-} ]]; then
     dracutbasedir=${BASH_SOURCE[0]%/*}
     [[ $dracutbasedir == dracut-functions* ]] && dracutbasedir="."
     [[ $dracutbasedir ]] || dracutbasedir="."
@@ -44,7 +44,7 @@ if ! is_func dinfo > /dev/null 2>&1; then
     dlog_init
 fi
 
-if ! [[ $initdir ]]; then
+if ! [[ ${initdir-} ]]; then
     dfatal "initdir not set"
     exit 1
 fi
@@ -53,14 +53,14 @@ if ! [[ -d $initdir ]]; then
     mkdir -p "$initdir"
 fi
 
-if ! [[ $kernel ]]; then
+if ! [[ ${kernel-} ]]; then
     kernel=$(uname -r)
     export kernel
 fi
 
-srcmods="$dracutsysrootdir/lib/modules/$kernel/"
+srcmods="${dracutsysrootdir-}/lib/modules/$kernel/"
 
-[[ $drivers_dir ]] && {
+[[ ${drivers_dir-} ]] && {
     if ! command -v kmod &> /dev/null && vercmp "$(modprobe --version | cut -d' ' -f3)" lt 3.7; then
         dfatal 'To use --kmoddir option module-init-tools >= 3.7 is required.'
         exit 1
@@ -70,7 +70,7 @@ srcmods="$dracutsysrootdir/lib/modules/$kernel/"
 export srcmods
 
 # export standard hookdirs
-[[ $hookdirs ]] || {
+[[ ${hookdirs-} ]] || {
     hookdirs="cmdline pre-udev pre-trigger netroot "
     hookdirs+="initqueue initqueue/settled initqueue/online initqueue/finished initqueue/timeout "
     hookdirs+="pre-mount pre-pivot cleanup mount "
@@ -86,17 +86,17 @@ DRACUT_LDCONFIG=${DRACUT_LDCONFIG:-ldconfig}
 . "$dracutbasedir"/dracut-functions.sh
 
 # Detect lib paths
-if ! [[ $libdirs ]]; then
-    if [[ $("$DRACUT_LDD" "$dracutsysrootdir$DRACUT_TESTBIN") == */lib64/* ]] &> /dev/null \
-        && [[ -d $dracutsysrootdir/lib64 ]]; then
+if ! [[ ${libdirs-} ]]; then
+    if [[ $("$DRACUT_LDD" "${dracutsysrootdir-}$DRACUT_TESTBIN") == */lib64/* ]] &> /dev/null \
+        && [[ -d ${dracutsysrootdir-}/lib64 ]]; then
         libdirs+=" /lib64"
-        [[ -d $dracutsysrootdir/usr/lib64 ]] && libdirs+=" /usr/lib64"
+        [[ -d ${dracutsysrootdir-}/usr/lib64 ]] && libdirs+=" /usr/lib64"
 
     fi
 
-    if [[ -d $dracutsysrootdir/lib ]]; then
+    if [[ -d ${dracutsysrootdir-}/lib ]]; then
         libdirs+=" /lib"
-        [[ -d $dracutsysrootdir/usr/lib ]] && libdirs+=" /usr/lib"
+        [[ -d ${dracutsysrootdir-}/usr/lib ]] && libdirs+=" /usr/lib"
     fi
 
     libdirs+=" $(ldconfig_paths)"
@@ -105,9 +105,9 @@ if ! [[ $libdirs ]]; then
 fi
 
 # ldd needs LD_LIBRARY_PATH pointing to the libraries within the sysroot directory
-if [[ -n $dracutsysrootdir ]]; then
+if [[ -n ${dracutsysrootdir-} ]]; then
     for lib in $libdirs; do
-        LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+"$LD_LIBRARY_PATH":}$dracutsysrootdir$lib"
+        LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+"$LD_LIBRARY_PATH":}${dracutsysrootdir-}$lib"
     done
     export LD_LIBRARY_PATH
 fi
@@ -204,7 +204,7 @@ dracut_module_path() {
     return 1
 }
 
-if ! [[ $DRACUT_INSTALL ]]; then
+if ! [[ ${DRACUT_INSTALL-} ]]; then
     DRACUT_INSTALL=$(find_binary dracut-install)
 fi
 
@@ -479,14 +479,14 @@ inst_rule_group_owner() {
     # shellcheck disable=SC2013
     for i in $(sed -nr 's/.*OWNER=?"([^ "]+).*/\1/p' "$1"); do
         if ! grep -Eq "^$i:" "$initdir/etc/passwd" 2> /dev/null; then
-            grep -E "^$i:" "$dracutsysrootdir"/etc/passwd 2> /dev/null >> "$initdir/etc/passwd"
+            grep -E "^$i:" "${dracutsysrootdir-}"/etc/passwd 2> /dev/null >> "$initdir/etc/passwd"
         fi
     done
 
     # shellcheck disable=SC2013
     for i in $(sed -nr 's/.*GROUP=?"([^ "]+).*/\1/p' "$1"); do
         if ! grep -Eq "^$i:" "$initdir/etc/group" 2> /dev/null; then
-            grep -E "^$i:" "$dracutsysrootdir"/etc/group 2> /dev/null >> "$initdir/etc/group"
+            grep -E "^$i:" "${dracutsysrootdir-}"/etc/group 2> /dev/null >> "$initdir/etc/group"
         fi
     done
 }
@@ -506,7 +506,7 @@ inst_rules() {
     inst_dir "$_target"
     for _rule in "$@"; do
         if [ "${_rule#/}" = "$_rule" ]; then
-            for r in ${hostonly:+"$dracutsysrootdir"/etc/udev/rules.d} "$dracutsysrootdir${udevdir}/rules.d"; do
+            for r in ${hostonly:+"${dracutsysrootdir-}"/etc/udev/rules.d} "${dracutsysrootdir-}${udevdir}/rules.d"; do
                 [[ -e $r/$_rule ]] || continue
                 _found="$r/$_rule"
                 inst_rule_programs "$_found"
@@ -515,7 +515,7 @@ inst_rules() {
                 inst_simple "$_found"
             done
         fi
-        for r in '' "$dracutsysrootdir$dracutbasedir/rules.d/"; do
+        for r in '' "${dracutsysrootdir-}$dracutbasedir/rules.d/"; do
             # skip rules without an absolute path
             [[ "${r}$_rule" != /* ]] && continue
             [[ -f ${r}$_rule ]] || continue
@@ -533,8 +533,8 @@ inst_rules() {
 build_ld_cache() {
     local dstdir="${dstdir:-"$initdir"}"
 
-    for f in "$dracutsysrootdir"/etc/ld.so.conf "$dracutsysrootdir"/etc/ld.so.conf.d/*; do
-        [[ -f $f ]] && inst_simple "${f#"$dracutsysrootdir"}"
+    for f in "${dracutsysrootdir-}"/etc/ld.so.conf "${dracutsysrootdir-}"/etc/ld.so.conf.d/*; do
+        [[ -f $f ]] && inst_simple "${f#"${dracutsysrootdir-}"}"
     done
     if ! $DRACUT_LDCONFIG -r "$initdir" -f /etc/ld.so.conf; then
         if [[ $EUID == 0 ]]; then
@@ -596,8 +596,8 @@ inst_libdir_dir() {
     local -a _dirs
     for _dir in $libdirs; do
         for _i in "$@"; do
-            for _d in "$dracutsysrootdir$_dir"/$_i; do
-                [[ -d $_d ]] && _dirs+=("${_d#"$dracutsysrootdir"}")
+            for _d in "${dracutsysrootdir-}$_dir"/$_i; do
+                [[ -d $_d ]] && _dirs+=("${_d#"${dracutsysrootdir-}"}")
             done
         done
     done
@@ -616,17 +616,17 @@ inst_libdir_file() {
         shift 2
         for _dir in $libdirs; do
             for _i in "$@"; do
-                for _f in "$dracutsysrootdir$_dir"/$_i; do
-                    [[ ${_f#"$dracutsysrootdir"} =~ $_pattern ]] || continue
-                    [[ -e $_f ]] && _files+=("${_f#"$dracutsysrootdir"}")
+                for _f in "${dracutsysrootdir-}$_dir"/$_i; do
+                    [[ ${_f#"${dracutsysrootdir-}"} =~ $_pattern ]] || continue
+                    [[ -e $_f ]] && _files+=("${_f#"${dracutsysrootdir-}"}")
                 done
             done
         done
     else
         for _dir in $libdirs; do
             for _i in "$@"; do
-                for _f in "$dracutsysrootdir$_dir"/$_i; do
-                    [[ -e $_f ]] && _files+=("${_f#"$dracutsysrootdir"}")
+                for _f in "${dracutsysrootdir-}$_dir"/$_i; do
+                    [[ -e $_f ]] && _files+=("${_f#"${dracutsysrootdir-}"}")
                 done
             done
         done
@@ -667,7 +667,7 @@ inst_decompress() {
         inst_simple "${_src}"
         # Decompress with chosen tool.  We assume that tool changes name e.g.
         # from 'name.gz' to 'name'.
-        ${_cmd} "${initdir}${_src#"$dracutsysrootdir"}"
+        ${_cmd} "${initdir}${_src#"${dracutsysrootdir-}"}"
     done
 }
 
