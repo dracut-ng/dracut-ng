@@ -20,6 +20,11 @@ A /.overlay/usr/upper - - - - system_u:object_r:root_t:s0
 d /.overlay/usr/work 700 root root -
 A /.overlay/usr/work - - - - system_u:object_r:root_t:s0" > /run/tmpfiles.d/create-missing-root.conf
 
+# required to make audit happy
+echo "d /var/log/audit 700 root root -
+d /var/lib/rsyslog 700 root root -
+A /var/log/audit - - - - system_u:object_r:auditd_log_t:s0" >> /run/tmpfiles.d/create-missing-root.conf
+
 systemd-sysusers --root "$NEWROOT"
 systemd-tmpfiles --root "$NEWROOT" --create
 systemd-tmpfiles --root "$NEWROOT" --create /run/tmpfiles.d/create-missing-root.conf
