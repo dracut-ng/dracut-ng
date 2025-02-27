@@ -9,6 +9,8 @@ depends() {
     echo systemd-repart systemd-cryptsetup overlayfs
 }
 
+# sets CONF_LOCAL_FILE to the right config file, and
+# sources it
 _load_conf_file() {
     if [ -f "/etc/create-missing-root.conf" ]; then
         CONF_LOCAL_FILE="/etc/create-missing-root.conf"
@@ -19,8 +21,25 @@ _load_conf_file() {
     . "$CONF_LOCAL_FILE"
 }
 
+# sets FS_TO_LOAD to contain the chosen fs
+_get_root_fs() {
+    local fs="$1"
+    VALID_FS=("ext4" "xfs" "btrfs")
+    FS_TO_LOAD="ext4"
+    if [[ ${VALID_FS[*]} =~ ${fs} ]]; then
+        FS_TO_LOAD="$fs"
+    else
+        if [ -n "$fs" ]; then
+            dwarn "Allowed filesystems are" "${VALID_FS[@]}"
+        fi
+        dwarn "Using default fs ext4"
+    fi
+}
+
 installkernel() {
-    hostonly='' instmods -c btrfs ext4 xfs
+    _load_conf_file
+    _get_root_fs "$NEW_ROOT_FS"
+    hostonly='' instmods -c "$FS_TO_LOAD"
 }
 
 install() {
@@ -39,5 +58,6 @@ install() {
     _load_conf_file
     inst_simple "$CONF_LOCAL_FILE" "/etc/create-missing-root.conf"
 
-    inst_multiple -o mkfs.btrfs mkfs.ext4 mkfs.xfs lsblk jq chroot
+    _get_root_fs "$NEW_ROOT_FS"
+    inst_multiple -o mkfs."$FS_TO_LOAD" lsblk jq chroot
 }
