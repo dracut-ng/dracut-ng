@@ -13,20 +13,20 @@ on:  # yamllint disable-line rule:truthy
                 default: 'all'
                 options:
                     - "all"
-                    - "alpine"
+                    - "alpine:latest"
                     - "alpine:edge"
                     - "centos:stream10-development"
-                    - "fedora"
+                    - "fedora:latest"
                     - "fedora:rawhide"
-                    - "arch"
-                    - "debian"
+                    - "arch:latest"
+                    - "debian:latest"
                     - "debian:sid"
-                    - "ubuntu"
+                    - "ubuntu:latest"
                     - "ubuntu:devel"
                     - "ubuntu:rolling"
-                    - "opensuse"
-                    - "gentoo"
-                    - "void"
+                    - "opensuse:latest"
+                    - "gentoo:latest"
+                    - "void:latest"
             env:
                 description: 'Environment (optional)'
                 default: '{"DEBUGFAIL": "rd.debug"}'
@@ -70,7 +70,7 @@ jobs:
                 test: ${{ fromJSON(needs.matrix.outputs.tests) }}
             fail-fast: false
         container:
-            image: ${{ fromJSON(needs.matrix.outputs.registry) }}/${{ matrix.container }}
+            image: ${{ fromJSON(needs.matrix.outputs.registry) }}/${{ matrix.container }}-amd
             options: "--privileged -v /dev:/dev"
         steps:
             - name: "Checkout Repository"
