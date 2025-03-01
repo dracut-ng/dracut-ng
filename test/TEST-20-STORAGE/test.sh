@@ -166,7 +166,7 @@ test_setup() {
         -a "lvm" \
         $(if command -v mdadm > /dev/null; then echo "-a mdraid"; fi) \
         $(if command -v cryptsetup > /dev/null; then echo "-a crypt"; fi) \
-        $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "--add-drivers ${TEST_FSTYPE}"; fi) \
+        --add-drivers "${TEST_FSTYPE}" \
         -i "/tmp/crypttab" "/etc/crypttab" \
         -i "/tmp/key" "/etc/key"
 }
