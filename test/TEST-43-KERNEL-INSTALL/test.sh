@@ -9,13 +9,8 @@ test_check() {
         return 1
     fi
 
-    if ! command -v kernel-install > /dev/null; then
-        echo "This test needs kernel-install to run."
-        return 1
-    fi
-
-    if [[ $(kernel-install --version | grep -oP '(?<=systemd )\d+') -lt 255 ]]; then
-        echo "This test requires support for kernel-install add-all (v255)"
+    if ! command -v kernel-install > /dev/null && ! command -v installkernel > /dev/null; then
+        echo "This test needs kernel-install or installkernel to run."
         return 1
     fi
 }
@@ -29,20 +24,27 @@ test_run() {
 
     test_marker_reset
 
-    "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE" \
-        -initrd "$BOOT_ROOT/$TOKEN/$KVERSION"/initrd
+    if command -v kernel-install > /dev/null; then
+        "$testdir"/run-qemu \
+            "${disk_args[@]}" \
+            -append "$TEST_KERNEL_CMDLINE" \
+            -initrd "$BOOT_ROOT/$TOKEN/$KVERSION"/initrd
 
-    test_marker_check
+        test_marker_check
 
-    test_marker_reset
+        test_marker_reset
 
-    # rescue (non-hostonly) boot
-    "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE" \
-        -initrd "$BOOT_ROOT/$TOKEN"/0-rescue/initrd
+        # rescue (non-hostonly) boot
+        "$testdir"/run-qemu \
+            "${disk_args[@]}" \
+            -append "$TEST_KERNEL_CMDLINE" \
+            -initrd "$BOOT_ROOT/$TOKEN"/0-rescue/initrd
+    else
+        "$testdir"/run-qemu \
+            "${disk_args[@]}" \
+            -append "$TEST_KERNEL_CMDLINE" \
+            -initrd "$VMLINUZ/../initramfs-$KVERSION.img"
+    fi
 
     test_marker_check
 }
@@ -59,6 +61,7 @@ test_setup() {
 
     mkdir -p /run/kernel
     echo 'initrd_generator=dracut' >> /run/kernel/install.conf
+    echo 'uki_generator=none' >> /run/kernel/install.conf
 
     # enable test dracut config
     cp /usr/lib/dracut/test/dracut.conf.d/test/test.conf /usr/lib/dracut/dracut.conf.d/
@@ -66,9 +69,18 @@ test_setup() {
     # enable rescue boot config
     cp /usr/lib/dracut/dracut.conf.d/rescue/50-rescue.conf /usr/lib/dracut/dracut.conf.d/
 
-    # using kernell-install to invoke dracut
-    mkdir -p "$BOOT_ROOT/$TOKEN/$KVERSION" "$BOOT_ROOT/loader/entries" "$BOOT_ROOT/$TOKEN/0-rescue/loader/entries"
-    kernel-install add-all
+    if command -v kernel-install > /dev/null; then
+        # bls is the default, but lets set it explicitly
+        echo 'layout=bls' >> /run/kernel/install.conf
+        # using kernel-install to invoke dracut
+        mkdir -p "$BOOT_ROOT/$TOKEN/$KVERSION" "$BOOT_ROOT/loader/entries" "$BOOT_ROOT/$TOKEN/0-rescue/loader/entries"
+        KERNEL_INSTALL_CONF_ROOT=/run/kernel kernel-install add "$KVERSION" "$VMLINUZ"
+    else
+        # compat is the default, but lets set it explicitly
+        echo 'layout=compat' >> /run/kernel/install.conf
+        # using installkernel to invoke dracut
+        INSTALLKERNEL_CONF_ROOT=/run/kernel installkernel "$KVERSION" "$VMLINUZ"
+    fi
 }
 
 # shellcheck disable=SC1090
