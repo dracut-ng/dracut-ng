@@ -26,6 +26,7 @@ depends() {
 
 }
 
+# Install kernel module(s).
 installkernel() {
     instmods dm-integrity
 }
@@ -36,9 +37,11 @@ install() {
     inst_multiple -o \
         "$systemdutildir"/systemd-integritysetup \
         "$systemdutildir"/system-generators/systemd-integritysetup-generator \
+        "$systemdsystemunitdir"/remote-integritysetup.target \
         "$systemdsystemunitdir"/integritysetup-pre.target \
         "$systemdsystemunitdir"/integritysetup.target \
-        "$systemdsystemunitdir"/sysinit.target.wants/integritysetup.target
+        "$systemdsystemunitdir"/sysinit.target.wants/integritysetup.target \
+        "$systemdsystemunitdir"/initrd-root-device.target.wants/remote-integritysetup.target
 
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
@@ -48,8 +51,11 @@ install() {
             "$systemdsystemconfdir/integritysetup.target.wants/*.target" \
             "$systemdsystemconfdir"/integritysetup-pre.target \
             "$systemdsystemconfdir/integritysetup-pre.target.wants/*.target" \
+            "$systemdsystemconfdir"/remote-integritysetup.target \
+            "$systemdsystemconfdir/remote-integritysetup.target.wants/*.target" \
             "$systemdsystemconfdir"/sysinit.target.wants/integritysetup.target \
-            "$systemdsystemconfdir/sysinit.target.wants/integritysetup.target.wants/*.target"
+            "$systemdsystemconfdir/sysinit.target.wants/integritysetup.target.wants/*.target" \
+            "$systemdsystemconfdir"/initrd-root-device.target.wants/remote-integritysetup.target
     fi
 
     # Install required libraries.
