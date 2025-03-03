@@ -11,7 +11,6 @@ Conflicts=shutdown.target
 Conflicts=initrd-cleanup.service
 ConditionKernelCommandLine=!nompath
 ConditionKernelCommandLine=!rd.multipath=0
-ConditionKernelCommandLine=!rd_NO_MULTIPATH
 ConditionKernelCommandLine=!multipath=off
 ConditionVirtualization=!container
 
