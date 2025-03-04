@@ -72,6 +72,7 @@ static bool arg_silent = false;
 static bool arg_all = false;
 static bool arg_module = false;
 static bool arg_modalias = false;
+static bool arg_dry_run = false;
 static bool arg_resolvelazy = false;
 static bool arg_resolvedeps = false;
 static bool arg_hostonly = false;
@@ -294,6 +295,9 @@ static char *convert_abs_rel(const char *from, const char *target)
 
 static int ln_r(const char *src, const char *dst)
 {
+        if (arg_dry_run)
+                return 0;
+
         int ret;
         _cleanup_free_ const char *points_to = convert_abs_rel(src, dst);
 
@@ -373,6 +377,9 @@ static bool use_clone = true;
 
 static int cp(const char *src, const char *dst)
 {
+        if (arg_dry_run)
+                return 0;
+
         pid_t pid;
         int ret = 0;
 
@@ -1187,6 +1194,9 @@ static int hmac_install(const char *src, const char *dst, const char *hmacpath)
 
 void mark_hostonly(const char *path)
 {
+        if (arg_dry_run)
+                return;
+
         _cleanup_free_ char *fulldstpath = NULL;
         _cleanup_fclose_ FILE *f = NULL;
 
@@ -1224,6 +1234,9 @@ static bool check_hashmap(Hashmap *hm, const char *item)
 
 static int dracut_mkdir(const char *src)
 {
+        if (arg_dry_run)
+                return 0;
+
         _cleanup_free_ char *parent = NULL;
         char *path;
         struct stat sb;
@@ -1331,7 +1344,8 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
 
         _asprintf(&fulldstpath, "%s/%s", destrootdir, (dst[0] == '/' ? (dst + 1) : dst));
 
-        ret = stat(fulldstpath, &sb);
+        errno = ENOENT;
+        ret = arg_dry_run ? -1 : stat(fulldstpath, &sb);
 
         if (ret == 0) {
                 if (src_isdir && !S_ISDIR(sb.st_mode)) {
@@ -1360,7 +1374,7 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                         return 1;
                 }
 
-                ret = access(fulldstdir, F_OK);
+                ret = arg_dry_run ? 0 : access(fulldstdir, F_OK);
 
                 if (ret < 0) {
                         _cleanup_free_ char *dname = NULL;
@@ -1403,12 +1417,12 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                                 return 1;
                         }
 
-                        if (faccessat(AT_FDCWD, abspath, F_OK, AT_SYMLINK_NOFOLLOW) != 0) {
+                        if (!arg_dry_run && faccessat(AT_FDCWD, abspath, F_OK, AT_SYMLINK_NOFOLLOW) != 0) {
                                 log_debug("lstat '%s': %m", abspath);
                                 return 1;
                         }
 
-                        if (faccessat(AT_FDCWD, fulldstpath, F_OK, AT_SYMLINK_NOFOLLOW) != 0) {
+                        if (!arg_dry_run && faccessat(AT_FDCWD, fulldstpath, F_OK, AT_SYMLINK_NOFOLLOW) != 0) {
                                 _cleanup_free_ char *absdestpath = NULL;
 
                                 _asprintf(&absdestpath, "%s/%s", destrootdir,
@@ -1454,6 +1468,9 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
         }
 
         if (ret == 0) {
+                if (arg_dry_run)
+                        puts(src);
+
                 if (logfile_f)
                         dracut_log_cp(src);
         }
@@ -1484,6 +1501,7 @@ static void usage(int status)
                "  -d --dir          SOURCE is a directory\n"
                "  -l --ldd          Also install shebang executables and libraries\n"
                "  -L --logdir <DIR> Log files, which were installed from the host to <DIR>\n"
+               "  -n --dry-run      Don't actually copy files, just show what would be installed\n"
                "  -R --resolvelazy  Only install shebang executables and libraries\n"
                "                     for all SOURCE files\n"
                "  -H --hostonly     Mark all SOURCE files as hostonly\n\n"
@@ -1555,6 +1573,7 @@ static int parse_argv(int argc, char *argv[])
                 {"kerneldir", required_argument, NULL, ARG_KERNELDIR},
                 {"firmwaredirs", required_argument, NULL, ARG_FIRMWAREDIRS},
                 {"json-supported", no_argument, NULL, ARG_JSON_SUPPORTED},
+                {"dry-run", no_argument, NULL, 'n'},
                 {NULL, 0, NULL, 0}
         };
 
@@ -1666,6 +1685,9 @@ static int parse_argv(int argc, char *argv[])
                         puts("JSON is not supported");
                         return -1;
 #endif
+                case 'n':
+                        arg_dry_run = true;
+                        break;
                 default:
                         usage(EXIT_FAILURE);
                 }
@@ -2778,24 +2800,28 @@ int main(int argc, char **argv)
 
         umask(0022);
 
-        if (destrootdir == NULL || strlen(destrootdir) == 0) {
-                destrootdir = getenv("DESTROOTDIR");
+        if (arg_dry_run) {
+                destrootdir = "/nonexistent";
+        } else {
                 if (destrootdir == NULL || strlen(destrootdir) == 0) {
-                        log_error("Environment DESTROOTDIR or argument -D is not set!");
+                        destrootdir = getenv("DESTROOTDIR");
+                        if (destrootdir == NULL || strlen(destrootdir) == 0) {
+                                log_error("Environment DESTROOTDIR or argument -D is not set!");
+                                usage(EXIT_FAILURE);
+                        }
+                }
+
+                if (strcmp(destrootdir, "/") == 0) {
+                        log_error("Environment DESTROOTDIR or argument -D is set to '/'!");
                         usage(EXIT_FAILURE);
                 }
-        }
 
-        if (strcmp(destrootdir, "/") == 0) {
-                log_error("Environment DESTROOTDIR or argument -D is set to '/'!");
-                usage(EXIT_FAILURE);
-        }
-
-        i = destrootdir;
-        if (!(destrootdir = realpath(i, NULL))) {
-                log_error("Environment DESTROOTDIR or argument -D is set to '%s': %m", i);
-                r = EXIT_FAILURE;
-                goto finish2;
+                i = destrootdir;
+                if (!(destrootdir = realpath(i, NULL))) {
+                        log_error("Environment DESTROOTDIR or argument -D is set to '%s': %m", i);
+                        r = EXIT_FAILURE;
+                        goto finish2;
+                }
         }
 
         items = hashmap_new(string_hash_func, string_compare_func);
@@ -2848,7 +2874,8 @@ int main(int argc, char **argv)
                 r = EXIT_SUCCESS;
 
 finish1:
-        free(destrootdir);
+        if (!arg_dry_run)
+                free(destrootdir);
 finish2:
         if (!arg_kerneldir)
                 free(kerneldir);
