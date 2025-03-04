@@ -96,7 +96,5 @@ RUN \
 if [[ "${DISTRIBUTION}" =~ "centos:" ]]; then \
     [[ -e /usr/bin/qemu-kvm ]] || ln -sf /usr/libexec/qemu-kvm /usr/bin/qemu-kvm ;\
     [[ -e /usr/bin/qemu-system-$(uname -m) ]] || ln -sv /usr/libexec/qemu-kvm /usr/bin/qemu-system-$(uname -m) ;\
-    update-crypto-policies --no-reload --set FIPS ;\
-else \
-    fips-mode-setup --enable ;\
-fi
+fi ;\
+update-crypto-policies --no-reload --set FIPS
