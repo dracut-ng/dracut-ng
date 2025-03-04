@@ -84,7 +84,6 @@ static char *kerneldir = NULL;
 static size_t kerneldirlen = 0;
 static char **firmwaredirs = NULL;
 static char **pathdirs;
-static char *ldd = NULL;
 static char *logdir = NULL;
 static char *logfile = NULL;
 FILE *logfile_f = NULL;
@@ -901,143 +900,6 @@ static char *find_library(const char *soname, const char *src, size_t src_len, c
                search_libdir("/usr/local/lib", soname, match64, match32);
 }
 
-static int resolve_deps_ldd(const char *src, const char *fullsrcpath)
-{
-        int ret = 0, err;
-
-        _cleanup_free_ char *buf = NULL;
-        size_t linesize = LINE_MAX + 1;
-
-        buf = malloc(linesize);
-        if (buf == NULL)
-                return -errno;
-
-        if (strstr(src, ".so") == NULL) {
-                _cleanup_close_ int fd = -1;
-                fd = open(fullsrcpath, O_RDONLY | O_CLOEXEC);
-                if (fd < 0)
-                        return -errno;
-
-                ret = read(fd, buf, linesize - 1);
-                if (ret == -1)
-                        return -errno;
-
-                buf[ret] = '\0';
-                if (buf[0] == '#' && buf[1] == '!') {
-                        /* we have a shebang */
-                        char *p, *q;
-                        for (p = &buf[2]; *p && isspace(*p); p++) ;
-                        for (q = p; *q && (!isspace(*q)); q++) ;
-                        *q = '\0';
-                        log_debug("Script install: '%s'", p);
-                        ret = dracut_install(p, p, false, true, false);
-                        if (ret != 0)
-                                log_error("ERROR: failed to install '%s'", p);
-                        return ret;
-                }
-        }
-
-        int fds[2];
-        FILE *fptr;
-        if (pipe2(fds, O_CLOEXEC) == -1 || (fptr = fdopen(fds[0], "r")) == NULL) {
-                log_error("ERROR: pipe stream initialization for '%s' failed: %m", ldd);
-                exit(EXIT_FAILURE);
-        }
-
-        log_debug("%s %s", ldd, fullsrcpath);
-        pid_t ldd_pid;
-        if ((ldd_pid = fork()) == 0) {
-                dup2(fds[1], 1);
-                dup2(fds[1], 2);
-                putenv("LC_ALL=C");
-                execlp(ldd, ldd, fullsrcpath, (char *)NULL);
-                _exit(errno == ENOENT ? 127 : 126);
-        }
-        close(fds[1]);
-
-        ret = 0;
-
-        while (getline(&buf, &linesize, fptr) >= 0) {
-                char *p;
-
-                log_debug("ldd: '%s'", buf);
-
-                if (strstr(buf, "you do not have execution permission")) {
-                        log_error("%s", buf);
-                        ret += 1;
-                        break;
-                }
-
-                /* errors from cross-compiler-ldd */
-                if (strstr(buf, "unable to find sysroot")) {
-                        log_error("%s", buf);
-                        ret += 1;
-                        break;
-                }
-
-                /* musl ldd */
-                if (strstr(buf, "Not a valid dynamic program"))
-                        break;
-
-                /* glibc */
-                if (strstr(buf, "cannot execute binary file"))
-                        continue;
-
-                if (strstr(buf, "not a dynamic executable"))
-                        break;
-
-                if (strstr(buf, "loader cannot load itself"))
-                        break;
-
-                if (strstr(buf, "not regular file"))
-                        break;
-
-                if (strstr(buf, "cannot read header"))
-                        break;
-
-                if (strstr(buf, "cannot be preloaded"))
-                        continue;
-
-                if (strstr(buf, destrootdir))
-                        break;
-
-                p = buf;
-                if (strchr(p, '$')) {
-                        /* take ldd variable expansion into account */
-                        p = strstr(p, "=>");
-                        if (!p)
-                                p = buf;
-                }
-                p = strchr(p, '/');
-
-                if (p) {
-                        char *q;
-
-                        for (q = p; *q && *q != ' ' && *q != '\n'; q++) ;
-                        *q = '\0';
-
-                        ret += library_install(src, p);
-
-                }
-        }
-
-        fclose(fptr);
-        while (waitpid(ldd_pid, &err, 0) == -1) {
-                if (errno != EINTR) {
-                        log_error("ERROR: waitpid() failed: %m");
-                        return 1;
-                }
-        }
-        err = WIFSIGNALED(err) ? 128 + WTERMSIG(err) : WEXITSTATUS(err);
-        /* ldd has error conditions we largely don't care about ("not a dynamic executable", &c.):
-           only error out on hard errors (ENOENT, ENOEXEC, signals) */
-        if (err >= 126) {
-                log_error("ERROR: '%s %s' failed with %d", ldd, fullsrcpath, err);
-                return err;
-        } else
-                return ret;
-}
-
 #ifdef HAVE_SYSTEMD
 
 /* Parse the given .note.dlopen JSON (https://systemd.io/ELF_DLOPEN_METADATA/)
@@ -1120,10 +982,79 @@ static void resolve_deps_dlopen_parse_json(Hashmap *pdeps, Hashmap *deps, const 
         } \
 } while (0)
 
-static int resolve_deps(const char *src, Hashmap *pdeps);
+#endif
 
-static int resolve_deps_dlopen(const char *src, const char *fullsrcpath, Hashmap *pdeps)
+/* Given the ELF header map, also represented by match64/match32 and where B is
+   64 or 32 bit, check PT_INTERP and DT_NEEDED entries for dependencies. */
+#define RESOLVE_DEPS_NEEDED_FOR_BITS(B, match64, match32) do { \
+        PARSE_ELF_START(B, map); \
+\
+        if (ELF_BYTESWAP(16, ehdr->e_type) == ET_EXEC || ELF_BYTESWAP(16, ehdr->e_type) == ET_DYN) { \
+                for (size_t ph_idx = 0; ph_idx < ELF_BYTESWAP(16, ehdr->e_phnum); ph_idx++) { \
+                        Elf##B##_Phdr *phdr = (Elf##B##_Phdr *)((char *)map + ELF_BYTESWAP(B, ehdr->e_phoff) + ph_idx * ELF_BYTESWAP(16, ehdr->e_phentsize)); \
+                        if ((char *)phdr < (char *)map || (char *)phdr + sizeof(Elf##B##_Phdr) > (char *)map + src_len) \
+                                break; \
+                        if (ELF_BYTESWAP(32, phdr->p_type) != PT_INTERP) \
+                                continue; \
+\
+                        const char *interpreter = (const char *)map + ELF_BYTESWAP(B, phdr->p_offset); \
+                        if (interpreter < (char *)map || interpreter > (char *)map + src_len) \
+                                break; \
+                        if (hashmap_get(pdeps, interpreter)) \
+                                continue; \
+\
+                        char *value = strdup(interpreter); \
+                        if (!value || hashmap_put_strdup_key(deps, interpreter, value) < 0) { \
+                                log_error("ERROR: could not handle interpreter for '%s'", fullsrcpath); \
+                                ret = -1; \
+                        } \
+                        break; \
+                } \
+        } \
+\
+        for (size_t i = 0; i < ELF_BYTESWAP(16, ehdr->e_shnum); i++) { \
+                if ((char*)&shdr[i] < (char*)map || (char*)&shdr[i] + sizeof(Elf##B##_Shdr) > (char*)map + src_len) \
+                        break; \
+                if (strcmp(&shstrtab[ELF_BYTESWAP(32, shdr[i].sh_name)], ".dynamic") != 0) \
+                        continue; \
+\
+                Elf##B##_Dyn *dyn = (Elf##B##_Dyn *)((char *)map + ELF_BYTESWAP(B, shdr[i].sh_offset)); \
+                if ((char *)dyn < (char *)map || (char *)dyn > (char *)map + src_len) \
+                        break; \
+\
+                for (Elf##B##_Dyn *d = dyn; ELF_BYTESWAP(32, d->d_tag) != DT_NULL; d++) { \
+                        if ((char *)d < (char *)map || (char *)d + sizeof(Elf##B##_Dyn) > (char *)map + src_len) \
+                                break; \
+                        if (ELF_BYTESWAP(B, d->d_tag) != DT_NEEDED) \
+                                continue; \
+\
+                        const char *soname = (char *)map + ELF_BYTESWAP(B, shdr[ELF_BYTESWAP(32, shdr[i].sh_link)].sh_offset) + ELF_BYTESWAP(B, d->d_un.d_val); \
+                        if ((char *)soname < (char *)map || (char *)soname > (char *)map + src_len) \
+                                break; \
+                        if (hashmap_get(pdeps, soname)) \
+                                continue; \
+\
+                        char* library = find_library(soname, fullsrcpath, src_len, match64, match32); \
+                        if (!library || hashmap_put_strdup_key(deps, soname, library) < 0) { \
+                                log_error("ERROR: could not locate dependency %s requested by '%s'", soname, fullsrcpath); \
+                                ret = -1; \
+                        } \
+                } \
+        } \
+} while (0)
+
+/* Recursively check the given file for dependencies and install them. pdeps is
+   for dependencies already found in this chain and should initially be NULL.
+   Both ELF binaries and scripts with shebangs are handled. */
+static int resolve_deps(const char *src, Hashmap *pdeps)
 {
+        _cleanup_free_ char *fullsrcpath = NULL;
+
+        fullsrcpath = get_real_file(src, true);
+        log_debug("resolve_deps('%s') -> get_real_file('%s', true) = '%s'", src, src, fullsrcpath);
+        if (!fullsrcpath)
+                return 0;
+
         _cleanup_close_ int fd = open(fullsrcpath, O_RDONLY | O_CLOEXEC);
         if (fd < 0) {
                 log_error("ERROR: cannot open '%s': %m", fullsrcpath);
@@ -1162,6 +1093,18 @@ static int resolve_deps_dlopen(const char *src, const char *fullsrcpath, Hashmap
         Hashmap  *deps = hashmap_new(string_hash_func, string_compare_func);
         int ret = 0;
 
+        char *shebang = (char *)map;
+        if (shebang[0] == '#' && shebang[1] == '!') {
+                char *p, *q;
+                for (p = &shebang[2]; *p && isspace(*p); p++) ;
+                for (q = p; *q && (!isspace(*q)); q++) ;
+                char *interpreter = strndup(p, q - p);
+                log_debug("Script install: '%s'", interpreter);
+                ret = dracut_install(interpreter, interpreter, false, true, false);
+                free(interpreter);
+                goto finish;
+        }
+
         unsigned char *e_ident = (unsigned char *)map;
         if (e_ident[EI_MAG0] != ELFMAG0 ||
             e_ident[EI_MAG1] != ELFMAG1 ||
@@ -1171,10 +1114,16 @@ static int resolve_deps_dlopen(const char *src, const char *fullsrcpath, Hashmap
 
         switch (e_ident[EI_CLASS]) {
         case ELFCLASS32:
+                RESOLVE_DEPS_NEEDED_FOR_BITS(32, NULL, ehdr);
+#ifdef HAVE_SYSTEMD
                 RESOLVE_DEPS_DLOPEN_FOR_BITS(32, NULL, ehdr);
+#endif
                 break;
         case ELFCLASS64:
+                RESOLVE_DEPS_NEEDED_FOR_BITS(64, ehdr, NULL);
+#ifdef HAVE_SYSTEMD
                 RESOLVE_DEPS_DLOPEN_FOR_BITS(64, ehdr, NULL);
+#endif
                 break;
         default:
                 log_error("ERROR: '%s' has an unknown ELF class", fullsrcpath);
@@ -1204,27 +1153,6 @@ finish:
 
         hashmap_free(deps);
         return ret;
-}
-
-#endif
-
-/* Recursively check the given file for dependencies and install them. pdeps is
-   for dependencies already found in this chain and should initially be NULL.
-   Both ELF binaries and scripts with shebangs are handled. */
-static int resolve_deps(const char *src, Hashmap *pdeps)
-{
-        _cleanup_free_ char *fullsrcpath = NULL;
-
-        fullsrcpath = get_real_file(src, true);
-        log_debug("resolve_deps('%s') -> get_real_file('%s', true) = '%s'", src, src, fullsrcpath);
-        if (!fullsrcpath)
-                return 0;
-
-        return resolve_deps_ldd(src, fullsrcpath)
-#ifdef HAVE_SYSTEMD
-               ?: resolve_deps_dlopen(src, fullsrcpath, pdeps)
-#endif
-               ;
 }
 
 /* Install ".<filename>.hmac" file for FIPS self-checks */
@@ -1344,7 +1272,7 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
         bool src_islink = false;
         bool src_isdir = false;
         mode_t src_mode = 0;
-        char *i = NULL;
+        char *hash_path = NULL;
         const char *src, *dst;
 
         if (sysrootdirlen) {
@@ -1379,8 +1307,10 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
 
         if (lstat(fullsrcpath, &sb) < 0) {
                 if (!isdir) {
-                        i = strdup(src);
-                        hashmap_put(items_failed, i, i);
+                        hash_path = strdup(src);
+                        if (!hash_path)
+                                return -ENOMEM;
+                        hashmap_put(items_failed, hash_path, hash_path);
                         /* src does not exist */
                         return 1;
                 }
@@ -1389,6 +1319,15 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                 src_isdir = S_ISDIR(sb.st_mode);
                 src_mode = sb.st_mode;
         }
+
+        /* The install hasn't succeeded yet, but mark this item as successful
+           now. If it fails once, it will probably fail every time. Doing this
+           could avoid dependency loops, but this is actually handled elsewhere.
+           It also avoids an elusive memory leak detected by valgrind. */
+        hash_path = strdup(dst);
+        if (!hash_path)
+                return -ENOMEM;
+        hashmap_put(items, hash_path, hash_path);
 
         _asprintf(&fulldstpath, "%s/%s", destrootdir, (dst[0] == '/' ? (dst + 1) : dst));
 
@@ -1446,15 +1385,7 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
 
                 if (src_isdir) {
                         log_info("mkdir '%s'", fulldstpath);
-                        ret = dracut_mkdir(fulldstpath);
-                        if (ret == 0) {
-                                i = strdup(dst);
-                                if (!i)
-                                        return -ENOMEM;
-
-                                hashmap_put(items, i, i);
-                        }
-                        return ret;
+                        return dracut_mkdir(fulldstpath);
                 }
 
                 /* ready to install src */
@@ -1523,12 +1454,6 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
         }
 
         if (ret == 0) {
-                i = strdup(dst);
-                if (!i)
-                        return -ENOMEM;
-
-                hashmap_put(items, i, i);
-
                 if (logfile_f)
                         dracut_log_cp(src);
         }
@@ -2844,11 +2769,6 @@ int main(int argc, char **argv)
         }
 
         log_debug("PATH=%s", path);
-
-        ldd = getenv("DRACUT_LDD");
-        if (isempty(ldd))
-                ldd = "ldd";
-        log_debug("LDD=%s", ldd);
 
         env_no_xattr = getenv("DRACUT_NO_XATTR");
         if (env_no_xattr != NULL)
