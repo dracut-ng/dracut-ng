@@ -60,7 +60,7 @@ sc_supported() {
     if [[ ${gpgMajor} -gt 2 || ${gpgMajor} -eq 2 && ${gpgMinor} -ge 1 ]] \
         && require_binaries gpg-agent \
         && require_binaries gpg-connect-agent \
-        && ($DRACUT_LDD "${dracutsysrootdir}${scdaemon}" | grep libusb > /dev/null); then
+        && [[ $($DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} --dry-run -R "${scdaemon}") == *libusb* ]]; then
         return 0
     else
         return 1
