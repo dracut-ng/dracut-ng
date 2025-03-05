@@ -819,7 +819,6 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
         bool src_islink = false;
         bool src_isdir = false;
         mode_t src_mode = 0;
-        bool dst_exists = true;
         char *i = NULL;
         const char *src, *dst;
 
@@ -869,15 +868,13 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
         _asprintf(&fulldstpath, "%s/%s", destrootdir, (dst[0] == '/' ? (dst + 1) : dst));
 
         ret = stat(fulldstpath, &sb);
-        if (ret != 0) {
-                dst_exists = false;
-                if (errno != ENOENT) {
-                        log_error("ERROR: stat '%s': %m", fulldstpath);
-                        return 1;
-                }
-        }
 
         if (ret == 0) {
+                if (src_isdir && !S_ISDIR(sb.st_mode)) {
+                        log_error("dest dir '%s' already exists but is not a directory", fulldstpath);
+                        return 1;
+                }
+
                 if (resolvedeps && S_ISREG(sb.st_mode) && (sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
                         log_debug("'%s' already exists, but checking for any deps", fulldstpath);
                         if (sysrootdirlen && (strncmp(fulldstpath, sysrootdir, sysrootdirlen) == 0))
@@ -886,9 +883,11 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                                 ret = resolve_deps(fullsrcpath);
                 } else
                         log_debug("'%s' already exists", fulldstpath);
-
-                /* dst does already exist */
         } else {
+                if (errno != ENOENT) {
+                        log_error("ERROR: stat '%s': %m", fulldstpath);
+                        return 1;
+                }
 
                 /* check destination directory */
                 fulldstdir = strndup(fulldstpath, dir_len(fulldstpath));
@@ -921,15 +920,6 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                 }
 
                 if (src_isdir) {
-                        if (dst_exists) {
-                                if (S_ISDIR(sb.st_mode)) {
-                                        log_debug("dest dir '%s' already exists", fulldstpath);
-                                        return 0;
-                                }
-                                log_error("dest dir '%s' already exists but is not a directory", fulldstpath);
-                                return 1;
-                        }
-
                         log_info("mkdir '%s'", fulldstpath);
                         ret = dracut_mkdir(fulldstpath);
                         if (ret == 0) {
