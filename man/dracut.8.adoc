@@ -648,13 +648,6 @@ _DRACUT_LDCONFIG_::
 Default:
     _ldconfig_
 
-_DRACUT_LDD_::
-    sets the _ldd_ program path and options. Optional.
-    Used for **--sysroot**.
-+
-Default:
-    _ldd_
-
 _PKG_CONFIG_::
     sets the _pkg-config_ program path and options. Optional.
     Most useful together with **--sysroot**.
