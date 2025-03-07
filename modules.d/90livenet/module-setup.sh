@@ -8,7 +8,7 @@ check() {
 
 # called by dracut
 depends() {
-    echo network url-lib dmsquash-live img-lib bash
+    echo network url-lib dmsquash-live img-lib bash initqueue
     return 0
 }
 
@@ -20,5 +20,4 @@ install() {
     if dracut_module_included "systemd-initrd"; then
         inst_script "$moddir/livenet-generator.sh" "$systemdutildir"/system-generators/dracut-livenet-generator
     fi
-    dracut_need_initqueue
 }
