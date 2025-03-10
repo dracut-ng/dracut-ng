@@ -68,6 +68,7 @@ static bool arg_modalias = false;
 static bool arg_resolvelazy = false;
 static bool arg_resolvedeps = false;
 static bool arg_hostonly = false;
+static bool arg_kerneldir = false;
 static bool no_xattr = false;
 static char *destrootdir = NULL;
 static char *sysrootdir = NULL;
@@ -1200,6 +1201,7 @@ static int parse_argv(int argc, char *argv[])
                         break;
                 case ARG_KERNELDIR:
                         kerneldir = optarg;
+                        arg_kerneldir = true;
                         break;
                 case ARG_FIRMWAREDIRS:
                         firmwaredirs = strv_split(optarg, ":");
@@ -2402,6 +2404,9 @@ int main(int argc, char **argv)
 finish1:
         free(destrootdir);
 finish2:
+        if (!arg_kerneldir)
+                free(kerneldir);
+
         if (logfile_f)
                 fclose(logfile_f);
 
