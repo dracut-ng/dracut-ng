@@ -1111,7 +1111,7 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $ro_mnt_l ]] && ro_mnt="yes"
 [[ $early_microcode_l ]] && early_microcode=$early_microcode_l
 [[ $early_microcode ]] || early_microcode=yes
-[[ $early_microcode_image_dir ]] || early_microcode_image_dir=('/boot')
+[[ $early_microcode_image_dir ]] || early_microcode_image_dir=("$dracutsysrootdir"/boot)
 [[ $early_microcode_image_name ]] \
     || early_microcode_image_name=('intel-uc.img' 'intel-ucode.img' 'amd-uc.img' 'amd-ucode.img' 'early_ucode.cpio' 'microcode.cpio')
 [[ $logfile_l ]] && logfile="$logfile_l"
