@@ -29,7 +29,7 @@ install() {
     local _suffix=
 
     # systemd >= v258
-    [[ -e "$systemdsystemunitdir"/systemd-sysext-initrd.service ]] && _suffix="-initrd"
+    [[ -e "$dracutsysrootdir$systemdsystemunitdir"/systemd-sysext-initrd.service ]] && _suffix="-initrd"
 
     # It's intended to work only with raw binary disk images contained in
     # regular files, but not with directory trees.
