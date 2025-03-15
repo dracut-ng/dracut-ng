@@ -84,6 +84,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     squashfs-tools \
     swtpm \
     systemd-boot-unsigned \
+    systemd-container \
     systemd-resolved \
     systemd-ukify \
     tpm2-tools \
