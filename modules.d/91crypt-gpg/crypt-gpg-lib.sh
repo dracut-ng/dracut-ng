@@ -36,11 +36,13 @@ gpg_decrypt() {
     gpgMinorVersion="$(gpg --version | sed -n 1p | sed -n -r -e 's|.* [0-9]*\.([0-9]*).*|\1|p')"
 
     if [ "${gpgMajorVersion}" -ge 2 ] && [ "${gpgMinorVersion}" -ge 1 ] \
-        && [ -f /root/crypt-public-key.gpg ] && getargbool 1 rd.luks.smartcard; then
+        && ls /root/crypt-public-key*.gpg > /dev/null 2>&1 && getargbool 1 rd.luks.smartcard; then
         useSmartcard="1"
         echo "allow-loopback-pinentry" >> "$gpghome/gpg-agent.conf"
         GNUPGHOME="$gpghome" gpg-agent --quiet --daemon
-        GNUPGHOME="$gpghome" gpg --quiet --no-tty --import < /root/crypt-public-key.gpg
+        for file in /root/crypt-public-key*.gpg; do
+            GNUPGHOME="$gpghome" gpg --quiet --no-tty --import < "$file"
+        done
         GNUPGHOME="$gpghome" gpg-connect-agent 1> /dev/null learn /bye
         local smartcardSerialNumber
         smartcardSerialNumber="$(GNUPGHOME=$gpghome gpg --no-tty --card-status \

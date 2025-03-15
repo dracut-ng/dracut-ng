@@ -43,6 +43,19 @@ $ su -c 'cp /safe/place/keyfile_sc.gpg /boot/${KEYFILE}'
 $ gpg --armor --export-options export-minimal --export ${RECIPIENT} > /safe/place/crypt-public-key.gpg
 $ su -c 'cp /safe/place/crypt-public-key.gpg /etc/dracut.conf.d/crypt-public-key.gpg'
 
+
+# Multiple recipients for decryption with multiple keys
+# you can encrypt a keyfile with multiple recipients:
+$ cat /safe/place/keyfile.bak.gpg | gpg -d | gpg --encrypt --recipient ${RECIPIENT1} --recipient ${RECIPIENT2} --recipient ${RECIPIENT3} --cipher-algo aes256 --armor -c > /safe/place/keyfile_sc.gpg
+# the public keys can each be export with
+$ gpg --armor --export-options export-minimal --export ${RECIPIENT1} > /safe/place/crypt-public-key1.gpg
+$ su -c 'cp /safe/place/crypt-public-key1.gpg /etc/dracut.conf.d/crypt-public-key1.gpg'
+$ gpg --armor --export-options export-minimal --export ${RECIPIENT2} > /safe/place/crypt-public-key2.gpg
+$ su -c 'cp /safe/place/crypt-public-key2.gpg /etc/dracut.conf.d/crypt-public-key2.gpg'
+$ gpg --armor --export-options export-minimal --export ${RECIPIENT3} > /safe/place/crypt-public-key3.gpg
+$ su -c 'cp /safe/place/crypt-public-key3.gpg /etc/dracut.conf.d/crypt-public-key3.gpg'
+# this way any of the 3 recipients can decrypt the keyfile
+
 # Rebuild your initramfs as usual
 # When booting with any of the requirements not met, crypt-gpg will default to password-based keyfile unlocking.
 # If all requirements are met and smartcard support is not disabled by setting the kernel option "rd.luks.smartcard=0"
