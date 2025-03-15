@@ -1414,8 +1414,6 @@ rd_NO_MD:: rd.md=0
 
 rd_MD_UUID:: rd.md.uuid
 
-rd_NO_MULTIPATH: rd.multipath=0
-
 iscsi_initiator:: rd.iscsi.initiator
 
 iscsi_target_name:: rd.iscsi.target.name
