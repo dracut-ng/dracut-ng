@@ -30,12 +30,15 @@ install() {
         inst_multiple gpg-agent
         inst_multiple gpg-connect-agent
         inst_multiple -o /usr/libexec/scdaemon /usr/lib/gnupg/scdaemon
-        cp "$dracutsysrootdir$(sc_public_key)" "${initdir}/root/"
+
+        while IFS= read -r -d '' key; do
+            cp "$dracutsysrootdir$key" "${initdir}/root/"
+        done < <(sc_public_key)
     fi
 }
 
 sc_public_key() {
-    echo -n "/etc/dracut.conf.d/crypt-public-key.gpg"
+    find /etc/dracut.conf.d -maxdepth 1 -type f -iname 'crypt-public-key*.gpg' -print0
 }
 
 # CCID Smartcard support requires GnuPG >= 2.1 with scdaemon and libusb
@@ -65,9 +68,10 @@ sc_supported() {
 }
 
 sc_requested() {
-    if [ -f "$dracutsysrootdir$(sc_public_key)" ]; then
-        return 0
-    else
-        return 1
-    fi
+    while IFS= read -r -d '' key; do
+        if [ -f "$dracutsysrootdir$key" ]; then
+            return 0
+        fi
+    done < <(sc_public_key)
+    return 1
 }
