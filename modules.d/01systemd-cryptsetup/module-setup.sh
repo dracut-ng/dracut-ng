@@ -70,7 +70,7 @@ install() {
                 _luksfile="/run/cryptsetup-keys.d/$_mapper.key"
             fi
 
-            find "$systemdsystemunitdir" "$systemdsystemconfdir" -type f -name "*.socket" | while read -r socket_unit; do
+            find "$dracutsysrootdir$systemdsystemunitdir" "$dracutsysrootdir$systemdsystemconfdir" -type f -name "*.socket" | while read -r socket_unit; do
                 # systemd-cryptsetup utility only supports SOCK_STREAM (ListenStream) sockets, so we ignore
                 # other types like SOCK_DGRAM (ListenDatagram), SOCK_SEQPACKET (ListenSequentialPacket), etc.
                 if ! grep -E -q "^ListenStream\s*=\s*$_luksfile$" "$socket_unit"; then
