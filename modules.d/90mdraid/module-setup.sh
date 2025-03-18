@@ -46,7 +46,7 @@ cmdline() {
         [[ ${host_fs_types[$dev]} != *_raid_member ]] && continue
 
         UUID=$(
-            /sbin/mdadm --examine --export "$dev" \
+            mdadm --examine --export "$dev" \
                 | while read -r line || [[ "$line" ]]; do
                     [[ ${line#MD_UUID=} == "$line" ]] && continue
                     printf "%s" "${line#MD_UUID=} "
