@@ -99,3 +99,9 @@ RUN \
     KVERSION="$(cd /lib/modules && ls -1 | tail -1)" \
     ; if ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ]; then ln -sf /boot/vmlinuz /usr/lib/modules/"$KVERSION"/vmlinuz; fi  \
     ; if ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ]; then ln -sf /boot/vmlinuz-"$KVERSION" /usr/lib/modules/"$KVERSION"/vmlinuz; fi
+
+# adopt uutils utilities by default for ubuntu:devel
+RUN if [ "$DISTRIBUTION" = "ubuntu:devel" ] ; then \
+    cargo install --git https://github.com/jnsgruk/oxidizr \
+    && /root/.cargo/bin/oxidizr enable --experiments coreutils --yes \
+    ; fi
