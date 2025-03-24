@@ -2373,6 +2373,12 @@ if dracut_module_included "squash-lib"; then
     compress="cat"
 fi
 
+# protect existing output file against build errors
+if [[ -e $outfile ]]; then
+    outfile_final="$outfile"
+    outfile="${outfile}.tmp"
+fi
+
 dinfo "*** Creating image file '$outfile' ***"
 
 if [[ $uefi == yes ]]; then
@@ -2675,6 +2681,18 @@ else
     else
         rm -f -- "$outfile"
         dfatal "Creation of $outfile failed"
+        exit 1
+    fi
+fi
+
+if [[ $outfile_final ]]; then
+    dinfo "*** Moving image file '$outfile' to '$outfile_final' ***"
+    if mv -f "$outfile" "$outfile_final"; then
+        dinfo "*** Moving image file '$outfile' to '$outfile_final' done ***"
+        outfile="$outfile_final"
+    else
+        rm -f -- "$outfile_final"
+        dfatal "Move of $outfile_final failed"
         exit 1
     fi
 fi
