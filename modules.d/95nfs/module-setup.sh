@@ -139,5 +139,5 @@ install() {
 
     dracut_need_initqueue
 
-    inst_libdir_file 'libnfsidmap_nsswitch.so*' 'libnfsidmap/*.so' 'libnfsidmap*.so*'
+    inst_libdir_file 'libnfsidmap*/*.so' 'libnfsidmap*.so*'
 }
