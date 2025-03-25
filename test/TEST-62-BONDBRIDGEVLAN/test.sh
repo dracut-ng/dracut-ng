@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # -*- mode: shell-script; indent-tabs-mode: nil; sh-basic-offset: 4; -*-
 # ex: ts=8 sw=4 sts=4 et filetype=sh
-set -e
+set -eu
 
 [ -z "${USE_NETWORK-}" ] && USE_NETWORK="network"
 
@@ -66,7 +66,7 @@ run_server() {
         -pidfile "$TESTDIR"/server.pid -daemonize
     chmod 644 -- "$TESTDIR"/server.pid
 
-    if ! [[ $SERIAL ]]; then
+    if ! [[ ${SERIAL-} ]]; then
         wait_for_server_startup
     else
         echo Sleeping 10 seconds to give the server a head start
