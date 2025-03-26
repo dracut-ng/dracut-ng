@@ -105,7 +105,7 @@ if ! [[ $libdirs ]]; then
 fi
 
 # ldd needs LD_LIBRARY_PATH pointing to the libraries within the sysroot directory
-if [[ -n $dracutsysrootdir ]]; then
+if [[ -n $dracutsysrootdir ]] && [[ -z $DRACUT_LDD ]]; then
     for lib in $libdirs; do
         LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+"$LD_LIBRARY_PATH":}$dracutsysrootdir$lib"
     done
