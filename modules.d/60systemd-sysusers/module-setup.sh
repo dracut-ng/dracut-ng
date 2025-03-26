@@ -20,4 +20,9 @@ install() {
         set -o pipefail
         systemd-sysusers --root="$initdir" 2>&1 >&3 | grep -v "^Creating " >&2
     } 3>&1
+
+    if [[ $UID != 0 ]]; then
+        [[ -f "$initdir/etc/gshadow" ]] && chmod u+rw "$initdir/etc/gshadow"
+        [[ -f "$initdir/etc/shadow" ]] && chmod u+rw "$initdir/etc/shadow"
+    fi
 }
