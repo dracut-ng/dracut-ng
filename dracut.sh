@@ -927,6 +927,9 @@ export DRACUT_LOG_LEVEL=warning
 
 [[ $dracutbasedir ]] || dracutbasedir="$dracutsysrootdir"/usr/lib/dracut
 
+# These config variables needs to be exported for dracut-install.
+export add_dlopen_features="" omit_dlopen_features=""
+
 # if we were not passed a config file, try the default one
 if [[ -z $conffile ]]; then
     if [[ $allowlocal ]]; then
@@ -2007,6 +2010,13 @@ dracut_module_included "squash-lib" && mkdir -p "$squashdir"
 
 _isize=0 #initramfs size
 modules_loaded=" "
+# Allow all modules to update the config. Do this before installing anything.
+for moddir in "$dracutbasedir/modules.d"/[0-9][0-9]*; do
+    _d_mod=${moddir##*/}
+    _d_mod=${_d_mod#[0-9][0-9]}
+    [[ $mods_to_load == *\ $_d_mod\ * ]] || continue
+    module_config "$_d_mod" "$moddir"
+done
 # source our modules.
 for moddir in "$dracutbasedir/modules.d"/[0-9][0-9]*; do
     _d_mod=${moddir##*/}

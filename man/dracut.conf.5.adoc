@@ -75,6 +75,19 @@ This option forces dracut to only include the specified kernel modules.
 In most cases the "--add-drivers" option is what you want to use.
 This option is not recommended to use (use at your own risk).
 
+*add_dlopen_features+=*" __<pattern>:<feature>__[__,<feature>__...] ... "::
+Specify a space-separated list of binaries matching _pattern_ against a
+comma-separated list of features to install dependencies for. For example,
+"libsystemd-shared-*.so:idn,ip4tc" will install the dependencies for systemd's
+international domain name and iptables support. _pattern_ should match the
+soname for libraries or the filename for executables.
+
+*omit_dlopen_features+=*" __<pattern>:<feature>__[__,<feature>__...] ... "::
+Specify a space-separated list of binaries matching _pattern_ against a
+comma-separated list of features to omit dependencies for. Some dracut modules
+add certain features by default. This takes precedence over add_dlopen_features
+above.
+
 *filesystems+=*" __<filesystem names>__ "::
 Specify a space-separated list of kernel filesystem modules to exclusively
 include in the generic initramfs.
