@@ -26,6 +26,11 @@ depends() {
 
 }
 
+# Config adjustments before installing anything.
+config() {
+    add_dlopen_features+=" libsystemd-shared-*.so:cryptsetup "
+}
+
 # Install kernel module(s).
 installkernel() {
     hostonly='' instmods dm-verity

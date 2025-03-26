@@ -94,6 +94,9 @@ static Hashmap *modules_loaded = NULL;
 static Hashmap *modules_suppliers = NULL;
 static Hashmap *processed_suppliers = NULL;
 static Hashmap *modalias_to_kmod = NULL;
+static Hashmap *add_dlopen_features = NULL;
+static Hashmap *omit_dlopen_features = NULL;
+static Hashmap *dlopen_features[2] = {NULL};
 static regex_t mod_filter_path;
 static regex_t mod_filter_nopath;
 static regex_t mod_filter_symbol;
@@ -911,11 +914,14 @@ static char *find_library(const char *soname, const char *src, size_t src_len, c
 
 /* Parse the given .note.dlopen JSON (https://systemd.io/ELF_DLOPEN_METADATA/)
    in the given note index and find each dependent library, ensuring it matches
-   the given (64 or 32 bit) ELF header. Each library found is added to deps.
-   Dependencies already found in this chain must be given in pdeps. Failure to
-   parse the JSON or find a library is considered non-fatal. */
-static void resolve_deps_dlopen_parse_json(Hashmap *pdeps, Hashmap *deps, const char *fullsrcpath, size_t src_len,
-                                           const char *json, size_t note_idx, const Elf64_Ehdr *match64, const Elf32_Ehdr *match32)
+   the given (64 or 32 bit) ELF header. Dependencies are skipped if the
+   corresponding feature is present in omit_dlopen_features or missing from
+   add_dlopen_features. Those hashmaps are keyed by wildcard patterns, which are
+   compared against the source's soname or filename. Each library found is added
+   to deps. Dependencies already found in this chain must be given in pdeps.
+   Failure to parse the JSON or find a library is considered non-fatal. */
+static void resolve_deps_dlopen_parse_json(Hashmap *pdeps, Hashmap *deps, const char *src_soname, char *fullsrcpath,
+                                           size_t src_len, const char *json, size_t note_idx, const Elf64_Ehdr *match64, const Elf32_Ehdr *match32)
 {
         _cleanup_(sd_json_variant_unrefp) sd_json_variant *dlopen_json = NULL;
         if (sd_json_parse(json, 0, &dlopen_json, NULL, NULL) != 0 || !sd_json_variant_is_array(dlopen_json)) {
@@ -925,6 +931,28 @@ static void resolve_deps_dlopen_parse_json(Hashmap *pdeps, Hashmap *deps, const 
 
         for (size_t entry_idx = 0; entry_idx < sd_json_variant_elements(dlopen_json); entry_idx++) {
                 sd_json_variant *entry = sd_json_variant_by_index(dlopen_json, entry_idx);
+                sd_json_variant *feature_json = sd_json_variant_by_key(entry, "feature");
+
+                if (feature_json && sd_json_variant_is_string(feature_json)) {
+                        const char *feature = sd_json_variant_string(feature_json);
+                        const char *name = src_soname ?: basename(fullsrcpath);
+
+                        Iterator i;
+                        char ***features;
+                        const char *pattern;
+                        HASHMAP_FOREACH_KEY(features, pattern, omit_dlopen_features, i) {
+                                if (fnmatch(pattern, name, 0) == 0 && strv_contains(*features, feature))
+                                        goto skip;
+                        }
+                        int skip = 1;
+                        HASHMAP_FOREACH_KEY(features, pattern, add_dlopen_features, i) {
+                                if (fnmatch(pattern, name, 0) == 0 && strv_contains(*features, feature))
+                                        skip = 0;
+                        }
+                        if (skip)
+                                goto skip;
+                }
+
                 sd_json_variant *sonames = sd_json_variant_by_key(entry, "soname");
                 if (!sonames || !sd_json_variant_is_array(sonames)) {
                         log_warning("WARNING: soname array missing from .note.dlopen entry #%zd.%zd in '%s'", note_idx, entry_idx, fullsrcpath);
@@ -947,6 +975,7 @@ static void resolve_deps_dlopen_parse_json(Hashmap *pdeps, Hashmap *deps, const 
                         if (!library || hashmap_put_strdup_key(deps, soname, library) < 0)
                                 log_warning("WARNING: could not locate dlopen dependency %s requested by '%s'", soname, fullsrcpath);
                 }
+skip:
         }
 }
 
@@ -954,7 +983,32 @@ static void resolve_deps_dlopen_parse_json(Hashmap *pdeps, Hashmap *deps, const 
    64 or 32 bit, check .note.dlopen entries for dependencies. See above. */
 #define RESOLVE_DEPS_DLOPEN_FOR_BITS(B, match64, match32) do { \
         PARSE_ELF_START(B, map); \
+        const char *soname = NULL; \
         size_t note_idx = -1; \
+\
+        for (size_t i = 0; !soname && i < ELF_BYTESWAP(16, ehdr->e_shnum); i++) { \
+                if ((char*)&shdr[i] < (char*)map || (char*)&shdr[i] + sizeof(Elf##B##_Shdr) > (char*)map + src_len) \
+                        break; \
+                if (strcmp(&shstrtab[ELF_BYTESWAP(32, shdr[i].sh_name)], ".dynamic") != 0) \
+                        continue; \
+\
+                Elf##B##_Dyn *dyn = (Elf##B##_Dyn *)((char *)map + ELF_BYTESWAP(B, shdr[i].sh_offset)); \
+                if ((char *)dyn < (char *)map || (char *)dyn > (char *)map + src_len) \
+                        break; \
+\
+                for (Elf##B##_Dyn *d = dyn; !soname && ELF_BYTESWAP(32, d->d_tag) != DT_NULL; d++) { \
+                        if ((char *)d < (char *)map || (char *)d + sizeof(Elf##B##_Dyn) > (char *)map + src_len) \
+                                break; \
+                        if (ELF_BYTESWAP(B, d->d_tag) != DT_SONAME) \
+                                continue; \
+\
+                        soname = (char *)map + ELF_BYTESWAP(B, shdr[ELF_BYTESWAP(32, shdr[i].sh_link)].sh_offset) + ELF_BYTESWAP(B, d->d_un.d_val); \
+                        if ((char *)soname < (char *)map || (char *)soname > (char *)map + src_len) { \
+                                soname = NULL; \
+                                break; \
+                        } \
+                } \
+        } \
 \
         for (size_t i = 0; i < ELF_BYTESWAP(16, ehdr->e_shnum); i++) { \
                 if ((char*)shdr + i * sizeof(Elf##B##_Shdr) > (char*)map + src_len) \
@@ -984,7 +1038,7 @@ static void resolve_deps_dlopen_parse_json(Hashmap *pdeps, Hashmap *deps, const 
                                 continue; \
 \
                         note_idx++; \
-                        resolve_deps_dlopen_parse_json(pdeps, deps, fullsrcpath, src_len, note_desc, note_idx, match64, match32); \
+                        resolve_deps_dlopen_parse_json(pdeps, deps, soname, fullsrcpath, src_len, note_desc, note_idx, match64, match32); \
                 } \
         } \
 } while (0)
@@ -1100,6 +1154,11 @@ static int resolve_deps(const char *src, Hashmap *pdeps)
         Hashmap  *deps = hashmap_new(string_hash_func, string_compare_func);
         int ret = 0;
 
+        if (!ndeps || !deps) {
+                ret = -1;
+                goto finish;
+        }
+
         char *shebang = (char *)map;
         if (shebang[0] == '#' && shebang[1] == '!') {
                 char *p, *q;
@@ -1137,8 +1196,10 @@ static int resolve_deps(const char *src, Hashmap *pdeps)
                 ret = -1;
         }
 
-        if (hashmap_merge(ndeps, pdeps) < 0 || hashmap_merge(ndeps, deps) < 0)
+        if (hashmap_merge(ndeps, pdeps) < 0 || hashmap_merge(ndeps, deps) < 0) {
+                ret = -1;
                 goto finish;
+        }
 
         char *key, *library;
         Iterator i;
@@ -2748,6 +2809,88 @@ static int install_modules(int argc, char **argv)
         return EXIT_SUCCESS;
 }
 
+/* Parse the add_dlopen_features and omit_dlopen_features environment variables,
+   and store their contents in the corresponding char* -> char*** hashmaps. Each
+   variable holds multiple entries, separated by whitespace, and each entry
+   takes the form "libfoo.so.*:feature1,feature2". */
+static int parse_dlopen_features()
+{
+        const char *add_env = getenv("add_dlopen_features");
+        const char *omit_env = getenv("omit_dlopen_features");
+        const char *envs[] = {add_env, omit_env};
+
+        char *nkey;
+        char **features_array;
+        char ***features_arrayp;
+
+        for (size_t i = 0; i < 2; i++) {
+                if (!envs[i])
+                        continue;
+
+                /* We cannot let strtok modify the environment. */
+                _cleanup_free_ char *env_copy = strdup(envs[i]);
+                if (!env_copy)
+                        return -ENOMEM;
+
+                for (char *token = strtok(env_copy, " \t\n"); token; token = strtok(NULL, " \t\n")) {
+                        char *colon = strchr(token, ':');
+                        if (!colon) {
+                                log_warning("Invalid format in dlopen features: '%s'", token);
+                                continue;
+                        }
+
+                        *colon = '\0';
+                        const char *key = token;
+                        const char *features = colon + 1;
+
+                        features_array = strv_split(features, ",");
+                        if (!features_array)
+                                return -ENOMEM;
+
+                        /* There may be entries with the same name/pattern. */
+                        char ***existing = hashmap_get(dlopen_features[i], key);
+
+                        if (existing) {
+                                char **feature;
+                                STRV_FOREACH(feature, features_array) {
+                                        /* Free feature if already present. */
+                                        if (strv_contains(*existing, *feature))
+                                                free(*feature);
+                                        /* Otherwise push onto existing array
+                                           without duplicating the string. */
+                                        else if (strv_push(existing, *feature) == -ENOMEM)
+                                                goto oom2;
+                                }
+                                /* All features have been freed or pushed to the
+                                   existing array, so just free array itself. */
+                                free(features_array);
+                        } else {
+                                /* The hashmaps store strvs as char*** rather
+                                   than char** because strv_push above calls
+                                   realloc. The latter would then leave the
+                                   hashmap with a stale pointer. */
+                                features_arrayp = (char ***) malloc(sizeof(char **));
+                                nkey = strdup(key);
+                                if (!features_arrayp || !nkey)
+                                        goto oom1;
+                                *features_arrayp = features_array;
+                                if (hashmap_put(dlopen_features[i], nkey, features_arrayp) == -ENOMEM)
+                                        goto oom1;
+                        }
+                }
+        }
+
+        return 0;
+
+oom1:
+        free(features_arrayp);
+        free(nkey);
+oom2:
+        log_error("Out of memory");
+        strv_free(features_array);
+        return -ENOMEM;
+}
+
 int main(int argc, char **argv)
 {
         int r;
@@ -2829,7 +2972,11 @@ int main(int argc, char **argv)
         processed_suppliers = hashmap_new(string_hash_func, string_compare_func);
         modalias_to_kmod = hashmap_new(string_hash_func, string_compare_func);
 
-        if (!items || !items_failed || !processed_suppliers || !modules_loaded) {
+        dlopen_features[0] = add_dlopen_features = hashmap_new(string_hash_func, string_compare_func);
+        dlopen_features[1] = omit_dlopen_features = hashmap_new(string_hash_func, string_compare_func);
+
+        if (!items || !items_failed || !processed_suppliers || !modules_loaded ||
+            !add_dlopen_features || !omit_dlopen_features) {
                 log_error("Out of memory");
                 r = EXIT_FAILURE;
                 goto finish1;
@@ -2857,6 +3004,11 @@ int main(int argc, char **argv)
                                 argv[optind + 1] = argv[optind + 2];
                         }
                 }
+        }
+
+        if (parse_dlopen_features() < 0) {
+                r = EXIT_FAILURE;
+                goto finish1;
         }
 
         if (arg_module) {
@@ -2902,6 +3054,21 @@ finish2:
 
         while ((i = hashmap_steal_first(processed_suppliers)))
                 item_free(i);
+
+        for (size_t j = 0; j < 2; j++) {
+                char ***array;
+                Iterator it;
+
+                HASHMAP_FOREACH(array, dlopen_features[j], it) {
+                        strv_free(*array);
+                        free(array);
+                }
+
+                while ((i = hashmap_steal_first_key(dlopen_features[j])))
+                        item_free(i);
+
+                hashmap_free(dlopen_features[j]);
+        }
 
         /*
          * Note: modalias_to_kmod's values are freed implicitly by the kmod context destruction

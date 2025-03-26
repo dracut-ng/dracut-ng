@@ -14,6 +14,11 @@ check() {
     return 255
 }
 
+# Config adjustments before installing anything.
+config() {
+    add_dlopen_features+=" libsystemd-shared-*.so:kmod "
+}
+
 installkernel() {
     hostonly='' instmods autofs4 ipv6 dmi-sysfs
     hostonly=$(optional_hostonly) instmods -s efivarfs

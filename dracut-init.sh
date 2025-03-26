@@ -678,6 +678,15 @@ inst_opt_decompress() {
     done
 }
 
+module_functions=(
+    check
+    depends
+    cmdline
+    config
+    install
+    installkernel
+)
+
 # module_check <dracut module> [<forced>] [<module path>]
 # execute the check() function of module-setup.sh of <dracut module>
 # or the "check" script, if module-setup.sh is not found
@@ -690,7 +699,7 @@ module_check() {
     [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
     [ $# -ge 2 ] && _forced=$2
     [[ -f $_moddir/module-setup.sh ]] || return 1
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     check() { true; }
     # shellcheck disable=SC1090
     . "$_moddir"/module-setup.sh
@@ -700,7 +709,7 @@ module_check() {
     # shellcheck disable=SC2086
     moddir="$_moddir" check $hostonly
     _ret=$?
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     hostonly=$_hostonly
     return $_ret
 }
@@ -715,13 +724,13 @@ module_check_mount() {
     export mount_needs=1
     [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
     [[ -f $_moddir/module-setup.sh ]] || return 1
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     check() { false; }
     # shellcheck disable=SC1090
     . "$_moddir"/module-setup.sh
     moddir=$_moddir check 0
     _ret=$?
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     unset mount_needs
     return "$_ret"
 }
@@ -734,13 +743,13 @@ module_depends() {
     local _ret
     [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
     [[ -f $_moddir/module-setup.sh ]] || return 1
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     depends() { true; }
     # shellcheck disable=SC1090
     . "$_moddir"/module-setup.sh
     moddir=$_moddir depends
     _ret=$?
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     return $_ret
 }
 
@@ -752,13 +761,31 @@ module_cmdline() {
     local _ret
     [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
     [[ -f $_moddir/module-setup.sh ]] || return 1
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     cmdline() { true; }
     # shellcheck disable=SC1090
     . "$_moddir"/module-setup.sh
     moddir="$_moddir" cmdline
     _ret=$?
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
+    return $_ret
+}
+
+# module_config <dracut module> [<module path>]
+# execute the config() function of module-setup.sh of <dracut module>
+# or the "config" script, if module-setup.sh is not found
+module_config() {
+    local _moddir=$2
+    local _ret
+    [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
+    [[ -f $_moddir/module-setup.sh ]] || return 1
+    unset "${module_functions[@]}"
+    config() { true; }
+    # shellcheck disable=SC1090
+    . "$_moddir"/module-setup.sh
+    moddir="$_moddir" config
+    _ret=$?
+    unset "${module_functions[@]}"
     return $_ret
 }
 
@@ -770,13 +797,13 @@ module_install() {
     local _ret
     [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
     [[ -f $_moddir/module-setup.sh ]] || return 1
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     install() { true; }
     # shellcheck disable=SC1090
     . "$_moddir"/module-setup.sh
     moddir="$_moddir" install
     _ret=$?
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     return $_ret
 }
 
@@ -788,13 +815,13 @@ module_installkernel() {
     local _ret
     [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
     [[ -f $_moddir/module-setup.sh ]] || return 1
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     installkernel() { true; }
     # shellcheck disable=SC1090
     . "$_moddir"/module-setup.sh
     moddir="$_moddir" installkernel
     _ret=$?
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     return $_ret
 }
 
