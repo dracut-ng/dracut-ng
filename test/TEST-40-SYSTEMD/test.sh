@@ -65,6 +65,14 @@ test_setup() {
         --omit-drivers 'a b c d e f g h i j k l m n o p q r s t u v w x y z' \
         -i ./systemd-analyze.sh /lib/dracut/hooks/pre-pivot/00-systemd-analyze.sh \
         -i "/bin/true" "/usr/bin/man"
+
+    # shellcheck disable=SC2144 # We're not installing multilib libfido2, so
+    # glob will only match once. More matches would break the test anyway.
+    if pkg-config --exists "libsystemd >= 257" && [ -e /usr/lib*/libfido2.so.1 ] \
+        && ! lsinitrd "$TESTDIR"/initramfs.testing | grep -E ' usr/lib[^/]*/libfido2\.so\.1\b' > /dev/null; then
+        echo "Error: libfido2.so.1 should have been included in the initramfs" >&2
+        return 1
+    fi
 }
 
 # shellcheck disable=SC1090
