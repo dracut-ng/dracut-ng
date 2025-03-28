@@ -191,6 +191,9 @@ bindir ?= ${bindir:-${prefix}/bin}
 KMOD_CFLAGS ?= $(${PKG_CONFIG} --cflags " libkmod >= 23 ") ${KMOD_CFLAGS_EXTRA}
 KMOD_LIBS ?= $(${PKG_CONFIG} --libs " libkmod >= 23 ")
 FTS_LIBS ?= ${FTS_LIBS}
+# For the sd-json API, which was added in systemd v257. This is optional.
+SYSTEMD_CFLAGS ?= $(${PKG_CONFIG} --cflags "libsystemd >= 257")
+SYSTEMD_LIBS ?= $(${PKG_CONFIG} --libs "libsystemd >= 257")
 EOF
 
 {

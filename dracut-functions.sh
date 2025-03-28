@@ -44,6 +44,12 @@ trim() {
     printf "%s" "$var"
 }
 
+# is_elf <path>
+# Returns success if the given path is an ELF. Only checks the first 4 bytes.
+is_elf() {
+    [[ $(head --bytes=4 "$1") == $'\x7fELF' ]]
+}
+
 # find a binary.  If we were not passed the full path directly,
 # search in the usual places to find the binary.
 find_binary() {
@@ -56,13 +62,13 @@ find_binary() {
     if [[ $1 == *.so* ]]; then
         for l in $libdirs; do
             _path="${l}${_delim}${1}"
-            if { $DRACUT_LDD "${dracutsysrootdir}${_path}" &> /dev/null; }; then
+            if is_elf "${dracutsysrootdir}${_path}"; then
                 printf "%s\n" "${_path}"
                 return 0
             fi
         done
         _path="${_delim}${1}"
-        if { $DRACUT_LDD "${dracutsysrootdir}${_path}" &> /dev/null; }; then
+        if is_elf "${dracutsysrootdir}${_path}"; then
             printf "%s\n" "${_path}"
             return 0
         fi
