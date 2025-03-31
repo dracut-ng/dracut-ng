@@ -7,7 +7,7 @@ check() {
 
 # called by dracut
 depends() {
-    echo watchdog-modules
+    echo watchdog-modules initqueue
     return 0
 }
 
