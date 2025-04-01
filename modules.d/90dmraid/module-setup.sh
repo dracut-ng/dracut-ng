@@ -73,7 +73,7 @@ install() {
 
     inst_multiple dmraid
     inst_multiple -o kpartx
-    inst "$(command -v partx)" /sbin/partx
+    inst partx /sbin/partx
 
     inst "$moddir/dmraid.sh" /sbin/dmraid_scan
 

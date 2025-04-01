@@ -61,7 +61,7 @@ installkernel() {
 }
 
 mpathconf_installed() {
-    command -v mpathconf &> /dev/null
+    find_binary mpathconf &> /dev/null
 }
 
 # called by dracut
@@ -136,7 +136,7 @@ EOF
         }
     }
 
-    inst "$(command -v partx)" /sbin/partx
+    inst partx /sbin/partx
 
     inst_libdir_file "libmultipath*" "multipath/*"
     inst_libdir_file 'libgcc_s.so*'
