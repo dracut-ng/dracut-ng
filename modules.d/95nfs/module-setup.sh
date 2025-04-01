@@ -136,10 +136,10 @@ install() {
     local _confdir
     for _confdir in etc usr/lib; do
 
-        grep -sE '^(nfsnobody|_rpc|rpc|rpcuser):' "${dracutsysrootdir}/${_confdir}/passwd" \
+        grep -sE '^(nfsnobody|_rpc|rpc|rpcuser|statd):' "${dracutsysrootdir}/${_confdir}/passwd" \
             >> "$initdir/${_confdir}/passwd"
 
-        grep -sE '^(nogroup|rpc|nobody):' "${dracutsysrootdir}/${_confdir}/group" \
+        grep -sE '^(nogroup|rpc|nobody|statd):' "${dracutsysrootdir}/${_confdir}/group" \
             >> "$initdir/${_confdir}/group"
     done
 
