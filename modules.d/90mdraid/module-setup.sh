@@ -67,8 +67,8 @@ cmdline() {
 install() {
     inst_multiple cat expr
     inst_multiple -o mdmon
-    inst "$(command -v partx)" /sbin/partx
-    inst "$(command -v mdadm)" /sbin/mdadm
+    inst partx /sbin/partx
+    inst mdadm /sbin/mdadm
 
     if [[ $hostonly_cmdline == "yes" ]]; then
         local _raidconf
