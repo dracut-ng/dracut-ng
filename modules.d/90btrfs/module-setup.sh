@@ -56,5 +56,5 @@ install() {
     fi
 
     inst_multiple -o btrfsck btrfs-zero-log btrfstune
-    inst "$(command -v btrfs)" /sbin/btrfs
+    inst btrfs /sbin/btrfs
 }
