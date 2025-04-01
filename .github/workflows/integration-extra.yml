@@ -28,6 +28,7 @@ jobs:
                     - alpine:latest
                     - alpine:edge
                     - arch:latest
+                    - azurelinux:3.0
                     - debian:latest
                     - debian:sid
                     - fedora:latest
