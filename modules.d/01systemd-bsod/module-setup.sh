@@ -19,6 +19,11 @@ depends() {
     return 0
 }
 
+# Config adjustments before installing anything.
+config() {
+    add_dlopen_features+=" libsystemd-shared-*.so:qrencode "
+}
+
 # Install the required file(s) for the module in the initramfs.
 install() {
     inst_multiple \
@@ -26,5 +31,7 @@ install() {
         "$systemdsystemunitdir"/initrd.target.wants/systemd-bsod.service \
         "$systemdutildir"/systemd-bsod
 
-    inst_libdir_file "libqrencode.so*"
+    if [[ ! $USE_SYSTEMD_DLOPEN_DEPS ]]; then
+        inst_libdir_file "libqrencode.so*"
+    fi
 }

@@ -33,6 +33,7 @@ RUN pacman --noconfirm -Syu \
     erofs-utils \
     gcc \
     jq \
+    libfido2 \
     linux \
     lvm2 \
     make \
@@ -55,6 +56,7 @@ RUN pacman --noconfirm -Syu \
     sbsigntools \
     squashfs-tools \
     swtpm \
+    systemd-libs \
     systemd-ukify \
     tgt \
     tpm2-tools \

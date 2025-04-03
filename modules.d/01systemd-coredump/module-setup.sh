@@ -26,6 +26,11 @@ depends() {
 
 }
 
+# Config adjustments before installing anything.
+config() {
+    add_dlopen_features+=" libsystemd-shared-*.so:lz4,lzma,zstd "
+}
+
 # Install the required file(s) and directories for the module in the initramfs.
 install() {
 
@@ -44,10 +49,12 @@ install() {
 
     # Install library file(s)
     _arch=${DRACUT_ARCH:-$(uname -m)}
-    inst_libdir_file \
-        {"tls/$_arch/",tls/,"$_arch/",}"liblz4.so.*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"liblzma.so.*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libzstd.so.*"
+    if [[ ! $USE_SYSTEMD_DLOPEN_DEPS ]]; then
+        inst_libdir_file \
+            {"tls/$_arch/",tls/,"$_arch/",}"liblz4.so.*" \
+            {"tls/$_arch/",tls/,"$_arch/",}"liblzma.so.*" \
+            {"tls/$_arch/",tls/,"$_arch/",}"libzstd.so.*"
+    fi
 
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then

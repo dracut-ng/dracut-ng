@@ -66,6 +66,7 @@ if [ "$OPTION" = "systemd" ] ; then \
     app-misc/jq \
     dev-lang/perl \
     dev-lang/rust-bin \
+    dev-libs/libfido2 \
     dev-libs/libxslt \
     dev-libs/openssl \
     net-fs/nfs-utils \

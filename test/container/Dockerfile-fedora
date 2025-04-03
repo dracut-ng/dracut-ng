@@ -65,6 +65,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     kdump-utils \
     kernel \
     kmod-devel \
+    libfido2 \
     libkcapi-hmaccalc \
     libselinux-utils \
     lvm2 \
@@ -84,6 +85,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     squashfs-tools \
     swtpm \
     systemd-boot-unsigned \
+    systemd-devel \
     systemd-resolved \
     systemd-ukify \
     tpm2-tools \
