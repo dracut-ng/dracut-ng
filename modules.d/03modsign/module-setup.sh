@@ -28,6 +28,6 @@ install() {
 
     for x in "$dracutsysrootdir"/lib/modules/keys/*; do
         [[ ${x} == "$dracutsysrootdir/lib/modules/keys/*" ]] && break
-        inst_simple "${x#"$dracutsysrootdir"}"
+        inst_simple "${x}"
     done
 }
