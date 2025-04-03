@@ -23,7 +23,13 @@ depends() {
 
 # called by dracut
 installkernel() {
-    hostonly="" instmods drbg dm_crypt
+    local _arch=${DRACUT_ARCH:-$(uname -m)}
+    local _s390drivers=
+    if [[ $_arch == "s390" ]] || [[ $_arch == "s390x" ]]; then
+        _s390drivers="=drivers/s390/crypto"
+    fi
+
+    hostonly="" instmods drbg dm_crypt ${_s390drivers:+"$_s390drivers"}
 
     # in case some of the crypto modules moved from compiled in
     # to module based, try to install those modules
