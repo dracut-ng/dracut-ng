@@ -551,6 +551,10 @@ shutdown:
   - changed-files:
       - any-glob-to-any-file: 'modules.d/[0-9][0-9]shutdown/*'
 
+simpledrm:
+  - changed-files:
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]simpledrm/*'
+
 squash:
   - changed-files:
       - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash/*'
