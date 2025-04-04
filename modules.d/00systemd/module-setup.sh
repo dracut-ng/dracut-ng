@@ -35,6 +35,7 @@ install() {
         "$systemdutildir"/systemd-shutdown \
         "$systemdutildir"/systemd-reply-password \
         "$systemdutildir"/systemd-fsck \
+        "$systemdutildir"/systemd-validatefs \
         "$systemdutildir"/systemd-volatile-root \
         "$systemdutildir"/systemd-sysroot-fstab-check \
         "$systemdutildir"/system-generators/systemd-debug-generator \
@@ -76,6 +77,7 @@ install() {
         "$systemdsystemunitdir"/systemd-reboot.service \
         "$systemdsystemunitdir"/systemd-kexec.service \
         "$systemdsystemunitdir"/systemd-fsck@.service \
+        "$systemdsystemunitdir"/systemd-validatefs@.service \
         "$systemdsystemunitdir"/systemd-volatile-root.service \
         "$systemdsystemunitdir"/ctrl-alt-del.target \
         "$systemdsystemunitdir"/syslog.socket \
