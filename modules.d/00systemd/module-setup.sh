@@ -84,6 +84,7 @@ install() {
         "$systemdsystemunitdir"/-.slice \
         systemctl \
         echo swapoff \
+        chmod \
         mount umount reboot poweroff \
         systemd-run systemd-escape \
         systemd-cgls

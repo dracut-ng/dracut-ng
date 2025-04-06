@@ -65,7 +65,7 @@ inst_sshenv() {
 install() {
     local _nsslibs
 
-    inst_multiple ssh scp
+    inst_multiple ssh scp chmod
     inst_sshenv
 
     _nsslibs=$(
