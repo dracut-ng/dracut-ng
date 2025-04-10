@@ -33,7 +33,7 @@ depends() {
     elif [[ ! $hostonly ]]; then
         for module in fido2 pkcs11 tpm2-tss; do
             module_check $module > /dev/null 2>&1
-            if [[ $? == 255 ]]; then
+            if [[ $? == 255 ]] && ! [[ " $omit_dracutmodules " == *\ $module\ * ]]; then
                 deps+=" $module"
             fi
         done
