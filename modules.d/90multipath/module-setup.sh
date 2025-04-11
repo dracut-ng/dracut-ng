@@ -122,7 +122,7 @@ install() {
         fi
     }
 
-    [[ $hostonly ]] || {
+    [[ $hostonly ]] || mpathconf_installed || {
         for_each_host_dev_and_slaves is_mpath \
             || [[ -f /etc/multipath.conf ]] || {
             cat > "${initdir}"/etc/multipath.conf << EOF
