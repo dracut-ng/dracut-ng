@@ -1,0 +1,55 @@
+FROM mcr.microsoft.com/azurelinux/base/core:3.0
+
+ARG PLATFORM=linux/amd64
+
+RUN \
+if [[ "${PLATFORM}" =~ "amd64" ]]; then \
+    tdnf -y install --setopt=install_weak_deps=False \
+        systemd-boot \
+        systemd-ukify \
+; fi
+
+RUN tdnf -y install --setopt=install_weak_deps=False \
+    asciidoc \
+    bash-completion \
+    bluez \
+    btrfs-progs \
+    cargo \
+    chrony \
+    cifs-utils \
+    cryptsetup \
+    device-mapper-multipath \
+    dhcpcd \
+    e2fsprogs \
+    fuse3 \
+    gcc \
+    iproute \
+    iputils \
+    iscsi-initiator-utils \
+    jq \
+    kbd \
+    kexec-tools \
+    kernel \
+    kmod-devel \
+    libkcapi-hmaccalc \
+    libselinux-utils \
+    lvm2 \
+    make \
+    mdadm \
+    nbd \
+    ndctl \
+    nfs-utils \
+    nvme-cli \
+    parted \
+    pcsc-lite \
+    qemu \
+    qemu-kvm \
+    rng-tools \
+    rsyslog \
+    squashfs-tools \
+    swtpm \
+    systemd-resolved \
+    tpm2-tools \
+    xfsprogs \
+    xorriso \
+    && tdnf clean all
