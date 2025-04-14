@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 
 [ -z "${USE_NETWORK-}" ] && USE_NETWORK="network"
 
@@ -27,12 +27,12 @@ run_server() {
         -net nic,macaddr=52:54:00:12:34:56,model=virtio \
         -net nic,macaddr=52:54:00:12:34:57,model=virtio \
         -net socket,listen=127.0.0.1:12330 \
-        -append "panic=1 oops=panic softlockup_panic=1 quiet root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_serverroot rw console=ttyS0,115200n81 $SERVER_DEBUG" \
+        -append "panic=1 oops=panic softlockup_panic=1 quiet root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_serverroot rw console=ttyS0,115200n81 ${SERVER_DEBUG-}" \
         -initrd "$TESTDIR"/initramfs.server \
         -pidfile "$TESTDIR"/server.pid -daemonize
     chmod 644 "$TESTDIR"/server.pid
 
-    if ! [[ $SERIAL ]]; then
+    if ! [[ ${SERIAL-} ]]; then
         wait_for_server_startup
     else
         echo Sleeping 10 seconds to give the server a head start
