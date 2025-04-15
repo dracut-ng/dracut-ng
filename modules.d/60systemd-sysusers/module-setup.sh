@@ -20,4 +20,7 @@ install() {
         set -o pipefail
         systemd-sysusers --root="$initdir" 2>&1 >&3 | grep -v "^Creating " >&2
     } 3>&1
+
+    # delete shadow files created by systemd-sysusers
+    rm -f "$initdir/etc/shadow" "$initdir/etc/gshadow"
 }
