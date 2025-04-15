@@ -1,6 +1,7 @@
 # Test coverage provided by this container:
 # - arm64
 # - dash default shell (instead of bash)
+# - curl (url-lib)
 # - mawk (instead of gawk)
 # - zstd compression
 # - verbose logging for tests
@@ -43,6 +44,7 @@ RUN \
     console-data \
     cpio \
     cryptsetup \
+    curl \
     docbook \
     docbook-xml \
     docbook-xsl \
