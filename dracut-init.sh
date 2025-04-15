@@ -58,7 +58,7 @@ if ! [[ $kernel ]]; then
     export kernel
 fi
 
-srcmods="$dracutsysrootdir/lib/modules/$kernel/"
+srcmods="$(realpath -e "$dracutsysrootdir/lib/modules/$kernel")"
 
 [[ $drivers_dir ]] && {
     if ! command -v kmod &> /dev/null && vercmp "$(modprobe --version | cut -d' ' -f3)" lt 3.7; then
