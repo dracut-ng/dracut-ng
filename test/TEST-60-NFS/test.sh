@@ -12,6 +12,11 @@ test_check() {
         return 1
     fi
 
+    if ! type -p curl &> /dev/null; then
+        echo "Test needs curl for url-lib... Skipping"
+        return 1
+    fi
+
     command -v exportfs &> /dev/null
 }
 
@@ -291,59 +296,18 @@ test_setup() {
     )
 
     # Make client root inside server root
-    (
-        # shellcheck disable=SC2030
-        # shellcheck disable=SC2031
-        export initdir=$TESTDIR/server/overlay/source/nfs/client
-        # shellcheck disable=SC1090
-        . "$PKGLIBDIR"/dracut-init.sh
+    # shellcheck disable=SC2031
+    export initdir=$TESTDIR/server/overlay/source/nfs/client
 
-        (
-            cd "$initdir" || exit
-            mkdir -p dev sys proc etc run root usr var/lib/nfs/rpc_pipefs
-            echo "TEST FETCH FILE" > root/fetchfile
-        )
+    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
+        --add-confdir test-root \
+        -a "url-lib nfs" \
+        -I "ip grep setsid" \
+        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
 
-        inst_multiple sh shutdown poweroff cat ps ln ip dd \
-            mount dmesg mkdir cp grep setsid ls cat sync
-        for _terminfodir in /lib/terminfo /etc/terminfo /usr/share/terminfo; do
-            if [ -f "${_terminfodir}"/l/linux ]; then
-                inst_multiple -o "${_terminfodir}"/l/linux
-                break
-            fi
-        done
-
-        inst_simple "${PKGLIBDIR}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh"
-        inst_simple "${PKGLIBDIR}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh"
-        inst_simple "${PKGLIBDIR}/modules.d/45url-lib/url-lib.sh" "/lib/url-lib.sh"
-        inst_simple "${PKGLIBDIR}/modules.d/45net-lib/net-lib.sh" "/lib/net-lib.sh"
-        inst_simple "${PKGLIBDIR}/modules.d/95nfs/nfs-lib.sh" "/lib/nfs-lib.sh"
-        inst_binary "${PKGLIBDIR}/dracut-util" "/usr/bin/dracut-util"
-        ln -s dracut-util "${initdir}/usr/bin/dracut-getarg"
-        ln -s dracut-util "${initdir}/usr/bin/dracut-getargs"
-
-        inst ./client-init.sh /sbin/init
-        inst_simple /etc/os-release
-        inst_multiple -o {,/usr}/etc/nsswitch.conf
-        inst /etc/passwd /etc/passwd
-        inst /etc/group /etc/group
-
-        inst_libdir_file 'libnfsidmap_nsswitch.so*'
-        inst_libdir_file 'libnfsidmap/*.so*'
-        inst_libdir_file 'libnfsidmap*.so*'
-
-        _nsslibs=$(
-            cat "$dracutsysrootdir"/{,usr/}etc/nsswitch.conf 2> /dev/null \
-                | sed -e '/^#/d' -e 's/^.*://' -e 's/\[NOTFOUND=return\]//' \
-                | tr -s '[:space:]' '\n' | sort -u | tr -s '[:space:]' '|'
-        )
-        _nsslibs=${_nsslibs#|}
-        _nsslibs=${_nsslibs%|}
-        inst_libdir_file -n "$_nsslibs" 'libnss_*.so*'
-
-        cp -a /etc/ld.so.conf* "$initdir"/etc
-        ldconfig -r "$initdir"
-    )
+    mkdir -p "$initdir" && mv "$TESTDIR"/dracut.*/initramfs/* "$initdir" && rm -rf "$TESTDIR"/dracut.*
+    echo "TEST FETCH FILE" > "$initdir"/root/fetchfile
+    cp ./client-init.sh "$initdir"/sbin/init
 
     # second, install the files needed to make the root filesystem
     (
