@@ -73,19 +73,19 @@ install() {
         inst_multiple switch_root || dfatal "Failed to install switch_root"
         inst_script "$moddir/init.sh" "/init"
         inst_hook cmdline 10 "$moddir/parse-root-opts.sh"
+
+        {
+            echo "NAME=dracut"
+            echo "ID=dracut"
+            echo "VERSION_ID=\"$DRACUT_VERSION\""
+            echo 'ANSI_COLOR="0;34"'
+        } > "${initdir}"/usr/lib/initrd-release
     fi
 
     ln -fs /proc/self/mounts "$initdir/etc/mtab"
     if [[ $ro_mnt == yes ]]; then
         echo ro >> "${initdir}/etc/cmdline.d/base.conf"
     fi
-
-    {
-        echo "NAME=dracut"
-        echo "ID=dracut"
-        echo "VERSION_ID=\"$DRACUT_VERSION\""
-        echo 'ANSI_COLOR="0;34"'
-    } > "${initdir}"/usr/lib/initrd-release
 
     echo "dracut-$DRACUT_VERSION" > "$initdir/lib/dracut/dracut-$DRACUT_VERSION"
 
