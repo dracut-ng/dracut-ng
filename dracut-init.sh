@@ -989,6 +989,54 @@ for_each_module_dir() {
 dracut_kernel_post() {
     local dstdir="${dstdir:-"$initdir"}"
 
+    # Check for the necessary find(1) command for post-processing.
+    if ! find_binary find &> /dev/null; then
+        derror "Will not process kernel modules and firmware as find(1) is not available!"
+        return 1
+    fi
+
+    # Check for necessary compression utilities.
+    for cmd in gzip xz zstd; do
+        if ! find_binary "$cmd" &> /dev/null; then
+            derror "Will not process kernel modules and firmware compressed with '$cmd' as the command is not available!"
+            return 1
+        fi
+    done
+
+    # Decompress all firmware and module data for more optimal final
+    # compression ratio.
+    for kerndir in "${dstdir}/lib/firmware" \
+        "${dstdir}/lib/modules/$kernel"; do
+        [ -d "$kerndir" ] && find "$kerndir" -type f -print0 \
+            | while read -r -d $'\0' kernfile; do
+                case "$kernfile" in
+                    *.gz)
+                        ddebug "Decompressing gzipped kernel module/firmware: $kernfile ..."
+                        gzip -d "$kernfile"
+                        ;;
+                    *.xz)
+                        ddebug "Decompressing xz-compressed kernel module/firmware: $kernfile ..."
+                        xz -d "$kernfile"
+                        ;;
+                    *.zst)
+                        ddebug "Decompressing zstd-compressed kernel module/firmware: $kernfile ..."
+                        zstd -q --rm -d "$kernfile"
+                        ;;
+                esac
+            done
+    done
+
+    # Fixup symlinks to compressed firmware.
+    [ -d "${dstdir}/lib/firmware" ] && find "${dstdir}/lib/firmware" \
+        \( -name '*.gz' -o -name '*.xz' -o -name '*.zst' \) \
+        -type l -print0 \
+        | while read -r -d $'\0' fwlink; do
+            ddebug "Fixing up decompressed firmware: $fwlink ..."
+            fwtarget=$(readlink "$fwlink")
+            rm "$fwlink"
+            ln -s "${fwtarget%.*}" "${fwlink%.*}"
+        done
+
     for _f in modules.builtin modules.builtin.alias modules.builtin.modinfo modules.order; do
         [[ -e $srcmods/$_f ]] && inst_simple "$srcmods/$_f" "/lib/modules/$kernel/$_f"
     done
