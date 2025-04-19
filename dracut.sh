@@ -927,6 +927,9 @@ export DRACUT_LOG_LEVEL=warning
 
 [[ $dracutbasedir ]] || dracutbasedir="$dracutsysrootdir"/usr/lib/dracut
 
+# These config variables needs to be exported for dracut-install.
+export add_dlopen_features="" omit_dlopen_features=""
+
 # if we were not passed a config file, try the default one
 if [[ -z $conffile ]]; then
     if [[ $allowlocal ]]; then
@@ -1357,11 +1360,7 @@ if [[ $early_microcode == yes ]] || { [[ $acpi_override == yes ]] && [[ -d $acpi
     mkdir "$early_cpio_dir"
 fi
 
-if ${DRACUT_LDD:-ldd} "${dracutsysrootdir}/bin/sh" | grep -q musl &> /dev/null; then
-    musl=1
-fi
-
-[[ "$dracutsysrootdir" ]] || [[ "$noexec" ]] || [[ "$musl" ]] || export DRACUT_RESOLVE_LAZY="1"
+[[ "$dracutsysrootdir" ]] || [[ "$noexec" ]] || export DRACUT_RESOLVE_LAZY="1"
 
 if [[ $print_cmdline ]]; then
     stdloglvl=0
@@ -1488,9 +1487,14 @@ set_global_var() {
     local _pkgconfig="$1"
     local _pkgvar="${2%:*}"
     local _var="${2#*:}"
-    [[ -z ${!_var} || ! -d ${dracutsysrootdir}${!_var} ]] \
-        && export "$_var"="$(pkg-config "$_pkgconfig" --variable="$_pkgvar" 2> /dev/null)"
-    if [[ -z ${!_var} || ! -d ${dracutsysrootdir}${!_var} ]]; then
+    if [[ $_pkgvar == modversion ]]; then
+        local _vararg=--modversion
+    else
+        local _vararg=--variable=$_pkgvar
+    fi
+    [[ -z ${!_var} || ($3 == /* && ! -d ${dracutsysrootdir}${!_var}) ]] \
+        && export "$_var"="$($PKG_CONFIG "$_pkgconfig" "$_vararg" 2> /dev/null)"
+    if [[ -z ${!_var} || ($3 == /* && ! -d ${dracutsysrootdir}${!_var}) ]]; then
         shift 2
         if (($# == 1)); then
             export "$_var"="$1"
@@ -1550,10 +1554,22 @@ set_global_var "systemd" "sysusers" "/usr/lib/sysusers.d"
 set_global_var "systemd" "sysusersconfdir" "/etc/sysusers.d"
 set_global_var "systemd" "tmpfilesdir" "/lib/tmpfiles.d" "/usr/lib/tmpfiles.d"
 set_global_var "systemd" "tmpfilesconfdir" "/etc/tmpfiles.d"
+set_global_var "systemd" "modversion:systemdversion" "0"
 
 # libkmod global variables
 set_global_var "libkmod" "depmodd" "/usr/lib/depmod.d"
 set_global_var "libkmod" "depmodconfdir" "/etc/depmod.d"
+
+# Modules should check for JSON support in dracut-install before using it.
+DRACUT_INSTALL_JSON=
+$DRACUT_INSTALL --json-supported &> /dev/null && DRACUT_INSTALL_JSON=1
+
+# systemd started declaring its dlopen dependencies in v256. Checking for these
+# requires JSON support in dracut-install, provided by libsystemd v257. The
+# version in the sysroot may be different to the one used by dracut-install.
+USE_SYSTEMD_DLOPEN_DEPS=
+# shellcheck disable=SC2034 # USE_SYSTEMD_DLOPEN_DEPS is used in modules
+[[ $DRACUT_INSTALL_JSON && ${systemdversion%%.*} -ge 256 ]] && USE_SYSTEMD_DLOPEN_DEPS=1
 
 if [[ $no_kernel != yes ]] && [[ -d $srcmods ]]; then
     if ! [[ -f $srcmods/modules.dep ]]; then
@@ -1994,6 +2010,13 @@ dracut_module_included "squash-lib" && mkdir -p "$squashdir"
 
 _isize=0 #initramfs size
 modules_loaded=" "
+# Allow all modules to update the config. Do this before installing anything.
+for moddir in "$dracutbasedir/modules.d"/[0-9][0-9]*; do
+    _d_mod=${moddir##*/}
+    _d_mod=${_d_mod#[0-9][0-9]}
+    [[ $mods_to_load == *\ $_d_mod\ * ]] || continue
+    module_config "$_d_mod" "$moddir"
+done
 # source our modules.
 for moddir in "$dracutbasedir/modules.d"/[0-9][0-9]*; do
     _d_mod=${moddir##*/}

@@ -78,16 +78,42 @@ export srcmods
     export hookdirs
 }
 
-DRACUT_LDD=${DRACUT_LDD:-ldd}
 DRACUT_TESTBIN=${DRACUT_TESTBIN:-/bin/sh}
 DRACUT_LDCONFIG=${DRACUT_LDCONFIG:-ldconfig}
+PKG_CONFIG=${PKG_CONFIG:-pkg-config}
 
 # shellcheck source=./dracut-functions.sh
 . "$dracutbasedir"/dracut-functions.sh
 
+if ! [[ $DRACUT_INSTALL ]]; then
+    DRACUT_INSTALL=$(find_binary dracut-install)
+fi
+
+if ! [[ $DRACUT_INSTALL ]] && [[ -x $dracutbasedir/dracut-install ]]; then
+    DRACUT_INSTALL=$dracutbasedir/dracut-install
+elif ! [[ $DRACUT_INSTALL ]] && [[ -x $dracutbasedir/src/install/dracut-install ]]; then
+    DRACUT_INSTALL=$dracutbasedir/src/install/dracut-install
+fi
+
+# Test if dracut-install is a standalone executable with no options.
+# E.g. DRACUT_INSTALL may be set externally as:
+# DRACUT_INSTALL="valgrind dracut-install"
+# or
+# DRACUT_INSTALL="dracut-install --debug"
+# in which case the string cannot be tested for being executable.
+DRINSTALLPARTS=0
+for i in $DRACUT_INSTALL; do
+    DRINSTALLPARTS=$((DRINSTALLPARTS + 1))
+done
+
+if [[ $DRINSTALLPARTS == 1 ]] && ! command -v "$DRACUT_INSTALL" > /dev/null 2>&1; then
+    dfatal "dracut-install not found!"
+    exit 10
+fi
+
 # Detect lib paths
 if ! [[ $libdirs ]]; then
-    if [[ $("$DRACUT_LDD" "$dracutsysrootdir$DRACUT_TESTBIN") == */lib64/* ]] &> /dev/null \
+    if [[ $($DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} --dry-run -R "$DRACUT_TESTBIN") == */lib64/* ]] &> /dev/null \
         && [[ -d $dracutsysrootdir/lib64 ]]; then
         libdirs+=" /lib64"
         [[ -d $dracutsysrootdir/usr/lib64 ]] && libdirs+=" /usr/lib64"
@@ -102,14 +128,6 @@ if ! [[ $libdirs ]]; then
     libdirs+=" $(ldconfig_paths)"
 
     export libdirs
-fi
-
-# ldd needs LD_LIBRARY_PATH pointing to the libraries within the sysroot directory
-if [[ -n $dracutsysrootdir ]]; then
-    for lib in $libdirs; do
-        LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+"$LD_LIBRARY_PATH":}$dracutsysrootdir$lib"
-    done
-    export LD_LIBRARY_PATH
 fi
 
 # helper function for check() in module-setup.sh
@@ -203,32 +221,6 @@ dracut_module_path() {
     done
     return 1
 }
-
-if ! [[ $DRACUT_INSTALL ]]; then
-    DRACUT_INSTALL=$(find_binary dracut-install)
-fi
-
-if ! [[ $DRACUT_INSTALL ]] && [[ -x $dracutbasedir/dracut-install ]]; then
-    DRACUT_INSTALL=$dracutbasedir/dracut-install
-elif ! [[ $DRACUT_INSTALL ]] && [[ -x $dracutbasedir/src/install/dracut-install ]]; then
-    DRACUT_INSTALL=$dracutbasedir/src/install/dracut-install
-fi
-
-# Test if dracut-install is a standalone executable with no options.
-# E.g. DRACUT_INSTALL may be set externally as:
-# DRACUT_INSTALL="valgrind dracut-install"
-# or
-# DRACUT_INSTALL="dracut-install --debug"
-# in which case the string cannot be tested for being executable.
-DRINSTALLPARTS=0
-for i in $DRACUT_INSTALL; do
-    DRINSTALLPARTS=$((DRINSTALLPARTS + 1))
-done
-
-if [[ $DRINSTALLPARTS == 1 ]] && ! command -v "$DRACUT_INSTALL" > /dev/null 2>&1; then
-    dfatal "dracut-install not found!"
-    exit 10
-fi
 
 if [[ $hostonly == "-h" ]]; then
     if ! [[ $DRACUT_KERNEL_MODALIASES ]] || ! [[ -f $DRACUT_KERNEL_MODALIASES ]]; then
@@ -686,6 +678,15 @@ inst_opt_decompress() {
     done
 }
 
+module_functions=(
+    check
+    depends
+    cmdline
+    config
+    install
+    installkernel
+)
+
 # module_check <dracut module> [<forced>] [<module path>]
 # execute the check() function of module-setup.sh of <dracut module>
 # or the "check" script, if module-setup.sh is not found
@@ -698,7 +699,7 @@ module_check() {
     [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
     [ $# -ge 2 ] && _forced=$2
     [[ -f $_moddir/module-setup.sh ]] || return 1
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     check() { true; }
     # shellcheck disable=SC1090
     . "$_moddir"/module-setup.sh
@@ -708,7 +709,7 @@ module_check() {
     # shellcheck disable=SC2086
     moddir="$_moddir" check $hostonly
     _ret=$?
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     hostonly=$_hostonly
     return $_ret
 }
@@ -723,13 +724,13 @@ module_check_mount() {
     export mount_needs=1
     [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
     [[ -f $_moddir/module-setup.sh ]] || return 1
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     check() { false; }
     # shellcheck disable=SC1090
     . "$_moddir"/module-setup.sh
     moddir=$_moddir check 0
     _ret=$?
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     unset mount_needs
     return "$_ret"
 }
@@ -742,13 +743,13 @@ module_depends() {
     local _ret
     [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
     [[ -f $_moddir/module-setup.sh ]] || return 1
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     depends() { true; }
     # shellcheck disable=SC1090
     . "$_moddir"/module-setup.sh
     moddir=$_moddir depends
     _ret=$?
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     return $_ret
 }
 
@@ -760,13 +761,31 @@ module_cmdline() {
     local _ret
     [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
     [[ -f $_moddir/module-setup.sh ]] || return 1
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     cmdline() { true; }
     # shellcheck disable=SC1090
     . "$_moddir"/module-setup.sh
     moddir="$_moddir" cmdline
     _ret=$?
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
+    return $_ret
+}
+
+# module_config <dracut module> [<module path>]
+# execute the config() function of module-setup.sh of <dracut module>
+# or the "config" script, if module-setup.sh is not found
+module_config() {
+    local _moddir=$2
+    local _ret
+    [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
+    [[ -f $_moddir/module-setup.sh ]] || return 1
+    unset "${module_functions[@]}"
+    config() { true; }
+    # shellcheck disable=SC1090
+    . "$_moddir"/module-setup.sh
+    moddir="$_moddir" config
+    _ret=$?
+    unset "${module_functions[@]}"
     return $_ret
 }
 
@@ -778,13 +797,13 @@ module_install() {
     local _ret
     [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
     [[ -f $_moddir/module-setup.sh ]] || return 1
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     install() { true; }
     # shellcheck disable=SC1090
     . "$_moddir"/module-setup.sh
     moddir="$_moddir" install
     _ret=$?
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     return $_ret
 }
 
@@ -796,13 +815,13 @@ module_installkernel() {
     local _ret
     [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
     [[ -f $_moddir/module-setup.sh ]] || return 1
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     installkernel() { true; }
     # shellcheck disable=SC1090
     . "$_moddir"/module-setup.sh
     moddir="$_moddir" installkernel
     _ret=$?
-    unset check depends cmdline install installkernel
+    unset "${module_functions[@]}"
     return $_ret
 }
 
