@@ -16,6 +16,7 @@ RUN zypper --non-interactive install --no-recommends \
     bash-completion \
     btrfsprogs \
     cargo \
+    cpio \
     cryptsetup \
     dhcp-client \
     dhcp-server \
