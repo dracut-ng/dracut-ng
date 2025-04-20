@@ -62,6 +62,9 @@ These modules would require including a version of systemd into initramfs.
 | systemd-ask-password
 | https://www.freedesktop.org/software/systemd/man/systemd-ask-password.html[systemd-ask-password]
 
+| systemd-battery-check
+| https://www.freedesktop.org/software/systemd/man/latest/systemd-battery-check.service.html[systemd-battery-check]
+
 | systemd-coredump
 | https://www.freedesktop.org/software/systemd/man/systemd-coredump.html[systemd-coredump]
 
@@ -70,6 +73,9 @@ These modules would require including a version of systemd into initramfs.
 
 | systemd-cyptsetup
 | https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptsetup@.service.html[systemd-cyptsetup]
+
+| systemd-emergency
+| https://www.freedesktop.org/software/systemd/man/latest/systemd.special.html#emergency.target[systemd-emergency]
 
 | systemd-hostnamed
 | https://www.freedesktop.org/software/systemd/man/systemd-hostnamed.html[systemd-hostnamed]

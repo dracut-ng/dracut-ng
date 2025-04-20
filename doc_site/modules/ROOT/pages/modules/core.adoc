@@ -209,6 +209,10 @@ code, there are no specific types or categories for dracut modules.
 | Sets up hooks to run on shutdown
 |
 
+| simpledrm
+| kernel modules for simpledrm (see CONFIG_DRM_SIMPLEDRM)
+| kernel
+
 | syslog
 | Includes syslog capabilites
 | utils
