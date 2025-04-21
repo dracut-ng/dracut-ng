@@ -58,6 +58,7 @@ RUN \
     jq \
     kbd \
     kmod \
+    libfido2-1 \
     libkmod-dev \
     libsystemd-dev \
     linux-image-generic \
