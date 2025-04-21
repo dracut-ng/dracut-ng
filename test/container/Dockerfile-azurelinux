@@ -48,6 +48,7 @@ RUN tdnf -y install --setopt=install_weak_deps=False \
     rsyslog \
     squashfs-tools \
     swtpm \
+    systemd-devel \
     systemd-resolved \
     tar \
     tpm2-tools \
