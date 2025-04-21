@@ -65,6 +65,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     kdump-utils \
     kernel \
     kmod-devel \
+    libfido2 \
     libkcapi-hmaccalc \
     libselinux-utils \
     lvm2 \

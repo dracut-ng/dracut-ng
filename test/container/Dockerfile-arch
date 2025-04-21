@@ -33,6 +33,7 @@ RUN pacman --noconfirm -Syu \
     erofs-utils \
     gcc \
     jq \
+    libfido2 \
     linux \
     lvm2 \
     make \
