@@ -392,8 +392,6 @@ static int cp(const char *src, const char *dst)
                         futimes(dest_desc, tv);
                         return ret;
                 }
-                close(dest_desc);
-                dest_desc = -1;
                 /* clone did not work, remove the file */
                 unlink(dst);
                 /* do not try clone again */
@@ -1502,7 +1500,6 @@ static int install_firmware(struct kmod_module *mod)
 
                 value = kmod_module_info_get_value(l);
                 log_debug("Firmware %s", value);
-                ret = -1;
                 STRV_FOREACH(q, firmwaredirs) {
                         _cleanup_free_ char *fwpath = NULL;
 
@@ -2374,8 +2371,6 @@ int main(int argc, char **argv)
                         goto finish1;
                 }
         }
-
-        r = EXIT_SUCCESS;
 
         if (((optind + 1) < argc) && (strcmp(argv[optind + 1], destrootdir) == 0)) {
                 /* ugly hack for compat mode "inst src $destrootdir" */
