@@ -124,6 +124,21 @@ raid with encryption and LVM on top), as long as you specify the correct
 filesystem LABEL or UUID on the kernel command line for your root device, dracut
 will find it and boot from it.
 
+Files from the host root filesystem under the /etc, /var, or /run directories
+should only be copied over to the generated initramfs in "hostonly" mode,
+as these host directories are meant to be customized by users for each host.
+Only host files from the /usr directory in the host root filesystem are meant to
+be included in the generated initramfs in both "hostonly" and "non-hostonly" mode.
+As an example /etc/fstab and /etc/cryptab files should be only consulted
+when dracut is run in "hostonly" mode.
+
+The only exception to this rule is the /etc/dracut.conf file and
+/etc/dracut.conf.d/ directory that is considered both in "hostonly"
+and "non-hostonly" modes.
+
+Some command line arguments (e.g. --include) can override the default
+"hostonly"/"non-hostonly" modes.
+
 Generic initrd's are larger, but should be able to automatically boot any
 bootable configuration with appropriate boot flags (root device, network
 configuration information, etc.)
