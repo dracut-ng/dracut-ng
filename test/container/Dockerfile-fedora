@@ -85,6 +85,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     swtpm \
     systemd-boot-unsigned \
     systemd-container \
+    systemd-devel \
     systemd-resolved \
     systemd-ukify \
     tpm2-tools \

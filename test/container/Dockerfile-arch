@@ -55,6 +55,7 @@ RUN pacman --noconfirm -Syu \
     sbsigntools \
     squashfs-tools \
     swtpm \
+    systemd-libs \
     systemd-ukify \
     tgt \
     tpm2-tools \

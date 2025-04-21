@@ -59,6 +59,7 @@ RUN \
     kbd \
     kmod \
     libkmod-dev \
+    libsystemd-dev \
     linux-image-generic \
     lvm2 \
     make \
