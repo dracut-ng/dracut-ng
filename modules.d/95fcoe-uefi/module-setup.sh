@@ -7,7 +7,7 @@ check() {
         block_is_fcoe "$1" || return 1
     }
 
-    [[ $hostonly ]] || [[ $mount_needs ]] && {
+    [[ $hostonly_mode == "strict" ]] || [[ $mount_needs ]] && {
         for_each_host_dev_and_slaves is_fcoe || return 255
         [ -d /sys/firmware/efi ] || return 255
     }

@@ -7,7 +7,7 @@ check() {
     # No mdadm?  No mdraid support.
     require_binaries mdadm expr || return 1
 
-    [[ $hostonly ]] || [[ $mount_needs ]] && {
+    [[ $hostonly_mode == "strict" ]] || [[ $mount_needs ]] && {
         for dev in "${!host_fs_types[@]}"; do
             [[ ${host_fs_types[$dev]} != *_raid_member ]] && continue
 

@@ -5,7 +5,7 @@ check() {
     # If our prerequisites are not met, fail anyways.
     require_binaries mount.cifs || return 1
 
-    [[ $hostonly ]] || [[ $mount_needs ]] && {
+    [[ $hostonly_mode == "strict" ]] || [[ $mount_needs ]] && {
         for fs in "${host_fs_types[@]}"; do
             [[ $fs == "cifs" ]] && return 0
         done

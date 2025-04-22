@@ -6,7 +6,7 @@ check() {
     # if cryptsetup is not installed, then we cannot support encrypted devices.
     require_binaries "$systemdutildir"/systemd-cryptsetup || return 1
 
-    [[ $hostonly ]] || [[ $mount_needs ]] && {
+    [[ $hostonly_mode == "strict" ]] || [[ $mount_needs ]] && {
         for fs in "${host_fs_types[@]}"; do
             [[ $fs == "crypto_LUKS" ]] && return 0
         done

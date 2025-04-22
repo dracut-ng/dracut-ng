@@ -4,7 +4,7 @@
 check() {
     is_qemu_virtualized && return 0
 
-    if [[ $hostonly ]] || [[ $mount_needs ]]; then
+    if [[ $hostonly_mode == "strict" ]] || [[ $mount_needs ]]; then
         return 255
     fi
 
