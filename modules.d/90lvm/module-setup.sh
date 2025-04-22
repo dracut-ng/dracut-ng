@@ -5,7 +5,7 @@ check() {
     # No point trying to support lvm if the binaries are missing
     require_binaries lvm grep || return 1
 
-    [[ $hostonly ]] || [[ $mount_needs ]] && {
+    [[ $hostonly_mode == "strict" ]] || [[ $mount_needs ]] && {
         for fs in "${host_fs_types[@]}"; do
             [[ $fs == LVM*_member ]] && return 0
         done

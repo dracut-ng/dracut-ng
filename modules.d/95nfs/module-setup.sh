@@ -23,7 +23,7 @@ check() {
     require_any_binary rpcbind portmap || return 1
     require_binaries rpc.statd mount.nfs mount.nfs4 umount sed chmod chown || return 1
 
-    [[ $hostonly ]] || [[ $mount_needs ]] && {
+    [[ $hostonly_mode == "strict" ]] || [[ $mount_needs ]] && {
         [[ "$(get_nfs_type)" ]] && return 0
         return 255
     }

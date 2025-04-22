@@ -45,7 +45,7 @@ cmdline() {
 
 # called by dracut
 check() {
-    [[ $hostonly ]] || [[ $mount_needs ]] && {
+    [[ $hostonly_mode == "strict" ]] || [[ $mount_needs ]] && {
         [ -w /sys/module/scsi_mod/parameters/scan ] || return 255
         read -r scan_type < /sys/module/scsi_mod/parameters/scan
         [ "$scan_type" = "manual" ] && return 0

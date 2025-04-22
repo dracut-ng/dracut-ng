@@ -25,7 +25,7 @@ check() {
     require_binaries multipath || return 1
     require_binaries kpartx || return 1
 
-    [[ $hostonly ]] || [[ $mount_needs ]] && {
+    [[ $hostonly_mode == "strict" ]] || [[ $mount_needs ]] && {
         for_each_host_dev_and_slaves is_mpath || return 255
     }
 

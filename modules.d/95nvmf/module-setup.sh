@@ -42,7 +42,7 @@ check() {
         [[ $found ]]
     }
 
-    [[ $hostonly ]] || [[ $mount_needs ]] && {
+    [[ $hostonly_mode == "strict" ]] || [[ $mount_needs ]] && {
         [ -f /etc/nvme/hostnqn ] || return 255
         [ -f /etc/nvme/hostid ] || return 255
         pushd . > /dev/null
