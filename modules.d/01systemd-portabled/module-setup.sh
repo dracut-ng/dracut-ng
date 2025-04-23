@@ -28,7 +28,7 @@ depends() {
 
 # Install kernel module(s).
 installkernel() {
-    instmods loop squashfs
+    hostonly=$(optional_hostonly) instmods loop squashfs
 }
 
 # Install the required file(s) and directories for the module in the initramfs.

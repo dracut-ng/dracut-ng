@@ -25,7 +25,7 @@ installkernel() {
     }
 
     install_block_modules() {
-        instmods \
+        hostonly=$(optional_hostonly) instmods \
             scsi_dh_rdac scsi_dh_emc scsi_dh_alua \
             =drivers/usb/storage \
             =ide nvme vmd \
@@ -58,7 +58,7 @@ installkernel() {
             "=drivers/usb/typec" \
             "=drivers/watchdog"
 
-        instmods \
+        hostonly=$(optional_hostonly) instmods \
             yenta_socket intel_lpss_pci spi_pxa2xx_platform \
             atkbd i8042 firewire-ohci hv-vmbus \
             virtio virtio_ring virtio_pci pci_hyperv \
@@ -67,7 +67,7 @@ installkernel() {
         if [[ ${DRACUT_ARCH:-$(uname -m)} == arm* || ${DRACUT_ARCH:-$(uname -m)} == aarch64 || ${DRACUT_ARCH:-$(uname -m)} == riscv* ]]; then
             # arm/aarch64 specific modules
             _blockfuncs+='|dw_mc_probe|dw_mci_pltfm_register|nvme_init_ctrl'
-            instmods \
+            hostonly=$(optional_hostonly) instmods \
                 "=drivers/clk" \
                 "=drivers/devfreq" \
                 "=drivers/dma" \
@@ -138,7 +138,7 @@ installkernel() {
         [[ $arch == s390x ]] && arch=s390
         [[ $arch == aarch64 ]] && arch=arm64
         hostonly='' instmods "=crypto"
-        instmods "=arch/$arch/crypto" "=drivers/crypto"
+        hostonly=$(optional_hostonly) instmods "=arch/$arch/crypto" "=drivers/crypto"
     fi
 
     inst_multiple -o "$depmodd/*.conf"

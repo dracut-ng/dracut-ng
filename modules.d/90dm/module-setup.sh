@@ -8,7 +8,7 @@ check() {
 
 # called by dracut
 installkernel() {
-    instmods '=drivers/md' dm_mod dm-cache dm-cache-mq dm-cache-cleaner
+    hostonly=$(optional_hostonly) instmods '=drivers/md' dm_mod dm-cache dm-cache-mq dm-cache-cleaner
 }
 
 # called by dracut

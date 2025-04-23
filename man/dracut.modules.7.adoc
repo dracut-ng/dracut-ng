@@ -332,6 +332,15 @@ To install a kernel module regardless of the hostonly mode use the form:
 hostonly='' instmods <kernelmodule>
 ----
 
+a common pattern to call instmods is to use the following form:
+----
+`hostonly=$(optional_hostonly) instmods <kernelmodule>`
+----
+This statement installs the kernel module in either of the following conditions:
+* in non-hostonly mode (regardless of the host state)
+* in `sloppy` hostonly mode (regardless of the host state)
+* in hostonly mode if the kernel module is already loaded in the host
+
 options:
 
 -c:: check that kernel modules exists and can be installed (i.e., not optional).

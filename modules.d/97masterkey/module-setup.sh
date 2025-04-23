@@ -11,7 +11,7 @@ check() {
 
 # called by dracut
 installkernel() {
-    instmods trusted encrypted
+    hostonly=$(optional_hostonly) instmods trusted encrypted
 }
 
 # called by dracut

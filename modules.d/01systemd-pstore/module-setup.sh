@@ -25,7 +25,7 @@ depends() {
 
 # Install kernel module(s).
 installkernel() {
-    instmods efi-pstore
+    hostonly='' instmods efi-pstore
 }
 
 # Install the required file(s) and directories for the module in the initramfs.

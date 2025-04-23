@@ -16,7 +16,7 @@ check() {
 
 installkernel() {
     hostonly='' instmods autofs4 ipv6 dmi-sysfs
-    instmods -s efivarfs
+    hostonly=$(optional_hostonly) instmods -s efivarfs
 }
 
 # called by dracut
