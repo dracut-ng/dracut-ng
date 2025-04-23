@@ -33,16 +33,16 @@ installkernel() {
 
     # only PowerMac3,6 has a module, special case
     if [[ ${DRACUT_ARCH:-$(uname -m)} != ppc64* ]]; then
-        if ! [[ $hostonly ]] || [[ "$(pmac_model)" == "PowerMac3,6" ]]; then
-            instmods therm_windtunnel
+        if [[ $hostonly_mode != "strict" ]] || [[ $hostonly && "$(pmac_model)" == "PowerMac3,6" ]]; then
+            hostonly=$(optional_hostonly) instmods therm_windtunnel
         fi
         return 0
     fi
 
     windfarm_modules() {
-        if ! [[ $hostonly ]]; then
-            # include all drivers when not hostonly
-            instmods \
+        if [[ $hostonly_mode != "strict" ]]; then
+            # include all drivers when not hostonly or sloppy hostonly
+            hostonly='' instmods \
                 windfarm_pm72 windfarm_pm81 windfarm_pm91 windfarm_pm112 \
                 windfarm_pm121 windfarm_rm31
         else

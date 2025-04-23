@@ -16,7 +16,7 @@ check() {
 
 # called by dracut
 installkernel() {
-    instmods 9p 9pnet_virtio virtio_pci
+    hostonly=$(optional_hostonly) instmods 9p 9pnet_virtio virtio_pci
 }
 
 # called by dracut

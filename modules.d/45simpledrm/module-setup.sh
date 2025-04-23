@@ -8,9 +8,9 @@ check() {
 # called by dracut
 installkernel() {
     # Include simple DRM driver
-    instmods simpledrm
+    hostonly='' instmods simpledrm
 
-    if [[ $hostonly ]]; then
+    if [[ $hostonly_mode == "strict" ]]; then
         # if there is a privacy screen then its driver must be loaded before the
         # kms driver will bind, otherwise its probe() will return -EPROBE_DEFER
         # note privacy screens always register, even with e.g. nokmsboot
@@ -18,7 +18,7 @@ installkernel() {
             [[ -L $i ]] || continue
             modlink=$(readlink "$i")
             modname=$(basename "$modlink")
-            instmods "$modname"
+            hostonly='' instmods "$modname"
         done
     else
         # include privacy screen providers (see above comment)

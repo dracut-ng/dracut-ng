@@ -13,7 +13,7 @@ depends() {
 
 # called by dracut
 installkernel() {
-    instmods ecryptfs
+    hostonly='' instmods ecryptfs
 }
 
 # called by dracut

@@ -13,7 +13,7 @@ installkernel() {
         ! [ -e "$_wd" ] && continue
         _wdtdrv=$(get_dev_module "$_wd")
         if [[ $_wdtdrv ]]; then
-            instmods "$_wdtdrv"
+            hostonly=$(optional_hostonly) instmods "$_wdtdrv"
             for i in $_wdtdrv; do
                 _drivers[$i]=1
             done

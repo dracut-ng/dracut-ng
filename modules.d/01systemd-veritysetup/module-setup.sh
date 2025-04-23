@@ -28,7 +28,7 @@ depends() {
 
 # Install kernel module(s).
 installkernel() {
-    instmods dm-verity
+    hostonly='' instmods dm-verity
 }
 
 # Install the required file(s) and directories for the module in the initramfs.

@@ -23,13 +23,13 @@ depends() {
 
 # called by dracut
 installkernel() {
-    instmods cifs ipv6
+    hostonly=$(optional_hostonly) instmods cifs ipv6
     # hash algos
-    instmods md4 md5 sha256 sha512
+    hostonly=$(optional_hostonly) instmods md4 md5 sha256 sha512
     # ciphers
-    instmods aes arc4 des ecb gcm aead2
+    hostonly=$(optional_hostonly) instmods aes arc4 des ecb gcm aead2
     # macs
-    instmods hmac cmac ccm
+    hostonly=$(optional_hostonly) instmods hmac cmac ccm
 }
 
 # called by dracut
