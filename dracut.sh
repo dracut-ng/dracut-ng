@@ -1436,16 +1436,16 @@ dracutfunctions=$dracutbasedir/dracut-functions.sh
 export dracutfunctions
 
 ((${#drivers_l[@]})) && drivers="${drivers_l[*]}"
-drivers=${drivers/-/_}
+drivers=${drivers//-/_}
 
 ((${#add_drivers_l[@]})) && add_drivers+=" ${add_drivers_l[*]} "
-add_drivers=${add_drivers/-/_}
+add_drivers=${add_drivers//-/_}
 
 ((${#force_drivers_l[@]})) && force_drivers+=" ${force_drivers_l[*]} "
-force_drivers=${force_drivers/-/_}
+force_drivers=${force_drivers//-/_}
 
 ((${#omit_drivers_l[@]})) && omit_drivers+=" ${omit_drivers_l[*]} "
-omit_drivers=${omit_drivers/-/_}
+omit_drivers=${omit_drivers//-/_}
 
 ((${#kernel_cmdline_l[@]})) && kernel_cmdline+=" ${kernel_cmdline_l[*]} "
 
