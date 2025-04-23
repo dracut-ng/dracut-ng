@@ -1,6 +1,6 @@
 # Test coverage provided by this container:
 # - arm64
-# - default hostonly
+# - strict hostonly
 # - network-legacy
 # - mkosi-initrd
 # - hmaccalc (fido)
@@ -58,6 +58,8 @@ RUN zypper --non-interactive install --no-recommends \
     && zypper --non-interactive dist-upgrade --no-recommends
 
 # workaround for openSUSE on arm64
+# force strict hostonly mode to increase test coverage
 RUN \
+    echo 'hostonly_mode="strict"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf \
     KVERSION="$(cd /lib/modules && ls -1 | tail -1)" \
     && if [ "$(arch)"="aarch64" ] && [ -e /usr/lib/modules/"$KVERSION"/Image ]; then ln -sf /usr/lib/modules/"$KVERSION"/Image /usr/lib/modules/"$KVERSION"/vmlinuz; fi
