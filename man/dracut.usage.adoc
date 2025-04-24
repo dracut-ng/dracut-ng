@@ -249,8 +249,7 @@ For example
 # dracut --include cmdline-preset /etc/cmdline.d/mycmdline.conf initramfs-cmdline-pre.img
 ----
 will create an initramfs image, where the file cmdline-preset will be copied
-inside the initramfs to _/etc/cmdline.d/mycmdline.conf_. --include can only
-be specified once.
+inside the initramfs to _/etc/cmdline.d/mycmdline.conf_.
 
 [,console]
 ----
