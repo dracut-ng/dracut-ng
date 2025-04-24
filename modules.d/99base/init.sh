@@ -55,7 +55,7 @@ fi
 
 if ! ismounted /dev/pts; then
     mkdir -m 0755 -p /dev/pts
-    mount -t devpts -o gid=5,mode=620,noexec,nosuid devpts /dev/pts > /dev/null
+    mount -t devpts -o gid=5,mode=600,noexec,nosuid devpts /dev/pts > /dev/null
 fi
 
 if ! ismounted /dev/shm; then
