@@ -15,7 +15,7 @@ Type=oneshot
 RemainAfterExit=yes
 # mpathconf requires /etc/multipath to already exist
 ExecStartPre=-/usr/bin/mkdir -p /etc/multipath
-ExecStart=/usr/sbin/mpathconf --enable
+ExecStart=/usr/sbin/mpathconf --enable --user_friendly_names n
 
 [Install]
 WantedBy=sysinit.target
