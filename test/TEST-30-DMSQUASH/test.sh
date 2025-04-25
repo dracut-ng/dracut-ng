@@ -54,7 +54,7 @@ test_run() {
 
     # Run the iso test only if xorriso is available
     if command -v xorriso &> /dev/null; then
-        client_run "iso" "iso-scan/filename=linux.iso root=live:/dev/disk/by-label/ISO"
+        client_run "iso" "iso-scan/filename=linux.iso root=live:/dev/disk/by-label/ISO rd.driver.pre=squashfs rd.driver.pre=ext4"
     fi
 
     test_marker_reset
@@ -127,7 +127,7 @@ EOF
 
     test_dracut \
         --no-hostonly \
-        --modules "dmsquash-live-autooverlay"
+        --modules "dmsquash-live-autooverlay kernel-modules"
 }
 
 # shellcheck disable=SC1090
