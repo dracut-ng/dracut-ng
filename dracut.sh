@@ -233,6 +233,8 @@ Creates initial ramdisk images for preloading modules
                          in the final initramfs.
   -I, --install [LIST]  Install the space separated list of files into the
                          initramfs.
+  --remove      [LIST]  Remove a space-separated list of files and directories
+                        from the initramfs.
   --install-optional [LIST]
                         Install the space separated list of files into the
                          initramfs, if they exist.
@@ -484,6 +486,7 @@ rearrange_params() {
             --long hostonly-nics: \
             --long no-machineid \
             --long version \
+            --long remove: \
             -- "$@"
     )
 
@@ -658,6 +661,11 @@ while :; do
             ;;
         -I | --install)
             install_items_l+=("$2")
+            PARMS_TO_STORE+=" '$2'"
+            shift
+            ;;
+        --remove)
+            remove_items_l+=("$2")
             PARMS_TO_STORE+=" '$2'"
             shift
             ;;
@@ -1092,6 +1100,7 @@ export SYSTEMCTL=${SYSTEMCTL:-systemctl}
 ((${#fscks_l[@]})) && fscks+=" ${fscks_l[*]} "
 ((${#add_fstab_l[@]})) && add_fstab+=" ${add_fstab_l[*]} "
 ((${#install_items_l[@]})) && install_items+=" ${install_items_l[*]} "
+((${#remove_items_l[@]})) && remove_items+=" ${remove_items_l[*]} "
 ((${#install_optional_items_l[@]})) && install_optional_items+=" ${install_optional_items_l[*]} "
 ((${#hostonly_nics_l[@]})) && hostonly_nics+=" ${hostonly_nics_l[*]} "
 
@@ -2432,6 +2441,11 @@ if dracut_module_included "squash-lib"; then
     # Skip initramfs compress
     compress="cat"
 fi
+
+# remove items
+for items in $remove_items; do
+    rm -rf -- "${initdir:?}/${items:?}"
+done
 
 # protect existing output file against build errors
 if [[ -e $outfile ]]; then
