@@ -105,6 +105,13 @@ Specify a space-separated list of directories where to look for libraries.
 *install_items+=*" __<file>__[ __<file>__ ...] "::
 Specify additional files to include in the initramfs, separated by spaces.
 
+*remove_items+=*" __<file/dir>__[ __<file/dir>__ ...] "::
+Specify additional files or directories to remove from the generated initramfs,
+separated by spaces.
+Warning: Avoid manually removing files or directories, as you may inadvertently
+remove essential ones that dracut won't detect or warn you about.
+Using this option is not recommended and is at your own risk.
+
 *install_optional_items+=*" __<file>__[ __<file>__ ...] "::
 Specify additional files to include in the initramfs, separated by spaces,
 if they exist.
