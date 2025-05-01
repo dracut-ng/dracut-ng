@@ -136,7 +136,7 @@ install() {
 
             inst_rules 90-vconsole.rules
 
-            if [[ -e "$systemdsystemunitdir"/systemd-vconsole-setup.service ]]; then
+            if [[ -e "$dracutsysrootdir$systemdsystemunitdir"/systemd-vconsole-setup.service ]]; then
                 inst_multiple -o \
                     "$systemdutildir"/systemd-vconsole-setup \
                     "$systemdsystemunitdir"/systemd-vconsole-setup.service \
