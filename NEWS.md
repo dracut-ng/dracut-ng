@@ -1,5 +1,113 @@
 [Rendered view](https://github.com/dracut-ng/dracut-ng/blob/master/NEWS.md)
 
+dracut-ng-107
+=============
+
+This release marks the one-year anniversary of this project.
+
+To celebrate the anniversary, the project would like to thank the following Linux distributions that rely on this project for initramfs generation.
+* Adélie Linux
+* ALT Linux
+* AOSC
+* Azure Linux
+* Debian (dracut-install)
+* Chimera Linux (dracut-install)
+* CRUX
+* EndeavourOS (Arch based)
+* Fedora and Red Hat Enterprise Linux
+* GardenLinux (Debian based)
+* Gentoo
+* KaOS
+* Lubuntu (Ubuntu based)
+* OpenMamba
+* OpenMandriva
+* Side Linux
+* Solus
+* Ubuntu (dracut-install)
+* Void Linux
+
+The following independent distributions have packaged releases of this project, enabling dracut as an alternative initramfs generator:
+* Alpine
+* Arch
+* Slackware
+
+#### Bug Fixes
+
+*   improve hostonly sloppy mode ([8519dcdb](https://github.com/dracut-ng/dracut-ng/commit/8519dcdb154b55c5feb6e4638a525c33e8fa7f66))
+*   don't use command -v to find binaries in the sysroot ([c0d3b120](https://github.com/dracut-ng/dracut-ng/commit/c0d3b12024b9e17d3d602b82e8ede82e1aa3de80))
+*   add $dracutsysrootdir to paths where it should be present ([a3fea596](https://github.com/dracut-ng/dracut-ng/commit/a3fea5968b4c130a38057a3b87643acc13d5c55b))
+* **90kernel-modules:**  explicitly include xhci-pci-renesas ([20cc20d2](https://github.com/dracut-ng/dracut-ng/commit/20cc20d2ac9c2908da6735b04dba49c1cb1b0bab))
+* **base:**
+  *  tighten /dev/pts permissions ([5ec66e97](https://github.com/dracut-ng/dracut-ng/commit/5ec66e97e6e3e09ecc1d43132c1c6496982ffc52))
+  *  only set ID to dracut if systemd is not used ([82487fc8](https://github.com/dracut-ng/dracut-ng/commit/82487fc81d29dd7509e377028ec20c64a271de7f))
+* **crypt:**  always install s390 crypto modules ([dea50f64](https://github.com/dracut-ng/dracut-ng/commit/dea50f649c8c9317ef1c4f03bb9e02eae5c07459))
+* **dracut:**
+  *  kernel module name normalization in drivers lists ([8674d84f](https://github.com/dracut-ng/dracut-ng/commit/8674d84f9be04aa16ca3ed3dfe05b5e066bf7959))
+  *  protect existing output file against build errors ([39a765de](https://github.com/dracut-ng/dracut-ng/commit/39a765debe212407cce28e6d3a84a65e4efc1c6e))
+  *  avoid mktemp collisions with find filter ([9b822c31](https://github.com/dracut-ng/dracut-ng/commit/9b822c31e3c096a276904c0d6ebfd379ec443e23))
+* **dracut-init:**
+  *  do not detect virt environment in non-hostonly mode ([b2c72e10](https://github.com/dracut-ng/dracut-ng/commit/b2c72e100db036e5eaaa2522b6d51351ac9834f9))
+  *  assign real path to srcmods ([bb6d0c11](https://github.com/dracut-ng/dracut-ng/commit/bb6d0c11d321cb71817bbc3f1dcd7bdcef8a8409))
+* **dracut-install:**  install compressed blobs that match wildcard fwpath ([57911e76](https://github.com/dracut-ng/dracut-ng/commit/57911e76e2826fa6d9f2b80915cf99c6eb0e05b0))
+* **dracut-lib:**  support "set -e" in setdebug ([89da4257](https://github.com/dracut-ng/dracut-ng/commit/89da4257a6ffa737a69f7095bb41d5ae3f247d82))
+* **hwdb:**  enable hwdb dracut module when hostonly is sloppy ([5ff7dab0](https://github.com/dracut-ng/dracut-ng/commit/5ff7dab00830c25168eff1f962685ab915d3c18b))
+* **iscsi:**
+  *  make sure services are shut down when switching root ([fcde3355](https://github.com/dracut-ng/dracut-ng/commit/fcde3355456323be9674aac1d00e3c66683b7f99))
+  *  don't require network setup for qedi ([3d5bab81](https://github.com/dracut-ng/dracut-ng/commit/3d5bab815570d2a271a45ceb9135f7cb3bde11f1))
+* **man:**  --include can be specified multiple times ([18375a5c](https://github.com/dracut-ng/dracut-ng/commit/18375a5c3851c67ef8050e527c57cb3a2b41b112))
+* **mdraid:**  do not call mdadm with full path ([b0c37531](https://github.com/dracut-ng/dracut-ng/commit/b0c37531092d3ccd20a1a867975b67c44aa8a5f9))
+* **multipath:**
+  *  disable user_friendly_names with mpathconf ([1d7464cf](https://github.com/dracut-ng/dracut-ng/commit/1d7464cf2ee2d99f0eec545c4d3d84925df3e76f))
+  *  skip default multipath.conf with mpathconf ([c43b7905](https://github.com/dracut-ng/dracut-ng/commit/c43b79056ffdb7b410e70550a8ad8d137b4720c0))
+* **nfs:**
+  *  add possible `statd` user and group ([7eaa8536](https://github.com/dracut-ng/dracut-ng/commit/7eaa8536fae73aa65fae604820f10e842a18bc88))
+  *  use `DRACUT_CP` instead of `cp` ([2f5a759f](https://github.com/dracut-ng/dracut-ng/commit/2f5a759f490bb813ec24a685f015b15ff196783b))
+  *  libnfsidmap plugins not added in some distributions ([6b30662e](https://github.com/dracut-ng/dracut-ng/commit/6b30662e6e4720428f0efb0ab85c80303dd34afd))
+* **release:**  tagging and release generation is no longer automated ([5c2864dc](https://github.com/dracut-ng/dracut-ng/commit/5c2864dc41c84f911132f0bba9cb50dbd35e27e1))
+* **rngd:**
+  *  adjust license to match the license of the whole project ([da099c30](https://github.com/dracut-ng/dracut-ng/commit/da099c30177c6a88e96f14fde3f07bd6cfc0dabf))
+  *  do not check for +x perms ([04841c42](https://github.com/dracut-ng/dracut-ng/commit/04841c426376ca6ca41f47a97a638a72644a7456))
+* **squash-erofs:**  adjust configuration in order to match SquashFS ([e2f19b65](https://github.com/dracut-ng/dracut-ng/commit/e2f19b650391dc5565e1391745433c4ee16726b1))
+* **systemd-sysusers:**
+  *  make sure tss user for tpm2 is created ([c6d38cb4](https://github.com/dracut-ng/dracut-ng/commit/c6d38cb479f7f630ec13e5f7975460e746495d81))
+  *  silence "Creating " on stderr ([cb8fb964](https://github.com/dracut-ng/dracut-ng/commit/cb8fb9641feec8ee3e0ce249da98becc6cdbb98b))
+  *  always silence stdout ([62c75393](https://github.com/dracut-ng/dracut-ng/commit/62c75393ea18b65ba0f7f224070c3bb94d3bd930))
+* **systemd-veritysetup:**  install dm-verity kernel module ([f3fffa1e](https://github.com/dracut-ng/dracut-ng/commit/f3fffa1edce2fd5e542c115296c9b0856611faa7))
+
+#### Features
+
+*   strip out unused/unlikely AMDGPU firmware ([c06f2481](https://github.com/dracut-ng/dracut-ng/commit/c06f24818b7fbbf32a7f37fb725c1f2e58f13cc0))
+*   add simpledrm module (as subset of drm module) ([2ae73d63](https://github.com/dracut-ng/dracut-ng/commit/2ae73d639834758a88b34033693bd97a7b1ed2f0))
+* **UKI:**  use ukify when available to generate UKI ([acfddd69](https://github.com/dracut-ng/dracut-ng/commit/acfddd69f0575fba29b19e64873f4e0bbecc17f5))
+* **btrfs:**  also install btrfstune ([ddbeed81](https://github.com/dracut-ng/dracut-ng/commit/ddbeed81b2d43a03a16dc60ff76fd0355d4be5b9))
+* **systemd:**  add new systemd-validatefs@.service ([1b5669c1](https://github.com/dracut-ng/dracut-ng/commit/1b5669c1d89e0cc1134ad5b0aa5c091144d24b84))
+* **systemd-integritysetup:**  add remote-integritysetup.target ([4402aeb2](https://github.com/dracut-ng/dracut-ng/commit/4402aeb271933e6b542f5d9a4ff13f6e8b97e6c2))
+
+#### Performance
+
+* **base:**  move the chmod dependency from base to systemd ([ddc1f54d](https://github.com/dracut-ng/dracut-ng/commit/ddc1f54d3ec96c55c444af22a0a964cb48266a21))
+
+#### Contributors
+
+- Jo Zzsi <jozzsicsataban@gmail.com>
+- Benjamin Drung <benjamin.drung@canonical.com>
+- Antonio Alvarez Feijoo <antonio.feijoo@suse.com>
+- James Le Cuirot <jlecuirot@microsoft.com>
+- Benjamin Marzinski <bmarzins@redhat.com>
+- Martin Wilck <mwilck@suse.de>
+- Alexander Tsoy <alexander@tsoy.me>
+- Brian Fjeldstad <bfjelds@microsoft.com>
+- Dylan Aïssi <dylan.aissi@collabora.com>
+- Gao Xiang <hsiangkao@linux.alibaba.com>
+- Laszlo Gombos <laszlo.gombos@gmail.com>
+- Mark Harmstone <mark@harmstone.com>
+- Mingcong Bai <jeffbai@aosc.io>
+- Nowa Ammerlaan <nowa@gentoo.org>
+- Stefan Dirsch <sndirsch@suse.de>
+- Thien Trung Vuong <tvuong@microsoft.com>
+- Xinhui Yang <cyan@cyano.uk>
+- You-Sheng Yang <vicamo.yang@canonical.com>
+
 dracut-ng-106
 =============
 
