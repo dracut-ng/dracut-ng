@@ -30,6 +30,7 @@ install() {
 
     inst_multiple -o \
         pcscd \
+        /etc/pkcs11/modules/opensc.module \
         /usr/share/p11-kit/modules/opensc.module \
         /usr/share/p11-kit/modules/opensc-pkcs11.module
 
