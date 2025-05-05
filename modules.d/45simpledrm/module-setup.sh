@@ -8,7 +8,7 @@ check() {
 # called by dracut
 installkernel() {
     # Include simple DRM driver
-    hostonly='' instmods simpledrm
+    hostonly='' instmods simpledrm =drivers/gpu/drm/panel
 
     if [[ $hostonly_mode == "strict" ]]; then
         # if there is a privacy screen then its driver must be loaded before the
