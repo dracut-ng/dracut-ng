@@ -26,8 +26,8 @@ test_setup() {
         --add-confdir test-root \
         -f "$TESTDIR"/initramfs.root "$KVERSION"
 
-    dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync
-    mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync
+    dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync "$TESTDIR"/root.img
+    mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync "$TESTDIR"/root.img
 
     ln -s / "$TESTDIR"/sysroot
     test_dracut --sysroot "$TESTDIR"/sysroot

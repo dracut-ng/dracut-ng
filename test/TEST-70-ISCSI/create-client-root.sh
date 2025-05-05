@@ -20,5 +20,5 @@ cp -a -t /sysroot /source/*
 umount /sysroot
 lvm lvchange -a n /dev/dracut/root
 echo "dracut-root-block-created" | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
-sync
+sync /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
 poweroff -f

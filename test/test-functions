@@ -215,7 +215,7 @@ qemu_add_drive() {
         fi
 
         dd if=/dev/zero of="${file}" bs=1MiB count="${size}" status=none
-        sync
+        sync "${file}"
     fi
 
     eval "${2}"'+=(' \
@@ -229,7 +229,7 @@ qemu_add_drive() {
 
 test_marker_reset() {
     dd if=/dev/zero of="$TESTDIR"/marker.img bs=1MiB count=1 status=none
-    sync
+    sync "$TESTDIR"/marker.img
 }
 
 test_marker_check() {

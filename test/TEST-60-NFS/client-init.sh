@@ -42,5 +42,5 @@ fi
 
 : > /dev/watchdog
 
-sync
+sync /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker2
 poweroff -f
