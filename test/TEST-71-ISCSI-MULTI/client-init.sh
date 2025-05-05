@@ -10,5 +10,5 @@ while read -r dev _ fstype opts rest || [ -n "$dev" ]; do
     break
 done < /proc/mounts
 
-sync
+sync /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
 poweroff -f

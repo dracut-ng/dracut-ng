@@ -15,5 +15,5 @@ echo "made it to the rootfs! Powering down."
 
 mount -n -o remount,ro /
 
-sync
+sync /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
 poweroff -f

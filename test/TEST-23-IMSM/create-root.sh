@@ -65,5 +65,5 @@ echo "MD_UUID=$MD_UUID"
     echo MD_UUID="$MD_UUID"
 } | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
 mdadm --wait-clean /dev/md0
-sync
+sync /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
 poweroff -f
