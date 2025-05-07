@@ -222,3 +222,31 @@ jobs:
               uses: actions/checkout@v4
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+
+    systemd-storagetm:
+        needs: basic
+        name: ${{ matrix.test }} on ${{ matrix.container }}
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+        concurrency:
+            group: extended-systemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                container:
+                    - arch:latest
+                    - fedora:latest
+                    - gentoo:latest
+                    - opensuse:latest
+                    - ubuntu:rolling
+                test:
+                    - "73"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            options: '--device=/dev/kvm --device=/dev/nvme-fabrics --privileged'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v4
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}

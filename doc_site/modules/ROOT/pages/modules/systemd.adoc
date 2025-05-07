@@ -110,6 +110,9 @@ These modules would require including a version of systemd into initramfs.
 | systemd-resolved
 | https://www.freedesktop.org/software/systemd/man/systemd-resolved.html[systemd-resolved]
 
+| systemd-storagetm
+| https://www.freedesktop.org/software/systemd/man/latest/systemd-storagetm.html[systemd-storagetm]
+
 | systemd-sysctl
 | https://www.freedesktop.org/software/systemd/man/systemd-sysctl.html[systemd-sysctl]
 
