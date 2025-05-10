@@ -63,7 +63,7 @@ check() {
 
 # called by dracut
 depends() {
-    echo rootfs-block network
+    echo rootfs-block network initqueue
     return 0
 }
 
@@ -156,5 +156,4 @@ install() {
     inst_simple "/etc/nvme/config.json"
     inst_rules /usr/lib/udev/rules.d/71-nvmf-iopolicy-netapp.rules
     inst_rules "$moddir/95-nvmf-initqueue.rules"
-    dracut_need_initqueue
 }

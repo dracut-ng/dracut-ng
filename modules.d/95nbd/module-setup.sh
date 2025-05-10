@@ -19,7 +19,7 @@ check() {
 # called by dracut
 depends() {
     # We depend on network modules being loaded
-    echo network rootfs-block
+    echo network rootfs-block initqueue
 }
 
 # called by dracut
@@ -35,5 +35,4 @@ install() {
     if dracut_module_included "systemd-initrd"; then
         inst_script "$moddir/nbd-generator.sh" "$systemdutildir"/system-generators/dracut-nbd-generator
     fi
-    dracut_need_initqueue
 }
