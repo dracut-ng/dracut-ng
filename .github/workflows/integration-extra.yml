@@ -56,6 +56,16 @@ jobs:
                     - "80"
                     - "81"
                     - "82"
+                exclude:
+                    # https://github.com/dracut-ng/dracut-ng/issues/1224
+                    - container: gentoo:amd64-openrc
+                    test: "43"
+                    # https://github.com/dracut-ng/dracut-ng/issues/1315
+                    - container: azurelinux:3.0
+                    test: "41"
+                    # https://github.com/dracut-ng/dracut-ng/issues/1314
+                    - container: azurelinux:3.0
+                    test: "43"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm --privileged'
