@@ -122,11 +122,11 @@ installkernel() {
 
         # if not on strict hostonly mode, install all known filesystems,
         # if the required list is not set via the filesystems variable
-        if [[ $hostonly_mode != "strict" ]]; then
-            if [[ -z $filesystems ]]; then
-                dracut_instmods -o -P ".*/(kernel/fs/nfs|kernel/fs/nfsd|kernel/fs/lockd)/.*" '=fs'
-            fi
-        elif [[ "${host_fs_types[*]}" ]]; then
+        if [[ $hostonly_mode != "strict" ]] && [[ -z $filesystems ]]; then
+            dracut_instmods -o -P ".*/(kernel/fs/nfs|kernel/fs/nfsd|kernel/fs/lockd)/.*" '=fs'
+        fi
+
+        if [[ $hostonly ]] && [[ "${host_fs_types[*]}" ]]; then
             hostonly='' instmods "${host_fs_types[@]}"
         fi
 
