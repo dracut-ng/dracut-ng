@@ -1,0 +1,16 @@
+[Unit]
+Description=Populate /etc and overlay /usr
+Requires=prepare-root.service
+After=prepare-root.service
+Before=initrd-switch-root.service
+DefaultDependencies=no
+ConditionKernelCommandLine=create_root.overlay
+AssertPathExists=/etc/initrd-release
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/finish-root.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=initrd.target
