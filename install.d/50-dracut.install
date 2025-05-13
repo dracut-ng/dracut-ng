@@ -71,7 +71,6 @@ done
 
 # shellcheck disable=SC2046
 dracut -f \
-    --add-confdir hostonly \
     ${noimageifnotneeded:+--noimageifnotneeded} \
     $([[ $KERNEL_INSTALL_VERBOSE == 1 ]] && echo --verbose) \
     $([[ -n $KERNEL_IMAGE ]] && echo --kernel-image "$KERNEL_IMAGE") \
