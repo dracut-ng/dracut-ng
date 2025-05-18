@@ -176,7 +176,7 @@ install: all
 	for i in $(configprofile) ; do \
 		cp -arx dracut.conf.d/$$i/* $(DESTDIR)$(pkglibdir)/dracut.conf.d/ ;\
 	done
-ifneq ($(enable_test),no)
+ifeq ($(enable_test),yes)
 	cp -arx test $(DESTDIR)$(pkglibdir)
 else
 	rm -rf $(DESTDIR)$(pkglibdir)/modules.d/80test*
