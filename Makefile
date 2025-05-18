@@ -37,14 +37,14 @@ man7pages = man/dracut.cmdline.7 \
 
 man8pages = man/dracut.8 \
             man/dracut-catimages.8 \
-            modules.d/98dracut-systemd/dracut-cmdline.service.8 \
-            modules.d/98dracut-systemd/dracut-mount.service.8 \
-            modules.d/98dracut-systemd/dracut-shutdown.service.8 \
-            modules.d/98dracut-systemd/dracut-pre-mount.service.8 \
-            modules.d/98dracut-systemd/dracut-pre-pivot.service.8 \
-            modules.d/98dracut-systemd/dracut-pre-trigger.service.8 \
-            modules.d/98dracut-systemd/dracut-pre-udev.service.8 \
-            modules.d/99initqueue/dracut-initqueue.service.8
+            modules.d/77dracut-systemd/dracut-cmdline.service.8 \
+            modules.d/77dracut-systemd/dracut-mount.service.8 \
+            modules.d/77dracut-systemd/dracut-shutdown.service.8 \
+            modules.d/77dracut-systemd/dracut-pre-mount.service.8 \
+            modules.d/77dracut-systemd/dracut-pre-pivot.service.8 \
+            modules.d/77dracut-systemd/dracut-pre-trigger.service.8 \
+            modules.d/77dracut-systemd/dracut-pre-udev.service.8 \
+            modules.d/77initqueue/dracut-initqueue.service.8
 
 manpages = $(man1pages) $(man5pages) $(man7pages) $(man8pages)
 
@@ -190,8 +190,8 @@ ifneq ($(enable_documentation),no)
 endif
 	if [ -n "$(systemdsystemunitdir)" ]; then \
 		mkdir -p $(DESTDIR)$(systemdsystemunitdir); \
-		ln -srf $(DESTDIR)$(pkglibdir)/modules.d/98dracut-systemd/dracut-shutdown-onfailure.service $(DESTDIR)$(systemdsystemunitdir)/dracut-shutdown-onfailure.service; \
-		ln -srf $(DESTDIR)$(pkglibdir)/modules.d/98dracut-systemd/dracut-shutdown.service $(DESTDIR)$(systemdsystemunitdir)/dracut-shutdown.service; \
+		ln -srf $(DESTDIR)$(pkglibdir)/modules.d/77dracut-systemd/dracut-shutdown-onfailure.service $(DESTDIR)$(systemdsystemunitdir)/dracut-shutdown-onfailure.service; \
+		ln -srf $(DESTDIR)$(pkglibdir)/modules.d/77dracut-systemd/dracut-shutdown.service $(DESTDIR)$(systemdsystemunitdir)/dracut-shutdown.service; \
 		mkdir -p $(DESTDIR)$(systemdsystemunitdir)/sysinit.target.wants; \
 		ln -sf ../dracut-shutdown.service \
 		$(DESTDIR)$(systemdsystemunitdir)/sysinit.target.wants/dracut-shutdown.service; \
@@ -204,11 +204,11 @@ endif
 		    dracut-pre-trigger.service \
 		    dracut-pre-udev.service \
 		    ; do \
-			ln -srf $(DESTDIR)$(pkglibdir)/modules.d/98dracut-systemd/$$i $(DESTDIR)$(systemdsystemunitdir); \
+			ln -srf $(DESTDIR)$(pkglibdir)/modules.d/77dracut-systemd/$$i $(DESTDIR)$(systemdsystemunitdir); \
 			ln -sf ../$$i \
 			$(DESTDIR)$(systemdsystemunitdir)/initrd.target.wants/$$i; \
 		done; \
-		ln -srf $(DESTDIR)$(pkglibdir)/modules.d/99initqueue/dracut-initqueue.service $(DESTDIR)$(systemdsystemunitdir); \
+		ln -srf $(DESTDIR)$(pkglibdir)/modules.d/77initqueue/dracut-initqueue.service $(DESTDIR)$(systemdsystemunitdir); \
 		ln -sf ../dracut-initqueue.service \
 		$(DESTDIR)$(systemdsystemunitdir)/initrd.target.wants/dracut-initqueue.service; \
 	fi
