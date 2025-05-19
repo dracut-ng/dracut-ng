@@ -72,18 +72,20 @@ test_setup() {
     test_marker_check dracut-root-block-created
     rm -- "$TESTDIR"/marker.img
 
-    # initrd for test infra and required kernel modules
+    # initrd for required kernel modules
     # Improve boot time by generating two initrds. Do not re-compress kernel modules
-    test_dracut \
+    "$DRACUT" \
         --no-compress \
-        -m "kernel-modules" \
-        "$TESTDIR"/initramfs-test
+        --kernel-only \
+        -m "kernel-modules qemu" \
+        -d "ext4" \
+        -f "$TESTDIR"/initramfs-test "$KVERSION"
 
     # vanilla kernel-independent systemd-based minimal initrd without dracut specific customizations
     # since dracut-systemd is not included in the generated initrd, only systemd options are supported during boot
     test_dracut --no-kernel \
         --omit "test systemd-sysctl systemd-modules-load" \
-        -m "systemd-initrd" \
+        -m "systemd-initrd base" \
         "$TESTDIR"/initramfs-systemd-initrd
 
     # verify that dracut systemd services are not included
