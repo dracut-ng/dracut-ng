@@ -975,7 +975,7 @@ if [[ -f $conffile ]]; then
 fi
 
 # source our config dir
-for f in $(dropindirs_sort ".conf" "$confdir" "$add_confdir" "$dracutbasedir/dracut.conf.d"); do
+for f in $(dropindirs_sort ".conf" "$confdir" ${add_confdir:+"$add_confdir"} "$dracutbasedir/dracut.conf.d"); do
     check_conf_file "$f"
     # shellcheck disable=SC1090
     [[ -e $f ]] && . "$f"
