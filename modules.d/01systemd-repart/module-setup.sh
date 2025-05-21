@@ -16,6 +16,7 @@ install() {
     inst_multiple -o \
         "/usr/lib/repart.d/*.conf" \
         "$systemdsystemunitdir"/systemd-repart.service \
+        "$systemdsystemunitdir/systemd-repart.service.d/*.conf" \
         "$systemdsystemunitdir"/initrd-root-fs.target.wants/systemd-repart.service \
         systemd-repart
 
