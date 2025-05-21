@@ -65,6 +65,7 @@ while (($# > 0)); do
         --bashcompletiondir) read_arg bashcompletiondir "$@" || shift ;;
         --enable-dracut-cpio) enable_dracut_cpio=yes ;;
         --disable-dracut-cpio) enable_dracut_cpio=no ;;
+        --enable-test) enable_test=yes ;;
         --configprofile) read_arg configprofile "$@" || shift ;;
         *) echo "Ignoring unknown option '$1'" ;;
     esac
@@ -189,6 +190,7 @@ sysconfdir ?= ${sysconfdir:-${prefix}/etc}
 sbindir ?= ${sbindir:-${prefix}/sbin}
 mandir ?= ${mandir:-${prefix}/share/man}
 enable_documentation ?= ${enable_documentation:-yes}
+enable_test ?= ${enable_test:-no}
 enable_dracut_cpio ?= ${enable_dracut_cpio}
 bindir ?= ${bindir:-${prefix}/bin}
 KMOD_CFLAGS ?= $(${PKG_CONFIG} --cflags " libkmod >= 23 ") ${KMOD_CFLAGS_EXTRA}
