@@ -358,8 +358,11 @@ Default:
     This is useful when running dracut from a git checkout.
 
 **-H, --hostonly**::
-    Host-only mode: Install only what is needed for booting the local host
-    instead of a generic host and generate host-specific configuration.
+    Host-only mode: Install files from the host root filesystem, including
+    from directories that are customized by system administrators and
+    users such as /etc and generate host-specific configuration (default).
+    Resilience to minor hardware changes of the generated initramfs is
+    controlled by _hostonly-mode_ .
 +
 [WARNING]
 ====

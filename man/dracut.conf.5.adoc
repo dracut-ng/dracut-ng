@@ -147,7 +147,7 @@ Prefix initramfs files with __<directory>__.
 *hostonly=*"__{yes|no}__"::
 Host-only mode: Install only what is needed for booting the local host
 instead of a generic host and generate host-specific configuration
-(default=no).
+(default=yes).
 
 *hostonly_mode=*"__{sloppy|strict}__"::
 Specify the host-only mode to use (default=sloppy).
@@ -164,7 +164,7 @@ the image unbootable.
 *hostonly_cmdline=*"__{yes|no}__"::
 If set to "yes", store the kernel command line arguments needed in the
 initramfs. If **hostonly="yes"** and this option is not configured, it's
-automatically set to "yes".
+automatically set to "yes". (default=no)
 
 *hostonly_nics+=*" [__<nic>__[ __<nic>__ ...]] "::
 Only enable listed NICs in the initramfs. The list can be empty, so other
