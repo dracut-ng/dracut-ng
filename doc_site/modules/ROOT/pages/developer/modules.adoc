@@ -47,8 +47,8 @@ The name of the module prefixed by a two-digit numeric sort code.
 +
 The numeric code must be present and in the range of 00 - 99.
 +
-NOTE: Range 50 - 59 is reserved for out of tree (3rd party) dracut
-modules.
+NOTE: Range 50 - 59 and 90 - 99 are reserved for out of tree
+(3rd party) dracut modules.
 +
 Modules with lower numbers are installed first.  This is important
 because the dracut install functions (which install files onto
