@@ -180,6 +180,7 @@ ifneq ($(enable_test),no)
 	cp -arx test $(DESTDIR)$(pkglibdir)
 else
 	rm -rf $(DESTDIR)$(pkglibdir)/modules.d/80test*
+	rm -rf $(DESTDIR)$(pkglibdir)/dracut.conf.d/test*
 endif
 ifneq ($(enable_documentation),no)
 	for i in $(man1pages); do install -m 0644 $$i $(DESTDIR)$(mandir)/man1/$${i##*/}; done
