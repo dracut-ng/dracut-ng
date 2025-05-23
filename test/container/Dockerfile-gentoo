@@ -28,12 +28,10 @@ RUN \
     echo "MAKEOPTS=\"-j$(nproc) -l$(nproc)\"" >> /etc/portage/make.conf ;\
     echo "EMERGE_DEFAULT_OPTS=\"-j$(nproc) -l$(nproc)\"" >> /etc/portage/make.conf ;\
     echo "FEATURES=\"getbinpkg binpkg-ignore-signature parallel-fetch parallel-install pkgdir-index-trusted\"" >> /etc/portage/make.conf ;\
-    # systemd-boot, no need to install intramfs with kernel \
-    echo "USE=\"boot kernel-install pkcs7 pkcs11 tpm -initramfs\"" >> /etc/portage/make.conf ;\
-    # Use debian's installkernel \
-    echo 'sys-kernel/installkernel -systemd' >> /etc/portage/package.use/kernel ;\
-    # Enable ukify, qrcode and cryptsetup (includes unit generator for crypttab) \
-    echo 'sys-apps/systemd ukify qrcode cryptsetup' >> /etc/portage/package.use/systemd ;\
+    # disable initramfs sanity checks for kernel to avoid pulling in dracut package \
+    echo "USE=\"pkcs7 pkcs11 tpm -initramfs\"" >> /etc/portage/make.conf ;\
+    # Enable systemd-boot, ukify, qrcode and cryptsetup (includes unit generator for crypttab) \
+    echo 'sys-apps/systemd boot kernel-install ukify qrcode cryptsetup' >> /etc/portage/package.use/systemd ;\
     # Support thin volumes and build all of LVM2 including daemons and tools like lvchange \
     echo 'sys-fs/lvm2 thin lvm' >> /etc/portage/package.use/lvm2 ;\
     # force hostonly mode as this is the config recommended by https://wiki.gentoo.org/wiki/Dracut \
