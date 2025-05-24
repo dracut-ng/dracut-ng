@@ -6,11 +6,7 @@ check() {
 }
 
 depends() {
-    echo "rootfs-block kernel-modules qemu"
-}
-
-installkernel() {
-    hostonly='' instmods piix ide-gd_mod ata_piix ext4 sd_mod
+    echo "rootfs-block kernel-modules qemu "
 }
 
 install() {
