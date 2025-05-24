@@ -94,7 +94,7 @@ test_setup() {
     if command -v ukify &> /dev/null; then
         echo "Using ukify to create UKI"
         test_dracut --no-uefi \
-            --drivers 'squashfs'
+            --add-drivers 'squashfs'
 
         ukify build \
             --linux="$VMLINUZ" \
@@ -105,7 +105,7 @@ test_setup() {
         echo "Using dracut to create UKI"
         test_dracut \
             --kernel-cmdline "$TEST_KERNEL_CMDLINE root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root" \
-            --drivers 'squashfs' \
+            --add-drivers 'squashfs' \
             --uefi \
             "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
     fi
