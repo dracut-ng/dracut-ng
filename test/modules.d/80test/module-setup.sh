@@ -6,19 +6,12 @@ check() {
 }
 
 depends() {
-    echo "base debug qemu watchdog"
+    echo "base debug kernel-modules qemu watchdog"
 }
 
+# testsuite assumes ext4 for convenience
 installkernel() {
-    hostonly='' instmods \
-        ata_piix \
-        ext4 \
-        i6300esb \
-        ide-gd_mod \
-        piix \
-        sd_mod \
-        virtio_pci \
-        virtio_scsi
+    hostonly='' instmods ext4
 }
 
 install() {

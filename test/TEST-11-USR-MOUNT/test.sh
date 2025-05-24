@@ -84,7 +84,7 @@ test_setup() {
     fi
 
     test_dracut \
-        -d "btrfs"
+        --add-drivers "btrfs"
 }
 
 # shellcheck disable=SC1090
