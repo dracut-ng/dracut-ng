@@ -201,6 +201,10 @@ code, there are no specific types or categories for dracut modules.
 | mount block device as rootfs
 | device
 
+| rootfs-block-fallback
+| mount block fallback device as rootfs
+| device
+
 | securityfs
 | mount securityfs early
 | filesystem
