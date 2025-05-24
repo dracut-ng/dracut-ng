@@ -467,6 +467,10 @@ rootfs-block:
   - changed-files:
       - any-glob-to-any-file: 'modules.d/[0-9][0-9]rootfs-block/*'
 
+rootfs-block-fallback:
+  - changed-files:
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]rootfs-block-fallback/*'
+
 ssh-client:
   - changed-files:
       - any-glob-to-any-file: 'modules.d/[0-9][0-9]ssh-client/*'
