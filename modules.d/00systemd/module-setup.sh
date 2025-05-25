@@ -21,7 +21,7 @@ config() {
 
 installkernel() {
     hostonly='' instmods autofs4 ipv6 dmi-sysfs
-    hostonly=$(optional_hostonly) instmods -s efivarfs
+    hostonly=$(optional_hostonly) instmods -s efivarfs overlay
 }
 
 # called by dracut
