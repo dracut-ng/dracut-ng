@@ -122,11 +122,11 @@ by copying the original kernel cmdline parameters.
 [listing]
 .Example
 --
-menuentry 'Live Fedora 20' --class fedora --class gnu-linux --class gnu --class os {
-    set isolabel=Fedora-Live-LXDE-x86_64-20-1
-    set isofile="/boot/iso/Fedora-Live-LXDE-x86_64-20-1.iso"
+menuentry 'Live' --class gnu-linux --class gnu --class os {
+    set isolabel=Live-x86_64
+    set isofile="/boot/iso/Live-x86_64.iso"
     loopback loop $isofile
-    linux (loop)/isolinux/vmlinuz0 boot=isolinux iso-scan/filename=$isofile root=live:LABEL=$isolabel ro rd.live.image quiet rhgb
+    linux (loop)/isolinux/vmlinuz0 boot=isolinux iso-scan/filename=$isofile root=live:LABEL=$isolabel ro rd.live.image quiet
     initrd (loop)/isolinux/initrd0.img
 }
 --
