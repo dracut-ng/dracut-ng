@@ -1,3 +1,4 @@
+rebase
 -include dracut-version.sh
 
 DRACUT_MAIN_VERSION ?= $(shell env GIT_CEILING_DIRECTORIES=$(CURDIR)/.. git describe --abbrev=0 --tags --always 2>/dev/null || :)
