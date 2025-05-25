@@ -333,7 +333,7 @@ situation.
 
 [[identifying-your-problem-area]]
 == Identifying your problem area
-. Remove ''rhgb'' and ''quiet'' from the kernel command line
+. Remove ''splash'' and ''quiet'' from the kernel command line
 . Add ''rd.shell'' to the kernel command line. This will present a shell should
 dracut be unable to locate your root device
 . Add ''rd.shell rd.debug log_buf_len=1M'' to the kernel command line so that
@@ -441,7 +441,7 @@ locate your root filesystem. To enable the shell:
 
 . Add the boot parameter ''rd.shell'' to your bootloader configuration file
 (e.g. _/boot/grub2/grub.cfg_)
-. Remove the boot arguments ''rhgb'' and ''quiet''
+. Remove the boot arguments ''splash'' and ''quiet''
 +
 A sample _/boot/grub2/grub.cfg_ bootloader configuration file is listed below.
 +
