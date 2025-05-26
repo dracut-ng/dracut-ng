@@ -42,7 +42,8 @@ install() {
         chown \
         findmnt \
         kmod \
-        less
+        less \
+        sysctl
 
     inst_binary "${dracutbasedir}/dracut-util" "/usr/bin/dracut-util"
 
@@ -77,9 +78,16 @@ install() {
     inst_simple "$moddir/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh"
     mkdir -p "${initdir}"/var
 
+    [[ -d /lib/modprobe.d ]] && inst_multiple -o "/lib/modprobe.d/*.conf"
+    [[ -d /usr/lib/modprobe.d ]] && inst_multiple -o "/usr/lib/modprobe.d/*.conf"
+    [[ $hostonly ]] && inst_multiple -H -o /etc/modprobe.d/*.conf /etc/modprobe.conf
+
+    inst_simple "$moddir/insmodpost.sh" /sbin/insmodpost.sh
+
     if ! dracut_module_included "systemd"; then
         inst_multiple switch_root || dfatal "Failed to install switch_root"
         inst_script "$moddir/init.sh" "/init"
+        inst_hook cmdline 01 "$moddir/parse-kernel.sh"
         inst_hook cmdline 10 "$moddir/parse-root-opts.sh"
 
         {
