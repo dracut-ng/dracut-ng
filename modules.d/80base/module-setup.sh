@@ -15,6 +15,13 @@ depends() {
     return 0
 }
 
+# we prefer the non-busybox implementation of switch_root
+# due to the dependency, this dracut module needs to be ordered before the busybox dracut module
+# as this dracut module would install the non-busybox implementation of switch_root, if available
+
+# this dracut module needs to be ordered after the systemd-sysusers dracut module, so make sure
+# that the root password set in for the emergency console in host-only mode
+
 # called by dracut
 install() {
     inst_multiple \

@@ -99,6 +99,7 @@ squash_installpost() {
     mv "$squashdir"/* "$initdir"
 }
 
+# due to this installation step below, this dracut module needs to be ordered to be the absolute last one
 install() {
 
     if [[ $DRACUT_SQUASH_POST_INST ]]; then

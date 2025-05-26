@@ -5,6 +5,8 @@ check() {
     return 255
 }
 
+# due to the dependencies below, this dracut module needs to be ordered later than network-manager, systemd-networkd, connman and network-legacy dracut modules
+
 # called by dracut
 depends() {
     for module in network-manager systemd-networkd connman network-legacy; do
