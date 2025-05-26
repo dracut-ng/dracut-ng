@@ -10,6 +10,8 @@ check() {
     return 0
 }
 
+# due to the dependencies below, this dracut module needs to be ordered later than systemd-initrd, systemd-ask-password and the crypt dracut modules
+
 # called by dracut
 depends() {
     local deps

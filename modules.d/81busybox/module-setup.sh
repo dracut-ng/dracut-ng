@@ -7,6 +7,10 @@ check() {
     return 255
 }
 
+# we prefer the non-busybox implementation of switch_root
+# due to the dependency, the busybox dracut module needs to be order later than the base dracut module
+# as the base dracut module would install the non-busybox implementation of switch_root, if available
+
 # called by dracut
 install() {
     local _i _path _busybox

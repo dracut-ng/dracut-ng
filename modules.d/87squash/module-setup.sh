@@ -4,6 +4,8 @@ check() {
     return 255
 }
 
+# due to the dependencies below, this dracut module needs to be ordered later than the squash-squashfs and squash-erofs dracut modules
+
 depends() {
     local _module _handler
     local -a _modules=(squash-squashfs squash-erofs)

@@ -8,6 +8,8 @@ check() {
     return 255
 }
 
+# due to the dependencies below, this dracut module needs to be ordered later than the dbus-daemon and dbus-broker dracut modules
+
 # Module dependency requirements.
 depends() {
     local _module
