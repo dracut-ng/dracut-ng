@@ -691,7 +691,7 @@ check_vol_slaves() {
 }
 
 check_vol_slaves_all() {
-    local _vg _pv _majmin _dm
+    local _vg _pv _majmin _dm _ret=1
     _majmin="$2"
     _dm=$(get_lvm_dm_dev "$_majmin")
     [[ -z $_dm ]] && return 1 # not an LVM device-mapper device
@@ -705,11 +705,10 @@ check_vol_slaves_all() {
         fi
 
         for _pv in $(lvm vgs --noheadings -o pv_name "$_vg" 2> /dev/null); do
-            check_block_and_slaves_all "$1" "$(get_maj_min "$_pv")"
+            check_block_and_slaves_all "$1" "$(get_maj_min "$_pv")" && _ret=0
         done
-        return 0
     fi
-    return 1
+    return $_ret
 }
 
 # fs_get_option <filesystem options> <search for option>
