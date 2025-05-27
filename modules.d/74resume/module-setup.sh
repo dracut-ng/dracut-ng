@@ -39,7 +39,9 @@ check() {
 
 # called by dracut
 depends() {
-    echo initqueue
+    if ! dracut_module_included "systemd"; then
+        echo initqueue
+    fi
     return 0
 }
 
