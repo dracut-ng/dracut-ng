@@ -1011,7 +1011,11 @@ if [[ $regenerate_all == "yes" ]]; then
         for i in *; do
             [[ -f $i/modules.dep ]] || [[ -f $i/modules.dep.bin ]] || continue
             "$dracut_cmd" --kver="$i" "${dracut_args[@]}"
-            ((ret += $?))
+            _rc=$?
+            if [[ $_rc -gt 0 ]]; then
+                printf "%s\n" "dracut[F]: image generation failed for kernel '$i'." >&2
+                ((ret += _rc))
+            fi
         done
     else
         for i in *; do
@@ -1027,6 +1031,10 @@ if [[ $regenerate_all == "yes" ]]; then
                 ((ret += wst))
             fi
         done
+
+        if [[ $ret -gt 0 ]]; then
+            printf "%s\n" "dracut[F]: image generation failed." >&2
+        fi
     fi
     exit "$ret"
 fi
