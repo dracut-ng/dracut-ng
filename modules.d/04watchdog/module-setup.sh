@@ -7,7 +7,10 @@ check() {
 
 # called by dracut
 depends() {
-    echo watchdog-modules initqueue
+    echo watchdog-modules
+    if ! dracut_module_included "systemd"; then
+        echo initqueue
+    fi
     return 0
 }
 
