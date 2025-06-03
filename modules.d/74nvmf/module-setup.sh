@@ -72,6 +72,14 @@ installkernel() {
     hostonly=$(optional_hostonly) instmods nvme_fc nvme_tcp nvme_rdma lpfc qla2xxx
     # 802.1q VLAN may be set up in Firmware later. Include the module always.
     hostonly="" instmods 8021q
+    # lookup NIC kernel modules for active NBFT interfaces
+    if [[ $hostonly ]]; then
+        for i in /sys/class/net/nbft*; do
+            [ -d "$i" ] || continue
+            _driver=$(basename "$(readlink -f "$i/device/driver/module")")
+            [ -z "$_driver" ] || instmods "$_driver"
+        done
+    fi
 }
 
 # called by dracut
