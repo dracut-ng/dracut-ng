@@ -61,6 +61,10 @@ case "${root#block:}${root_unset}" in
         root="block:${root#block:}"
         rootok=1
         ;;
+    nfs*)
+        [ -e /usr/lib/systemd/system-generators/nfsroot-generator ] \
+            && rootok=1
+        ;;
     UNSET | gpt-auto | tmpfs)
         # systemd's gpt-auto-generator/fstab-generator handles this case.
         rootok=1

@@ -32,8 +32,18 @@ check() {
 
 # called by dracut
 depends() {
+    local _deps
+
     # We depend on network modules being loaded
-    echo network initqueue
+    _deps="network"
+
+    if ! [[ -e "$systemdutildir"/system-generators/nfsroot-generator ]] \
+        || [[ "$(get_nfs_type)" == "nfs" ]]; then
+        _deps+=" initqueue"
+    fi
+
+    echo "$_deps"
+    return 0
 }
 
 # called by dracut
@@ -104,10 +114,19 @@ install() {
 
     inst_libdir_file -n "$_nsslibs" 'libnss_*.so*'
 
-    inst_hook cmdline 90 "$moddir/parse-nfsroot.sh"
-    inst_hook pre-udev 99 "$moddir/nfs-start-rpc.sh"
-    inst_hook cleanup 99 "$moddir/nfsroot-cleanup.sh"
-    inst "$moddir/nfsroot.sh" "/sbin/nfsroot"
+    if [[ -e "$systemdutildir"/system-generators/nfsroot-generator ]] \
+        && [[ "$(get_nfs_type)" != "nfs" ]]; then
+        inst_multiple -o \
+            "$systemdsystemunitdir"/nfs-idmapd.service \
+            "$systemdsystemunitdir"/rpc_pipefs.target \
+            "$systemdsystemunitdir"/var-lib-nfs-rpc_pipefs.mount \
+            "$systemdutildir"/system-generators/nfsroot-generator
+    else
+        inst_hook cmdline 90 "$moddir/parse-nfsroot.sh"
+        inst_hook pre-udev 99 "$moddir/nfs-start-rpc.sh"
+        inst_hook cleanup 99 "$moddir/nfsroot-cleanup.sh"
+        inst "$moddir/nfsroot.sh" "/sbin/nfsroot"
+    fi
 
     # For strict hostonly, only install rpcbind for NFS < 4
     if [[ $hostonly_mode != "strict" ]] || [[ "$(get_nfs_type)" != "nfs4" ]]; then
