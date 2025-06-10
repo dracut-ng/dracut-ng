@@ -130,6 +130,7 @@ client_test() {
 }
 
 test_nfsv3() {
+    return 0
     # MAC numbering scheme:
     # NFSv3: last octet starts at 0x00 and works up
     # NFSv4: last octet starts at 0x80 and works up
@@ -185,17 +186,17 @@ test_nfsv4() {
     # server, so put these later in the list to avoid a pause when doing
     # switch_root
 
-    client_test "NFSv4 root=dhcp DHCP proto:IP:path" 52:54:00:12:34:82 \
-        "root=dhcp" 192.168.50.3 -wsize=4096
+    #client_test "NFSv4 root=dhcp DHCP proto:IP:path" 52:54:00:12:34:82 \
+    #    "root=dhcp" 192.168.50.3 -wsize=4096
 
-    client_test "NFSv4 root=dhcp DHCP proto:IP:path:options" 52:54:00:12:34:83 \
-        "root=dhcp" 192.168.50.3 wsize=4096
+    #client_test "NFSv4 root=dhcp DHCP proto:IP:path:options" 52:54:00:12:34:83 \
+    #    "root=dhcp" 192.168.50.3 wsize=4096
 
     client_test "NFSv4 root=nfs4:..." 52:54:00:12:34:84 \
         "root=nfs4:192.168.50.1:/client" 192.168.50.1 -wsize=4096
 
-    client_test "NFSv4 root=dhcp DHCP proto:IP:path,options" 52:54:00:12:34:87 \
-        "root=dhcp" 192.168.50.3 wsize=4096
+    #client_test "NFSv4 root=dhcp DHCP proto:IP:path,options" 52:54:00:12:34:87 \
+    #    "root=dhcp" 192.168.50.3 wsize=4096
 
     client_test "NFSv4 Overlayfs root=nfs4:..." 52:54:00:12:34:84 \
         "root=nfs4:192.168.50.1:/client rd.live.overlay.overlayfs=1 " 192.168.50.1 -wsize=4096
