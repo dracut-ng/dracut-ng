@@ -20,14 +20,14 @@ check() {
 depends() {
     local deps
     deps="dm rootfs-block crypt systemd-ask-password"
-    if [[ $hostonly && -f "$dracutsysrootdir"/etc/crypttab ]]; then
-        if grep -q -e "fido2-device=" -e "fido2-cid=" "$dracutsysrootdir"/etc/crypttab; then
+    if [[ $hostonly && -f "${dracutsysrootdir-}"/etc/crypttab ]]; then
+        if grep -q -e "fido2-device=" -e "fido2-cid=" "${dracutsysrootdir-}"/etc/crypttab; then
             deps+=" fido2"
         fi
-        if grep -q "pkcs11-uri" "$dracutsysrootdir"/etc/crypttab; then
+        if grep -q "pkcs11-uri" "${dracutsysrootdir-}"/etc/crypttab; then
             deps+=" pkcs11"
         fi
-        if grep -q "tpm2-device=" "$dracutsysrootdir"/etc/crypttab; then
+        if grep -q "tpm2-device=" "${dracutsysrootdir-}"/etc/crypttab; then
             deps+=" tpm2-tss"
         fi
     elif [[ ! $hostonly ]]; then
@@ -70,7 +70,7 @@ install() {
                 _luksfile="/run/cryptsetup-keys.d/$_mapper.key"
             fi
 
-            find "$dracutsysrootdir$systemdsystemunitdir" "$dracutsysrootdir$systemdsystemconfdir" -type f -name "*.socket" | while read -r socket_unit; do
+            find "${dracutsysrootdir-}$systemdsystemunitdir" "${dracutsysrootdir-}$systemdsystemconfdir" -type f -name "*.socket" | while read -r socket_unit; do
                 # systemd-cryptsetup utility only supports SOCK_STREAM (ListenStream) sockets, so we ignore
                 # other types like SOCK_DGRAM (ListenDatagram), SOCK_SEQPACKET (ListenSequentialPacket), etc.
                 if ! grep -E -q "^ListenStream\s*=\s*$_luksfile$" "$socket_unit"; then

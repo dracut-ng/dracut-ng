@@ -69,14 +69,14 @@ install() {
         /usr/lib/bluetooth/bluetoothd
 
     if [[ $hostonly ]]; then
-        var_lib_files=("$dracutsysrootdir"/var/lib/bluetooth/**)
+        var_lib_files=("${dracutsysrootdir-}"/var/lib/bluetooth/**)
 
         inst_multiple -o \
             /etc/bluetooth/main.conf \
             "$dbussystemconfdir"/bluetooth.conf \
             "$systemdsystemconfdir"/bluetooth.service \
             "$systemdsystemconfdir/bluetooth.service.d/*.conf" \
-            "${var_lib_files[@]#"$dracutsysrootdir"}"
+            "${var_lib_files[@]#"${dracutsysrootdir-}"}"
     fi
 
     inst_rules 69-btattach-bcm.rules 60-persistent-input.rules
