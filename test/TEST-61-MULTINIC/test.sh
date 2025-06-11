@@ -44,7 +44,7 @@ run_server() {
 
     chmod 644 -- "$TESTDIR"/server.pid
 
-    if ! [[ $SERIAL ]]; then
+    if ! [[ ${SERIAL-} ]]; then
         wait_for_server_startup
     else
         echo Sleeping 10 seconds to give the server a head start
