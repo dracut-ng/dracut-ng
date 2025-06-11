@@ -137,6 +137,7 @@ installkernel() {
         [[ $arch == x86_64 ]] && arch=x86
         [[ $arch == s390x ]] && arch=s390
         [[ $arch == aarch64 ]] && arch=arm64
+        [[ $arch == loongarch64 ]] && arch=loongarch
         hostonly='' instmods "=crypto"
         hostonly=$(optional_hostonly) instmods "=arch/$arch/crypto" "=drivers/crypto"
     fi
