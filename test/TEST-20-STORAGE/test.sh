@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 
 [ -z "${TEST_FSTYPE-}" ] && TEST_FSTYPE="ext4"
 
