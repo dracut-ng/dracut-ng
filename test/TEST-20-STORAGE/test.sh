@@ -10,6 +10,9 @@ test_check() {
     (command -v zfs || (command -v lvm && command -v "mkfs.$TEST_FSTYPE")) &> /dev/null
 }
 
+USE_LVM=
+HAVE_RAID=
+HAVE_CRYPT=
 if [ "$TEST_FSTYPE" != "zfs" ] && [ "$TEST_FSTYPE" != "btrfs" ]; then
     # test fips mode
     [ -f /usr/share/crypto-policies/default-fips-config ] && TEST_KERNEL_CMDLINE+=" fips=1 rd.fips.skipkernel boot=LABEL=dracut "
