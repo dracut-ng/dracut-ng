@@ -171,7 +171,6 @@ install: all
 	ln -fs dracut-functions.sh $(DESTDIR)$(pkglibdir)/dracut-functions
 	install -m 0755 dracut-logger.sh $(DESTDIR)$(pkglibdir)/dracut-logger.sh
 	install -m 0755 dracut-initramfs-restore.sh $(DESTDIR)$(pkglibdir)/dracut-initramfs-restore
-	rm -rf $(DESTDIR)$(pkglibdir)/modules.d/80test*
 	cp -arx modules.d dracut.conf.d $(DESTDIR)$(pkglibdir)
 	for i in $(configprofile) ; do \
 		cp -arx dracut.conf.d/$$i/* $(DESTDIR)$(pkglibdir)/dracut.conf.d/ ;\
@@ -179,7 +178,7 @@ install: all
 ifeq ($(enable_test),yes)
 	cp -arx test $(DESTDIR)$(pkglibdir)
 else
-	rm -rf $(DESTDIR)$(pkglibdir)/modules.d/80test*
+	rm -rf $(DESTDIR)$(pkglibdir)/modules.d/70test*
 endif
 ifneq ($(enable_documentation),no)
 	for i in $(man1pages); do install -m 0644 $$i $(DESTDIR)$(mandir)/man1/$${i##*/}; done
