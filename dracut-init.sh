@@ -606,7 +606,7 @@ inst_libdir_dir() {
 # Install a <file> located on a lib directory to the initramfs image
 # -n <pattern> install matching files
 inst_libdir_file() {
-    local -a _files
+    local -a _files=()
     if [[ $1 == "-n" ]]; then
         local _pattern=$2
         shift 2
