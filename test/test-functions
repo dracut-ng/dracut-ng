@@ -23,11 +23,11 @@ fi
 
 TEST_KERNEL_CMDLINE+=" root=LABEL=dracut panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot $DEBUGFAIL "
 
-if [[ $V != "1" && $V != "2" ]]; then
+if [[ ${V-} != "1" && ${V-} != "2" ]]; then
     TEST_KERNEL_CMDLINE+="quiet "
 fi
 
-if [[ $V == "2" ]]; then
+if [[ ${V-} == "2" ]]; then
     TEST_KERNEL_CMDLINE+="rd.debug "
 fi
 
@@ -72,7 +72,7 @@ wait_for_server_startup() {
 
     echo "Waiting for the server to startup"
     while ! grep -q Serving "$TESTDIR"/server.log; do
-        if [ "$V" -ge 1 ]; then
+        if [ "${V-}" -ge 1 ]; then
             lines=$(wc -l "$TESTDIR"/server.log | cut -f 1 -d ' ')
             if [ "$lines" -gt "$printed_lines" ]; then
                 tail -n "+$((printed_lines + 1))" "$TESTDIR"/server.log
@@ -264,7 +264,7 @@ while (($# > 0)); do
         --all)
             set_test_envonment_variables
             if ! test_check 2 &> test${TEST_RUN_ID:+-$TEST_RUN_ID}.log; then
-                if [[ $V == "1" || $V == "2" ]]; then
+                if [[ ${V-} == "1" || ${V-} == "2" ]]; then
                     cat test${TEST_RUN_ID:+-$TEST_RUN_ID}.log
                 fi
                 echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_WARNING" "[SKIPPED]" "$COLOR_NORMAL"
@@ -272,7 +272,7 @@ while (($# > 0)); do
             else
                 echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_SUCCESS" "[STARTED]" "$COLOR_NORMAL"
             fi
-            if [[ $V == "1" || $V == "2" ]]; then
+            if [[ ${V-} == "1" || ${V-} == "2" ]]; then
                 tee_command="tee"
                 set -o pipefail
                 (
@@ -303,7 +303,7 @@ while (($# > 0)); do
                 echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_SUCCESS" "[OK]" "$COLOR_NORMAL"
             else
                 echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_FAILURE" "[FAILED]" "$COLOR_NORMAL"
-                if [ "$V" == "2" ]; then
+                if [ "${V-}" == "2" ]; then
                     tail -c 1048576 "$(pwd)/server${TEST_RUN_ID:+-$TEST_RUN_ID}.log" "$(pwd)/test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
                     echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_FAILURE" "[FAILED]" "$COLOR_NORMAL"
                 else
