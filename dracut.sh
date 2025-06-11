@@ -566,6 +566,36 @@ if [[ $append_args_l == "yes" ]]; then
     fi
 fi
 
+# Define variables that are exported later
+add_dracutmodules=
+add_fstab=
+debug=
+dracutmodules=
+drivers=
+fileloglvl=
+filesystems=
+force_add_dracutmodules=
+fscks=
+fstab_lines=()
+fw_dir=
+hostonly_cmdline=
+kernel_only=
+kmsgloglvl=
+libdirs=
+logfile=
+loginstall=
+lvmconf=
+mdadmconf=
+no_kernel=
+nofscks=
+omit_dracutmodules=
+omit_drivers=
+prefix=
+ro_mnt=
+squash_compress=
+sshkey=
+use_fstab=
+
 unset PARMS_TO_STORE
 PARMS_TO_STORE=""
 
@@ -1698,7 +1728,11 @@ if [[ $hostonly ]]; then
     done
 fi
 
-declare -A host_fs_types
+declare -A host_fs_types=()
+declare -a host_devs=()
+declare -a root_devs=()
+declare -a swap_devs=()
+declare -a user_devs=()
 
 for line in "${fstab_lines[@]}"; do
     # shellcheck disable=SC2086
