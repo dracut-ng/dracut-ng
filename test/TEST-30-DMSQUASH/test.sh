@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="live root on a squash filesystem"

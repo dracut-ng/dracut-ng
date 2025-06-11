@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 
 [ -z "${USE_NETWORK-}" ] && USE_NETWORK="network"
 
