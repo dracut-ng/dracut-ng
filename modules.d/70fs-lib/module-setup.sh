@@ -68,7 +68,7 @@ install() {
 
     _helpers+=(umount mount)
 
-    if [[ ${_helpers[*]} == *e2fsck* ]] && [[ -e $dracutsysrootdir/etc/e2fsck.conf ]]; then
+    if [[ ${_helpers[*]} == *e2fsck* ]] && [[ -e "${dracutsysrootdir-}/etc/e2fsck.conf" ]]; then
         inst_simple /etc/e2fsck.conf
     fi
 

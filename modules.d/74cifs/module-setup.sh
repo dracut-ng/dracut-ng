@@ -42,7 +42,7 @@ install() {
     inst_libdir_file 'libcap-ng.so*'
 
     _nsslibs=$(
-        cat "$dracutsysrootdir"/{,usr/}etc/nsswitch.conf 2> /dev/null \
+        cat "${dracutsysrootdir-}"/{,usr/}etc/nsswitch.conf 2> /dev/null \
             | sed -e '/^#/d' -e 's/^.*://' -e 's/\[NOTFOUND=return\]//' \
             | tr -s '[:space:]' '\n' | sort -u | tr -s '[:space:]' '|'
     )

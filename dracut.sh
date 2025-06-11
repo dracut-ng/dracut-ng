@@ -50,7 +50,7 @@ path_rel_to_abs() {
 
 usage() {
     [[ $sysroot_l ]] && dracutsysrootdir="$sysroot_l"
-    [[ $dracutbasedir ]] || dracutbasedir="$dracutsysrootdir"/usr/lib/dracut
+    [[ $dracutbasedir ]] || dracutbasedir="${dracutsysrootdir-}"/usr/lib/dracut
     if [[ -f $dracutbasedir/dracut-version.sh ]]; then
         # shellcheck source=./dracut-version.sh
         . "$dracutbasedir"/dracut-version.sh
@@ -76,7 +76,7 @@ EOF
 }
 
 long_usage() {
-    [[ $dracutbasedir ]] || dracutbasedir="$dracutsysrootdir"/usr/lib/dracut
+    [[ $dracutbasedir ]] || dracutbasedir="${dracutsysrootdir-}"/usr/lib/dracut
     if [[ -f $dracutbasedir/dracut-version.sh ]]; then
         # shellcheck source=./dracut-version.sh
         . "$dracutbasedir"/dracut-version.sh
@@ -310,7 +310,7 @@ EOF
 }
 
 long_version() {
-    [[ $dracutbasedir ]] || dracutbasedir="$dracutsysrootdir"/usr/lib/dracut
+    [[ $dracutbasedir ]] || dracutbasedir="${dracutsysrootdir-}"/usr/lib/dracut
     if [[ -f $dracutbasedir/dracut-version.sh ]]; then
         # shellcheck source=./dracut-version.sh
         . "$dracutbasedir"/dracut-version.sh
@@ -925,7 +925,7 @@ export DRACUT_LOG_LEVEL=warning
     debug=yes
 }
 
-[[ $dracutbasedir ]] || dracutbasedir="$dracutsysrootdir"/usr/lib/dracut
+[[ $dracutbasedir ]] || dracutbasedir="${dracutsysrootdir-}"/usr/lib/dracut
 
 # These config variables needs to be exported for dracut-install.
 export add_dlopen_features="" omit_dlopen_features=""
@@ -935,7 +935,7 @@ if [[ -z $conffile ]]; then
     if [[ $allowlocal ]]; then
         conffile="$dracutbasedir/dracut.conf"
     else
-        conffile="$dracutsysrootdir/etc/dracut.conf"
+        conffile="${dracutsysrootdir-}/etc/dracut.conf"
     fi
 elif [[ ! -e $conffile ]]; then
     printf "%s\n" "dracut[F]: Configuration file '$conffile' not found." >&2
@@ -946,7 +946,7 @@ if [[ -z $confdir ]]; then
     if [[ $allowlocal ]]; then
         confdir="$dracutbasedir/dracut.conf.d"
     else
-        confdir="$dracutsysrootdir/etc/dracut.conf.d"
+        confdir="${dracutsysrootdir-}/etc/dracut.conf.d"
     fi
 elif [[ ! -d $confdir ]]; then
     printf "%s\n" "dracut[F]: Configuration directory '$confdir' not found." >&2
@@ -1009,7 +1009,7 @@ if [[ $regenerate_all == "yes" ]]; then
         esac
     done
 
-    cd "$dracutsysrootdir"/lib/modules || exit 1
+    cd "${dracutsysrootdir-}"/lib/modules || exit 1
     if [[ $parallel != "yes" ]]; then
         for i in *; do
             [[ -f $i/modules.dep ]] || [[ -f $i/modules.dep.bin ]] || continue
@@ -1042,15 +1042,15 @@ DRACUT_PATH=${DRACUT_PATH:-/sbin /bin /usr/sbin /usr/bin}
 
 for i in $DRACUT_PATH; do
     rl=$i
-    if [ -L "$dracutsysrootdir$i" ]; then
-        rl=$(readlink -f "$dracutsysrootdir$i")
+    if [ -L "${dracutsysrootdir-}$i" ]; then
+        rl=$(readlink -f "${dracutsysrootdir-}$i")
     fi
-    rl="${rl#"$dracutsysrootdir"}"
+    rl="${rl#"${dracutsysrootdir-}"}"
     if [[ $NPATH != *:$rl* ]]; then
         NPATH+=":$rl"
     fi
 done
-[[ -z $dracutsysrootdir ]] && export PATH="${NPATH#:}"
+[[ -z ${dracutsysrootdir-} ]] && export PATH="${NPATH#:}"
 unset NPATH
 
 export SYSTEMCTL=${SYSTEMCTL:-systemctl}
@@ -1097,14 +1097,14 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $use_fstab_l ]] && use_fstab=$use_fstab_l
 [[ $mdadmconf_l ]] && mdadmconf=$mdadmconf_l
 [[ $lvmconf_l ]] && lvmconf=$lvmconf_l
-[[ $dracutbasedir ]] || dracutbasedir="$dracutsysrootdir"/usr/lib/dracut
+[[ $dracutbasedir ]] || dracutbasedir="${dracutsysrootdir-}"/usr/lib/dracut
 [[ $fw_dir ]] || {
     fw_path_para=$(< /sys/module/firmware_class/parameters/path)
-    fw_dir="${fw_path_para:+$dracutsysrootdir$fw_path_para:}$dracutsysrootdir/lib/firmware/updates/$kernel:$dracutsysrootdir/lib/firmware/updates:$dracutsysrootdir/lib/firmware/$kernel:$dracutsysrootdir/lib/firmware"
+    fw_dir="${fw_path_para:+${dracutsysrootdir-}$fw_path_para:}${dracutsysrootdir-}/lib/firmware/updates/$kernel:${dracutsysrootdir-}/lib/firmware/updates:${dracutsysrootdir-}/lib/firmware/$kernel:${dracutsysrootdir-}/lib/firmware"
 }
 [[ $tmpdir_l ]] && tmpdir="$tmpdir_l"
 [[ $tmpdir ]] || tmpdir="$TMPDIR"
-[[ $tmpdir ]] || tmpdir="$dracutsysrootdir"/var/tmp
+[[ $tmpdir ]] || tmpdir="${dracutsysrootdir-}"/var/tmp
 [[ $INITRD_COMPRESS ]] && compress=$INITRD_COMPRESS
 [[ $compress_l ]] && compress=$compress_l
 [[ $squash_compress_l ]] && squash_compress=$squash_compress_l
@@ -1114,7 +1114,7 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $ro_mnt_l ]] && ro_mnt="yes"
 [[ $early_microcode_l ]] && early_microcode=$early_microcode_l
 [[ $early_microcode ]] || early_microcode=yes
-[[ $early_microcode_image_dir ]] || early_microcode_image_dir=("$dracutsysrootdir"/boot)
+[[ $early_microcode_image_dir ]] || early_microcode_image_dir=("${dracutsysrootdir-}"/boot)
 [[ $early_microcode_image_name ]] \
     || early_microcode_image_name=('intel-uc.img' 'intel-ucode.img' 'amd-uc.img' 'amd-ucode.img' 'early_ucode.cpio' 'microcode.cpio')
 [[ $logfile_l ]] && logfile="$logfile_l"
@@ -1129,12 +1129,12 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 
 if ! [[ $outfile ]]; then
     if [[ $machine_id != "no" ]]; then
-        if [[ -d "$dracutsysrootdir"/efi/Default ]] \
-            || [[ -d "$dracutsysrootdir"/boot/Default ]] \
-            || [[ -d "$dracutsysrootdir"/boot/efi/Default ]]; then
+        if [[ -d "${dracutsysrootdir-}"/efi/Default ]] \
+            || [[ -d "${dracutsysrootdir-}"/boot/Default ]] \
+            || [[ -d "${dracutsysrootdir-}"/boot/efi/Default ]]; then
             MACHINE_ID="Default"
-        elif [[ -s "$dracutsysrootdir"/etc/machine-id ]]; then
-            read -r MACHINE_ID < "$dracutsysrootdir"/etc/machine-id
+        elif [[ -s "${dracutsysrootdir-}"/etc/machine-id ]]; then
+            read -r MACHINE_ID < "${dracutsysrootdir-}"/etc/machine-id
             [[ $MACHINE_ID == "uninitialized" ]] && MACHINE_ID="Default"
         else
             MACHINE_ID="Default"
@@ -1152,11 +1152,11 @@ if ! [[ $outfile ]]; then
             exit 1
         fi
 
-        BUILD_ID=$(cat "$dracutsysrootdir"/etc/os-release "$dracutsysrootdir"/usr/lib/os-release \
+        BUILD_ID=$(cat "${dracutsysrootdir-}"/etc/os-release "${dracutsysrootdir-}"/usr/lib/os-release \
             | while read -r line || [[ $line ]]; do
                 [[ $line =~ BUILD_ID\=* ]] && eval "$line" && echo "$BUILD_ID" && break
             done)
-        if [[ -z $dracutsysrootdir ]]; then
+        if [[ -z ${dracutsysrootdir-} ]]; then
             if [[ -d /efi ]] && mountpoint -q /efi; then
                 efidir=/efi/EFI
             else
@@ -1167,44 +1167,44 @@ if ! [[ $outfile ]]; then
             fi
         else
             efidir=/boot/EFI
-            if [[ -d $dracutsysrootdir/boot/efi/EFI ]]; then
+            if [[ -d ${dracutsysrootdir-}/boot/efi/EFI ]]; then
                 efidir=/boot/efi/EFI
             fi
         fi
-        mkdir -p "$dracutsysrootdir$efidir/Linux"
-        outfile="$dracutsysrootdir$efidir/Linux/linux-$kernel${MACHINE_ID:+-${MACHINE_ID}}${BUILD_ID:+-${BUILD_ID}}.efi"
+        mkdir -p "${dracutsysrootdir-}$efidir/Linux"
+        outfile="${dracutsysrootdir-}$efidir/Linux/linux-$kernel${MACHINE_ID:+-${MACHINE_ID}}${BUILD_ID:+-${BUILD_ID}}.efi"
     else
         if ! [[ $initrdname ]]; then
             initrdname="initramfs-${kernel}.img"
         fi
-        if [[ -d "$dracutsysrootdir"/efi/loader/entries || -L "$dracutsysrootdir"/efi/loader/entries ]] \
+        if [[ -d "${dracutsysrootdir-}"/efi/loader/entries || -L "${dracutsysrootdir-}"/efi/loader/entries ]] \
             && [[ $MACHINE_ID ]] \
-            && [[ -d "$dracutsysrootdir"/efi/${MACHINE_ID} || -L "$dracutsysrootdir"/efi/${MACHINE_ID} ]]; then
-            outfile="$dracutsysrootdir/efi/${MACHINE_ID}/${kernel}/initrd"
-        elif [[ -d "$dracutsysrootdir"/boot/loader/entries || -L "$dracutsysrootdir"/boot/loader/entries ]] \
+            && [[ -d "${dracutsysrootdir-}"/efi/${MACHINE_ID} || -L "${dracutsysrootdir-}"/efi/${MACHINE_ID} ]]; then
+            outfile="${dracutsysrootdir-}/efi/${MACHINE_ID}/${kernel}/initrd"
+        elif [[ -d "${dracutsysrootdir-}"/boot/loader/entries || -L "${dracutsysrootdir-}"/boot/loader/entries ]] \
             && [[ $MACHINE_ID ]] \
-            && [[ -d "$dracutsysrootdir"/boot/${MACHINE_ID} || -L "$dracutsysrootdir"/boot/${MACHINE_ID} ]]; then
-            outfile="$dracutsysrootdir/boot/${MACHINE_ID}/${kernel}/initrd"
-        elif [[ -d "$dracutsysrootdir"/boot/efi/loader/entries || -L "$dracutsysrootdir"/boot/efi/loader/entries ]] \
+            && [[ -d "${dracutsysrootdir-}"/boot/${MACHINE_ID} || -L "${dracutsysrootdir-}"/boot/${MACHINE_ID} ]]; then
+            outfile="${dracutsysrootdir-}/boot/${MACHINE_ID}/${kernel}/initrd"
+        elif [[ -d "${dracutsysrootdir-}"/boot/efi/loader/entries || -L "${dracutsysrootdir-}"/boot/efi/loader/entries ]] \
             && [[ $MACHINE_ID ]] \
-            && [[ -d "$dracutsysrootdir"/boot/efi/${MACHINE_ID} || -L "$dracutsysrootdir"/boot/efi/${MACHINE_ID} ]]; then
-            outfile="$dracutsysrootdir/boot/efi/${MACHINE_ID}/${kernel}/initrd"
-        elif [[ -f "$dracutsysrootdir"/lib/modules/${kernel}/initrd ]]; then
-            outfile="$dracutsysrootdir/lib/modules/${kernel}/initrd"
-        elif [[ -e $dracutsysrootdir/boot/vmlinuz-${kernel} ||
-            -e $dracutsysrootdir/boot/vmlinux-${kernel} ||
-            -e $dracutsysrootdir/boot/kernel-${kernel} ]]; then
-            outfile="$dracutsysrootdir/boot/$initrdname"
-        elif [[ -z $dracutsysrootdir ]] \
+            && [[ -d "${dracutsysrootdir-}"/boot/efi/${MACHINE_ID} || -L "${dracutsysrootdir-}"/boot/efi/${MACHINE_ID} ]]; then
+            outfile="${dracutsysrootdir-}/boot/efi/${MACHINE_ID}/${kernel}/initrd"
+        elif [[ -f "${dracutsysrootdir-}"/lib/modules/${kernel}/initrd ]]; then
+            outfile="${dracutsysrootdir-}/lib/modules/${kernel}/initrd"
+        elif [[ -e ${dracutsysrootdir-}/boot/vmlinuz-${kernel} ||
+            -e ${dracutsysrootdir-}/boot/vmlinux-${kernel} ||
+            -e ${dracutsysrootdir-}/boot/kernel-${kernel} ]]; then
+            outfile="${dracutsysrootdir-}/boot/$initrdname"
+        elif [[ -z ${dracutsysrootdir-} ]] \
             && [[ $MACHINE_ID ]] \
             && mountpoint -q /efi; then
             outfile="/efi/${MACHINE_ID}/${kernel}/initrd"
-        elif [[ -z $dracutsysrootdir ]] \
+        elif [[ -z ${dracutsysrootdir-} ]] \
             && [[ $MACHINE_ID ]] \
             && mountpoint -q /boot/efi; then
             outfile="/boot/efi/${MACHINE_ID}/${kernel}/initrd"
         else
-            outfile="$dracutsysrootdir/boot/$initrdname"
+            outfile="${dracutsysrootdir-}/boot/$initrdname"
         fi
     fi
 fi
@@ -1360,7 +1360,7 @@ if [[ $early_microcode == yes ]] || { [[ $acpi_override == yes ]] && [[ -d $acpi
     mkdir "$early_cpio_dir"
 fi
 
-[[ "$dracutsysrootdir" ]] || [[ "$noexec" ]] || export DRACUT_RESOLVE_LAZY="1"
+[[ "${dracutsysrootdir-}" ]] || [[ "$noexec" ]] || export DRACUT_RESOLVE_LAZY="1"
 
 if [[ $print_cmdline ]]; then
     stdloglvl=0
@@ -1492,9 +1492,9 @@ set_global_var() {
     else
         local _vararg=--variable=$_pkgvar
     fi
-    [[ -z ${!_var} || ($3 == /* && ! -d ${dracutsysrootdir}${!_var}) ]] \
+    [[ -z ${!_var} || ($3 == /* && ! -d ${dracutsysrootdir-}${!_var}) ]] \
         && export "$_var"="$($PKG_CONFIG "$_pkgconfig" "$_vararg" 2> /dev/null)"
-    if [[ -z ${!_var} || ($3 == /* && ! -d ${dracutsysrootdir}${!_var}) ]]; then
+    if [[ -z ${!_var} || ($3 == /* && ! -d ${dracutsysrootdir-}${!_var}) ]]; then
         shift 2
         if (($# == 1)); then
             export "$_var"="$1"
@@ -1503,7 +1503,7 @@ set_global_var() {
             for _val in "$@"; do
                 _check=${_val##*:}
                 _val=${_val%:*}
-                [[ -e ${dracutsysrootdir}${_check} ]] && export "$_var"="$_val"
+                [[ -e ${dracutsysrootdir-}${_check} ]] && export "$_var"="$_val"
             done
         fi
     fi
@@ -1636,7 +1636,7 @@ if [[ ! $print_cmdline ]]; then
         esac
 
         if ! [[ -s $uefi_stub ]]; then
-            uefi_stub="$dracutsysrootdir${systemdprefix}/lib/systemd/boot/efi/linux${EFI_MACHINE_TYPE_NAME}.efi.stub"
+            uefi_stub="${dracutsysrootdir-}${systemdprefix}/lib/systemd/boot/efi/linux${EFI_MACHINE_TYPE_NAME}.efi.stub"
         fi
 
         if ! [[ -s $uefi_stub ]]; then
@@ -1645,7 +1645,7 @@ if [[ ! $print_cmdline ]]; then
         fi
 
         if ! [[ $kernel_image ]]; then
-            for kernel_image in "$dracutsysrootdir/lib/modules/$kernel/vmlinuz" "$dracutsysrootdir/boot/vmlinuz-$kernel"; do
+            for kernel_image in "${dracutsysrootdir-}/lib/modules/$kernel/vmlinuz" "${dracutsysrootdir-}/boot/vmlinuz-$kernel"; do
                 [[ -s $kernel_image ]] || continue
                 break
             done
@@ -1768,7 +1768,7 @@ if [[ $hostonly ]] && [[ $hostonly_default_device != "no" ]]; then
         "/boot/efi" \
         "/boot/zipl" \
         "/efi"; do
-        mp=$(readlink -f "$dracutsysrootdir$mp")
+        mp=$(readlink -f "${dracutsysrootdir-}$mp")
         mountpoint "$mp" > /dev/null 2>&1 || continue
         _dev=$(find_block_device "$mp")
         # shellcheck disable=SC2181
@@ -1793,7 +1793,7 @@ if [[ $hostonly ]] && [[ $hostonly_default_device != "no" ]]; then
     done
 
     # TODO - with sysroot, /proc/swaps is not relevant
-    if [[ -f /proc/swaps ]] && [[ -f $dracutsysrootdir/etc/fstab ]]; then
+    if [[ -f /proc/swaps ]] && [[ -f ${dracutsysrootdir-}/etc/fstab ]]; then
         while read -r dev type rest || [ -n "$dev" ]; do
             [[ -b $dev ]] || continue
             [[ $type == "partition" ]] || continue
@@ -1807,7 +1807,7 @@ if [[ $hostonly ]] && [[ $hostonly_default_device != "no" ]]; then
                 _d=$(expand_persistent_dev "$_d")
                 [[ $_d -ef $dev ]] || continue
 
-                if [[ -f $dracutsysrootdir/etc/crypttab ]]; then
+                if [[ -f ${dracutsysrootdir-}/etc/crypttab ]]; then
                     while read -r _mapper _ _p _o || [ -n "$_mapper" ]; do
                         [[ $_mapper == \#* ]] && continue
                         [[ $_d -ef /dev/mapper/"$_mapper" ]] || continue
@@ -1816,19 +1816,19 @@ if [[ $hostonly ]] && [[ $hostonly_default_device != "no" ]]; then
                         [[ $_p == /* ]] && [[ -f $_p ]] && continue 2
                         # skip mkswap swap
                         [[ $_o == *swap* ]] && continue 2
-                    done < "$dracutsysrootdir"/etc/crypttab
+                    done < "${dracutsysrootdir-}"/etc/crypttab
                 fi
 
                 _dev="$(readlink -f "$dev")"
                 push_host_devs "$_dev"
                 swap_devs+=("$_dev")
                 break
-            done < "$dracutsysrootdir"/etc/fstab
+            done < "${dracutsysrootdir-}"/etc/fstab
         done < /proc/swaps
     fi
 
     # collect all "x-initrd.mount" entries from /etc/fstab
-    if [[ -f $dracutsysrootdir/etc/fstab ]]; then
+    if [[ -f ${dracutsysrootdir-}/etc/fstab ]]; then
         while read -r _d _m _t _o _ || [ -n "$_d" ]; do
             [[ $_d == \#* ]] && continue
             [[ $_d ]] || continue
@@ -1847,7 +1847,7 @@ if [[ $hostonly ]] && [[ $hostonly_default_device != "no" ]]; then
                     push_host_devs "$i"
                 done
             fi
-        done < "$dracutsysrootdir"/etc/fstab
+        done < "${dracutsysrootdir-}"/etc/fstab
     fi
 fi
 
@@ -1938,7 +1938,7 @@ fi
 [[ $prefix ]] && mkdir -m 0755 -p "${initdir}${prefix}"
 
 # shellcheck disable=SC2174
-[[ -L $dracutsysrootdir/lib ]] || mkdir -m 0755 -p "${initdir}${prefix}/lib"
+[[ -L ${dracutsysrootdir-}/lib ]] || mkdir -m 0755 -p "${initdir}${prefix}/lib"
 [[ $prefix ]] && ln -sfn "${prefix#/}/lib" "$initdir/lib"
 
 if [[ $prefix ]]; then
@@ -2143,7 +2143,7 @@ if [[ $kernel_only != yes ]]; then
         cat "$f" >> "${initdir}/etc/fstab"
     done
 
-    if [[ $dracutsysrootdir$systemdutildir ]]; then
+    if [[ ${dracutsysrootdir-}$systemdutildir ]]; then
         if [[ -d ${initdir}/$systemdutildir ]]; then
             mkdir -p "${initdir}"/etc/conf.d
             {
@@ -2199,9 +2199,9 @@ for ((i = 0; i < ${#include_src[@]}; i++)); do
                         mkdir -m 0755 -p "$object_destdir"
                         chmod --reference="$objectname" "$object_destdir"
                     fi
-                    $DRACUT_CP -t "$object_destdir" "$dracutsysrootdir$objectname"/.
+                    $DRACUT_CP -t "$object_destdir" "${dracutsysrootdir-}$objectname"/.
                 else
-                    $DRACUT_CP -t "$destdir" "$dracutsysrootdir$objectname"
+                    $DRACUT_CP -t "$destdir" "${dracutsysrootdir-}$objectname"
                 fi
             done
             eval "$reset_dotglob"
@@ -2345,7 +2345,7 @@ fi
 if [[ $kernel_only != yes ]]; then
     # libpthread workaround: pthread_cancel wants to dlopen libgcc_s.so
     for _dir in $libdirs; do
-        for _f in "$dracutsysrootdir$_dir/libpthread.so"*; do
+        for _f in "${dracutsysrootdir-}$_dir/libpthread.so"*; do
             [[ -e $_f ]] || continue
             inst_libdir_file "libgcc_s.so*"
             break 2
@@ -2355,7 +2355,7 @@ if [[ $kernel_only != yes ]]; then
     # FIPS workaround for Fedora/RHEL: libcrypto needs libssl when FIPS is enabled
     if [[ $DRACUT_FIPS_MODE ]]; then
         for _dir in $libdirs; do
-            for _f in "$dracutsysrootdir$_dir/libcrypto.so"*; do
+            for _f in "${dracutsysrootdir-}$_dir/libcrypto.so"*; do
                 [[ -e $_f ]] || continue
                 inst_libdir_file -o "libssl.so*"
                 break 2
@@ -2608,8 +2608,8 @@ if [[ $uefi == yes ]]; then
         exit 1
     fi
     offs=$((offs + "$align" - offs % "$align"))
-    [[ -s $dracutsysrootdir/usr/lib/os-release ]] && uefi_osrelease="$dracutsysrootdir/usr/lib/os-release"
-    [[ -s $dracutsysrootdir/etc/os-release ]] && uefi_osrelease="$dracutsysrootdir/etc/os-release"
+    [[ -s ${dracutsysrootdir-}/usr/lib/os-release ]] && uefi_osrelease="${dracutsysrootdir-}/usr/lib/os-release"
+    [[ -s ${dracutsysrootdir-}/etc/os-release ]] && uefi_osrelease="${dracutsysrootdir-}/etc/os-release"
     [[ -s $uefi_osrelease ]] \
         && uefi_osrelease_offs=${offs} \
         && offs=$((offs + $(stat -Lc%s "$uefi_osrelease"))) \
@@ -2627,8 +2627,8 @@ if [[ $uefi == yes ]]; then
         unset uefi_cmdline
     fi
 
-    if [[ -s ${dracutsysrootdir}${uefi_splash_image} ]]; then
-        uefi_splash_image="${dracutsysrootdir}${uefi_splash_image}"
+    if [[ -s ${dracutsysrootdir-}${uefi_splash_image} ]]; then
+        uefi_splash_image="${dracutsysrootdir-}${uefi_splash_image}"
         uefi_splash_offs=${offs}
         offs=$((offs + $(stat -Lc%s "$uefi_splash_image")))
         offs=$((offs + "$align" - offs % "$align"))
@@ -2797,7 +2797,7 @@ freeze_ok_for_fstype() {
 # and there's no reason to sync, and *definitely* no reason to fsfreeze.
 # Another case where this happens is rpm-ostree, which performs its own sync/fsfreeze
 # globally.  See e.g. https://github.com/ostreedev/ostree/commit/8642ef5ab3fec3ac8eb8f193054852f83a8bc4d0
-if [[ -d $dracutsysrootdir/run/systemd/system ]]; then
+if [[ -d ${dracutsysrootdir-}/run/systemd/system ]]; then
     if ! sync "$outfile" 2> /dev/null; then
         dinfo "sync operation on newly created initramfs $outfile failed"
         exit 1
