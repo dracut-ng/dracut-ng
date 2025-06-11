@@ -9,7 +9,7 @@ depends() {
     local deps
     deps="terminfo"
 
-    if [[ $V == "2" ]]; then
+    if [[ ${V-} == "2" ]]; then
         deps+=" debug"
     fi
 
