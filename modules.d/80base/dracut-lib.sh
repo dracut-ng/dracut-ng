@@ -274,9 +274,8 @@ getargs() {
     debug_off
     CMDLINE=$(getcmdline)
     export CMDLINE
-    local _val _i _gfound _deprecated
+    local _val _i _gfound="" _deprecated=""
     unset _val
-    unset _gfound
     _newoption="$1"
     for _i in "$@"; do
         if [ "$_i" = "-d" ]; then
