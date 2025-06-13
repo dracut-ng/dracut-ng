@@ -21,7 +21,7 @@ if [[ -f /etc/machine-id ]]; then
 fi
 [ -z "$TOKEN" ] && . /etc/os-release && TOKEN="$ID"
 
-TEST_KERNEL_CMDLINE+=" root=LABEL=dracut panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot $DEBUGFAIL "
+TEST_KERNEL_CMDLINE+=" root=LABEL=dracut panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot ${DEBUGFAIL-} "
 
 if [[ ${V-} != "1" && ${V-} != "2" ]]; then
     TEST_KERNEL_CMDLINE+="quiet "
