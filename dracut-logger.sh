@@ -103,7 +103,7 @@ export __DRACUT_LOGGER__=1
 dlog_init() {
     local __oldumask
     local ret=0
-    local errmsg
+    local errmsg=
     [ -z "$stdloglvl" ] && stdloglvl=4
     [ -z "$sysloglvl" ] && sysloglvl=0
     [ -z "$kmsgloglvl" ] && kmsgloglvl=0
