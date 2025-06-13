@@ -48,16 +48,34 @@ install() {
         # "Wired connection #" DHCP connections for Ethernet interfaces
         inst_simple "$moddir"/initrd-no-auto-default.conf /usr/lib/NetworkManager/conf.d/
 
-        inst_simple "$moddir"/nm-initrd.service "$systemdsystemunitdir"/nm-initrd.service
-        inst_simple "$moddir"/nm-wait-online-initrd.service "$systemdsystemunitdir"/nm-wait-online-initrd.service
+        # Install systemd service units
+        if [[ -e "$systemdsystemunitdir"/NetworkManager-config-initrd.service ]]; then
+            # NetworkManager-1.54 provides its own initrd services
+            inst_multiple -o \
+                "$systemdsystemunitdir"/NetworkManager-config-initrd.service \
+                "$systemdsystemunitdir"/NetworkManager-initrd.service \
+                "$systemdsystemunitdir"/NetworkManager-wait-online-initrd.service
+
+            # dracut specific dropins to override upstream systemd services
+            inst_simple "$moddir/NetworkManager-config-initrd-dracut.conf" \
+                "$systemdsystemunitdir/NetworkManager-config-initrd.service.d/NetworkManager-config-initrd-dracut.conf"
+            inst_simple "$moddir/NetworkManager-wait-online-initrd-dracut.conf" \
+                "$systemdsystemunitdir/NetworkManager-wait-online-initrd.service.d/NetworkManager-wait-online-initrd-dracut.conf"
+
+            $SYSTEMCTL -q --root "$initdir" enable NetworkManager-initrd.service
+        else
+            #TODO: remove custom systemd services when NetworkManager-1.54 is the minimum supported version
+            inst_simple "$moddir"/nm-initrd.service "$systemdsystemunitdir"/nm-initrd.service
+            inst_simple "$moddir"/nm-wait-online-initrd.service "$systemdsystemunitdir"/nm-wait-online-initrd.service
+
+            $SYSTEMCTL -q --root "$initdir" enable nm-initrd.service
+        fi
 
         # Adding default link and (if exists) 98-default-mac-none.link
         inst_multiple -o \
             "${systemdnetwork}/99-default.link" \
             "${systemdnetwork}/98-default-mac-none.link"
         [[ $hostonly ]] && inst_multiple -H -o "${systemdnetworkconfdir}/*.link"
-
-        $SYSTEMCTL -q --root "$initdir" enable nm-initrd.service
     fi
 
     inst_hook initqueue/settled 99 "$moddir/nm-run.sh"
