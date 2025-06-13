@@ -205,7 +205,7 @@ qemu_add_drive() {
     local file=$3
     local name=${4:-$index}
     local size=${5:-0}
-    local bootindex=$6
+    local bootindex=${6-}
 
     if [ "${size}" -ne 0 ]; then
         if [[ ${name} =~ "marker" ]]; then
