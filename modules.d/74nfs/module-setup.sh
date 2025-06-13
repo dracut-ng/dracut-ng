@@ -87,7 +87,7 @@ install() {
         [[ $_netconf ]] && printf "%s\n" "$_netconf" >> "${initdir}/etc/cmdline.d/95nfs.conf"
     fi
 
-    if [[ -f $dracutsysrootdir/lib/modprobe.d/nfs.conf ]]; then
+    if [[ -f "${dracutsysrootdir-}/lib/modprobe.d/nfs.conf" ]]; then
         inst_multiple /lib/modprobe.d/nfs.conf
     else
         [[ -d $initdir/etc/modprobe.d ]] || mkdir -p "$initdir"/etc/modprobe.d
@@ -95,7 +95,7 @@ install() {
     fi
 
     _nsslibs=$(
-        cat "$dracutsysrootdir"/{,usr/}etc/nsswitch.conf 2> /dev/null \
+        cat "${dracutsysrootdir-}"/{,usr/}etc/nsswitch.conf 2> /dev/null \
             | sed -e '/^#/d' -e 's/^.*://' -e 's/\[NOTFOUND=return\]//' \
             | tr -s '[:space:]' '\n' | sort -u | tr -s '[:space:]' '|'
     )
@@ -120,14 +120,14 @@ install() {
     mkdir -m 0770 -p "$initdir/var/lib/rpcbind"
 
     # use the same directory permissions as the host
-    [[ -d "$dracutsysrootdir"/var/lib/nfs/statd ]] \
-        && $DRACUT_CP -L --preserve=ownership -t "$initdir"/var/lib/nfs "$dracutsysrootdir"/var/lib/nfs/statd \
+    [[ -d "${dracutsysrootdir-}"/var/lib/nfs/statd ]] \
+        && $DRACUT_CP -L --preserve=ownership -t "$initdir"/var/lib/nfs "${dracutsysrootdir-}"/var/lib/nfs/statd \
         && rm -rf "$initdir"/var/lib/nfs/statd/*
-    [[ -d "$dracutsysrootdir"/var/lib/nfs/statd/sm ]] \
-        && $DRACUT_CP -L --preserve=ownership -t "$initdir"/var/lib/nfs/statd "$dracutsysrootdir"/var/lib/nfs/statd/sm \
+    [[ -d "${dracutsysrootdir-}"/var/lib/nfs/statd/sm ]] \
+        && $DRACUT_CP -L --preserve=ownership -t "$initdir"/var/lib/nfs/statd "${dracutsysrootdir-}"/var/lib/nfs/statd/sm \
         && rm -rf "$initdir"/var/lib/nfs/statd/sm/*
-    [[ -d "$dracutsysrootdir"/var/lib/nfs/sm ]] \
-        && $DRACUT_CP -L --preserve=ownership -t "$initdir"/var/lib/nfs "$dracutsysrootdir"/var/lib/nfs/sm \
+    [[ -d "${dracutsysrootdir-}"/var/lib/nfs/sm ]] \
+        && $DRACUT_CP -L --preserve=ownership -t "$initdir"/var/lib/nfs "${dracutsysrootdir-}"/var/lib/nfs/sm \
         && rm -rf "$initdir"/var/lib/nfs/sm/*
 
     # Rather than copy the passwd file in, just set a user for rpcbind
@@ -136,10 +136,10 @@ install() {
     local _confdir
     for _confdir in etc usr/lib; do
 
-        grep -sE '^(nobody|nfsnobody|_rpc|rpc|rpcuser|statd):' "${dracutsysrootdir}/${_confdir}/passwd" \
+        grep -sE '^(nobody|nfsnobody|_rpc|rpc|rpcuser|statd):' "${dracutsysrootdir-}/${_confdir}/passwd" \
             >> "$initdir/${_confdir}/passwd"
 
-        grep -sE '^(nogroup|rpc|nobody|statd):' "${dracutsysrootdir}/${_confdir}/group" \
+        grep -sE '^(nogroup|rpc|nobody|statd):' "${dracutsysrootdir-}/${_confdir}/group" \
             >> "$initdir/${_confdir}/group"
     done
 

@@ -47,5 +47,5 @@ install() {
         tcpdump \
         vi
 
-    grep '^tcpdump:' "$dracutsysrootdir"/etc/passwd 2> /dev/null >> "$initdir/etc/passwd"
+    grep '^tcpdump:' "${dracutsysrootdir-}"/etc/passwd 2> /dev/null >> "$initdir/etc/passwd"
 }

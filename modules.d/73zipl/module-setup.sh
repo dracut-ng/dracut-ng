@@ -4,7 +4,7 @@
 
 get_boot_zipl_dev() {
     local _boot_zipl
-    _boot_zipl=$(sed -n -e '/^[[:space:]]*#/d' -e 's/\(.*\)\w*\/boot\/zipl.*/\1/p' "$dracutsysrootdir"/etc/fstab)
+    _boot_zipl=$(sed -n -e '/^[[:space:]]*#/d' -e 's/\(.*\)\w*\/boot\/zipl.*/\1/p' "${dracutsysrootdir-}"/etc/fstab)
     printf "%s" "$(trim "$_boot_zipl")"
 }
 

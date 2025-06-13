@@ -73,10 +73,10 @@ install() {
     local VERSION=""
     local PRETTY_NAME=""
     # Derive an os-release file from the host, if it exists
-    if [[ -e $dracutsysrootdir/etc/os-release ]]; then
+    if [[ -e "${dracutsysrootdir-}/etc/os-release" ]]; then
         # shellcheck disable=SC1090
-        . "$dracutsysrootdir"/etc/os-release
-        grep -hE -ve '^VERSION=' -ve '^PRETTY_NAME' "$dracutsysrootdir"/etc/os-release > "${initdir}"/usr/lib/initrd-release
+        . "${dracutsysrootdir-}"/etc/os-release
+        grep -hE -ve '^VERSION=' -ve '^PRETTY_NAME' "${dracutsysrootdir-}"/etc/os-release > "${initdir}"/usr/lib/initrd-release
         [[ -n ${VERSION} ]] && VERSION+=" "
         [[ -n ${PRETTY_NAME} ]] && PRETTY_NAME+=" "
     fi

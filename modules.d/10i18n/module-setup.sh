@@ -17,7 +17,7 @@ install() {
         unset FONT
         unset KEYMAP
         # shellcheck disable=SC1090
-        [[ -f "$dracutsysrootdir"/etc/vconsole.conf ]] && . "$dracutsysrootdir"/etc/vconsole.conf
+        [[ -f "${dracutsysrootdir-}"/etc/vconsole.conf ]] && . "${dracutsysrootdir-}"/etc/vconsole.conf
     fi
 
     KBDSUBDIRS=(consolefonts consoletrans keymaps unimaps)
@@ -39,7 +39,7 @@ install() {
             MAPNAME=${1%.map*}
 
             mapfile -t -d '' MAPS < <(
-                find "${dracutsysrootdir}${kbddir}"/keymaps/ -type f,l \( -name "${MAPNAME}" -o -name "${MAPNAME}.map*" \) -print0
+                find "${dracutsysrootdir-}${kbddir}"/keymaps/ -type f,l \( -name "${MAPNAME}" -o -name "${MAPNAME}.map*" \) -print0
             )
         fi
 
@@ -59,7 +59,7 @@ install() {
 
             for INCL in "${INCLUDES[@]}"; do
                 local -a FNS
-                mapfile -t -d '' FNS < <(find "${dracutsysrootdir}${kbddir}"/keymaps/ -type f -name "${INCL}*" -print0)
+                mapfile -t -d '' FNS < <(find "${dracutsysrootdir-}${kbddir}"/keymaps/ -type f -name "${INCL}*" -print0)
                 for FN in "${FNS[@]}"; do
                     [[ -f $FN ]] || continue
                     [[ -v KEYMAPS["$FN"] ]] || findkeymap "$FN"
@@ -104,8 +104,8 @@ install() {
             read -r -a item <<< "${item/:/ }"
             for map in ${item[1]//,/ }; do
                 read -r -a map <<< "${map//-/ }"
-                if [[ -f "$dracutsysrootdir${item[0]}" ]]; then
-                    value=$(grep "^${map[0]}=" "$dracutsysrootdir${item[0]}")
+                if [[ -f "${dracutsysrootdir-}${item[0]}" ]]; then
+                    value=$(grep "^${map[0]}=" "${dracutsysrootdir-}${item[0]}")
                     value=${value#*=}
                     echo "${map[1]:-${map[0]}}=${value}"
                 fi
@@ -132,11 +132,11 @@ install() {
 
         if dracut_module_included "systemd"; then
             # https://github.com/dracutdevs/dracut/issues/796
-            [[ -f $dracutsysrootdir${VCONFIG_CONF} ]] && inst_simple ${VCONFIG_CONF}
+            [[ -f ${dracutsysrootdir-}${VCONFIG_CONF} ]] && inst_simple ${VCONFIG_CONF}
 
             inst_rules 90-vconsole.rules
 
-            if [[ -e "$dracutsysrootdir$systemdsystemunitdir"/systemd-vconsole-setup.service ]]; then
+            if [[ -e "${dracutsysrootdir-}$systemdsystemunitdir"/systemd-vconsole-setup.service ]]; then
                 inst_multiple -o \
                     "$systemdutildir"/systemd-vconsole-setup \
                     "$systemdsystemunitdir"/systemd-vconsole-setup.service \
@@ -154,7 +154,7 @@ install() {
 
         for _src in "${KBDSUBDIRS[@]}"; do
             inst_dir "${kbddir}/$_src"
-            $DRACUT_CP -L -t "${initdir}/${kbddir}/$_src" "${dracutsysrootdir}${kbddir}/$_src"/*
+            $DRACUT_CP -L -t "${initdir}/${kbddir}/$_src" "${dracutsysrootdir-}${kbddir}/$_src"/*
         done
 
         # remove unnecessary files
@@ -178,11 +178,11 @@ install() {
         # shellcheck disable=SC2086
         eval "$(gather_vars ${i18n_vars})"
         # shellcheck disable=SC1090
-        [ -f "$dracutsysrootdir"$I18N_CONF ] && . "$dracutsysrootdir"$I18N_CONF
+        [ -f "${dracutsysrootdir-}"$I18N_CONF ] && . "${dracutsysrootdir-}"$I18N_CONF
         # shellcheck disable=SC1090
-        [ -f "$dracutsysrootdir"$VCONFIG_CONF ] && . "$dracutsysrootdir"$VCONFIG_CONF
+        [ -f "${dracutsysrootdir-}"$VCONFIG_CONF ] && . "${dracutsysrootdir-}"$VCONFIG_CONF
 
-        if dracut_module_included "systemd" && [[ -f $dracutsysrootdir${I18N_CONF} ]]; then
+        if dracut_module_included "systemd" && [[ -f ${dracutsysrootdir-}${I18N_CONF} ]]; then
             inst_simple ${I18N_CONF}
         else
             mksubdirs "${initdir}"${I18N_CONF}
@@ -246,7 +246,7 @@ install() {
                 # create new symlink to decompressed keymap
                 maplink=${maplink%.gz}
                 keymap=${keymap%.gz}
-                ln -srn "${initdir}${maplink#"$dracutsysrootdir"}" "${initdir}${keymap#"$dracutsysrootdir"}"
+                ln -srn "${initdir}${maplink#"${dracutsysrootdir-}"}" "${initdir}${keymap#"${dracutsysrootdir-}"}"
             else
                 inst_opt_decompress "${keymap}"
             fi
@@ -287,9 +287,9 @@ install() {
 
     checks() {
         for kbddir in ${kbddir} /usr/lib/kbd /lib/kbd /usr/share /usr/share/kbd; do
-            if [[ -d "$dracutsysrootdir${kbddir}" ]]; then
+            if [[ -d "${dracutsysrootdir-}${kbddir}" ]]; then
                 for dir in "${KBDSUBDIRS[@]}"; do
-                    [[ -d "$dracutsysrootdir${kbddir}/${dir}" ]] && continue
+                    [[ -d "${dracutsysrootdir-}${kbddir}/${dir}" ]] && continue
                     false
                 done && break
             fi
@@ -298,7 +298,7 @@ install() {
 
         [[ "$kbddir" ]] || return 1
 
-        [[ -f $dracutsysrootdir$I18N_CONF ]] \
+        [[ -f ${dracutsysrootdir-}$I18N_CONF ]] \
             || [[ ! ${hostonly} || ${i18n_vars} ]] || {
             derror 'i18n_vars not set!  Please set up i18n_vars in ' \
                 'configuration file.'

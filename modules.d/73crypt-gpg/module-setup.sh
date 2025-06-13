@@ -32,7 +32,7 @@ install() {
         inst_multiple -o /usr/libexec/scdaemon /usr/lib/gnupg/scdaemon
 
         while IFS= read -r -d '' key; do
-            cp "$dracutsysrootdir$key" "${initdir}/root/"
+            cp "${dracutsysrootdir-}$key" "${initdir}/root/"
         done < <(sc_public_key)
     fi
 }
@@ -49,9 +49,9 @@ sc_supported() {
     gpgMajor="$(gpg --version | sed -n 1p | sed -n -r -e 's|.* ([0-9]*).*|\1|p')"
     gpgMinor="$(gpg --version | sed -n 1p | sed -n -r -e 's|.* [0-9]*\.([0-9]*).*|\1|p')"
 
-    if [[ -x "$dracutsysrootdir"/usr/libexec/scdaemon ]]; then
+    if [[ -x "${dracutsysrootdir-}"/usr/libexec/scdaemon ]]; then
         scdaemon=/usr/libexec/scdaemon
-    elif [[ -x "$dracutsysrootdir"/usr/lib/gnupg/scdaemon ]]; then
+    elif [[ -x "${dracutsysrootdir-}"/usr/lib/gnupg/scdaemon ]]; then
         scdaemon=/usr/lib/gnupg/scdaemon
     else
         return 1
@@ -69,7 +69,7 @@ sc_supported() {
 
 sc_requested() {
     while IFS= read -r -d '' key; do
-        if [ -f "$dracutsysrootdir$key" ]; then
+        if [ -f "${dracutsysrootdir-}$key" ]; then
             return 0
         fi
     done < <(sc_public_key)

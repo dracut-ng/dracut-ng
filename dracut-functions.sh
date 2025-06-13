@@ -62,33 +62,33 @@ find_binary() {
     if [[ $1 == *.so* ]]; then
         for l in $libdirs; do
             _path="${l}${_delim}${1}"
-            if is_elf "${dracutsysrootdir}${_path}"; then
+            if is_elf "${dracutsysrootdir-}${_path}"; then
                 printf "%s\n" "${_path}"
                 return 0
             fi
         done
         _path="${_delim}${1}"
-        if is_elf "${dracutsysrootdir}${_path}"; then
+        if is_elf "${dracutsysrootdir-}${_path}"; then
             printf "%s\n" "${_path}"
             return 0
         fi
     fi
     if [[ $1 == */* ]]; then
         _path="${_delim}${1}"
-        if [[ -L ${dracutsysrootdir}${_path} ]] || [[ -x ${dracutsysrootdir}${_path} ]]; then
+        if [[ -L ${dracutsysrootdir-}${_path} ]] || [[ -x ${dracutsysrootdir-}${_path} ]]; then
             printf "%s\n" "${_path}"
             return 0
         fi
     fi
     for p in $DRACUT_PATH; do
         _path="${p}${_delim}${1}"
-        if [[ -L ${dracutsysrootdir}${_path} ]] || [[ -x ${dracutsysrootdir}${_path} ]]; then
+        if [[ -L ${dracutsysrootdir-}${_path} ]] || [[ -x ${dracutsysrootdir-}${_path} ]]; then
             printf "%s\n" "${_path}"
             return 0
         fi
     done
 
-    [[ -n $dracutsysrootdir ]] && return 1
+    [[ -n ${dracutsysrootdir-} ]] && return 1
     type -P "${1##*/}"
 }
 
@@ -394,7 +394,7 @@ find_block_device() {
         } && return 0
     fi
     # fall back to /etc/fstab
-    [[ ! -f "$dracutsysrootdir"/etc/fstab ]] && return 1
+    [[ ! -f "${dracutsysrootdir-}"/etc/fstab ]] && return 1
 
     findmnt -e --fstab -v -n -o 'MAJ:MIN,SOURCE' --target "$_find_mpt" | {
         while read -r _majmin _dev || [ -n "$_dev" ]; do
@@ -445,7 +445,7 @@ find_mp_fstype() {
         } && return 0
     fi
 
-    [[ ! -f "$dracutsysrootdir"/etc/fstab ]] && return 1
+    [[ ! -f "${dracutsysrootdir-}"/etc/fstab ]] && return 1
 
     findmnt --fstab -e -v -n -o 'FSTYPE' --target "$1" | {
         while read -r _fs || [ -n "$_fs" ]; do
@@ -487,7 +487,7 @@ find_dev_fstype() {
         } && return 0
     fi
 
-    [[ ! -f "$dracutsysrootdir"/etc/fstab ]] && return 1
+    [[ ! -f "${dracutsysrootdir-}"/etc/fstab ]] && return 1
 
     findmnt --fstab -e -v -n -o 'FSTYPE' --source "$_find_dev" | {
         while read -r _fs || [ -n "$_fs" ]; do
@@ -515,7 +515,7 @@ find_mp_fsopts() {
         findmnt -e -v -n -o 'OPTIONS' --target "$1" 2> /dev/null && return 0
     fi
 
-    [[ ! -f "$dracutsysrootdir"/etc/fstab ]] && return 1
+    [[ ! -f "${dracutsysrootdir-}"/etc/fstab ]] && return 1
 
     findmnt --fstab -e -v -n -o 'OPTIONS' --target "$1"
 }
@@ -540,7 +540,7 @@ find_dev_fsopts() {
         findmnt -e -v -n -o 'OPTIONS' --source "$_find_dev" 2> /dev/null && return 0
     fi
 
-    [[ ! -f "$dracutsysrootdir"/etc/fstab ]] && return 1
+    [[ ! -f "${dracutsysrootdir-}"/etc/fstab ]] && return 1
 
     findmnt --fstab -e -v -n -o 'OPTIONS' --source "$_find_dev"
 }
@@ -750,7 +750,7 @@ check_kernel_config() {
     )
 
     for _config in "${_config_paths[@]}"; do
-        if [[ -f $dracutsysrootdir$_config ]]; then
+        if [[ -f ${dracutsysrootdir-}$_config ]]; then
             _config_file="$_config"
             break
         fi
@@ -759,7 +759,7 @@ check_kernel_config() {
     # no kernel config file, so return true
     [[ $_config_file ]] || return 0
 
-    grep -q "^${_config_opt}=" "$dracutsysrootdir$_config_file"
+    grep -q "^${_config_opt}=" "${dracutsysrootdir-}$_config_file"
     return $?
 }
 

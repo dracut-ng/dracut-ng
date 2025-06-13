@@ -59,13 +59,13 @@ install() {
     inst_rules "$moddir/64-lvm.rules"
 
     if [[ $hostonly ]] || [[ $lvmconf == "yes" ]]; then
-        if [[ -f $dracutsysrootdir/etc/lvm/lvm.conf ]]; then
+        if [[ -f "${dracutsysrootdir-}/etc/lvm/lvm.conf" ]]; then
             inst_simple -H /etc/lvm/lvm.conf
         fi
 
         export LVM_SUPPRESS_FD_WARNINGS=1
         # Also install any files needed for LVM system id support.
-        if [[ -f $dracutsysrootdir/etc/lvm/lvmlocal.conf ]]; then
+        if [[ -f "${dracutsysrootdir-}/etc/lvm/lvmlocal.conf" ]]; then
             inst_simple -H /etc/lvm/lvmlocal.conf
         fi
         eval "$(lvm dumpconfig global/system_id_source &> /dev/null)"
