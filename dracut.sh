@@ -2192,7 +2192,7 @@ if [[ $kernel_only != yes ]]; then
         fi
     fi
 
-    if [[ $DRACUT_RESOLVE_LAZY ]] && [[ $DRACUT_INSTALL ]]; then
+    if [[ ${DRACUT_RESOLVE_LAZY-} ]] && [[ $DRACUT_INSTALL ]]; then
         dinfo "*** Resolving executable dependencies ***"
         # shellcheck disable=SC2086
         find "$initdir" -type f -perm /0111 -not -path '*.ko*' -print0 \

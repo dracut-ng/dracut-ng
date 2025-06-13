@@ -229,7 +229,7 @@ if [[ $hostonly == "-h" ]]; then
     fi
 fi
 
-[[ $DRACUT_RESOLVE_LAZY ]] || export DRACUT_RESOLVE_DEPS=1
+[[ ${DRACUT_RESOLVE_LAZY-} ]] || export DRACUT_RESOLVE_DEPS=1
 inst_dir() {
     local _ret
     [[ -e ${initdir}/"$1" ]] && return 0 # already there
