@@ -14,10 +14,10 @@ if [ -z "$DRACUT_SYSTEMD" ]; then
             break
         done
     fi
-fi
 
-if [ -s /run/NetworkManager/initrd/hostname ]; then
-    cat /run/NetworkManager/initrd/hostname > /proc/sys/kernel/hostname
+    if [ -s /run/NetworkManager/initrd/hostname ]; then
+        cat /run/NetworkManager/initrd/hostname > /proc/sys/kernel/hostname
+    fi
 fi
 
 kf_get_string() {
