@@ -38,12 +38,12 @@ run_server() {
         -net socket,listen=127.0.0.1:12320 \
         -net nic,macaddr=52:54:00:12:34:56,model=virtio \
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
-        -append "panic=1 oops=panic softlockup_panic=1 root=LABEL=dracut rootfstype=ext4 rw console=ttyS0,115200n81 $SERVER_DEBUG" \
+        -append "panic=1 oops=panic softlockup_panic=1 root=LABEL=dracut rootfstype=ext4 rw console=ttyS0,115200n81 ${SERVER_DEBUG-}" \
         -initrd "$TESTDIR"/initramfs.server \
         -pidfile "$TESTDIR"/server.pid -daemonize
     chmod 644 "$TESTDIR"/server.pid
 
-    if ! [[ $SERIAL ]]; then
+    if ! [[ ${SERIAL-} ]]; then
         wait_for_server_startup
     else
         echo Sleeping 10 seconds to give the server a head start

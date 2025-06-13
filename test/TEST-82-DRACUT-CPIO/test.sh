@@ -72,7 +72,7 @@ test_setup() {
 }
 
 test_cleanup() {
-    [ -d "$CPIO_TESTDIR" ] && rm -rf "$CPIO_TESTDIR"
+    [ -d "${CPIO_TESTDIR-}" ] && rm -rf "$CPIO_TESTDIR"
     return 0
 }
 
