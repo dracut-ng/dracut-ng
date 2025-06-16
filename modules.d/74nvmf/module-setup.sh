@@ -148,7 +148,6 @@ install() {
     inst_multiple ip sed
 
     inst_script "${moddir}/nvmf-autoconnect.sh" /sbin/nvmf-autoconnect.sh
-    inst_script "${moddir}/nbftroot.sh" /sbin/nbftroot
 
     inst_multiple nvme jq
     inst_hook cmdline 92 "$moddir/parse-nvmf-boot-connections.sh"
