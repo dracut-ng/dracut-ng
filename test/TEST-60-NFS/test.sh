@@ -231,7 +231,9 @@ test_run() {
 }
 
 test_setup() {
+    DRACUT_PATH=${DRACUT_PATH:-/sbin /bin /usr/sbin /usr/bin}
     export kernel=$KVERSION
+    export no_kernel=
     export srcmods="/lib/modules/$kernel/"
     # Detect lib paths
 
