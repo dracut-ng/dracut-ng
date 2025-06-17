@@ -329,22 +329,26 @@ static inline int clone_file(int dest_fd, int src_fd)
 static int copy_xattr(int dest_fd, int src_fd)
 {
         int ret = 0;
-        ssize_t name_len = 0, value_len = 0;
-        char *name_buf = NULL, *name = NULL, *value = NULL, *value_save = NULL;
+        ssize_t name_len, value_len;
+        _cleanup_free_ char *name_buf = NULL, *value = NULL;
+        char *name, *value_save;
 
         name_len = flistxattr(src_fd, NULL, 0);
         if (name_len < 0)
                 return -1;
+        /* no xattrs are present */
+        if (name_len == 0)
+                return 0;
 
-        name_buf = calloc(1, name_len + 1);
+        name_buf = malloc(name_len);
         if (name_buf == NULL)
                 return -1;
 
         name_len = flistxattr(src_fd, name_buf, name_len);
         if (name_len < 0)
-                goto out;
+                return -1;
 
-        for (name = name_buf; name != name_buf + name_len; name = strchr(name, '\0') + 1) {
+        for (name = name_buf; name - name_buf < name_len; name += strlen(name) + 1) {
                 value_len = fgetxattr(src_fd, name, NULL, 0);
                 if (value_len < 0) {
                         ret = -1;
@@ -355,8 +359,7 @@ static int copy_xattr(int dest_fd, int src_fd)
                 value = realloc(value, value_len);
                 if (value == NULL) {
                         value = value_save;
-                        ret = -1;
-                        goto out;
+                        return -1;
                 }
 
                 value_len = fgetxattr(src_fd, name, value, value_len);
@@ -370,9 +373,6 @@ static int copy_xattr(int dest_fd, int src_fd)
                         ret = -1;
         }
 
-out:
-        free(name_buf);
-        free(value);
         return ret;
 }
 
