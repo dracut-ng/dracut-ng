@@ -422,7 +422,11 @@ fi
 if [ -n "$overlayfs" ]; then
     if [ -n "$FSIMG" ]; then
         mkdir -m 0755 -p /run/rootfsbase
-        mount -r "$FSIMG" /run/rootfsbase
+        if [ "$FSIMG" = "$SQUASHED" ]; then
+            mount --bind /run/initramfs/squashfs /run/rootfsbase
+        else
+            mount -r "$FSIMG" /run/rootfsbase
+        fi
     else
         ln -sf /run/initramfs/live /run/rootfsbase
     fi
