@@ -960,6 +960,10 @@ export DRACUT_LOG_LEVEL=warning
 # These config variables needs to be exported for dracut-install.
 export add_dlopen_features="" omit_dlopen_features=""
 
+if [[ $regenerate_all_l != "yes" ]] && ! [[ $kernel ]]; then
+    kernel=$(uname -r)
+fi
+
 # if we were not passed a config file, try the default one
 if [[ -z $conffile ]]; then
     if [[ $allowlocal ]]; then
@@ -1062,10 +1066,6 @@ if [[ $regenerate_all == "yes" ]]; then
         done
     fi
     exit "$ret"
-fi
-
-if ! [[ $kernel ]]; then
-    kernel=$(uname -r)
 fi
 
 DRACUT_PATH=${DRACUT_PATH:-/sbin /bin /usr/sbin /usr/bin}
