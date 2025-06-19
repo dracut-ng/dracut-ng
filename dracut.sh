@@ -968,6 +968,17 @@ export DRACUT_LOG_LEVEL=warning
 # These config variables needs to be exported for dracut-install.
 export add_dlopen_features="" omit_dlopen_features=""
 
+if ! [[ $kernel ]] && [[ $regenerate_all_l != "yes" ]]; then
+    if type -P systemd-detect-virt &> /dev/null && ! systemd-detect-virt -c &> /dev/null; then
+        kernel="$(uname -r)"
+    else
+        # shellcheck disable=SC2012
+        kernel="$(cd /lib/modules && ls -1v | tail -1)"
+        # shellcheck disable=SC2012
+        [[ $kernel ]] || kernel="$(cd /usr/lib/modules && ls -1v | tail -1)"
+    fi
+fi
+
 # if we were not passed a config file, try the default one
 if [[ -z $conffile ]]; then
     if [[ $allowlocal ]]; then
@@ -1070,17 +1081,6 @@ if [[ $regenerate_all == "yes" ]]; then
         done
     fi
     exit "$ret"
-fi
-
-if ! [[ $kernel ]]; then
-    if type -P systemd-detect-virt &> /dev/null && ! systemd-detect-virt -c &> /dev/null; then
-        kernel="$(uname -r)"
-    else
-        # shellcheck disable=SC2012
-        kernel="$(cd /lib/modules && ls -1v | tail -1)"
-        # shellcheck disable=SC2012
-        [[ $kernel ]] || kernel="$(cd /usr/lib/modules && ls -1v | tail -1)"
-    fi
 fi
 
 # Ensure that the standard search paths are searched.
