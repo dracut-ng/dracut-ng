@@ -56,7 +56,7 @@ set_systemd_timeout_for_dev() {
     local _noreload
     local _timeout
 
-    [ -z "$DRACUT_SYSTEMD" ] && return 0
+    [ -z "${DRACUT_SYSTEMD-}" ] && return 0
 
     if [ "$1" = "-n" ]; then
         _noreload=1
@@ -130,7 +130,7 @@ cancel_wait_for_dev() {
     _name="$(str_replace "$1" '/' '\x2f')"
     rm -f -- "$hookdir/initqueue/finished/devexists-${_name}.sh"
     rm -f -- "$hookdir/emergency/80-${_name}.sh"
-    if [ -n "$DRACUT_SYSTEMD" ]; then
+    if [ -n "${DRACUT_SYSTEMD-}" ]; then
         _name=$(dev_unit_name "$1")
         rm -f -- "${PREFIX}/etc/systemd/system/initrd.target.wants/${_name}.device"
         rm -f -- "${PREFIX}/etc/systemd/system/${_name}.device.d/timeout.conf"

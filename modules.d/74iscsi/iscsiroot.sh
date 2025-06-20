@@ -37,7 +37,7 @@ iroot=${iroot#:}
 modprobe crc32c 2> /dev/null
 
 # start iscsiuio if needed
-if [ -z "${DRACUT_SYSTEMD}" ] \
+if [ -z "${DRACUT_SYSTEMD-}" ] \
     && { [ -e /sys/module/bnx2i ] || [ -e /sys/module/qedi ]; } \
     && ! [ -e /tmp/iscsiuio-started ]; then
     iscsiuio
@@ -149,7 +149,7 @@ handle_netroot() {
         mkdir -p /etc/iscsi
         ln -fs /run/initiatorname.iscsi /etc/iscsi/initiatorname.iscsi
         : > /tmp/iscsi_set_initiator
-        if [ -n "$DRACUT_SYSTEMD" ]; then
+        if [ -n "${DRACUT_SYSTEMD-}" ]; then
             systemctl try-restart iscsid
             # FIXME: iscsid is not yet ready, when the service is :-/
             sleep 1
@@ -170,7 +170,7 @@ handle_netroot() {
         mkdir -p /etc/iscsi
         ln -fs /run/initiatorname.iscsi /etc/iscsi/initiatorname.iscsi
         : > /tmp/iscsi_set_initiator
-        if [ -n "$DRACUT_SYSTEMD" ]; then
+        if [ -n "${DRACUT_SYSTEMD-}" ]; then
             systemctl try-restart iscsid
             # FIXME: iscsid is not yet ready, when the service is :-/
             sleep 1
@@ -194,14 +194,14 @@ handle_netroot() {
     if ! [ -e /etc/iscsi/initiatorname.iscsi ]; then
         mkdir -p /etc/iscsi
         ln -fs /run/initiatorname.iscsi /etc/iscsi/initiatorname.iscsi
-        if [ -n "$DRACUT_SYSTEMD" ]; then
+        if [ -n "${DRACUT_SYSTEMD-}" ]; then
             systemctl try-restart iscsid
             # FIXME: iscsid is not yet ready, when the service is :-/
             sleep 1
         fi
     fi
 
-    if [ -z "$DRACUT_SYSTEMD" ]; then
+    if [ -z "${DRACUT_SYSTEMD-}" ]; then
         iscsid
         sleep 2
     fi
@@ -216,7 +216,7 @@ handle_netroot() {
         wait_for_dev -n /dev/root
 
         # install mount script
-        [ -z "$DRACUT_SYSTEMD" ] \
+        [ -z "${DRACUT_SYSTEMD-}" ] \
             && echo "iscsi_lun=$iscsi_lun . /bin/mount-lun.sh " > "$hookdir"/mount/01-$$-iscsi.sh
     fi
 

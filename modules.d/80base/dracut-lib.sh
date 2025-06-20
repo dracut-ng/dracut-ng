@@ -64,7 +64,7 @@ trim() {
     printf "%s" "$var"
 }
 
-if [ -z "$DRACUT_SYSTEMD" ]; then
+if [ -z "${DRACUT_SYSTEMD-}" ]; then
 
     warn() {
         check_quiet
@@ -422,7 +422,7 @@ die() {
         source_hook "shutdown-emergency"
     fi
 
-    if [ -n "$DRACUT_SYSTEMD" ]; then
+    if [ -n "${DRACUT_SYSTEMD-}" ]; then
         systemctl --no-block --force poweroff
     fi
 
@@ -834,7 +834,7 @@ fi
 
 _emergency_shell() {
     local _name="$1"
-    if [ -n "$DRACUT_SYSTEMD" ]; then
+    if [ -n "${DRACUT_SYSTEMD-}" ]; then
         : > /.console_lock
         echo "PS1=\"$_name:\\\${PWD}# \"" > /etc/profile
         systemctl start dracut-emergency.service
