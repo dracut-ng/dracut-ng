@@ -1,6 +1,6 @@
 #!/bin/sh
 
-[ -n "$DRACUT_SYSTEMD" ] && exit 0
+[ -n "${DRACUT_SYSTEMD-}" ] && exit 0
 
 if [ -x "$systemdutildir"/systemd-vconsole-setup ]; then
     "$systemdutildir"/systemd-vconsole-setup "$@"

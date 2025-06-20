@@ -7,7 +7,7 @@ if [ -n "$netroot" ] || [ -e /tmp/net.ifaces ]; then
 fi
 
 if getargbool 0 rd.debug; then
-    if [ -n "$DRACUT_SYSTEMD" ]; then
+    if [ -n "${DRACUT_SYSTEMD-}" ]; then
         # Enable tty output if a usable console is found
         # shellcheck disable=SC2217
         if [ -w /dev/console ] && (echo < /dev/console) > /dev/null 2> /dev/null; then

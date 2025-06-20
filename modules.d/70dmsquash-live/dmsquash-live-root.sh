@@ -73,7 +73,7 @@ if [ ! -f "$livedev" ]; then
     getarg rd.live.check || check=""
     if [ -n "$check" ]; then
         type plymouth > /dev/null 2>&1 && plymouth --hide-splash
-        if [ -n "$DRACUT_SYSTEMD" ]; then
+        if [ -n "${DRACUT_SYSTEMD-}" ]; then
             p=$(dev_unit_name "$check_dev")
             systemctl start checkisomd5@"${p}".service
         else
@@ -178,7 +178,7 @@ do_live_overlay() {
                 fi
                 if [ -n "$overlayfs" ]; then
                     unset -v overlayfs
-                    [ -n "$DRACUT_SYSTEMD" ] && reloadsysrootmountunit=":>/xor_overlayfs;"
+                    [ -n "${DRACUT_SYSTEMD-}" ] && reloadsysrootmountunit=":>/xor_overlayfs;"
                 fi
                 setup="yes"
             else
@@ -187,7 +187,7 @@ do_live_overlay() {
                     && [ -d /run/initramfs/overlayfs/ovlwork ]; then
                     ln -s /run/initramfs/overlayfs/overlayfs /run/overlayfs${readonly_overlay:+-r}
                     ln -s /run/initramfs/overlayfs/ovlwork /run/ovlwork${readonly_overlay:+-r}
-                    if [ -z "$overlayfs" ] && [ -n "$DRACUT_SYSTEMD" ]; then
+                    if [ -z "$overlayfs" ] && [ -n "${DRACUT_SYSTEMD-}" ]; then
                         reloadsysrootmountunit=":>/xor_overlayfs;"
                     fi
                     overlayfs="required"
@@ -198,7 +198,7 @@ do_live_overlay() {
             && [ -d "/run/initramfs/overlayfs$pathspec/../ovlwork" ]; then
             ln -s "/run/initramfs/overlayfs$pathspec" /run/overlayfs${readonly_overlay:+-r}
             ln -s "/run/initramfs/overlayfs$pathspec/../ovlwork" /run/ovlwork${readonly_overlay:+-r}
-            if [ -z "$overlayfs" ] && [ -n "$DRACUT_SYSTEMD" ]; then
+            if [ -z "$overlayfs" ] && [ -n "${DRACUT_SYSTEMD-}" ]; then
                 reloadsysrootmountunit=":>/xor_overlayfs;"
             fi
             overlayfs="required"
@@ -211,7 +211,7 @@ do_live_overlay() {
                 die "OverlayFS is required but not available."
                 exit 1
             fi
-            [ -n "$DRACUT_SYSTEMD" ] && reloadsysrootmountunit=":>/xor_overlayfs;"
+            [ -n "${DRACUT_SYSTEMD-}" ] && reloadsysrootmountunit=":>/xor_overlayfs;"
             m='OverlayFS is not available; using temporary Device-mapper overlay.'
             info "$m"
             unset -v overlayfs setup
@@ -228,7 +228,7 @@ do_live_overlay() {
       All root filesystem changes will be lost on shutdown.
          Press [Enter] to continue.'
             printf "\n\n\n\n%s\n\n\n" "${m}" > /dev/kmsg
-            if [ -n "$DRACUT_SYSTEMD" ]; then
+            if [ -n "${DRACUT_SYSTEMD-}" ]; then
                 if type plymouth > /dev/null 2>&1 && plymouth --ping; then
                     if getargbool 0 rhgb || getargbool 0 splash; then
                         m='>>>
@@ -261,7 +261,7 @@ do_live_overlay() {
             if [ -n "$readonly_overlay" ] && ! [ -h /run/overlayfs-r ]; then
                 info "No persistent overlay found."
                 unset -v readonly_overlay
-                [ -n "$DRACUT_SYSTEMD" ] && reloadsysrootmountunit="${reloadsysrootmountunit}:>/xor_readonly;"
+                [ -n "${DRACUT_SYSTEMD-}" ] && reloadsysrootmountunit="${reloadsysrootmountunit}:>/xor_readonly;"
             fi
         else
             dd if=/dev/null of=/overlay bs=1024 count=1 seek=$((overlay_size * 1024)) 2> /dev/null
@@ -346,7 +346,7 @@ if [ -e "$SQUASHED" ]; then
         fi
     elif [ -d /run/initramfs/squashfs/usr ]; then
         FSIMG=$SQUASHED
-        if [ -z "$overlayfs" ] && [ -n "$DRACUT_SYSTEMD" ]; then
+        if [ -z "$overlayfs" ] && [ -n "${DRACUT_SYSTEMD-}" ]; then
             reloadsysrootmountunit=":>/xor_overlayfs;"
         fi
         overlayfs="required"
@@ -427,7 +427,7 @@ if [ -n "$overlayfs" ]; then
         ln -sf /run/initramfs/live /run/rootfsbase
     fi
 else
-    if [ -z "$DRACUT_SYSTEMD" ]; then
+    if [ -z "${DRACUT_SYSTEMD-}" ]; then
         [ -n "$ROOTFLAGS" ] && ROOTFLAGS="-o $ROOTFLAGS"
         printf 'mount %s /dev/mapper/live-rw %s\n' "$ROOTFLAGS" "$NEWROOT" > "$hookdir"/mount/01-$$-live.sh
     fi

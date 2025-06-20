@@ -2,7 +2,7 @@
 
 command -v source_hook > /dev/null || . /lib/dracut-lib.sh
 
-if [ -z "$DRACUT_SYSTEMD" ]; then
+if [ -z "${DRACUT_SYSTEMD-}" ]; then
     # Only start NM if networking is needed
     if [ -e /run/NetworkManager/initrd/neednet ]; then
         for i in /usr/lib/NetworkManager/system-connections/* \
