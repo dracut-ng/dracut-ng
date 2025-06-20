@@ -58,7 +58,7 @@ else
                 luksname="luks-$uuid"
             fi
 
-            if [ -z "$DRACUT_SYSTEMD" ]; then
+            if [ -z "${DRACUT_SYSTEMD-}" ]; then
                 {
                     printf -- 'ENV{ID_PART_ENTRY_UUID}=="*%s*", ' "$uuid"
                     printf -- 'RUN+="%s --settled --unique --onetime ' "$(command -v initqueue)"
@@ -98,7 +98,7 @@ else
                 luksname="luks-$serialid"
             fi
 
-            if [ -z "$DRACUT_SYSTEMD" ]; then
+            if [ -z "${DRACUT_SYSTEMD-}" ]; then
                 {
                     printf -- 'ENV{ID_SERIAL_SHORT}=="*%s*", ' "$serialid"
                     printf -- 'RUN+="%s --settled --unique --onetime ' "$(command -v initqueue)"
@@ -138,7 +138,7 @@ else
                 luksname="luks-$luksid"
             fi
 
-            if [ -z "$DRACUT_SYSTEMD" ]; then
+            if [ -z "${DRACUT_SYSTEMD-}" ]; then
                 {
                     printf -- 'ENV{ID_FS_TYPE}=="crypto_LUKS", '
                     printf -- 'ENV{ID_FS_UUID}=="*%s*", ' "$luksid"
@@ -175,7 +175,7 @@ else
             fi
         done
     elif getargbool 0 rd.auto; then
-        if [ -z "$DRACUT_SYSTEMD" ]; then
+        if [ -z "${DRACUT_SYSTEMD-}" ]; then
             {
                 printf -- 'ENV{ID_FS_TYPE}=="crypto_LUKS", RUN+="%s ' "$(command -v initqueue)"
                 printf -- '--unique --settled --onetime --name cryptroot-ask-%%k '
