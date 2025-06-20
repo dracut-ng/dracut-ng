@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-[ -z "$TEST_FSTYPE" ] && TEST_FSTYPE="ext4"
+[ -z "${TEST_FSTYPE-}" ] && TEST_FSTYPE="ext4"
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on multiple device $TEST_FSTYPE (on top of RAID and LUKS)"

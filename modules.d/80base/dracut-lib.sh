@@ -970,7 +970,7 @@ are_lists_eq() {
 }
 
 setmemdebug() {
-    if [ -z "$DEBUG_MEM_LEVEL" ]; then
+    if [ -z "${DEBUG_MEM_LEVEL-}" ]; then
         DEBUG_MEM_LEVEL=$(getargnum 0 0 5 rd.memdebug)
         export DEBUG_MEM_LEVEL
     fi

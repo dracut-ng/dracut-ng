@@ -31,7 +31,7 @@ is_func() {
     [[ "$(type -t "$1")" == "function" ]]
 }
 
-if ! [[ $dracutbasedir ]]; then
+if ! [[ ${dracutbasedir-} ]]; then
     dracutbasedir=${BASH_SOURCE[0]%/*}
     [[ $dracutbasedir == dracut-functions* ]] && dracutbasedir="."
     [[ $dracutbasedir ]] || dracutbasedir="."
@@ -44,7 +44,7 @@ if ! is_func dinfo > /dev/null 2>&1; then
     dlog_init
 fi
 
-if ! [[ $initdir ]]; then
+if ! [[ ${initdir-} ]]; then
     dfatal "initdir not set"
     exit 1
 fi
@@ -53,14 +53,14 @@ if ! [[ -d $initdir ]]; then
     mkdir -p "$initdir"
 fi
 
-if ! [[ $kernel ]]; then
+if ! [[ ${kernel-} ]]; then
     kernel=$(uname -r)
     export kernel
 fi
 
 srcmods="$(realpath -e "${dracutsysrootdir-}/lib/modules/$kernel")"
 
-[[ $drivers_dir ]] && {
+[[ ${drivers_dir-} ]] && {
     if ! command -v kmod &> /dev/null && vercmp "$(modprobe --version | cut -d' ' -f3)" lt 3.7; then
         dfatal 'To use --kmoddir option module-init-tools >= 3.7 is required.'
         exit 1
@@ -70,7 +70,7 @@ srcmods="$(realpath -e "${dracutsysrootdir-}/lib/modules/$kernel")"
 export srcmods
 
 # export standard hookdirs
-[[ $hookdirs ]] || {
+[[ ${hookdirs-} ]] || {
     hookdirs="cmdline pre-udev pre-trigger netroot "
     hookdirs+="initqueue initqueue/settled initqueue/online initqueue/finished initqueue/timeout "
     hookdirs+="pre-mount pre-pivot cleanup mount "
@@ -85,7 +85,7 @@ PKG_CONFIG=${PKG_CONFIG:-pkg-config}
 # shellcheck source=./dracut-functions.sh
 . "$dracutbasedir"/dracut-functions.sh
 
-if ! [[ $DRACUT_INSTALL ]]; then
+if ! [[ "${DRACUT_INSTALL-}" ]]; then
     DRACUT_INSTALL=$(find_binary dracut-install)
 fi
 
@@ -112,7 +112,7 @@ if [[ $DRINSTALLPARTS == 1 ]] && ! command -v "$DRACUT_INSTALL" > /dev/null 2>&1
 fi
 
 # Detect lib paths
-if ! [[ $libdirs ]]; then
+if ! [[ ${libdirs-} ]]; then
     if [[ $($DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} --dry-run -R "$DRACUT_TESTBIN") == */lib64/* ]] &> /dev/null \
         && [[ -d "${dracutsysrootdir-}/lib64" ]]; then
         libdirs+=" /lib64"
