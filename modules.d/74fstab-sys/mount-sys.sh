@@ -27,7 +27,7 @@ fstab_mount() {
 
 # systemd will mount and run fsck from /etc/fstab and we don't want to
 # run into a race condition.
-if [ -z "$DRACUT_SYSTEMD" ]; then
+if [ -z "${DRACUT_SYSTEMD-}" ]; then
     [ -f /etc/fstab ] && fstab_mount /etc/fstab
 fi
 

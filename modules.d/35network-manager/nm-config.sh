@@ -21,7 +21,7 @@ if getargbool 0 rd.debug; then
         echo 'level=TRACE'
     ) > /run/NetworkManager/conf.d/initrd-logging.conf
 
-    if [ -n "$DRACUT_SYSTEMD" ]; then
+    if [ -n "${DRACUT_SYSTEMD-}" ]; then
         # Enable tty output if a usable console is found
         # See https://github.com/coreos/fedora-coreos-tracker/issues/943
         # shellcheck disable=SC2217
