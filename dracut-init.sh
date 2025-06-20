@@ -222,7 +222,7 @@ dracut_module_path() {
     return 1
 }
 
-if [[ $hostonly == "-h" ]]; then
+if [[ ${hostonly-} == "-h" ]]; then
     if ! [[ $DRACUT_KERNEL_MODALIASES ]] || ! [[ -f $DRACUT_KERNEL_MODALIASES ]]; then
         export DRACUT_KERNEL_MODALIASES="${DRACUT_TMPDIR}/modaliases"
         $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${srcmods:+--kerneldir "$srcmods"} --modalias > "$DRACUT_KERNEL_MODALIASES"
@@ -375,7 +375,7 @@ inst_fsck_help() {
 # given modules.
 optional_hostonly() {
     if [[ $hostonly_mode == "strict" ]]; then
-        printf -- "%s" "$hostonly"
+        printf -- "%s" "${hostonly-}"
     else
         printf ""
     fi
@@ -634,7 +634,7 @@ inst_libdir_file() {
 inst_sysusers() {
     inst_multiple -o "$sysusers/$*" "$sysusers/acct-*-$*"
 
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o "$sysusersconfdir/$*" "$sysusers/acct-*-$*"
     fi
 }
@@ -695,7 +695,7 @@ module_check() {
     local _moddir=$3
     local _ret
     local _forced=0
-    local _hostonly=$hostonly
+    local _hostonly=${hostonly-}
     [[ -z $_moddir ]] && _moddir=$(dracut_module_path "$1")
     [ $# -ge 2 ] && _forced=$2
     [[ -f $_moddir/module-setup.sh ]] || return 1
@@ -707,7 +707,7 @@ module_check() {
     [[ $_forced != 0 ]] && unset hostonly
     # don't quote $hostonly to leave argument empty
     # shellcheck disable=SC2086
-    moddir="$_moddir" check $hostonly
+    moddir="$_moddir" check ${hostonly-}
     _ret=$?
     unset "${module_functions[@]}"
     hostonly=$_hostonly
@@ -1168,7 +1168,7 @@ is_qemu_virtualized() {
     # 255 if any error was encountered
 
     # do not consult /sys and do not detect virt environment in non-hostonly mode
-    ! [[ $hostonly ]] && return 1
+    ! [[ ${hostonly-} ]] && return 1
 
     if type -P systemd-detect-virt > /dev/null 2>&1; then
         if ! vm=$(systemd-detect-virt --vm 2> /dev/null); then

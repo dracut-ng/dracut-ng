@@ -44,7 +44,7 @@ install() {
     $SYSTEMCTL -q --root "$initdir" enable systemd-pstore.service
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             "$systemdutilconfdir"/pstore.conf \
             "$systemdutilconfdir/pstore.conf.d/*.conf" \

@@ -23,7 +23,7 @@ install() {
         "$systemdutildir"/systemd-sysctl
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             /etc/sysctl.conf \
             /etc/sysctl.d/*.conf \

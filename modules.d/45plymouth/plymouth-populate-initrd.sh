@@ -12,7 +12,7 @@ mkdir -m 0755 -p "${initdir}/usr/share/plymouth"
 
 inst_libdir_file "plymouth/text.so" "plymouth/details.so"
 
-if [[ $hostonly ]]; then
+if [[ ${hostonly-} ]]; then
     inst_multiple \
         "/usr/share/plymouth/themes/details/details.plymouth" \
         "/usr/share/plymouth/themes/text/text.plymouth"

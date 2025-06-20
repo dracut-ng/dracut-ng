@@ -78,7 +78,7 @@ install() {
     done
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             "$systemdutilconfdir"/networkd.conf \
             "$systemdutilconfdir/networkd.conf.d/*.conf" \

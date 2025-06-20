@@ -1119,7 +1119,7 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $hostonly_l ]] && hostonly=$hostonly_l
 [[ $hostonly_cmdline_l ]] && hostonly_cmdline=$hostonly_cmdline_l
 [[ $hostonly_mode_l ]] && hostonly_mode=$hostonly_mode_l
-[[ $hostonly == "yes" ]] && ! [[ $hostonly_cmdline ]] && hostonly_cmdline="yes"
+[[ ${hostonly-} == "yes" ]] && ! [[ $hostonly_cmdline ]] && hostonly_cmdline="yes"
 # shellcheck disable=SC2034
 [[ $i18n_install_all_l ]] && i18n_install_all=$i18n_install_all_l
 # shellcheck disable=SC2034
@@ -1305,15 +1305,15 @@ check_kernel_compress_support() {
     return $?
 }
 
-[[ $hostonly == yes ]] && hostonly="-h"
-[[ $hostonly != "-h" ]] && unset hostonly
+[[ ${hostonly-} == yes ]] && hostonly="-h"
+[[ ${hostonly-} != "-h" ]] && unset hostonly
 
 case $hostonly_mode in
     '')
-        [[ $hostonly ]] && hostonly_mode="sloppy"
+        [[ ${hostonly-} ]] && hostonly_mode="sloppy"
         ;;
     sloppy | strict)
-        if [[ ! $hostonly ]]; then
+        if [[ ! ${hostonly-} ]]; then
             unset hostonly_mode
         fi
         ;;
@@ -1406,7 +1406,7 @@ fi
 
 if systemd-detect-virt -c &> /dev/null; then
     export DRACUT_NO_MKNOD=1
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         printf "%s\n" "dracut[W]: Running in hostonly mode in a container!" >&2
     fi
 fi
@@ -1696,7 +1696,7 @@ if [[ $acpi_override == yes ]] && ! (check_kernel_config CONFIG_ACPI_TABLE_UPGRA
 fi
 
 if [[ $early_microcode == yes ]]; then
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         if [[ $(get_cpu_vendor) == "AMD" || $(get_cpu_vendor) == "Intel" ]]; then
             check_kernel_config CONFIG_MICROCODE || unset early_microcode
         else
@@ -1719,7 +1719,7 @@ fi
 # Need to be able to have non-root users read stuff (rpcbind etc)
 chmod 755 "$initdir"
 
-if [[ $hostonly ]]; then
+if [[ ${hostonly-} ]]; then
     for i in /sys /proc /run /dev; do
         if ! findmnt --target "$i" &> /dev/null; then
             dwarning "Turning off host-only mode: '$i' is not mounted!"
@@ -1785,7 +1785,7 @@ if ((${#add_device_l[@]})); then
     push_user_devs "${add_device_l[@]}"
 fi
 
-if [[ $hostonly ]] && [[ $hostonly_default_device != "no" ]]; then
+if [[ ${hostonly-} ]] && [[ $hostonly_default_device != "no" ]]; then
     # in hostonly mode, determine all devices, which have to be accessed
     # and examine them for filesystem types
 
@@ -2134,7 +2134,7 @@ if [[ $no_kernel != yes ]]; then
     dracut_kernel_post
     dinfo "*** Installing kernel module dependencies done ***"
 
-    if [[ $noimageifnotneeded == yes ]] && [[ $hostonly ]]; then
+    if [[ $noimageifnotneeded == yes ]] && [[ ${hostonly-} ]]; then
         if [[ ! -f "$initdir/lib/dracut/need-initqueue" ]] \
             && [[ -f ${initdir}/lib/modules/$kernel/modules.dep && ! -s ${initdir}/lib/modules/$kernel/modules.dep ]]; then
             for i in "${initdir}"/etc/cmdline.d/*.conf; do
@@ -2291,7 +2291,7 @@ if [[ $early_microcode == yes ]]; then
     _dest_dir="$early_cpio_dir/d/kernel/x86/microcode"
     _dest_idx="0 1"
     mkdir -p "$_dest_dir"
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         [[ $(get_cpu_vendor) == "AMD" ]] && _dest_idx="0"
         [[ $(get_cpu_vendor) == "Intel" ]] && _dest_idx="1"
     fi
@@ -2301,7 +2301,7 @@ if [[ $early_microcode == yes ]]; then
             if [[ -d $_fwdir && -d $_fwdir/$_fw ]]; then
                 _src="*"
                 dinfo "*** Constructing ${ucode_dest[$idx]} ***"
-                if [[ $hostonly ]]; then
+                if [[ ${hostonly-} ]]; then
                     _src=$(get_ucode_file)
                     [[ $_src ]] || break
                     if [[ -r "$_fwdir/$_fw/${_src}.early" ]]; then

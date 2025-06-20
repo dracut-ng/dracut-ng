@@ -23,7 +23,7 @@ installkernel() {
     # if the hardware is present, include module even if it is not currently loaded,
     # as we could e.g. be in the installer; nokmsboot boot parameter will disable
     # loading of the driver if needed
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         local -a _mods
         local i modlink modname
 
