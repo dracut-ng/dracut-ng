@@ -96,7 +96,7 @@ install() {
         systemd-run systemd-escape \
         systemd-cgls
 
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             "$systemdutilconfdir"/system.conf \
             "$systemdutilconfdir"/system.conf.d/*.conf \

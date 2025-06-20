@@ -2,7 +2,7 @@
 
 check() {
     # including a module dedicated to live environments in a host-only initrd doesn't make sense
-    [[ $hostonly ]] && return 1
+    [[ ${hostonly-} ]] && return 1
     return 255
 }
 
