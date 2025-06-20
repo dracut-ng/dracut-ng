@@ -55,7 +55,7 @@ install() {
         {"tls/$_arch/",tls/,"$_arch/",}"libpcsclite_real.so.*"
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             /etc/opensc.conf \
             "/etc/reader.conf.d/*"

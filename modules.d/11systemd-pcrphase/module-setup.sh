@@ -43,7 +43,7 @@ install() {
         "$systemdsystemunitdir"/initrd.target.wants/systemd-pcrphase-initrd.service
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             "$systemdsystemconfdir"/systemd-pcrphase-initrd.service \
             "$systemdsystemconfdir/systemd-pcrphase-initrd.service.d/*.conf" \

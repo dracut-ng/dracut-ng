@@ -19,7 +19,7 @@ check() {
 # Module dependency requirements.
 depends() {
 
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         # A password cannot be entered if there is no graphical output during boot,
         # as is the case in aarch64, where efifb does not work with qemu-system-aarch64:
         # - virtio-gpu-pci does not expose a linear framebuffer

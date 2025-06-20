@@ -111,7 +111,7 @@ install() {
         "$tmpfilesdir/multipath.conf"
 
     mpathconf_installed \
-        && [[ $hostonly ]] && [[ $hostonly_mode == "strict" ]] && {
+        && [[ ${hostonly-} ]] && [[ $hostonly_mode == "strict" ]] && {
         for_each_host_dev_and_slaves_all add_hostonly_mpath_conf
         if ((${#_allow[@]} > 0)); then
             local -a _args
@@ -123,7 +123,7 @@ install() {
         fi
     }
 
-    [[ $hostonly ]] || mpathconf_installed || {
+    [[ ${hostonly-} ]] || mpathconf_installed || {
         for_each_host_dev_and_slaves is_mpath \
             || [[ -f /etc/multipath.conf ]] || {
             cat > "${initdir}"/etc/multipath.conf << EOF

@@ -20,7 +20,7 @@ check() {
 depends() {
     local deps
     deps="dm rootfs-block crypt systemd-ask-password"
-    if [[ $hostonly && -f "${dracutsysrootdir-}"/etc/crypttab ]]; then
+    if [[ ${hostonly-} && -f "${dracutsysrootdir-}"/etc/crypttab ]]; then
         if grep -q -e "fido2-device=" -e "fido2-cid=" "${dracutsysrootdir-}"/etc/crypttab; then
             deps+=" fido2"
         fi
@@ -30,7 +30,7 @@ depends() {
         if grep -q "tpm2-device=" "${dracutsysrootdir-}"/etc/crypttab; then
             deps+=" tpm2-tss"
         fi
-    elif [[ ! $hostonly ]]; then
+    elif [[ ! ${hostonly-} ]]; then
         for module in fido2 pkcs11 tpm2-tss; do
             module_check $module > /dev/null 2>&1
             if [[ $? == 255 ]] && ! [[ " $omit_dracutmodules " == *\ $module\ * ]]; then
@@ -56,7 +56,7 @@ install() {
         "$systemdsystemunitdir"/remote-cryptsetup.target \
         "$systemdsystemunitdir"/initrd-root-device.target.wants/remote-cryptsetup.target
 
-    if [[ $hostonly ]] && [[ -f $initdir/etc/crypttab ]]; then
+    if [[ ${hostonly-} ]] && [[ -f $initdir/etc/crypttab ]]; then
         # for each entry in /etc/crypttab check if the key file is backed by a socket unit and if so,
         # include it along with its corresponding service unit.
         while read -r _mapper _dev _luksfile _luksoptions || [[ -n $_mapper ]]; do

@@ -48,7 +48,7 @@ install() {
     $SYSTEMCTL -q --root "$initdir" enable systemd-resolved.service
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             "$systemdutilconfdir"/resolv.conf \
             "$systemdutilconfdir"/resolved.conf \

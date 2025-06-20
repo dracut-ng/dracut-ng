@@ -71,7 +71,7 @@ install() {
     $SYSTEMCTL -q --root "$initdir" enable dbus-broker.service
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             "$dbusconfdir"/session.conf \
             "$dbusconfdir"/system.conf \

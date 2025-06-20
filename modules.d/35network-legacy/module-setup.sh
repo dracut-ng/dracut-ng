@@ -29,7 +29,7 @@ install() {
         inst_multiple -o \
             "${systemdnetwork}/99-default.link" \
             "${systemdnetwork}/98-default-mac-none.link"
-        [[ $hostonly ]] && inst_multiple -H -o "${systemdnetworkconfdir}/*.link"
+        [[ ${hostonly-} ]] && inst_multiple -H -o "${systemdnetworkconfdir}/*.link"
     fi
 
     inst_multiple ip dhclient sed awk grep pgrep tr expr

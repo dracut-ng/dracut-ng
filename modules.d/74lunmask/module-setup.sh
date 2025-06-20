@@ -38,7 +38,7 @@ cmdline() {
         fi
         return 1
     }
-    [[ $hostonly ]] || [[ $mount_needs ]] && {
+    [[ ${hostonly-} ]] || [[ $mount_needs ]] && {
         for_each_host_dev_and_slaves_all get_lunmask
     } | sort | uniq
 }

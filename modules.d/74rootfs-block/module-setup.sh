@@ -6,7 +6,7 @@ depends() {
 }
 
 cmdline_journal() {
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         for dev in "${!host_fs_types[@]}"; do
             [[ ${host_fs_types[$dev]} == "xfs" ]] || continue
             rootopts=$(find_dev_fsopts "$dev")

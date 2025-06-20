@@ -49,7 +49,7 @@ install() {
         "$systemdsystemunitdir"/initrd-root-device.target.wants/remote-veritysetup.target
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             /etc/veritytab \
             "$systemdsystemconfdir"/veritysetup.target \

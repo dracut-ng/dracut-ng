@@ -2,7 +2,7 @@
 
 # called by dracut
 check() {
-    if [[ ! $hostonly ]]; then
+    if [[ ! ${hostonly-} ]]; then
         return 0
     fi
     [[ $DRACUT_KERNEL_MODALIASES && -f $DRACUT_KERNEL_MODALIASES ]] \

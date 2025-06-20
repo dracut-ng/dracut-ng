@@ -100,7 +100,7 @@ install() {
         {"tls/$_arch/",tls/,"$_arch/",}"libnss_files*"
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_dir "$udevconfdir"
         inst_multiple -H -o \
             "$udevconfdir"/udev.conf \

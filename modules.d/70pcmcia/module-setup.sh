@@ -26,7 +26,7 @@ install() {
         "${udevdir}"/pcmcia-check-broken-cis
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             /etc/pcmcia/config.opts
     fi

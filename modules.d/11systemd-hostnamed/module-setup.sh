@@ -46,7 +46,7 @@ install() {
         hostnamectl
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             /etc/hostname \
             "$systemdsystemconfdir"/systemd-hostnamed.service \

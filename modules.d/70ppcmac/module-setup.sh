@@ -33,7 +33,7 @@ installkernel() {
 
     # only PowerMac3,6 has a module, special case
     if [[ ${DRACUT_ARCH:-$(uname -m)} != ppc64* ]]; then
-        if [[ $hostonly_mode != "strict" ]] || [[ $hostonly && "$(pmac_model)" == "PowerMac3,6" ]]; then
+        if [[ $hostonly_mode != "strict" ]] || [[ ${hostonly-} && "$(pmac_model)" == "PowerMac3,6" ]]; then
             hostonly=$(optional_hostonly) instmods therm_windtunnel
         fi
         return 0

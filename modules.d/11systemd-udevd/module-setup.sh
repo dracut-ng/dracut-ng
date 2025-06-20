@@ -50,7 +50,7 @@ install() {
         "$systemdsystemunitdir"/sysinit.target.wants/systemd-udev-trigger.service
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             "$systemdsystemconfdir"/systemd-udevd.service \
             "$systemdsystemconfdir/systemd-udevd.service.d/*.conf" \
