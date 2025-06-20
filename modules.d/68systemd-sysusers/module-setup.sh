@@ -23,4 +23,8 @@ install() {
         set -o pipefail
         systemd-sysusers --root="$initdir" 2>&1 >&3 | grep -v "^Creating " >&2
     } 3>&1
+
+    # delete shadow files as initramfs is not designed to ask for a non-root user password
+    # interactively and their permissions crashes the build.
+    rm -f "$initdir/etc/shadow" "$initdir/etc/gshadow"
 }
