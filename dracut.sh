@@ -955,7 +955,7 @@ export DRACUT_LOG_LEVEL=warning
     debug=yes
 }
 
-[[ $dracutbasedir ]] || dracutbasedir="${dracutsysrootdir-}"/usr/lib/dracut
+[[ ${dracutbasedir-} ]] || dracutbasedir="${dracutsysrootdir-}"/usr/lib/dracut
 
 # These config variables needs to be exported for dracut-install.
 export add_dlopen_features="" omit_dlopen_features=""
@@ -1102,7 +1102,7 @@ export SYSTEMCTL=${SYSTEMCTL:-systemctl}
 ((${#libdirs_l[@]})) && libdirs="${libdirs_l[*]}"
 
 [[ $stdloglvl_l ]] && stdloglvl=$stdloglvl_l
-[[ ! $stdloglvl ]] && stdloglvl=4
+[[ ! ${stdloglvl-} ]] && stdloglvl=4
 stdloglvl=$((stdloglvl + verbosity_mod_l))
 ((stdloglvl > 6)) && stdloglvl=6
 ((stdloglvl < 0)) && stdloglvl=0

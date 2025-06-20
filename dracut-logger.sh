@@ -104,16 +104,16 @@ dlog_init() {
     local __oldumask
     local ret=0
     local errmsg=
-    [ -z "$stdloglvl" ] && stdloglvl=4
-    [ -z "$sysloglvl" ] && sysloglvl=0
-    [ -z "$kmsgloglvl" ] && kmsgloglvl=0
+    [ -z "${stdloglvl-}" ] && stdloglvl=4
+    [ -z "${sysloglvl-}" ] && sysloglvl=0
+    [ -z "${kmsgloglvl-}" ] && kmsgloglvl=0
     # Skip initialization if it's already done.
-    [ -n "$maxloglvl" ] && return 0
+    [ -n "${maxloglvl-}" ] && return 0
 
-    if [ -z "$fileloglvl" ]; then
-        [ -w "$logfile" ] && fileloglvl=4 || fileloglvl=0
+    if [ -z "${fileloglvl-}" ]; then
+        [ -w "${logfile-}" ] && fileloglvl=4 || fileloglvl=0
     elif ((fileloglvl > 0)); then
-        if [[ $logfile ]]; then
+        if [[ ${logfile-} ]]; then
             __oldumask=$(umask)
             umask 0377
             ! [ -e "$logfile" ] && : > "$logfile"
