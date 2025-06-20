@@ -11,7 +11,7 @@ check() {
 
 # called by dracut
 installkernel() {
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         for dev in /sys/devices/dcssblk/*/block/dcssblk*; do
             [[ -e $dev ]] || continue
             hostonly='' instmods dcssblk
@@ -28,7 +28,7 @@ install() {
     # If there is a config file which contains avail (best only of root device)
     # disks to activate add it and use it during boot -> then we do not need
     # a kernel param anymore
-    #if [[ $hostonly ]]; then
+    #if [[ ${hostonly-} ]]; then
     #    inst /etc/dcssblk.conf
     #fi
 }

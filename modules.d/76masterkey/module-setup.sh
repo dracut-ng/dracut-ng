@@ -2,7 +2,7 @@
 
 # called by dracut
 check() {
-    [[ $hostonly ]] && {
+    [[ ${hostonly-} ]] && {
         require_binaries keyctl uname || return 1
     }
 

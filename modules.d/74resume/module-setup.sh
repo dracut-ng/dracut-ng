@@ -11,7 +11,7 @@ check() {
     }
 
     # If hostonly check if we want to include the resume module
-    if [[ $hostonly ]] || [[ $mount_needs ]]; then
+    if [[ ${hostonly-} ]] || [[ $mount_needs ]]; then
         # Resuming won't work if swap is on a netdevice
         swap_on_netdevice && return 255
         if grep -rq 'resume=' /proc/cmdline /etc/cmdline /etc/cmdline.d /etc/kernel/cmdline /usr/lib/kernel/cmdline 2> /dev/null; then
@@ -80,7 +80,7 @@ install() {
     for _bin in /usr/sbin/resume /usr/lib/suspend/resume /usr/lib64/suspend/resume /usr/lib/uswsusp/resume /usr/lib64/uswsusp/resume; do
         [[ -x "${dracutsysrootdir-}${_bin}" ]] && {
             inst "${_bin}" /usr/sbin/resume
-            [[ $hostonly ]] && [[ -f "${dracutsysrootdir-}/etc/suspend.conf" ]] && inst -H /etc/suspend.conf
+            [[ ${hostonly-} ]] && [[ -f "${dracutsysrootdir-}/etc/suspend.conf" ]] && inst -H /etc/suspend.conf
             break
         }
     done

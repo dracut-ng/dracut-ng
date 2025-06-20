@@ -12,7 +12,7 @@ check() {
 install() {
     inst_multiple dasdconf.sh
     conf=/etc/dasd.conf
-    if [[ $hostonly && -f $conf ]]; then
+    if [[ ${hostonly-} && -f $conf ]]; then
         inst -H $conf
     fi
     inst_rules 56-dasd.rules

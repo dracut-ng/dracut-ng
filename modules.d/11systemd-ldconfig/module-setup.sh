@@ -41,7 +41,7 @@ install() {
     inst_libdir_file {"tls/$_arch/",tls/,"$_arch/",}"ld.so"
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             "$systemdsystemconfdir"/ldconfig.service \
             "$systemdsystemconfdir/ldconfig.service.d/*.conf"

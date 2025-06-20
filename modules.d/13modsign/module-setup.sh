@@ -11,7 +11,7 @@ check() {
 
     # do not include module in hostonly mode,
     # if no keys are present
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         x=$(echo "${dracutsysrootdir-}"/lib/modules/keys/*)
         [[ ${x} == "${dracutsysrootdir-}/lib/modules/keys/*" ]] && return 255
     fi

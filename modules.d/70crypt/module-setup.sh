@@ -93,7 +93,7 @@ install() {
         inst_hook cleanup 30 "$moddir/crypt-cleanup.sh"
     fi
 
-    if [[ $hostonly ]] && [[ -f "${dracutsysrootdir-}/etc/crypttab" ]]; then
+    if [[ ${hostonly-} ]] && [[ -f "${dracutsysrootdir-}/etc/crypttab" ]]; then
         # filter /etc/crypttab for the devices we need
         while read -r _mapper _dev _luksfile _luksoptions || [ -n "$_mapper" ]; do
             [[ $_mapper == \#* ]] && continue

@@ -7,7 +7,7 @@ check() {
     # If the binary(s) requirements are not fulfilled the module can't be installed
     require_any_binary /usr/lib/bluetooth/bluetoothd /usr/libexec/bluetooth/bluetoothd || return 1
 
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         # Warn user if bluetooth kernel module is loaded
         # and if Peripheral (0x500) is found of minor class:
         #  * Keyboard (0x40)
@@ -68,7 +68,7 @@ install() {
         /usr/libexec/bluetooth/bluetoothd \
         /usr/lib/bluetooth/bluetoothd
 
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         var_lib_files=("${dracutsysrootdir-}"/var/lib/bluetooth/**)
 
         inst_multiple -o \

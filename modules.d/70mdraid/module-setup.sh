@@ -91,7 +91,7 @@ install() {
 
     inst_rules "$moddir/59-persistent-storage-md.rules"
 
-    if [[ $hostonly ]] || [[ $mdadmconf == "yes" ]]; then
+    if [[ ${hostonly-} ]] || [[ $mdadmconf == "yes" ]]; then
         if [[ -f "${dracutsysrootdir-}/etc/mdadm.conf" ]]; then
             inst -H /etc/mdadm.conf
         else

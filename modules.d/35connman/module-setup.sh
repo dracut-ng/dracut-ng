@@ -24,7 +24,7 @@ install() {
     inst connmanctl
     inst connmand-wait-online
     inst "$dbussystem"/connman.conf
-    [[ $hostonly ]] && [[ -f ${dracutsysrootdir-}/etc/connman/main.conf ]] && inst /etc/connman/main.conf
+    [[ ${hostonly-} ]] && [[ -f ${dracutsysrootdir-}/etc/connman/main.conf ]] && inst /etc/connman/main.conf
     inst_dir /usr/lib/connman/plugins
     inst_dir /var/lib/connman
 

@@ -51,7 +51,7 @@ install() {
     done
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             "/etc/extensions/*.raw" \
             "/etc/extension-release.d/extension-release.*" \
