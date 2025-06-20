@@ -2,7 +2,7 @@
 
 # called by dracut
 depends() {
-    echo base fs-lib initqueue
+    echo base fs-lib
 }
 
 cmdline_journal() {
@@ -80,8 +80,6 @@ install() {
         inst_hook pre-udev 30 "$moddir/block-genrules.sh"
         inst_hook mount 99 "$moddir/mount-root.sh"
     fi
-
-    inst_hook initqueue/timeout 99 "$moddir/rootfallback.sh"
 
     inst_rules \
         "$moddir/59-persistent-storage.rules" \
