@@ -25,7 +25,7 @@ installkernel() {
 install() {
     inst_hook cmdline 30 "$moddir/parse-ccw.sh"
     inst_multiple grep sed seq readlink chzdev
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         local _tempfile
         _tempfile=$(mktemp --tmpdir="${DRACUT_TMPDIR}" dracut-zdev.XXXXXX)
         {

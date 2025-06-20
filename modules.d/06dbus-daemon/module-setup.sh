@@ -77,7 +77,7 @@ install() {
     grep '^\(d\|message\)bus:' "${dracutsysrootdir-}"/etc/group >> "$initdir/etc/group"
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             "$dbusconfdir"/system.conf \
             "$systemdsystemconfdir"/dbus.socket \

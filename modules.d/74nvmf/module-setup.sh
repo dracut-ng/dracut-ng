@@ -128,7 +128,7 @@ cmdline() {
         echo -n " rd.nvmf.hostid=${_hostid}"
     fi
 
-    [[ $hostonly ]] || [[ $mount_needs ]] && {
+    [[ ${hostonly-} ]] || [[ $mount_needs ]] && {
         pushd . > /dev/null
         for_each_host_dev_and_slaves gen_nvmf_cmdline
         popd > /dev/null || exit
