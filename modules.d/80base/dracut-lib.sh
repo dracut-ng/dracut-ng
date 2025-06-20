@@ -8,7 +8,7 @@ if [ -n "$NEWROOT" ]; then
     [ -d "$NEWROOT" ] || mkdir -p -m 0755 "$NEWROOT"
 fi
 
-if [ -z "$PREFIX" ]; then
+if [ -z "${PREFIX-}" ]; then
     if ! [ -d /run/initramfs ]; then
         mkdir -p -m 0755 /run/initramfs/log
         ln -sfn /run/initramfs/log /var/log
@@ -64,7 +64,7 @@ trim() {
     printf "%s" "$var"
 }
 
-if [ -z "$DRACUT_SYSTEMD" ]; then
+if [ -z "${DRACUT_SYSTEMD-}" ]; then
 
     warn() {
         check_quiet
@@ -422,7 +422,7 @@ die() {
         source_hook "shutdown-emergency"
     fi
 
-    if [ -n "$DRACUT_SYSTEMD" ]; then
+    if [ -n "${DRACUT_SYSTEMD-}" ]; then
         systemctl --no-block --force poweroff
     fi
 
@@ -834,7 +834,7 @@ fi
 
 _emergency_shell() {
     local _name="$1"
-    if [ -n "$DRACUT_SYSTEMD" ]; then
+    if [ -n "${DRACUT_SYSTEMD-}" ]; then
         : > /.console_lock
         echo "PS1=\"$_name:\\\${PWD}# \"" > /etc/profile
         systemctl start dracut-emergency.service
@@ -970,7 +970,7 @@ are_lists_eq() {
 }
 
 setmemdebug() {
-    if [ -z "$DEBUG_MEM_LEVEL" ]; then
+    if [ -z "${DEBUG_MEM_LEVEL-}" ]; then
         DEBUG_MEM_LEVEL=$(getargnum 0 0 5 rd.memdebug)
         export DEBUG_MEM_LEVEL
     fi

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 
 # This file is part of dracut.
 # SPDX-License-Identifier: GPL-2.0-or-later
@@ -86,6 +86,8 @@ test_run() {
         [[ $val ]] && ret=$((ret + 1))
 
         export PATH=".:$PATH"
+        # shellcheck disable=SC2034  # NEWROOT defined for dracut-lib.sh, set by base/init.sh
+        NEWROOT=$(mktemp --directory -p "$TESTDIR" newroot.XXXXXXXXXX)
 
         . dracut-dev-lib.sh
         . dracut-lib.sh

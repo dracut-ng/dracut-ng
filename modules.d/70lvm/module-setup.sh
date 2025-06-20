@@ -58,7 +58,7 @@ install() {
 
     inst_rules "$moddir/64-lvm.rules"
 
-    if [[ $hostonly ]] || [[ $lvmconf == "yes" ]]; then
+    if [[ ${hostonly-} ]] || [[ $lvmconf == "yes" ]]; then
         if [[ -f "${dracutsysrootdir-}/etc/lvm/lvm.conf" ]]; then
             inst_simple -H /etc/lvm/lvm.conf
         fi
@@ -89,7 +89,7 @@ install() {
     inst_script "$moddir/lvm_scan.sh" /sbin/lvm_scan
     inst_hook cmdline 30 "$moddir/parse-lvm.sh"
 
-    if [[ $hostonly ]] && find_binary lvs &> /dev/null; then
+    if [[ ${hostonly-} ]] && find_binary lvs &> /dev/null; then
         for dev in "${!host_fs_types[@]}"; do
             [[ -e /sys/block/${dev#/dev/}/dm/name ]] || continue
             dev=$(< "/sys/block/${dev#/dev/}/dm/name")
@@ -107,7 +107,7 @@ install() {
         done
     fi
 
-    if ! [[ $hostonly ]]; then
+    if ! [[ ${hostonly-} ]]; then
         inst_multiple -o thin_dump thin_restore thin_check thin_repair \
             cache_dump cache_restore cache_check cache_repair \
             era_check era_dump era_invalidate era_restore
