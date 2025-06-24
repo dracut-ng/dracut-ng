@@ -326,3 +326,7 @@ fi
 
 /sbin/initqueue --settled --onetime --name nvmf-connect-settled /sbin/nvmf-autoconnect.sh settled
 /sbin/initqueue --timeout --onetime --name nvmf-connect-timeout /sbin/nvmf-autoconnect.sh timeout
+
+# shellcheck disable=SC2034
+rootok=1
+[ -z "$root" ] && root="nvmf"
