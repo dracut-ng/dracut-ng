@@ -7,6 +7,7 @@ set -e
 TEST_DESCRIPTION="root filesystem on multiple device $TEST_FSTYPE (on top of RAID and LUKS)"
 
 test_check() {
+    set_kversion_and_vmlinux
     (command -v zfs || (command -v lvm && command -v "mkfs.$TEST_FSTYPE")) &> /dev/null
 }
 

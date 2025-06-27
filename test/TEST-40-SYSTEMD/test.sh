@@ -4,6 +4,7 @@ set -e
 TEST_DESCRIPTION="root filesystem on a ext4 filesystem"
 
 test_check() {
+    set_kversion_and_vmlinux
     command -v systemctl &> /dev/null
 }
 

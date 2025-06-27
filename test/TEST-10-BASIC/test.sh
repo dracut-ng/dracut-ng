@@ -3,6 +3,10 @@ set -e
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on ext4 filesystem"
 
+test_check() {
+    set_kversion_and_vmlinux
+}
+
 test_run() {
     declare -a disk_args=()
     # shellcheck disable=SC2034  # disk_index used in qemu_add_drive

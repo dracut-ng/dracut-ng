@@ -8,6 +8,7 @@ TEST_DESCRIPTION="live root on a squash filesystem"
 #DEBUGFAIL="rd.shell rd.debug rd.live.debug loglevel=7"
 
 test_check() {
+    set_kversion_and_vmlinux
     if ! type -p mksquashfs &> /dev/null; then
         echo "Test needs mksquashfs... Skipping"
         return 1
