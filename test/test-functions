@@ -147,7 +147,7 @@ set_vmlinux_env() {
     export VMLINUZ
 }
 
-set_test_envonment_variables() {
+set_kversion_and_vmlinux() {
     determine_kernel_version
     set_vmlinux_env
 }
@@ -244,13 +244,13 @@ while (($# > 0)); do
     case $1 in
         --run)
             echo "TEST RUN: $TEST_DESCRIPTION"
-            set_test_envonment_variables
+            set_kversion_and_vmlinux
             test_check && test_run
             exit $?
             ;;
         --setup)
             echo "TEST SETUP: $TEST_DESCRIPTION"
-            set_test_envonment_variables
+            set_kversion_and_vmlinux
             test_check && test_setup
             exit $?
             ;;
@@ -262,7 +262,7 @@ while (($# > 0)); do
             exit $?
             ;;
         --all)
-            set_test_envonment_variables
+            set_kversion_and_vmlinux
             if ! test_check 2 &> test${TEST_RUN_ID:+-$TEST_RUN_ID}.log; then
                 if [[ ${V-} == "1" || ${V-} == "2" ]]; then
                     cat test${TEST_RUN_ID:+-$TEST_RUN_ID}.log
