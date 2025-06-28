@@ -8,7 +8,7 @@ if [ -n "$NEWROOT" ]; then
     [ -d "$NEWROOT" ] || mkdir -p -m 0755 "$NEWROOT"
 fi
 
-if [ -z "$PREFIX" ]; then
+if [ -z "${PREFIX-}" ]; then
     if ! [ -d /run/initramfs ]; then
         mkdir -p -m 0755 /run/initramfs/log
         ln -sfn /run/initramfs/log /var/log
