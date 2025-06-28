@@ -23,7 +23,7 @@ install() {
     inst_script /sbin/zfcpconf.sh
     inst_rules 56-zfcp.rules
 
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_simple -H /etc/zfcp.conf
     fi
 }

@@ -38,7 +38,7 @@ installkernel() {
         hostonly='' instmods "${_mods[@]}"
     fi
 
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         mapfile -t _mods < <(modules_load_get "$modulesloadconfdir")
         if [[ ${#_mods[@]} -gt 0 ]]; then
             hostonly='' instmods "${_mods[@]}"
@@ -65,7 +65,7 @@ install() {
     $SYSTEMCTL -q --root "$initdir" enable systemd-modules-load.service
 
     # Install the hosts local user configurations if enabled.
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
             /etc/modules-load.d/*.conf \
             "$modulesloadconfdir/*.conf" \
