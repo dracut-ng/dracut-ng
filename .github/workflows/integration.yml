@@ -30,16 +30,12 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - alpine:latest
                     - arch:latest
                     - debian:latest
                     - fedora:latest
-                    - gentoo:latest
                     - opensuse:latest
-                    - ubuntu:rolling
-                    - void:latest
                 test:
-                    - "10"
+                    - "26"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm'

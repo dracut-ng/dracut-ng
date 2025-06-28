@@ -34,7 +34,7 @@ test_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root ro rd.auto rootwait $LUKSARGS" \
+        -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root ro rd.auto rootwait" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check
     echo "CLIENT TEST END: [OK]"
