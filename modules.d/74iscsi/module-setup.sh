@@ -193,7 +193,7 @@ install() {
     inst_binary sort
 
     inst_simple /etc/iscsi/iscsid.conf
-    if [[ $hostonly ]]; then
+    if [[ ${hostonly-} ]]; then
         inst_simple /etc/iscsi/initiatorname.iscsi
     fi
 

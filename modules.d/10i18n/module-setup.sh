@@ -299,7 +299,7 @@ install() {
         [[ "$kbddir" ]] || return 1
 
         [[ -f ${dracutsysrootdir-}$I18N_CONF ]] \
-            || [[ ! ${hostonly} || ${i18n_vars} ]] || {
+            || [[ ! ${hostonly-} || ${i18n_vars-} ]] || {
             derror 'i18n_vars not set!  Please set up i18n_vars in ' \
                 'configuration file.'
         }
@@ -309,7 +309,7 @@ install() {
     if checks; then
         install_base
 
-        if [[ ${hostonly} ]] && ! [[ ${i18n_install_all} == "yes" ]]; then
+        if [[ ${hostonly-} ]] && ! [[ ${i18n_install_all} == "yes" ]]; then
             install_local_i18n || install_all_kbd
         else
             install_all_kbd

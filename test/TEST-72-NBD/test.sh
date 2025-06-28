@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 
 [ -z "${USE_NETWORK-}" ] && USE_NETWORK="network"
 
@@ -63,12 +63,9 @@ client_test() {
     local test_name="$1"
     local mac=$2
     local cmdline="$3"
-    local fstype=$4
-    local fsopt=$5
+    local fstype=${4-ext4}
+    local fsopt=${5-ro}
     local found opts nbdinfo
-
-    [[ $fstype ]] || fstype=ext4
-    [[ $fsopt ]] || fsopt="ro"
 
     echo "CLIENT TEST START: $test_name"
 

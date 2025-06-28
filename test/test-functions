@@ -4,14 +4,14 @@ export PATH
 
 # shellcheck disable=SC1090
 [[ -e .testdir${TEST_RUN_ID:+-$TEST_RUN_ID} ]] && . .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
-if [[ -z $TESTDIR ]] || [[ ! -d $TESTDIR ]]; then
+if [[ -z ${TESTDIR-} ]] || [[ ! -d $TESTDIR ]]; then
     TESTDIR=$(mktemp -d -p "/var/tmp" -t dracut-test.XXXXXX)
 fi
 echo "TESTDIR=\"$TESTDIR\"" > .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
 export TESTDIR
 export BOOT_ROOT="$TESTDIR"
 
-if [[ -z $basedir ]]; then basedir="$(realpath ../..)"; fi
+if [[ -z ${basedir-} ]]; then basedir="$(realpath ../..)"; fi
 
 DRACUT=${DRACUT-dracut}
 PKGLIBDIR=${PKGLIBDIR-$basedir}
@@ -19,7 +19,7 @@ PKGLIBDIR=${PKGLIBDIR-$basedir}
 if [[ -f /etc/machine-id ]]; then
     read -r TOKEN < /etc/machine-id || true
 fi
-[ -z "$TOKEN" ] && . /etc/os-release && TOKEN="$ID"
+[ -z "${TOKEN-}" ] && . /etc/os-release && TOKEN="$ID"
 
 TEST_KERNEL_CMDLINE+=" root=LABEL=dracut panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot ${DEBUGFAIL-} "
 
@@ -106,10 +106,10 @@ determine_kernel_version() {
     # we are running inside a container already
 
     # shellcheck disable=SC2012
-    [[ $KVERSION ]] || KVERSION="$(cd /lib/modules && ls -1 | tail -1)"
+    [[ ${KVERSION-} ]] || KVERSION="$(cd /lib/modules && ls -1 | tail -1)"
     # shellcheck disable=SC2012
-    [[ $KVERSION ]] || KVERSION="$(cd /usr/lib/modules && ls -1 | tail -1)"
-    [[ $KVERSION ]] || KVERSION="$(uname -r)"
+    [[ ${KVERSION-} ]] || KVERSION="$(cd /usr/lib/modules && ls -1 | tail -1)"
+    [[ ${KVERSION-} ]] || KVERSION="$(uname -r)"
 }
 
 set_vmlinux_env() {
@@ -121,7 +121,7 @@ set_vmlinux_env() {
     if ! [ -f "$VMLINUZ" ]; then
         [[ -f /etc/machine-id ]] && read -r MACHINE_ID < /etc/machine-id
 
-        if [[ $MACHINE_ID ]] && { [[ -d /boot/${MACHINE_ID} ]] || [[ -L /boot/${MACHINE_ID} ]]; }; then
+        if [[ ${MACHINE_ID-} ]] && { [[ -d /boot/${MACHINE_ID} ]] || [[ -L /boot/${MACHINE_ID} ]]; }; then
             VMLINUZ="/boot/${MACHINE_ID}/$KVERSION/linux"
         elif [ -f "/boot/vmlinuz-${KVERSION}" ]; then
             VMLINUZ="/boot/vmlinuz-${KVERSION}"
