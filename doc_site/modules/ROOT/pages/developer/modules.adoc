@@ -48,7 +48,7 @@ The name of the module prefixed by a two-digit numeric sort code.
 +
 The numeric code must be present and in the range of 00 - 99.
 +
-NOTE: Range 50 - 59 and 90 - 99 are reserved for out of tree
+NOTE: Range 00-09, 50-59 and 90-99 are reserved for out of tree
 (3rd party) dracut modules.
 
 It is strongly recommended to use the 50-59 range for out of tree
