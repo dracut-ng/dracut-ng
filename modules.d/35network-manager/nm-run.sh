@@ -7,8 +7,7 @@ if [ -z "$DRACUT_SYSTEMD" ]; then
     if [ -e /run/NetworkManager/initrd/neednet ]; then
         for i in /usr/lib/NetworkManager/system-connections/* \
             /run/NetworkManager/system-connections/* \
-            /etc/NetworkManager/system-connections/* \
-            /etc/sysconfig/network-scripts/ifcfg-*; do
+            /etc/NetworkManager/system-connections/*; do
             [ -f "$i" ] || continue
             /usr/sbin/NetworkManager --configure-and-quit=initrd --no-daemon
             break
