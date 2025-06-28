@@ -4,7 +4,7 @@ trap 'poweroff -f' EXIT
 set -ex
 
 printf test > keyfile
-cryptsetup -q luksFormat /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root /keyfile
+cryptsetup --pbkdf pbkdf2 -q luksFormat /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root /keyfile
 echo "The passphrase is test"
 cryptsetup luksOpen /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root dracut_crypt_test < /keyfile
 lvm pvcreate -ff -y /dev/mapper/dracut_crypt_test
