@@ -8,6 +8,7 @@ TEST_DESCRIPTION="root filesystem on a btrfs filesystem with /usr subvolume"
 #DEBUGFAIL="rd.shell rd.break"
 
 test_check() {
+    set_kversion_and_vmlinux
     if ! type -p mkfs.btrfs &> /dev/null; then
         echo "Test needs mkfs.btrfs.. Skipping"
         return 1
