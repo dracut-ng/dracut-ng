@@ -14,8 +14,9 @@ so you should install it on your system -- dash aims for strict POSIX
 compliance to the extent possible.
 * Hooks MUST be POSIX compliant -- they are sourced by the init script,
 and having a bashism break your user's ability to boot really sucks.
-* Generator modules should have a two digit numeric prefix -- they run in
-ascending sort order. Anything in the 90-99 range is stuff that dracut
+* Generator modules should have a two digit numeric prefix in the range
+of 50-59 -- they run in ascending sort order.
+Anything in the 80-89 range is stuff that dracut
 relies on, so try not to break those hooks.
 * Hooks must have a .sh extension.
 * Generator modules are described in more detail later on.
@@ -49,6 +50,16 @@ The numeric code must be present and in the range of 00 - 99.
 +
 NOTE: Range 50 - 59 and 90 - 99 are reserved for out of tree
 (3rd party) dracut modules.
+
+It is strongly recommended to use the 50-59 range for out of tree
+dracut modules. Range 90-99 are reserved for unusual
+dracut customizations for completeness, but using range 90-99
+is not recommended for out of tree dracut modules.
+
+Not using the 50-59 range for out of tree dracut modules
+will likely lead to unintended errors in the initramfs
+generation process as your dracut module will either run too
+early or too late in the generaiton process. You have been warned.
 +
 Modules with lower numbers are installed first.  This is important
 because the dracut install functions (which install files onto
