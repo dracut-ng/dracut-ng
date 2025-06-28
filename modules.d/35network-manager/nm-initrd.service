@@ -10,7 +10,6 @@ ConditionPathExists=/run/NetworkManager/initrd/neednet
 ConditionPathExistsGlob=|/usr/lib/NetworkManager/system-connections/*
 ConditionPathExistsGlob=|/run/NetworkManager/system-connections/*
 ConditionPathExistsGlob=|/etc/NetworkManager/system-connections/*
-ConditionPathExistsGlob=|/etc/sysconfig/network-scripts/ifcfg-*
 
 [Service]
 Type=dbus
