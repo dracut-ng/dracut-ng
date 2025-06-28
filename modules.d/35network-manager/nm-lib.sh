@@ -20,8 +20,7 @@ nm_generate_connections() {
         if getargbool 0 rd.neednet; then
             for i in /usr/lib/NetworkManager/system-connections/* \
                 /run/NetworkManager/system-connections/* \
-                /etc/NetworkManager/system-connections/* \
-                /etc/sysconfig/network-scripts/ifcfg-*; do
+                /etc/NetworkManager/system-connections/*; do
                 [ -f "$i" ] || continue
                 echo '[ -f /tmp/nm.done ]' > "$hookdir"/initqueue/finished/nm.sh
                 mkdir -p /run/NetworkManager/initrd
