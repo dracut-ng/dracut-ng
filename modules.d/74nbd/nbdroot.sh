@@ -101,7 +101,7 @@ if [ "$root" = "block:/dev/root" ] || [ "$root" = "dhcp" ]; then
     udevadm control --reload
     wait_for_dev -n /dev/root
 
-    if [ -z "$DRACUT_SYSTEMD" ]; then
+    if [ -z "${DRACUT_SYSTEMD-}" ]; then
         command -v write_fs_tab > /dev/null || . /lib/fs-lib.sh
 
         write_fs_tab /dev/root "$nbdfstype" "$fsopts"
