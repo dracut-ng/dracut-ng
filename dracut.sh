@@ -2447,8 +2447,14 @@ if [[ $uefi == yes ]]; then
 fi
 
 if [[ $DRACUT_REPRODUCIBLE ]]; then
-    find "$initdir" -newer "$dracutbasedir/dracut-functions.sh" -print0 \
-        | xargs -r -0 touch -h -m -c -r "$dracutbasedir/dracut-functions.sh"
+    if [ -n "${SOURCE_DATE_EPOCH}" ]; then
+        # ensure that no timestamps are newer than $SOURCE_DATE_EPOCH
+        find "$initdir" -newermt "@${SOURCE_DATE_EPOCH}" -print0 \
+            | xargs -0r touch --no-dereference --date="@${SOURCE_DATE_EPOCH}"
+    else
+        # set all timestamps to 0
+        find "$initdir" -mindepth 1 -execdir touch -hcd '@0' '{}' +
+    fi
 
     if [[ "$(cpio --help)" == *--reproducible* ]]; then
         CPIO_REPRODUCIBLE=1
@@ -2463,8 +2469,14 @@ if [[ $create_early_cpio == yes ]]; then
     echo 1 > "$early_cpio_dir/d/early_cpio"
 
     if [[ $DRACUT_REPRODUCIBLE ]]; then
-        find "$early_cpio_dir/d" -newer "$dracutbasedir/dracut-functions.sh" -print0 \
-            | xargs -r -0 touch -h -m -c -r "$dracutbasedir/dracut-functions.sh"
+        if [ -n "${SOURCE_DATE_EPOCH}" ]; then
+            # ensure that no timestamps are newer than $SOURCE_DATE_EPOCH
+            find "$initdir" -newermt "@${SOURCE_DATE_EPOCH}" -print0 \
+                | xargs -0r touch --no-dereference --date="@${SOURCE_DATE_EPOCH}"
+        else
+            # set all timestamps to 0
+            find "$early_cpio_dir/d" -mindepth 1 -execdir touch -hcd '@0' '{}' +
+        fi
     fi
 
     # The microcode blob is _before_ the initramfs blob, not after
