@@ -25,7 +25,6 @@ jobs:
             matrix:
                 container:
                     - debian
-                    - fedora
                     - opensuse
                     - ubuntu
                     - void
