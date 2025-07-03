@@ -2460,9 +2460,13 @@ if [[ $uefi == yes ]]; then
     mkdir -p "$uefi_outdir"
 fi
 
-if [[ $DRACUT_REPRODUCIBLE ]]; then
-    find "$initdir" -newer "$dracutbasedir/dracut-functions.sh" -print0 \
+clamp_mtimes() {
+    find "$1" -newer "$dracutbasedir/dracut-functions.sh" -print0 \
         | xargs -r -0 touch -h -m -c -r "$dracutbasedir/dracut-functions.sh"
+}
+
+if [[ $DRACUT_REPRODUCIBLE ]]; then
+    clamp_mtimes "$initdir"
 
     if [[ "$(cpio --help)" == *--reproducible* ]]; then
         CPIO_REPRODUCIBLE=1
@@ -2477,8 +2481,7 @@ if [[ $create_early_cpio == yes ]]; then
     echo 1 > "$early_cpio_dir/d/early_cpio"
 
     if [[ $DRACUT_REPRODUCIBLE ]]; then
-        find "$early_cpio_dir/d" -newer "$dracutbasedir/dracut-functions.sh" -print0 \
-            | xargs -r -0 touch -h -m -c -r "$dracutbasedir/dracut-functions.sh"
+        clamp_mtimes "$early_cpio_dir/d"
     fi
 
     # The microcode blob is _before_ the initramfs blob, not after
