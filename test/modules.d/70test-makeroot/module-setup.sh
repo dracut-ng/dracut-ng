@@ -14,7 +14,7 @@ installkernel() {
 }
 
 install() {
-    inst_multiple poweroff cp umount sync mkfs.ext4
+    inst_multiple cp umount sync mkfs.ext4
 
     # prefer the coreutils version of dd over the busybox version for testing
     inst /bin/dd /usr/sbin/dd
