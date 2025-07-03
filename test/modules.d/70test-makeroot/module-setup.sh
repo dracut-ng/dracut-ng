@@ -9,10 +9,6 @@ depends() {
     echo "rootfs-block kernel-modules qemu"
 }
 
-installkernel() {
-    hostonly='' instmods piix ide-gd_mod ata_piix ext4 sd_mod
-}
-
 install() {
     inst_multiple cp umount sync mkfs.ext4
 
