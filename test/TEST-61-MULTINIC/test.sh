@@ -330,8 +330,6 @@ test_setup() {
         # shellcheck disable=SC1090
         . "$PKGLIBDIR"/dracut-init.sh
         inst_multiple poweroff shutdown
-        inst_hook shutdown-emergency 000 ./hard-off.sh
-        inst_hook emergency 000 ./hard-off.sh
         inst_simple ./client-persistent-lan0.link /etc/systemd/network/01-persistent-lan0.link
         inst_simple ./client-persistent-lan1.link /etc/systemd/network/01-persistent-lan1.link
         inst_simple ./client-persistent-lan2.link /etc/systemd/network/01-persistent-lan2.link
