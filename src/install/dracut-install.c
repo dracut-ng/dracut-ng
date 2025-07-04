@@ -335,6 +335,9 @@ static int copy_xattr(int dest_fd, int src_fd)
         name_len = flistxattr(src_fd, NULL, 0);
         if (name_len < 0)
                 return -1;
+        /* no xattrs are present */
+        if (name_len == 0)
+                return 0;
 
         name_buf = calloc(1, name_len + 1);
         if (name_buf == NULL)
