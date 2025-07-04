@@ -20,6 +20,16 @@ install() {
         "$systemdsystemunitdir"/initrd-root-fs.target.wants/systemd-repart.service \
         systemd-repart
 
+    # Systemd-repart is capable of also formatting the created partition.
+    # Support all filesystems that repart.d supports.
+    inst_multiple -o \
+        "mkfs.ext4" \
+        "mkfs.btrfs" \
+        "mkfs.xfs" \
+        "mkfs.vfat" \
+        "mkfs.erofs" \
+        "mksquashfs"
+
     # Install the hosts local user configurations if enabled.
     if [[ ${hostonly-} ]]; then
         inst_multiple -H -o \
