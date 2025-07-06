@@ -10,7 +10,10 @@ check() {
 
 # called by dracut
 depends() {
-    echo dbus bash net-lib kernel-network-modules initqueue
+    echo bash net-lib kernel-network-modules initqueue
+    if dracut_module_included systemd; then
+        echo dbus
+    fi
     return 0
 }
 
