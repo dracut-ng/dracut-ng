@@ -1072,7 +1072,9 @@ dracut_kernel_post() {
         fi
     fi
 
-    dracut_kernel_post_decomp
+    if [[ $handle_precompress == decomp* ]]; then
+        dracut_kernel_post_decomp
+    fi
 
     for _f in modules.builtin modules.builtin.alias modules.builtin.modinfo modules.order; do
         [[ -e $srcmods/$_f ]] && inst_simple "$srcmods/$_f" "/lib/modules/$kernel/$_f"
@@ -1085,6 +1087,9 @@ dracut_kernel_post() {
         exit 1
     fi
 
+    if [[ $handle_precompress == split ]]; then
+        dracut_kernel_post_split
+    fi
 }
 
 dracut_kernel_post_decomp() {
@@ -1150,6 +1155,18 @@ dracut_kernel_post_decomp() {
             rm "$fwlink"
             ln -s "${fwtarget%.*}" "${fwlink%.*}"
         done
+}
+
+dracut_kernel_post_split() {
+    ddebug "Splitting kernel modules and firmware into a non-compressed directory ..."
+    mkdir -p "$no_compress_dir"/d/lib/modules/"$kernel"/
+    mkdir -p "$no_compress_dir"/d/lib/firmware/
+
+    mv "$dstdir"/lib/firmware/* "$no_compress_dir"/d/lib/firmware/
+    mv "$dstdir"/lib/modules/"$kernel"/* "$no_compress_dir"/d/lib/modules/"$kernel"/
+
+    rm -rf "$dstdir"/lib/firmware
+    rm -rf "$dstdir"/lib/modules/"$kernel"
 }
 
 instmods() {

@@ -268,6 +268,13 @@ Creates initial ramdisk images for preloading modules
                         Specify the compressor and compressor specific options
                          used by mksquashfs if squash module is called when
                          building the initramfs.
+  --handle-precompress=<no|decomp|split>
+                        Control how already-compressed modules and firmware
+                         files are handled. "decomp" will decompress
+                         already-compressed files before adding them to the
+                         initramfs; "split" will split the files into a
+                         separate cpio archive that is not compressed.
+                         "no" does neither.
   --enhanced-cpio       Attempt to reflink cpio file data using dracut-cpio.
   --list-modules        List all available dracut modules.
   -M, --show-modules    Print included module's name to standard output during
@@ -748,6 +755,11 @@ while :; do
             PARMS_TO_STORE+=" '$2'"
             shift
             ;;
+        --handle-precompress)
+            handle_precompress_l="$2"
+            PARMS_TO_STORE+=" '$2'"
+            shift
+            ;;
         --prefix)
             prefix_l="$2"
             PARMS_TO_STORE+=" '$2'"
@@ -1138,6 +1150,7 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $INITRD_COMPRESS ]] && compress=$INITRD_COMPRESS
 [[ $compress_l ]] && compress=$compress_l
 [[ $squash_compress_l ]] && squash_compress=$squash_compress_l
+[[ $handle_precompress_l ]] && handle_precompress=$handle_precompress_l || handle_precompress=split
 [[ $enhanced_cpio_l ]] && enhanced_cpio=$enhanced_cpio_l
 [[ $show_modules_l ]] && show_modules=$show_modules_l
 [[ $nofscks_l ]] && nofscks="yes"
@@ -1388,6 +1401,11 @@ mkdir -p "$initdir"
 if [[ $early_microcode == yes ]] || { [[ $acpi_override == yes ]] && [[ -d $acpi_table_dir ]]; }; then
     readonly early_cpio_dir="${DRACUT_TMPDIR}/earlycpio"
     mkdir "$early_cpio_dir"
+fi
+
+if [[ $handle_precompress == split ]]; then
+    readonly no_compress_dir="${DRACUT_TMPDIR}/no_compress"
+    mkdir "$no_compress_dir"
 fi
 
 [[ "${dracutsysrootdir-}" ]] || [[ "$noexec" ]] || export DRACUT_RESOLVE_LAZY="1"
@@ -2494,6 +2512,42 @@ if [[ $create_early_cpio == yes ]]; then
     fi
 fi
 
+# This part is also never compressed.  Putting it after the main portion will require code for alignment
+# handling.
+if [[ $handle_precompress == split ]]; then
+    echo 2 > "$no_compress_dir/d/early_cpio" 
+
+    if [[ $DRACUT_REPRODUCIBLE ]]; then
+        find "$no_compress_dir/d" -newer "$dracutbasedir/dracut-functions.sh" -print0 \
+            | xargs -r -0 touch -h -m -c -r "$dracutbasedir/dracut-functions.sh"
+    fi
+
+    if [[ -n $enhanced_cpio ]]; then
+        if ! (
+            umask 077
+            cd "$no_compress_dir/d"
+            find . -print0 | sort -z \
+                | $enhanced_cpio --null ${cpio_owner:+--owner "$cpio_owner"} \
+                    --mtime 0 --data-align "$cpio_align" --truncate-existing \
+                    "${DRACUT_TMPDIR}/initramfs.img"
+        ); then
+            dfatal "dracut-cpio: write $outfile for non-compressed files failed"
+            exit 1
+        fi
+    else
+        if ! (
+            umask 077
+            cd "$no_compress_dir/d"
+            find . -print0 | sed -e 's,\./,,g' | sort -z \
+                | cpio -o ${CPIO_REPRODUCIBLE:+--reproducible} --null \
+                    ${cpio_owner:+-R "$cpio_owner"} -H newc --quiet >> "${DRACUT_TMPDIR}/initramfs.img"
+        ); then
+            dfatal "Write $outfile for non-compressed files failed"
+            exit 1
+        fi
+    fi
+fi
+
 if [[ $compress && $compress != cat ]]; then
     if ! command -v "${compress%% *}" &> /dev/null; then
         derror "Cannot execute compression command '$compress', falling back to default"
@@ -2574,7 +2628,7 @@ if [[ -n $enhanced_cpio ]]; then
         $compress < "$cpio_outfile" >> "${DRACUT_TMPDIR}/initramfs.img" \
             && rm "$cpio_outfile"
     ); then
-        dfatal "dracut-cpio: creation of $outfile failed"
+        dfatal "dracut-cpio: write $outfile for main portion failed"
         exit 1
     fi
     unset cpio_outfile
@@ -2586,7 +2640,7 @@ else
             | cpio -o ${CPIO_REPRODUCIBLE:+--reproducible} --null ${cpio_owner:+-R "$cpio_owner"} -H newc --quiet \
             | $compress >> "${DRACUT_TMPDIR}/initramfs.img"
     ); then
-        dfatal "Creation of $outfile failed"
+        dfatal "Write $outfile for main portion failed"
         exit 1
     fi
 fi
