@@ -340,7 +340,7 @@ static int copy_xattr(int dest_fd, int src_fd)
         if (name_len == 0)
                 return 0;
 
-        name_buf = calloc(1, name_len + 1);
+        name_buf = malloc(name_len);
         if (name_buf == NULL)
                 return -1;
 
