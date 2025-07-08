@@ -348,7 +348,7 @@ static int copy_xattr(int dest_fd, int src_fd)
         if (name_len < 0)
                 return -1;
 
-        for (name = name_buf; name != name_buf + name_len; name = strchr(name, '\0') + 1) {
+        for (name = name_buf; name - name_buf < name_len; name += strlen(name) + 1) {
                 value_len = fgetxattr(src_fd, name, NULL, 0);
                 if (value_len < 0) {
                         ret = -1;
