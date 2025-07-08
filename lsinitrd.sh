@@ -173,6 +173,7 @@ if ! [[ -f $image ]]; then
     usage
     exit 1
 fi
+image=$(realpath "$image")
 
 TMPDIR="$(mktemp -d -t lsinitrd.XXXXXX)"
 # shellcheck disable=SC2064
