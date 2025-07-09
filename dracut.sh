@@ -2259,12 +2259,6 @@ for ((i = 0; i < ${#include_src[@]}; i++)); do
     fi
 done
 
-if [[ $do_hardlink == yes ]] && command -v hardlink > /dev/null; then
-    dinfo "*** Hardlinking files ***"
-    hardlink "$initdir" 2>&1 | ddebug
-    dinfo "*** Hardlinking files done ***"
-fi
-
 # strip binaries
 if [[ $do_strip == yes ]]; then
     # Prefer strip from elfutils for package size
@@ -2469,6 +2463,13 @@ if [[ $DRACUT_REPRODUCIBLE ]]; then
     else
         dinfo "cpio does not support '--reproducible'. Resulting image will not be reproducible."
     fi
+fi
+
+# Hardlink is mtime-sensitive; do it after the above clamp.
+if [[ $do_hardlink == yes ]] && command -v hardlink > /dev/null; then
+    dinfo "*** Hardlinking files ***"
+    hardlink "$initdir" 2>&1 | ddebug
+    dinfo "*** Hardlinking files done ***"
 fi
 
 [[ $EUID != 0 ]] && cpio_owner="0:0"
