@@ -2895,14 +2895,20 @@ oom2:
         return -ENOMEM;
 }
 
-static void print_values(Hashmap *h)
+static void print_values_sorted(Hashmap *h)
 {
         Iterator i;
-        char *name;
+        char *name, **nameptr;
+        _cleanup_free_ char **names = NULL;
 
+        names = calloc(hashmap_size(h) + 1, sizeof(char *));
+        nameptr = names;
         HASHMAP_FOREACH(name, h, i) {
-                printf("%s\n", name);
+                *nameptr = name;
+                nameptr++;
         }
+        strv_sort(names);
+        strv_print(names);
 }
 
 int main(int argc, char **argv)
@@ -2925,7 +2931,7 @@ int main(int argc, char **argv)
                 _cleanup_kmod_unref_ struct kmod_ctx *ctx = NULL;
                 ctx = kmod_new(kerneldir, NULL);
                 modalias_list(ctx);
-                print_values(modules_loaded);
+                print_values_sorted(modules_loaded);
                 exit(0);
         }
 
