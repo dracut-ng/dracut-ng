@@ -2895,6 +2895,16 @@ oom2:
         return -ENOMEM;
 }
 
+static void print_values(Hashmap *h)
+{
+        Iterator i;
+        char *name;
+
+        HASHMAP_FOREACH(name, h, i) {
+                printf("%s\n", name);
+        }
+}
+
 int main(int argc, char **argv)
 {
         int r;
@@ -2912,15 +2922,10 @@ int main(int argc, char **argv)
 
         modules_loaded = hashmap_new(string_hash_func, string_compare_func);
         if (arg_modalias) {
-                Iterator i;
-                char *name;
                 _cleanup_kmod_unref_ struct kmod_ctx *ctx = NULL;
                 ctx = kmod_new(kerneldir, NULL);
-
                 modalias_list(ctx);
-                HASHMAP_FOREACH(name, modules_loaded, i) {
-                        printf("%s\n", name);
-                }
+                print_values(modules_loaded);
                 exit(0);
         }
 
