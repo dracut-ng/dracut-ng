@@ -2259,12 +2259,6 @@ for ((i = 0; i < ${#include_src[@]}; i++)); do
     fi
 done
 
-if [[ $do_hardlink == yes ]] && command -v hardlink > /dev/null; then
-    dinfo "*** Hardlinking files ***"
-    hardlink "$initdir" 2>&1 | ddebug
-    dinfo "*** Hardlinking files done ***"
-fi
-
 # strip binaries
 if [[ $do_strip == yes ]]; then
     # Prefer strip from elfutils for package size
@@ -2461,7 +2455,7 @@ if [[ $uefi == yes ]]; then
 fi
 
 clamp_mtimes() {
-    find "$1" -newer "$dracutbasedir/dracut-functions.sh" -print0 \
+    find "$@" -newer "$dracutbasedir/dracut-functions.sh" -print0 \
         | xargs -r -0 touch -h -m -c -r "$dracutbasedir/dracut-functions.sh"
 }
 
@@ -2472,6 +2466,19 @@ if [[ $DRACUT_REPRODUCIBLE ]]; then
         CPIO_REPRODUCIBLE=1
     else
         dinfo "cpio does not support '--reproducible'. Resulting image will not be reproducible."
+    fi
+fi
+
+# Hardlink is mtime-sensitive; do it after the above clamp.
+if [[ $do_hardlink == yes ]] && command -v hardlink > /dev/null; then
+    dinfo "*** Hardlinking files ***"
+    hardlink "$initdir" 2>&1 | ddebug
+    dinfo "*** Hardlinking files done ***"
+
+    # Hardlink itself breaks mtimes on directories as we may have added/removed
+    # dir entries. Fix those up.
+    if [[ $DRACUT_REPRODUCIBLE ]]; then
+        clamp_mtimes "$initdir" -type d
     fi
 fi
 
