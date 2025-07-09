@@ -2455,6 +2455,40 @@ fi
 
 dinfo "*** Creating image file '$outfile' ***"
 
+# Read list of files and echo them plus all leading directories.
+# The same directories might be printed multiple times (even with sorted input)!
+add_directories() {
+    local last_dir path dir
+    while read -r path; do
+        dir="${path%/*}"
+        parent="${dir}"
+        while [ "$parent" != "$last_dir" ] && [ "$parent" != "." ]; do
+            echo "$parent"
+            parent="${parent%/*}"
+        done
+        last_dir="$dir"
+        echo "$path"
+    done
+    if [ -n "$last_dir" ]; then
+        echo "."
+    fi
+}
+
+create_cpio_file_lists() {
+    local rootdir="$1"
+    local compressed_files_manifest="$2"
+    local uncompressed_files_manifest="$3"
+
+    (
+        cd "$rootdir" || exit 1
+        find . -name '*.gz' -o -name '*.xz' -o -name '*.zst'
+    ) | add_directories | LC_ALL=C sort | uniq > "$compressed_files_manifest"
+    (
+        cd "$rootdir" || exit 1
+        find . \( ! -type d ! -name '*.gz' ! -name '*.xz' ! -name '*.zst' \) -o \( -type d -empty \)
+    ) | add_directories | LC_ALL=C sort | uniq > "$uncompressed_files_manifest"
+}
+
 if [[ $uefi == yes ]]; then
     readonly uefi_outdir="$DRACUT_TMPDIR/uefi"
     mkdir -p "$uefi_outdir"
@@ -2568,6 +2602,10 @@ case $compress in
         ;;
 esac
 
+COMPRESSED_FILES_MANIFEST="$DRACUT_TMPDIR/compressed_files.manifest"
+UNCOMPRESSED_FILES_MANIFEST="$DRACUT_TMPDIR/uncompressed_files.manifest"
+create_cpio_file_lists "$initdir" "$COMPRESSED_FILES_MANIFEST" "$UNCOMPRESSED_FILES_MANIFEST"
+
 if [[ -n $enhanced_cpio ]]; then
     if [[ $compress == "cat" ]]; then
         # dracut-cpio appends by default, so any ucode remains
@@ -2578,12 +2616,23 @@ if [[ -n $enhanced_cpio ]]; then
         cpio_outfile="${DRACUT_TMPDIR}/initramfs.img.uncompressed"
     fi
 
+    if [ -s "$COMPRESSED_FILES_MANIFEST" ]; then
+        if ! (
+            umask 077
+            cd "$initdir"
+            $enhanced_cpio ${cpio_owner:+--owner "$cpio_owner"} --mtime 0 --data-align \
+                "$cpio_align" "${DRACUT_TMPDIR}/initramfs.img" < "$COMPRESSED_FILES_MANIFEST"
+        ); then
+            dfatal "dracut-cpio: creation of $outfile failed"
+            exit 1
+        fi
+    fi
+
     if ! (
         umask 077
         cd "$initdir"
-        find . -print0 | sort -z \
-            | $enhanced_cpio --null ${cpio_owner:+--owner "$cpio_owner"} \
-                --mtime 0 --data-align "$cpio_align" "$cpio_outfile" || exit 1
+        $enhanced_cpio ${cpio_owner:+--owner "$cpio_owner"} --mtime 0 --data-align \
+            "$cpio_align" "$cpio_outfile" < "$UNCOMPRESSED_FILES_MANIFEST" || exit 1
         [[ $compress == "cat" ]] && exit 0
         $compress < "$cpio_outfile" >> "${DRACUT_TMPDIR}/initramfs.img" \
             && rm "$cpio_outfile"
@@ -2593,12 +2642,23 @@ if [[ -n $enhanced_cpio ]]; then
     fi
     unset cpio_outfile
 else
+    if [ -s "$COMPRESSED_FILES_MANIFEST" ]; then
+        if ! (
+            umask 077
+            cd "$initdir"
+            cpio -o ${CPIO_REPRODUCIBLE:+--reproducible} ${cpio_owner:+-R "$cpio_owner"} -H newc --quiet \
+                < "$COMPRESSED_FILES_MANIFEST" >> "${DRACUT_TMPDIR}/initramfs.img"
+        ); then
+            dfatal "Creation of $outfile failed"
+            exit 1
+        fi
+    fi
+
     if ! (
         umask 077
         cd "$initdir"
-        find . -print0 | sed -e 's,\./,,g' | sort -z \
-            | cpio -o ${CPIO_REPRODUCIBLE:+--reproducible} --null ${cpio_owner:+-R "$cpio_owner"} -H newc --quiet \
-            | $compress >> "${DRACUT_TMPDIR}/initramfs.img"
+        cpio -o ${CPIO_REPRODUCIBLE:+--reproducible} ${cpio_owner:+-R "$cpio_owner"} -H newc --quiet \
+            < "$UNCOMPRESSED_FILES_MANIFEST" | $compress >> "${DRACUT_TMPDIR}/initramfs.img"
     ); then
         dfatal "Creation of $outfile failed"
         exit 1
