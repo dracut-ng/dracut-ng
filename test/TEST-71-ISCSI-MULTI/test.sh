@@ -125,6 +125,7 @@ test_run() {
 }
 
 test_check() {
+    set_kversion_and_vmlinux
     if ! type -p dhclient &> /dev/null; then
         echo "Test needs dhclient for server networking... Skipping"
         return 1
