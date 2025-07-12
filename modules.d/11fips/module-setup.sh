@@ -59,7 +59,9 @@ install() {
     inst_hook pre-udev 01 "$moddir/fips-load-crypto.sh"
     inst_script "$moddir/fips.sh" /sbin/fips.sh
 
-    inst_multiple sha512hmac rmmod insmod mount uname umount grep sed cut find sort cat tail tr
+    inst_multiple rmmod insmod mount uname umount grep sed cut find sort cat tail tr
+
+    inst_multiple -o sha512hmac
 
     inst_simple /etc/system-fips
 
