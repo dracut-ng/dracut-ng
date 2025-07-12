@@ -540,6 +540,13 @@ will not be able to boot. Equivalent to "--compress=zstd -15 -q -T0".
     supported compressors and compressor specific options. If squash module is
     not called when building the initramfs, this option will not take effect.
 
+**--handle-precompress** _{no|split|decomp}_::
+    Control how already-compressed modules and firmware files are handled.
+    "decomp" will decompress already-compressed files before adding them to the
+    initramfs for better compression.  "split" (the default) will split the
+    files into a separate cpio archive that is not compressed for speed.
+    "no" does neither.
+
 **--no-compress**::
     Do not compress the generated initramfs. This will override any other
     compression options.
