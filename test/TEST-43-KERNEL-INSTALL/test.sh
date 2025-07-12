@@ -64,7 +64,7 @@ test_setup() {
     cp /usr/lib/dracut/test/dracut.conf.d/test/test.conf /usr/lib/dracut/dracut.conf.d/
 
     # enable rescue boot config
-    cp /usr/lib/dracut/dracut.conf.d/rescue/50-rescue.conf /usr/lib/dracut/dracut.conf.d/
+    cp /usr/lib/dracut/dracut.conf.d/rescue/*.conf /usr/lib/dracut/dracut.conf.d/
 
     # using kernell-install to invoke dracut
     mkdir -p "$BOOT_ROOT/$TOKEN/$KVERSION" "$BOOT_ROOT/loader/entries" "$BOOT_ROOT/$TOKEN/0-rescue/loader/entries"
