@@ -40,6 +40,13 @@ Additional debugging info can be produced by adding **rd.debug** to the kernel
 command line. _/run/initramfs/rdsosreport.txt_ contains all logs and the output
 of some tools. It should be attached to any report about dracut problems.
 
+Dracut is expected to run as the root user to have unrestricted access to the
+root filesystem during initramfs generation. Running dracut as any user other
+than root supports only a limited set of functionalities.
+As an example, to facilitate secure sulogin in the emergency console with the
+host password requires read access to /etc/shadow on the host, which is usually
+only allowed for the root user.
+
 USAGE
 -----
 
