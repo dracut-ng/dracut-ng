@@ -36,9 +36,6 @@ RUN \
     echo 'sys-apps/systemd fido2 ukify qrcode cryptsetup' >> /etc/portage/package.use/systemd ;\
     # Support thin volumes and build all of LVM2 including daemons and tools like lvchange \
     echo 'sys-fs/lvm2 thin lvm' >> /etc/portage/package.use/lvm2 ;\
-    # force hostonly mode as this is the config recommended by https://wiki.gentoo.org/wiki/Dracut \
-    mkdir -p /usr/lib/dracut/dracut.conf.d/ ;\
-    echo 'hostonly="yes"' > /usr/lib/dracut/dracut.conf.d/50-hostonly.conf ;\
     # Ensure everything is up to date before we start \
     emerge --quiet --update --deep --newuse --autounmask-continue=y --with-bdeps=y @world
 
