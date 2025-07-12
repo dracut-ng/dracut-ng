@@ -380,7 +380,8 @@ _/etc/dracut.conf.d/_.
 _/etc/dracut.conf.d/_::
 Any _/etc/dracut.conf.d/*.conf_ file can override the values in
 _/etc/dracut.conf_. The configuration files are read in alphanumerical
-order.
+order. The recommended ordering for distribution or user provided
+configuration is in the range of 50-59.
 
 == AUTHOR
 Harald Hoyer
