@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+set -eu
 
 [ -z "${USE_NETWORK-}" ] && USE_NETWORK="network"
 
@@ -178,8 +178,10 @@ test_client() {
 }
 
 test_setup() {
+    DRACUT_PATH=${DRACUT_PATH:-/sbin /bin /usr/sbin /usr/bin}
     # shellcheck disable=SC2153
     export kernel=$KVERSION
+    export no_kernel=
     export srcmods="/lib/modules/$kernel/"
     rm -rf -- "$TESTDIR"/overlay
     (
