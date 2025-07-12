@@ -50,6 +50,9 @@ install() {
         findmnt \
         kmod \
         less \
+        halt \
+        poweroff \
+        reboot \
         sysctl
 
     inst_binary "${dracutbasedir}/dracut-util" "/usr/bin/dracut-util"
