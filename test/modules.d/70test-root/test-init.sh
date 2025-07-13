@@ -22,6 +22,11 @@ if command -v systemctl > /dev/null 2>&1; then
     systemctl --failed --no-legend --no-pager >> /run/failed
 fi
 
+# run the test case specific test assertion if exists
+if [ -x "/assertion.sh" ]; then
+    . /assertion.sh
+fi
+
 if [ -s /run/failed ]; then
     echo "**************************FAILED**************************"
     cat /run/failed
