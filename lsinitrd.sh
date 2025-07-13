@@ -358,11 +358,11 @@ unpack_files() {
 
 read -r -N 2 bin < "$image"
 if [ "$bin" = "MZ" ]; then
-    command -v objcopy > /dev/null || {
+    command -v "${OBJCOPY:-objcopy}" > /dev/null || {
         echo "Need 'objcopy' to unpack an UEFI executable."
         exit 1
     }
-    objcopy \
+    "${OBJCOPY:-objcopy}" \
         --dump-section .linux="$TMPDIR/vmlinuz" \
         --dump-section .initrd="$TMPDIR/initrd.img" \
         --dump-section .cmdline="$TMPDIR/cmdline.txt" \
