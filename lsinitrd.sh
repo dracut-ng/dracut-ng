@@ -397,21 +397,34 @@ if ((${#filenames[@]} <= 0)) && [[ -z $unpack ]] && [[ -z $unpackearly ]]; then
     echo "========================================================================"
 fi
 
-SKIP=
+if [[ -f "$dracutbasedir/src/skipcpio/skipcpio" ]]; then
+    SKIP="$dracutbasedir/src/skipcpio/skipcpio"
+else
+    SKIP="$dracutbasedir/skipcpio"
+fi
+
+NEEDSKIP=0
 read -r -N 6 bin < "$image"
 case $bin in
     $'\x71\xc7'* | 070701)
         CAT="cat --"
         is_early=$(cpio --extract --verbose --quiet --to-stdout -- 'early_cpio' < "$image" 2> /dev/null)
-        # Debian mkinitramfs does not create the file 'early_cpio', so let's check if firmware files exist
-        # FIXME: We have no way to detect the uncompressed cpio.  We could do it with skipcpio, but that
-        # defeats the point.  We could look for /init, but gotta check what mkinitramfs does there.
-        [[ "$is_early" ]] || [[ $(cpio --list --verbose --quiet --to-stdout -- 'kernel/*/microcode/*.bin' < "$image" 2> /dev/null) != "" ]] && is_early=1
+        # Debian mkinitramfs does not create the file 'early_cpio'...
+        if [[ ! "$is_early" ]]; then
+            # So let's check if firmware files exist
+            if [[ $(cpio --list --verbose --quiet --to-stdout -- 'kernel/*/microcode/*.bin' < "$image" 2> /dev/null) != "" ]]; then
+                is_early=1
+            # Or if "init" is absent ("bin", "etc"... also works, really the only thing present would be usr/lib/{firmware,modules})
+            elif [[ $(cpio --list --verbose --quiet --to-stdout -- 'init' < "$image" 2> /dev/null) == "" ]]; then
+                is_early=2
+            fi
+        fi
         if [[ "$is_early" ]]; then
+            NEEDSKIP=1
             if [[ -n $unpack ]]; then
                 # should use --unpackearly for early CPIO
                 # However, early_cpio > 1 is not really the microcode "early cpio" part, but the
-                # "decompressed modules and firmware" which we want.
+                # "compressed modules and firmware" which we want.
                 if ((is_early != 1)); then
                     unpack_files
                 fi
@@ -423,14 +436,9 @@ case $bin in
                 if ((is_early == 1)); then
                     echo "Early CPIO image (microcode only)"
                 else
-                    echo "Early CPIO image (decompressed modules and firmware)"
+                    echo "Subearly CPIO image (compressed modules and firmware)"
                 fi
                 list_files
-            fi
-            if [[ -f "$dracutbasedir/src/skipcpio/skipcpio" ]]; then
-                SKIP="$dracutbasedir/src/skipcpio/skipcpio"
-            else
-                SKIP="$dracutbasedir/skipcpio"
             fi
             if ! [[ -x $SKIP ]]; then
                 echo
@@ -458,99 +466,113 @@ split_cpio() {
     rm "$TMPDIR/0.cpio"
 }
 
-# shellcheck disable=SC2317  # assigned to CAT and $CAT called later
-skipcpio() {
-    $SKIP "$@" | $ORIG_CAT
-}
-
 process_one() {
     local image="$1"
     read -r -N 6 bin < "$image"
     case $bin in
-        $'\x1f\x8b'*)
-            CAT="zcat --"
-            ;;
-        BZh*)
-            CAT="bzcat --"
-            ;;
         $'\x71\xc7'* | 070701)
             CAT="cat --"
             ;;
-        $'\x02\x21'*)
-            CAT="lz4 -d -c"
-            ;;
-        $'\x89'LZO$'\0'*)
-            CAT="lzop -d -c"
-            ;;
-        $'\x28\xB5\x2F\xFD'*)
-            CAT="zstd -d -c"
-            ;;
         *)
-            if echo "test" | xz | xzcat --single-stream > /dev/null 2>&1; then
-                CAT="xzcat --single-stream --"
-            else
-                CAT="xzcat --"
-            fi
+            printf "Unknown magic for non-last CPIO image (%s): %q" "$image" "$bin">&2
+            ((ret += 1))
+            return 1
             ;;
     esac
 
-    type "${CAT%% *}" > /dev/null 2>&1 || {
-        echo "Need '${CAT%% *}' to unpack the initramfs."
-        exit 1
-    }
-
-
-    if ((${#filenames[@]} > 1)); then
-        TMPFILE="$TMPDIR/initrd.cpio"
-        $CAT "$image" 2> /dev/null > "$TMPFILE"
-        # shellcheck disable=SC2317  # assigned to CAT and $CAT called later
-        pre_decompress() {
-            cat "$TMPFILE"
-        }
-        CAT=pre_decompress
-    fi
-
     if [[ -n $unpack ]]; then
-    unpack_files
+        unpack_files
     elif ((${#filenames[@]} > 0)); then
         extract_files
     else
-        # shellcheck disable=SC2046
-        version=$($CAT "$image" | cpio --extract --verbose --quiet --to-stdout -- \
-            $(dracutlibdirs 'dracut-*') 2> /dev/null)
-        ((ret += $?))
-        echo "Version: $version"
-        echo
-        if [ "$modules" -eq 1 ]; then
-            list_modules
-            echo "========================================================================"
-        else
-            echo -n "Arguments: "
-            # shellcheck disable=SC2046
-            $CAT "$image" | cpio --extract --verbose --quiet --to-stdout -- \
-                $(dracutlibdirs build-parameter.txt) 2> /dev/null
-            echo
-            list_modules
-            list_files
-            list_squash_content
-            echo
-            list_cmdline
-        fi
+        echo "Subearly CPIO image ($i out of $nsplit)"
+        list_files
     fi
 }
 
-
 ret=0
-if [[ $SKIP ]]; then
+if ((NEEDSKIP)); then
     type "cmp" > /dev/null 2>&1 || {
         echo "Need 'cmp' to unpack the initramfs."
         exit 1
     }
     split_cpio
-    for (( i = 1; i <= nsplit; i++ )); do
+    for ((i = 1; i <= nsplit-1; i++)); do
         process_one "$TMPDIR/$i.cpio"
     done
-else
-    process_one "$image"
+    image="$TMPDIR/$nsplit.cpio"
 fi
+
+read -r -N 6 bin < "$image"
+case $bin in
+    $'\x1f\x8b'*)
+        CAT="zcat --"
+        ;;
+    BZh*)
+        CAT="bzcat --"
+        ;;
+    $'\x71\xc7'* | 070701)
+        CAT="cat --"
+        ;;
+    $'\x02\x21'*)
+        CAT="lz4 -d -c"
+        ;;
+    $'\x89'LZO$'\0'*)
+        CAT="lzop -d -c"
+        ;;
+    $'\x28\xB5\x2F\xFD'*)
+        CAT="zstd -d -c"
+        ;;
+    *)
+        if echo "test" | xz | xzcat --single-stream > /dev/null 2>&1; then
+            CAT="xzcat --single-stream --"
+        else
+            CAT="xzcat --"
+        fi
+        ;;
+esac
+
+type "${CAT%% *}" > /dev/null 2>&1 || {
+    echo "Need '${CAT%% *}' to unpack the initramfs."
+    exit 1
+}
+
+if ((${#filenames[@]} > 1)); then
+    TMPFILE="$TMPDIR/initrd.cpio"
+    $CAT "$image" 2> /dev/null > "$TMPFILE"
+    # shellcheck disable=SC2317  # assigned to CAT and $CAT called later
+    pre_decompress() {
+        cat "$TMPFILE"
+    }
+    CAT=pre_decompress
+fi
+
+if [[ -n $unpack ]]; then
+    unpack_files
+elif ((${#filenames[@]} > 0)); then
+    extract_files
+else
+    # shellcheck disable=SC2046
+    version=$($CAT "$image" | cpio --extract --verbose --quiet --to-stdout -- \
+        $(dracutlibdirs 'dracut-*') 2> /dev/null)
+    ((ret += $?))
+    echo "Version: $version"
+    echo
+    if [ "$modules" -eq 1 ]; then
+        list_modules
+        echo "========================================================================"
+    else
+        echo -n "Arguments: "
+        # shellcheck disable=SC2046
+        $CAT "$image" | cpio --extract --verbose --quiet --to-stdout -- \
+            $(dracutlibdirs build-parameter.txt) 2> /dev/null
+        echo
+        list_modules
+        list_files
+        list_squash_content
+        echo
+        list_cmdline
+    fi
+fi
+
 exit "$ret"

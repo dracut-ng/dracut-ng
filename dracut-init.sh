@@ -1162,11 +1162,14 @@ dracut_kernel_post_split() {
     mkdir -p "$no_compress_dir"/d/lib/modules/"$kernel"/
     mkdir -p "$no_compress_dir"/d/lib/firmware/
 
-    mv "$dstdir"/lib/firmware/* "$no_compress_dir"/d/lib/firmware/
-    mv "$dstdir"/lib/modules/"$kernel"/* "$no_compress_dir"/d/lib/modules/"$kernel"/
-
-    rm -rf "$dstdir"/lib/firmware
-    rm -rf "$dstdir"/lib/modules/"$kernel"
+    if mv -t "$no_compress_dir"/d/lib/firmware/ "$dstdir"/lib/firmware/* \
+        || mv -t "$no_compress_dir"/d/lib/modules/"$kernel"/ "$dstdir"/lib/modules/"$kernel"/*; then
+        rm -rf "$dstdir"/lib/firmware
+        rm -rf "$dstdir"/lib/modules/"$kernel"
+    else
+        dwarm "Nothing to move to the non-compressed directory, skipping."
+        handle_precompress=no
+    fi
 }
 
 instmods() {

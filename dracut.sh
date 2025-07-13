@@ -2515,7 +2515,7 @@ fi
 # This part is also never compressed.  Putting it after the main portion will require code for alignment
 # handling.
 if [[ $handle_precompress == split ]]; then
-    echo 2 > "$no_compress_dir/d/early_cpio" 
+    echo 2 > "$no_compress_dir/d/early_cpio"
 
     if [[ $DRACUT_REPRODUCIBLE ]]; then
         find "$no_compress_dir/d" -newer "$dracutbasedir/dracut-functions.sh" -print0 \
