@@ -48,6 +48,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     lvm2 \
     make \
     mdadm \
+    NetworkManager \
     nfs-utils \
     nvme-cli \
     parted \
