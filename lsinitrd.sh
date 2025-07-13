@@ -41,6 +41,9 @@ usage() {
 
 sorted=0
 modules=0
+: "${OBJCOPY:=objcopy}"
+[[ ${OBJCOPY} != /* ]] && OBJCOPY=$(command -v "${OBJCOPY}")
+
 unset verbose
 declare -A filenames
 
@@ -357,11 +360,11 @@ unpack_files() {
 
 read -r -N 2 bin < "$image"
 if [ "$bin" = "MZ" ]; then
-    command -v objcopy > /dev/null || {
+    command -v "${OBJCOPY}" > /dev/null || {
         echo "Need 'objcopy' to unpack an UEFI executable."
         exit 1
     }
-    objcopy \
+    "${OBJCOPY}" \
         --dump-section .linux="$TMPDIR/vmlinuz" \
         --dump-section .initrd="$TMPDIR/initrd.img" \
         --dump-section .cmdline="$TMPDIR/cmdline.txt" \
