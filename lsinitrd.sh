@@ -398,29 +398,48 @@ if ((${#filenames[@]} <= 0)) && [[ -z $unpack ]] && [[ -z $unpackearly ]]; then
     echo "========================================================================"
 fi
 
+if [[ -f "$dracutbasedir/src/skipcpio/skipcpio" ]]; then
+    SKIP="$dracutbasedir/src/skipcpio/skipcpio"
+else
+    SKIP="$dracutbasedir/skipcpio"
+fi
+
+NEEDSKIP=0
 read -r -N 6 bin < "$image"
 case $bin in
     $'\x71\xc7'* | 070701)
         CAT="cat --"
         is_early=$(cpio --extract --verbose --quiet --to-stdout -- 'early_cpio' < "$image" 2> /dev/null)
-        # Debian mkinitramfs does not create the file 'early_cpio', so let's check if firmware files exist
-        [[ "$is_early" ]] || is_early=$(cpio --list --verbose --quiet --to-stdout -- 'kernel/*/microcode/*.bin' < "$image" 2> /dev/null)
+        # Debian mkinitramfs does not create the file 'early_cpio'...
+        if [[ ! $is_early ]]; then
+            # So let's check if firmware files exist
+            if [[ $(cpio --list --verbose --quiet --to-stdout -- 'kernel/*/microcode/*.bin' < "$image" 2> /dev/null) != "" ]]; then
+                is_early=1
+            # Or if "init" is absent ("bin", "etc"... also works, really the only thing present would be usr/lib/{firmware,modules})
+            elif [[ $(cpio --list --verbose --quiet --to-stdout -- 'init' < "$image" 2> /dev/null) == "" ]]; then
+                is_early=2
+            fi
+        fi
         if [[ "$is_early" ]]; then
+            NEEDSKIP=1
             if [[ -n $unpack ]]; then
                 # should use --unpackearly for early CPIO
-                :
-            elif [[ -n $unpackearly ]]; then
+                # However, early_cpio > 1 is not really the microcode "early cpio" part, but the
+                # "compressed modules and firmware" which we want.
+                if ((is_early != 1)); then
+                    unpack_files
+                fi
+            elif [[ -n $unpackearly ]] && ((is_early == 1)); then
                 unpack_files
             elif ((${#filenames[@]} > 0)); then
                 extract_files
             else
-                echo "Early CPIO image"
+                if ((is_early == 1)); then
+                    echo "Early CPIO image (microcode only)"
+                else
+                    echo "Subearly CPIO image (compressed modules and firmware)"
+                fi
                 list_files
-            fi
-            if [[ -f "$dracutbasedir/src/skipcpio/skipcpio" ]]; then
-                SKIP="$dracutbasedir/src/skipcpio/skipcpio"
-            else
-                SKIP="$dracutbasedir/skipcpio"
             fi
             if ! [[ -x $SKIP ]]; then
                 echo
@@ -432,11 +451,60 @@ case $bin in
         ;;
 esac
 
-if [[ $SKIP ]]; then
-    bin="$($SKIP "$image" | { read -r -N 6 bin && echo "$bin"; })"
-else
+nsplit=0
+# Recursively split the cpio archive into smaller parts.  We assume that all
+# preceeding parts are uncompressed cpio, which is not always true of the full
+# "initramfs buffer format", but is true for images from mkinitramfs and dracut.
+# To support the full format we'd need "skipgzip" and other compress-specific
+# tools.
+split_cpio() {
+    cp "$image" "$TMPDIR/0.cpio"
+    $SKIP "$TMPDIR/$nsplit.cpio" > "$TMPDIR/$((nsplit + 1)).cpio"
+    while ! cmp -s "$TMPDIR/$nsplit.cpio" "$TMPDIR/$((nsplit + 1)).cpio"; do
+        nsplit=$((nsplit + 1))
+        $SKIP "$TMPDIR/$nsplit.cpio" > "$TMPDIR/$((nsplit + 1)).cpio"
+    done
+    rm "$TMPDIR/0.cpio"
+}
+
+process_one() {
+    local image="$1"
     read -r -N 6 bin < "$image"
+    case $bin in
+        $'\x71\xc7'* | 070701)
+            CAT="cat --"
+            ;;
+        *)
+            printf "Unknown magic for non-last CPIO image (%s): %q" "$image" "$bin" >&2
+            ((ret += 1))
+            return 1
+            ;;
+    esac
+
+    if [[ -n $unpack ]]; then
+        unpack_files
+    elif ((${#filenames[@]} > 0)); then
+        extract_files
+    else
+        echo "Subearly CPIO image ($i out of $nsplit)"
+        list_files
+    fi
+}
+
+ret=0
+if ((NEEDSKIP)); then
+    type "cmp" > /dev/null 2>&1 || {
+        echo "Need 'cmp' to unpack the initramfs."
+        exit 1
+    }
+    split_cpio
+    for ((i = 1; i <= nsplit - 1; i++)); do
+        process_one "$TMPDIR/$i.cpio"
+    done
+    image="$TMPDIR/$nsplit.cpio"
 fi
+
+read -r -N 6 bin < "$image"
 case $bin in
     $'\x1f\x8b'*)
         CAT="zcat --"
@@ -470,17 +538,7 @@ type "${CAT%% *}" > /dev/null 2>&1 || {
     exit 1
 }
 
-# shellcheck disable=SC2317  # assigned to CAT and $CAT called later
-skipcpio() {
-    $SKIP "$@" | $ORIG_CAT
-}
-
-if [[ $SKIP ]]; then
-    ORIG_CAT="$CAT"
-    CAT=skipcpio
-fi
-
-if ((${#filenames[@]} > 1)); then
+if ((${#filenames[@]} > 1)) || [[ -z $unpack && ${#filenames[@]} -eq 0 ]]; then
     TMPFILE="$TMPDIR/initrd.cpio"
     $CAT "$image" 2> /dev/null > "$TMPFILE"
     # shellcheck disable=SC2317  # assigned to CAT and $CAT called later
@@ -489,8 +547,6 @@ if ((${#filenames[@]} > 1)); then
     }
     CAT=pre_decompress
 fi
-
-ret=0
 
 if [[ -n $unpack ]]; then
     unpack_files
