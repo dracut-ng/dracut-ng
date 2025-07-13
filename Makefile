@@ -234,7 +234,7 @@ endif
 	if ! [ -n "$(systemdsystemunitdir)" ]; then \
 		rm -rf $(DESTDIR)$(pkglibdir)/test/TEST-[0-9][0-9]-*SYSTEMD* ;\
 		rm -rf $(DESTDIR)$(pkglibdir)/modules.d/*systemd* $(DESTDIR)$(mandir)/*.service.* ; \
-		for i in bluetooth connman dbus* fido2 lvmmerge lvmthinpool-monitor memstrack network-manager pcsc pkcs11 rngd squash* tpm2-tss; do \
+		for i in bluetooth connman dbus* fido2 lvmmerge lvmthinpool-monitor memstrack pcsc pkcs11 rngd squash* tpm2-tss; do \
 			rm -rf $(DESTDIR)$(pkglibdir)/modules.d/[0-9][0-9]$${i}; \
 		done \
 	fi
