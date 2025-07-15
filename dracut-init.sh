@@ -345,20 +345,7 @@ dracut_instmods() {
 # this is not used within dracut itself, but external modules use it,
 # do not remove it!
 inst_library() {
-    local _ret _hostonly_install
-    if [[ $1 == "-H" ]]; then
-        _hostonly_install="-H"
-        shift
-    fi
-    [[ -e ${initdir}/"${2:-$1}" ]] && return 0 # already there
-    [[ -e $1 ]] || return 1                    # no source
-    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} ${_hostonly_install:+-H} "$@"; then
-        return 0
-    else
-        _ret=$?
-        derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} ${_hostonly_install:+-H} "$@"
-        return $_ret
-    fi
+    inst "$@"
 }
 
 inst_binary() {
