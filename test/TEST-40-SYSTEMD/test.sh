@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 # shellcheck disable=SC2034
-TEST_DESCRIPTION="root filesystem on a ext4 filesystem"
+TEST_DESCRIPTION="root filesystem on a ext4 filesystem with systemd but without initqueue"
 
 test_check() {
     command -v systemctl &> /dev/null
@@ -62,7 +62,7 @@ test_setup() {
     #make sure --omit-drivers does not filter out drivers using regexp to test for an earlier regression (assuming there is no one letter linux kernel module needed to run the test)
 
     test_dracut \
-        --omit "fido2" \
+        --omit "fido2 initqueue" \
         --omit-drivers 'a b c d e f g h i j k l m n o p q r s t u v w x y z' \
         -i ./systemd-analyze.sh /lib/dracut/hooks/pre-pivot/00-systemd-analyze.sh \
         -i "/bin/true" "/usr/bin/man"
