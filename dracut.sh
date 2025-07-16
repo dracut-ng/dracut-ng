@@ -1076,9 +1076,9 @@ if ! [[ $kernel ]]; then
     if type -P systemd-detect-virt &> /dev/null && container=$(systemd-detect-virt -c) &> /dev/null; then
         dinfo "*** Detected container: $container ***"
         # shellcheck disable=SC2012
-        kernel="$(cd /lib/modules && ls -1 | tail -1)"
+        kernel="$(cd /lib/modules && ls -1v | tail -1)"
         # shellcheck disable=SC2012
-        [[ $kernel ]] || kernel="$(cd /usr/lib/modules && ls -1 | tail -1)"
+        [[ $kernel ]] || kernel="$(cd /usr/lib/modules && ls -1v | tail -1)"
     fi
     [[ $kernel ]] || kernel="$(uname -r)"
 fi

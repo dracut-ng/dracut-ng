@@ -106,9 +106,9 @@ determine_kernel_version() {
     # we are running inside a container already
 
     # shellcheck disable=SC2012
-    [[ ${KVERSION-} ]] || KVERSION="$(cd /lib/modules && ls -1 | tail -1)"
+    [[ ${KVERSION-} ]] || KVERSION="$(cd /lib/modules && ls -1v | tail -1)"
     # shellcheck disable=SC2012
-    [[ ${KVERSION-} ]] || KVERSION="$(cd /usr/lib/modules && ls -1 | tail -1)"
+    [[ ${KVERSION-} ]] || KVERSION="$(cd /usr/lib/modules && ls -1v | tail -1)"
     [[ ${KVERSION-} ]] || KVERSION="$(uname -r)"
 }
 
