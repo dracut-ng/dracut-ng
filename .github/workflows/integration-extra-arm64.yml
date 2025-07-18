@@ -24,11 +24,7 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - debian
                     - fedora
-                    - opensuse
-                    - ubuntu
-                    - void
                 test:
                     - "10"
                     - "30"

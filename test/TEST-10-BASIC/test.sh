@@ -29,7 +29,14 @@ test_setup() {
     dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync "$TESTDIR"/root.img
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync "$TESTDIR"/root.img
 
+    #ls -lRa /lib/modules
+    #ls -lRa /usr/lib/modules
+
     test_dracut
+
+    #ls -la /usr/lib/modules/6.15.6-200.fc42.aarch64/vmlinuz
+    sbverify --list vmlinuz
+    sbverify --list /usr/lib/modules/6.15.6-200.fc42.aarch64/vmlinuz
 }
 
 # shellcheck disable=SC1090

@@ -113,7 +113,7 @@ determine_kernel_version() {
 }
 
 set_vmlinux_env() {
-    VMLINUZ=${VMLINUZ-"/lib/modules/${KVERSION}/vmlinuz"}
+    VMLINUZ=${VMLINUZ-"/usr/lib/modules/${KVERSION}/vmlinuz"}
     if ! [ -f "$VMLINUZ" ]; then
         VMLINUZ="/lib/modules/${KVERSION}/vmlinux"
     fi
