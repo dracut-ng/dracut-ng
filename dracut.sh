@@ -23,6 +23,11 @@
 unset BASH_ENV
 unset GZIP
 
+: "${OBJCOPY:=objcopy}"
+[[ ${OBJCOPY} != /* ]] && OBJCOPY=$(command -v "${OBJCOPY}")
+: "${OBJDUMP:=objdump}"
+[[ ${OBJDUMP} != /* ]] && OBJDUMP=$(command -v "${OBJDUMP}")
+
 # Verify bash version, current minimum is 4
 if ((BASH_VERSINFO[0] < 4)); then
     printf "%s\n" "dracut[F]: dracut requires at least Bash 4." >&2
@@ -1657,7 +1662,7 @@ if [[ ! $print_cmdline ]]; then
     fi
 
     if [[ $uefi == yes ]]; then
-        if ! command -v objcopy &> /dev/null; then
+        if ! command -v "${OBJCOPY}" &> /dev/null; then
             dfatal "Need 'objcopy' to create a UEFI executable"
             exit 1
         fi
@@ -2646,7 +2651,7 @@ clean_sbat_string() {
 get_sbat_string() {
     local inp=$1
     local out=$uefi_outdir/$2
-    objcopy -O binary --only-section=.sbat "$inp" "$out"
+    "${OBJCOPY}" -O binary --only-section=.sbat "$inp" "$out"
     clean_sbat_string "$out"
 }
 
@@ -2664,7 +2669,7 @@ if [[ $uefi == yes ]]; then
         fi
     fi
 
-    offs=$(($(objdump -h "$uefi_stub" 2> /dev/null | awk 'NF==7 {size=$3;
+    offs=$(($("${OBJDUMP}" -h "$uefi_stub" 2> /dev/null | awk 'NF==7 {size=$3;
                 offset=$4} END {print "16#"size" + 16#"offset}')))
     if [[ $offs -eq 0 ]]; then
         dfatal "Failed to get the size of $uefi_stub to create UEFI image file"
@@ -2727,7 +2732,7 @@ if [[ $uefi == yes ]]; then
 
     tmp_uefi_stub=$uefi_outdir/elf.stub
     cp "$uefi_stub" "$tmp_uefi_stub"
-    objcopy --remove-section .sbat "$tmp_uefi_stub" &> /dev/null
+    "${OBJCOPY}" --remove-section .sbat "$tmp_uefi_stub" &> /dev/null
 
     if command -v ukify &> /dev/null; then
         dinfo "*** Using ukify to create UKI ***"
@@ -2757,7 +2762,7 @@ if [[ $uefi == yes ]]; then
             exit 1
         fi
     else
-        if objcopy \
+        if "${OBJCOPY}" \
             ${DRACUT_REPRODUCIBLE:+--enable-deterministic-archives --preserve-dates} \
             ${uefi_osrelease:+--add-section .osrel="$uefi_osrelease" --change-section-vma .osrel=$(printf 0x%x "$uefi_osrelease_offs")} \
             ${uefi_cmdline:+--add-section .cmdline="$uefi_cmdline" --change-section-vma .cmdline=$(printf 0x%x "$uefi_cmdline_offs")} \
