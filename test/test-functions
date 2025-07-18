@@ -49,7 +49,7 @@ test_dracut() {
     fi
 
     # pick up configuration from $TESTDIR/dracut.conf.d when running the tests
-    TEST_DRACUT_ARGS+=" --confdir $TESTDIR/dracut.conf.d --add-confdir test --keep --tmpdir $TESTDIR/initrd --kver $KVERSION"
+    TEST_DRACUT_ARGS+=" --confdir $TESTDIR/dracut.conf.d --add-confdir test --keep --tmpdir $TESTDIR/initrd"
 
     # include $TESTDIR"/overlay if exists
     if [ -d "$TESTDIR"/overlay ]; then
@@ -62,6 +62,8 @@ test_dracut() {
     "$DRACUT" \
         "${TEST_DRACUT_ARGS_ARRAY[@]}" \
         "$@" "$TESTDIR"/initramfs.testing || return 1
+
+   KVERSION=$(lsinitrd "$TESTDIR"/initramfs.testing | grep modules.dep | head -1 | rev | cut -d'/' -f2 | rev)
 }
 
 # Wait for the server QEMU has been started up.
@@ -97,19 +99,6 @@ ovmf_code() {
         "/usr/share/qemu/ovmf-x86_64-4m.bin"; do
         [[ -s $path ]] && echo -n "$path" && return
     done
-}
-
-determine_kernel_version() {
-    # inspired by kernel version detection in lsinitrd.sh
-
-    # Some test containers do not include systemd-detect-virt, so let's just assume
-    # we are running inside a container already
-
-    # shellcheck disable=SC2012
-    [[ ${KVERSION-} ]] || KVERSION="$(cd /lib/modules && ls -1v | tail -1)"
-    # shellcheck disable=SC2012
-    [[ ${KVERSION-} ]] || KVERSION="$(cd /usr/lib/modules && ls -1v | tail -1)"
-    [[ ${KVERSION-} ]] || KVERSION="$(uname -r)"
 }
 
 set_vmlinux_env() {
@@ -148,7 +137,6 @@ set_vmlinux_env() {
 }
 
 set_test_envonment_variables() {
-    determine_kernel_version
     set_vmlinux_env
 }
 
@@ -244,13 +232,13 @@ while (($# > 0)); do
     case $1 in
         --run)
             echo "TEST RUN: $TEST_DESCRIPTION"
-            set_test_envonment_variables
-            test_check && test_run
+            #set_test_envonment_variables
+            test_check && set_test_envonment_variables && test_run
             exit $?
             ;;
         --setup)
             echo "TEST SETUP: $TEST_DESCRIPTION"
-            set_test_envonment_variables
+            #set_test_envonment_variables
             test_check && test_setup
             exit $?
             ;;
@@ -262,7 +250,7 @@ while (($# > 0)); do
             exit $?
             ;;
         --all)
-            set_test_envonment_variables
+            #set_test_envonment_variables
             if ! test_check 2 &> test${TEST_RUN_ID:+-$TEST_RUN_ID}.log; then
                 if [[ ${V-} == "1" || ${V-} == "2" ]]; then
                     cat test${TEST_RUN_ID:+-$TEST_RUN_ID}.log
@@ -276,7 +264,7 @@ while (($# > 0)); do
                 tee_command="tee"
                 set -o pipefail
                 (
-                    test_setup && test_run
+                    test_setup && set_test_envonment_variables && test_run
                     ret=$?
                     test_cleanup
                     if ((ret != 0)) && [[ -f "$TESTDIR"/server.log ]]; then
@@ -288,7 +276,7 @@ while (($# > 0)); do
                 ) 2>&1 | "$tee_command" "test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
             else
                 (
-                    test_setup && test_run
+                    test_setup && set_test_envonment_variables && test_run
                     ret=$?
                     test_cleanup
                     rm -fr -- "$TESTDIR"
