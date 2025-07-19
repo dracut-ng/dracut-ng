@@ -4,6 +4,7 @@ set -e
 TEST_DESCRIPTION="root filesystem on a ext4 filesystem with systemd but without initqueue"
 
 test_check() {
+    set_kversion_and_vmlinux
     command -v systemctl &> /dev/null
 }
 

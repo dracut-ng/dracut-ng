@@ -8,6 +8,7 @@ TEST_DESCRIPTION="kernel cpio extraction tests for dracut-cpio"
 # see dracut-cpio source for unit tests
 
 test_check() {
+    set_kversion_and_vmlinux
     if ! [[ -x "$PKGLIBDIR/dracut-cpio" ]]; then
         echo "Test needs dracut-cpio... Skipping"
         return 1
