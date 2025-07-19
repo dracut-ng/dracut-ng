@@ -503,6 +503,8 @@ else
         $(dracutlibdirs 'dracut-*') 2> /dev/null)
     ((ret += $?))
     echo "Version: $version"
+    kernel=$($CAT "$image" | cpio --extract --quiet --list 'usr/lib/modules/*/modules.dep' | rev | cut -d'/' -f2 | rev)
+    [[ -n $kernel ]] && echo "Kernel: $kernel"
     echo
     if [ "$modules" -eq 1 ]; then
         list_modules
