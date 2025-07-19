@@ -7,6 +7,39 @@ export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 ARCH="${ARCH-$(uname -m)}"
 QEMU_CPU="${QEMU_CPU:-max}"
 
+set_vmlinux_env() {
+    VMLINUZ=${VMLINUZ-"/lib/modules/${KVERSION}/vmlinuz"}
+    if ! [ -f "$VMLINUZ" ]; then
+        VMLINUZ="/lib/modules/${KVERSION}/vmlinux"
+    fi
+
+    if ! [ -f "$VMLINUZ" ]; then
+        [[ -f /etc/machine-id ]] && read -r MACHINE_ID < /etc/machine-id
+
+        if [[ ${MACHINE_ID-} ]] && { [[ -d /boot/${MACHINE_ID} ]] || [[ -L /boot/${MACHINE_ID} ]]; }; then
+            VMLINUZ="/boot/${MACHINE_ID}/$KVERSION/linux"
+        elif [ -f "/boot/vmlinuz-${KVERSION}" ]; then
+            VMLINUZ="/boot/vmlinuz-${KVERSION}"
+        elif [ -f "/boot/vmlinux-${KVERSION}" ]; then
+            VMLINUZ="/boot/vmlinux-${KVERSION}"
+        elif [ -f "/boot/kernel-${KVERSION}" ]; then
+            VMLINUZ="/boot/kernel-${KVERSION}"
+        elif [ -f "/boot/Image-${KVERSION}" ]; then
+            VMLINUZ="/boot/Image-${KVERSION}"
+        fi
+    fi
+
+    if ! [ -f "$VMLINUZ" ]; then
+        VMLINUZ=$(find /boot/vmlinuz-* -type f 2> /dev/null | tail -1)
+    fi
+
+    if ! [ -f "$VMLINUZ" ]; then
+        echo "Could not find a Linux kernel version $KVERSION to test with!" >&2
+        echo "Please install linux." >&2
+        exit 1
+    fi
+}
+
 [[ -x /usr/bin/qemu ]] && BIN=/usr/bin/qemu && ARGS=(-cpu "$QEMU_CPU")
 (lsmod | grep -q '^kqemu ') && BIN=/usr/bin/qemu && ARGS=(-kernel-kqemu -cpu host)
 [[ -z ${NO_KVM-} && -c /dev/kvm && -x /usr/bin/kvm ]] && BIN=/usr/bin/kvm && ARGS=(-cpu host)
@@ -56,6 +89,7 @@ fi
 
 # only set -kernel if -initrd is specified
 if [[ $* == *-initrd* ]]; then
+    set_vmlinux_env
     ARGS+=(-kernel "$VMLINUZ")
 fi
 
