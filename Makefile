@@ -14,8 +14,6 @@ HAVE_SHFMT ?= $(shell command -v shfmt >/dev/null  2>&1 && echo yes)
 
 -include Makefile.inc
 
-KVERSION ?= $(shell uname -r)
-
 prefix ?= /usr
 libdir ?= ${prefix}/lib
 datadir ?= ${prefix}/share
