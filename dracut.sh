@@ -1073,8 +1073,7 @@ if [[ $regenerate_all == "yes" ]]; then
 fi
 
 if ! [[ $kernel ]]; then
-    if type -P systemd-detect-virt &> /dev/null && container=$(systemd-detect-virt -c) &> /dev/null; then
-        dinfo "*** Detected container: $container ***"
+    if type -P systemd-detect-virt &> /dev/null && systemd-detect-virt -c &> /dev/null; then
         # shellcheck disable=SC2012
         kernel="$(cd /lib/modules && ls -1v | tail -1)"
         # shellcheck disable=SC2012
@@ -1420,13 +1419,6 @@ if [[ -f $dracutbasedir/dracut-version.sh ]]; then
     . "$dracutbasedir"/dracut-version.sh
 fi
 
-if systemd-detect-virt -c &> /dev/null; then
-    export DRACUT_NO_MKNOD=1
-    if [[ ${hostonly-} ]]; then
-        printf "%s\n" "dracut[W]: Running in hostonly mode in a container!" >&2
-    fi
-fi
-
 if [[ -f $dracutbasedir/dracut-init.sh ]]; then
     # shellcheck source=./dracut-init.sh
     . "$dracutbasedir"/dracut-init.sh
@@ -1435,6 +1427,11 @@ else
     printf "%s\n" "dracut[F]: Are you running from a git checkout?" >&2
     printf "%s\n" "dracut[F]: Try passing -l as an argument to $dracut_cmd" >&2
     exit 1
+fi
+
+if container=$(systemd-detect-virt -c) &> /dev/null; then
+    export DRACUT_NO_MKNOD=1
+    dinfo "Detected $container container."
 fi
 
 if [[ $persistent_policy == "mapper" ]]; then
