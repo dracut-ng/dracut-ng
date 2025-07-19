@@ -502,6 +502,10 @@ else
         $(dracutlibdirs 'dracut-*') 2> /dev/null)
     ((ret += $?))
     echo "Version: $version"
+    # shellcheck disable=SC2046
+    kernel=$($CAT "$image" | cpio --extract --verbose --quiet --to-stdout -- \
+        $(dracutlibdirs 'kernel-*') 2> /dev/null)
+    echo "Kernel: $kernel"
     echo
     if [ "$modules" -eq 1 ]; then
         list_modules

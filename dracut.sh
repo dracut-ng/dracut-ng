@@ -2114,6 +2114,8 @@ for i in $modules_loaded; do
     printf "%s\n" "$i" >> "$initdir"/lib/dracut/modules.txt
 done
 
+printf "%s\n" "$kernel" > "$initdir"/lib/dracut/kernel-$kernel.txt
+
 dinfo "*** Including modules done ***"
 
 ## final stuff that has to happen

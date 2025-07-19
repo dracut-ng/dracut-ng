@@ -62,6 +62,8 @@ test_dracut() {
     "$DRACUT" \
         "${TEST_DRACUT_ARGS_ARRAY[@]}" \
         "$@" "$TESTDIR"/initramfs.testing || return 1
+
+    KVERSION=$(lsinitrd "$TESTDIR"/initramfs.testing | grep 'Kernel:' | cut -d':' -f2 | xargs)
 }
 
 # Wait for the server QEMU has been started up.
