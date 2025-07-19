@@ -91,24 +91,12 @@ test_setup() {
         cp "${basedir}"/dracut.conf.d/uki-virt/* "$TESTDIR"/dracut.conf.d/
     fi
 
-    if command -v ukify &> /dev/null; then
-        echo "Using ukify to create UKI"
-        test_dracut --no-uefi \
-            --add-drivers 'squashfs'
-
-        ukify build \
-            --linux="$VMLINUZ" \
-            --initrd="$TESTDIR"/initramfs.testing \
-            --cmdline="$TEST_KERNEL_CMDLINE root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root" \
-            --output="$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
-    else
-        echo "Using dracut to create UKI"
-        test_dracut \
-            --kernel-cmdline "$TEST_KERNEL_CMDLINE root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root" \
-            --add-drivers 'squashfs' \
-            --uefi \
-            "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
-    fi
+    echo "Using dracut to create UKI"
+    test_dracut \
+        --kernel-cmdline "$TEST_KERNEL_CMDLINE root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root" \
+        --add-drivers 'squashfs' \
+        --uefi \
+        "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
 }
 
 # shellcheck disable=SC1090
