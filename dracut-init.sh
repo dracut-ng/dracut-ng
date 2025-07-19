@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-export LC_MESSAGES=C
+export LC_MESSAGES=C kernel
 
 if [[ $EUID == "0" ]] && ! [[ ${DRACUT_NO_XATTR-} ]]; then
     export DRACUT_CP="cp --reflink=auto --sparse=auto --preserve=mode,timestamps,xattr,links -dfr"
@@ -51,11 +51,6 @@ fi
 
 if ! [[ -d $initdir ]]; then
     mkdir -p "$initdir"
-fi
-
-if ! [[ ${kernel-} ]]; then
-    kernel=$(uname -r)
-    export kernel
 fi
 
 srcmods="$(realpath -e "${dracutsysrootdir-}/lib/modules/$kernel")"
