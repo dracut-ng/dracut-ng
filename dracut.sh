@@ -1339,7 +1339,9 @@ case $hostonly_mode in
         ;;
 esac
 
-[[ $reproducible == yes ]] && DRACUT_REPRODUCIBLE=1
+if [[ $reproducible == yes ]] && [[ -z ${SOURCE_DATE_EPOCH-} ]]; then
+    SOURCE_DATE_EPOCH=$(stat -c %Y "$dracutbasedir/dracut-functions.sh")
+fi
 
 if [[ -z $DRACUT_KMODDIR_OVERRIDE && -n $drivers_dir ]]; then
     drivers_basename="${drivers_dir##*/}"
@@ -2462,11 +2464,11 @@ if [[ $uefi == yes ]]; then
 fi
 
 clamp_mtimes() {
-    find "$@" -newer "$dracutbasedir/dracut-functions.sh" -print0 \
-        | xargs -r -0 touch -h -m -c -r "$dracutbasedir/dracut-functions.sh"
+    find "$@" -newermt "@${SOURCE_DATE_EPOCH?}" -print0 \
+        | xargs -r -0 touch -h -m -c --date="@${SOURCE_DATE_EPOCH?}"
 }
 
-if [[ $DRACUT_REPRODUCIBLE ]]; then
+if [[ ${SOURCE_DATE_EPOCH-} ]]; then
     clamp_mtimes "$initdir"
 
     if [[ "$(cpio --help)" == *--reproducible* ]]; then
@@ -2484,7 +2486,7 @@ if [[ $do_hardlink == yes ]] && command -v hardlink > /dev/null; then
 
     # Hardlink itself breaks mtimes on directories as we may have added/removed
     # dir entries. Fix those up.
-    if [[ $DRACUT_REPRODUCIBLE ]]; then
+    if [[ ${SOURCE_DATE_EPOCH-} ]]; then
         clamp_mtimes "$initdir" -type d
     fi
 fi
@@ -2494,7 +2496,7 @@ fi
 if [[ $create_early_cpio == yes ]]; then
     echo 1 > "$early_cpio_dir/d/early_cpio"
 
-    if [[ $DRACUT_REPRODUCIBLE ]]; then
+    if [[ ${SOURCE_DATE_EPOCH-} ]]; then
         clamp_mtimes "$early_cpio_dir/d"
     fi
 
@@ -2758,7 +2760,7 @@ if [[ $uefi == yes ]]; then
         fi
     else
         if objcopy \
-            ${DRACUT_REPRODUCIBLE:+--enable-deterministic-archives --preserve-dates} \
+            ${SOURCE_DATE_EPOCH:+--enable-deterministic-archives --preserve-dates} \
             ${uefi_osrelease:+--add-section .osrel="$uefi_osrelease" --change-section-vma .osrel=$(printf 0x%x "$uefi_osrelease_offs")} \
             ${uefi_cmdline:+--add-section .cmdline="$uefi_cmdline" --change-section-vma .cmdline=$(printf 0x%x "$uefi_cmdline_offs")} \
             ${uefi_splash_image:+--add-section .splash="$uefi_splash_image" --change-section-vma .splash=$(printf 0x%x "$uefi_splash_offs")} \
