@@ -109,7 +109,6 @@ determine_kernel_version() {
     [[ ${KVERSION-} ]] || KVERSION="$(cd /lib/modules && ls -1v | tail -1)"
     # shellcheck disable=SC2012
     [[ ${KVERSION-} ]] || KVERSION="$(cd /usr/lib/modules && ls -1v | tail -1)"
-    [[ ${KVERSION-} ]] || KVERSION="$(uname -r)"
 }
 
 set_vmlinux_env() {
