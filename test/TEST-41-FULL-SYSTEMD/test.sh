@@ -139,6 +139,8 @@ test_setup() {
         -a "dracut-systemd $dracut_modules" \
         --add-drivers "btrfs"
 
+    KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)
+
     if command -v mkosi-initrd &> /dev/null; then
         mkosi-initrd --kernel-version "$KVERSION" -t directory -o mkosi -O "$TESTDIR"
 
