@@ -1431,7 +1431,7 @@ else
     exit 1
 fi
 
-if container=$(systemd-detect-virt -c) &> /dev/null; then
+if type -P systemd-detect-virt &> /dev/null && container=$(systemd-detect-virt -c) &> /dev/null; then
     export DRACUT_NO_MKNOD=1
     dinfo "Detected $container container."
 fi
