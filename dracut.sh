@@ -1082,20 +1082,12 @@ if ! [[ $kernel ]]; then
     [[ $kernel ]] || kernel="$(uname -r)"
 fi
 
-DRACUT_PATH=${DRACUT_PATH:-/sbin /bin /usr/sbin /usr/bin}
-
-for i in $DRACUT_PATH; do
-    rl=$i
-    if [ -L "${dracutsysrootdir-}$i" ]; then
-        rl=$(readlink -f "${dracutsysrootdir-}$i")
-    fi
-    rl="${rl#"${dracutsysrootdir-}"}"
-    if [[ $NPATH != *:$rl* ]]; then
-        NPATH+=":$rl"
+# Ensure that the standard search paths are searched.
+for path in /usr/sbin /usr/bin /sbin /bin; do
+    if ! [[ ":${PATH}:" =~ .*:${path}:.* ]]; then
+        PATH="${PATH:+${PATH}:}$path"
     fi
 done
-[[ -z ${dracutsysrootdir-} ]] && export PATH="${NPATH#:}"
-unset NPATH
 
 export SYSTEMCTL=${SYSTEMCTL:-systemctl}
 

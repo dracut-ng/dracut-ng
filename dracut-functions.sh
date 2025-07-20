@@ -80,13 +80,13 @@ find_binary() {
             return 0
         fi
     fi
-    for p in $DRACUT_PATH; do
+    while read -r -d ':' p; do
         _path="${p}${_delim}${1}"
         if [[ -L ${dracutsysrootdir-}${_path} ]] || [[ -x ${dracutsysrootdir-}${_path} ]]; then
             printf "%s\n" "${_path}"
             return 0
         fi
-    done
+    done <<< "$PATH"
 
     [[ -n ${dracutsysrootdir-} ]] && return 1
     type -P "${1##*/}"
