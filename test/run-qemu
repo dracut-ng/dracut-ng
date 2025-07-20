@@ -8,7 +8,15 @@ ARCH="${ARCH-$(uname -m)}"
 QEMU_CPU="${QEMU_CPU:-max}"
 
 set_vmlinux_env() {
-    VMLINUZ=${VMLINUZ-"/lib/modules/${KVERSION}/vmlinuz"}
+    if ! [[ ${KVERSION-} ]]; then
+        VMLINUZ=$(find /boot/vmlinuz-* -type f 2> /dev/null | tail -1)
+        ! [ -f "$VMLINUZ" ] && VMLINUZ=$(find /lib/modules/ -type f -name vmlinuz 2> /dev/null | tail -1)
+    fi
+
+    if ! [ -f "$VMLINUZ" ]; then
+        VMLINUZ=${VMLINUZ-"/lib/modules/${KVERSION}/vmlinuz"}
+    fi
+
     if ! [ -f "$VMLINUZ" ]; then
         VMLINUZ="/lib/modules/${KVERSION}/vmlinux"
     fi
@@ -27,10 +35,6 @@ set_vmlinux_env() {
         elif [ -f "/boot/Image-${KVERSION}" ]; then
             VMLINUZ="/boot/Image-${KVERSION}"
         fi
-    fi
-
-    if ! [ -f "$VMLINUZ" ]; then
-        VMLINUZ=$(find /boot/vmlinuz-* -type f 2> /dev/null | tail -1)
     fi
 
     if ! [ -f "$VMLINUZ" ]; then
