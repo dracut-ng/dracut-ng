@@ -126,6 +126,10 @@ command -v test_cleanup &> /dev/null || test_cleanup() {
     :
 }
 
+determine_kernel_version() {
+    lsinitrd "$1" | grep modules.dep | head -1 | rev | cut -d'/' -f2 | rev
+}
+
 # terminal sequence to set color to a 'success' color (currently: green)
 function SETCOLOR_SUCCESS() { echo -en '\033[0;32m'; }
 # terminal sequence to set color to a 'failure' color (currently: red)

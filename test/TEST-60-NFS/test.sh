@@ -232,12 +232,21 @@ test_run() {
 
 test_setup() {
     DRACUT_PATH=${DRACUT_PATH:-/sbin /bin /usr/sbin /usr/bin}
-    export kernel=$KVERSION
     export no_kernel=
-    export srcmods="/lib/modules/$kernel/"
     # Detect lib paths
 
+    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
+        --add-confdir test-root \
+        -a "url-lib nfs" \
+        -I "ip grep setsid" \
+        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
+
+    KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)
+    export kernel=$KVERSION
+    export srcmods="/lib/modules/$kernel/"
+
     rm -rf -- "$TESTDIR"/overlay
+
     (
         mkdir -p "$TESTDIR"/server/overlay/source
         # shellcheck disable=SC2030
@@ -300,13 +309,6 @@ test_setup() {
     # Make client root inside server root
     # shellcheck disable=SC2031
     export initdir=$TESTDIR/server/overlay/source/nfs/client
-
-    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -a "url-lib nfs" \
-        -I "ip grep setsid" \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
-
     mkdir -p "$initdir" && mv "$TESTDIR"/dracut.*/initramfs/* "$initdir" && rm -rf "$TESTDIR"/dracut.*
     echo "TEST FETCH FILE" > "$initdir"/root/fetchfile
     cp ./client-init.sh "$initdir"/sbin/init

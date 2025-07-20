@@ -103,6 +103,8 @@ test_setup() {
         -a "$dracut_modules" \
         -f "$TESTDIR"/initramfs.root "$KVERSION"
 
+    KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)
+
     mkdir -p "$TESTDIR"/overlay/source && cp -a "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     # second, install the files needed to make the root filesystem

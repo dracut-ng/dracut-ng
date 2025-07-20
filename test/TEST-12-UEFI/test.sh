@@ -48,6 +48,8 @@ test_setup() {
         --add-confdir test-root \
         "$TESTDIR"/tmp-initramfs.root "$KVERSION"
 
+    KVERSION=$(determine_kernel_version "$TESTDIR"/tmp-initramfs.root)
+
     mksquashfs "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/squashfs.img -quiet -no-progress
 
     mkdir -p "$TESTDIR"/ESP/EFI/BOOT "$TESTDIR"/dracut.conf.d
@@ -95,6 +97,7 @@ test_setup() {
     test_dracut \
         --kernel-cmdline "$TEST_KERNEL_CMDLINE root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root" \
         --add-drivers 'squashfs' \
+        --kver "$KVERSION" \
         --uefi \
         "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
 }
