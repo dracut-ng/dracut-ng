@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # -*- mode: shell-script; indent-tabs-mode: nil; sh-basic-offset: 4; -*-
 # ex: ts=8 sw=4 sts=4 et filetype=sh
-set -e
+set -eu
 
 [ -z "${USE_NETWORK-}" ] && USE_NETWORK="network"
 
@@ -214,8 +214,10 @@ bootdev=br0
 }
 
 test_setup() {
+    DRACUT_PATH=${DRACUT_PATH:-/sbin /bin /usr/sbin /usr/bin}
     # shellcheck disable=SC2153
     export kernel=$KVERSION
+    export no_kernel=
     rm -rf -- "$TESTDIR"/overlay
     (
         mkdir -p "$TESTDIR"/overlay/source
