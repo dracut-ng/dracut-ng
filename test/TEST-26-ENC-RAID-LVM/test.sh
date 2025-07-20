@@ -56,7 +56,7 @@ test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
-        -f "$TESTDIR"/initramfs.root "$KVERSION"
+        -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     # second, install the files needed to make the root filesystem
@@ -69,7 +69,7 @@ test_setup() {
         -a "bash crypt lvm mdraid" \
         -I "grep cryptsetup" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
+        -f "$TESTDIR"/initramfs.makeroot
 
     # Create the blank files to use as a root filesystem
     declare -a disk_args=()

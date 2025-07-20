@@ -83,7 +83,7 @@ test_setup() {
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -i ./test-init.sh /sbin/init-persist \
-        -f "$TESTDIR"/initramfs.root "$KVERSION"
+        -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/rootfs && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/rootfs && rm -rf "$TESTDIR"/dracut.*
 
     # test to make sure /proc /sys and /dev is not needed inside the generated initrd

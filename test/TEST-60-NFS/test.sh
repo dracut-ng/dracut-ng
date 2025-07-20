@@ -239,7 +239,7 @@ test_setup() {
         --add-confdir test-root \
         -a "url-lib nfs" \
         -I "ip grep setsid" \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
+        -f "$TESTDIR"/initramfs.root || return 1
 
     KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)
     export kernel=$KVERSION

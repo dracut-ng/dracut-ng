@@ -116,7 +116,7 @@ test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
-        -f "$TESTDIR"/initramfs.root "$KVERSION"
+        -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     # pass enviroment variables to make the root filesystem
@@ -136,7 +136,7 @@ test_setup() {
         $(if command -v cryptsetup > /dev/null; then echo "-a crypt -I cryptsetup"; fi) \
         $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "-I mkfs.${TEST_FSTYPE} --add-drivers ${TEST_FSTYPE}"; fi) \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
+        -f "$TESTDIR"/initramfs.makeroot
 
     # LVM
     test_makeroot "$TEST_FSTYPE" "disk" "rd.md=0 rd.luks=0"

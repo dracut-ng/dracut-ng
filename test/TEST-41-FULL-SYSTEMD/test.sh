@@ -101,7 +101,7 @@ test_setup() {
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "$dracut_modules" \
-        -f "$TESTDIR"/initramfs.root "$KVERSION"
+        -f "$TESTDIR"/initramfs.root
 
     KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)
 

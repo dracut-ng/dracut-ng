@@ -44,7 +44,7 @@ test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
-        -f "$TESTDIR"/initramfs.root "$KVERSION"
+        -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     # second, install the files needed to make the root filesystem
@@ -56,7 +56,7 @@ test_setup() {
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
+        -f "$TESTDIR"/initramfs.makeroot
 
     declare -a disk_args=()
     # shellcheck disable=SC2034  # disk_index used in qemu_add_drive
@@ -79,7 +79,7 @@ test_setup() {
         --kernel-only \
         -m "kernel-modules qemu" \
         -d "ext4 sd_mod" \
-        -f "$TESTDIR"/initramfs-test "$KVERSION"
+        -f "$TESTDIR"/initramfs-test
 
     # vanilla kernel-independent systemd-based minimal initrd without dracut specific customizations
     # since dracut-systemd is not included in the generated initrd, only systemd options are supported during boot
