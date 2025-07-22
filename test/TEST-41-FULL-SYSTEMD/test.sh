@@ -5,6 +5,7 @@ set -e
 TEST_DESCRIPTION="Full systemd serialization/deserialization test with /usr mount"
 
 test_check() {
+    set_kversion_and_vmlinux
     if ! type -p mkfs.btrfs &> /dev/null; then
         echo "Test needs mkfs.btrfs.. Skipping"
         return 1

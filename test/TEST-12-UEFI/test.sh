@@ -5,6 +5,7 @@ set -e
 TEST_DESCRIPTION="UEFI boot (ukify, kernel-install)"
 
 test_check() {
+    set_kversion_and_vmlinux
     if ! type -p mksquashfs &> /dev/null; then
         echo "Test needs mksquashfs... Skipping"
         return 1

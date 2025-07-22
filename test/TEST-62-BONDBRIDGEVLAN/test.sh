@@ -15,6 +15,7 @@ TEST_DESCRIPTION="root filesystem on NFS with bridging/bonding/vlan with $USE_NE
 
 # skip the test if ifcfg dracut module can not be installed
 test_check() {
+    set_kversion_and_vmlinux
     if ! type -p dhclient &> /dev/null; then
         echo "Test needs dhclient for server networking... Skipping"
         return 1
