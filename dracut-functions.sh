@@ -1042,7 +1042,7 @@ get_dev_module() {
 pe_file_format() {
     if [[ $# -eq 1 ]]; then
         local magic
-        magic=$(objdump -p "$1" \
+        magic=$("${OBJDUMP:-objdump}" -p "$1" \
             | awk '{if ($1 == "Magic"){print $2}}')
         # 010b (PE32), 020b (PE32+)
         [[ $magic == "020b" || $magic == "010b" ]] && return 0
@@ -1055,7 +1055,7 @@ pe_get_header_data() {
     local data_header
     [[ $# -ne "2" ]] && return 1
     [[ $(pe_file_format "$1") -eq 1 ]] && return 1
-    data_header=$(objdump -p "$1" \
+    data_header=$("${OBJDUMP:-objdump}" -p "$1" \
         | awk -v data="$2" '{if ($1 == data){print $2}}')
     echo "$data_header"
 }
