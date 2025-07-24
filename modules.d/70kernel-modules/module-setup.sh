@@ -107,9 +107,9 @@ installkernel() {
 
         awk -F: '/^\// {print $1}' "$srcmods/modules.dep" 2> /dev/null | instmods
 
-        # if not on hostonly mode, or there are hostonly block device
+        # if not on strict hostonly mode, or there are hostonly block device
         # install block drivers
-        if ! [[ ${hostonly-} ]] \
+        if [[ $hostonly_mode != "strict" ]] \
             || for_each_host_dev_and_slaves_all record_block_dev_drv; then
             hostonly='' instmods sg sr_mod sd_mod scsi_dh ata_piix
 
