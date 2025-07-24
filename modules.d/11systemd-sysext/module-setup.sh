@@ -47,13 +47,18 @@ install() {
         "$systemdsystemunitdir/systemd-confext${_suffix}.service.d/*.conf" \
         "$systemdsystemunitdir"/systemd-sysext${_suffix}.service \
         "$systemdsystemunitdir/systemd-sysext${_suffix}.service.d/*.conf" \
+        "$systemdsystemunitdir"/initrd.target.wants/systemd-confext${_suffix}.service \
+        "$systemdsystemunitdir"/initrd.target.wants/systemd-sysext${_suffix}.service \
         systemd-confext systemd-sysext
 
-    # Enable systemd type unit(s)
+    # Enable systemd type unit(s) for systemd < v258 which doesn't ship
+    # initrd.target.wants symlinks.
     for i in \
         systemd-confext.service \
         systemd-sysext.service; do
-        $SYSTEMCTL -q --root "$initdir" enable "$i"
+        if [[ -e "$initdir$systemdsystemunitdir"/"$i" ]]; then
+            $SYSTEMCTL -q --root "$initdir" enable "$i"
+        fi
     done
 
     # Install the hosts local user configurations if enabled.
