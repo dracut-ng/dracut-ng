@@ -2668,7 +2668,7 @@ else
         if ! (
             umask 077
             cd "$initdir"
-            sed -e 's,\./,,g's < "$COMPRESSED_FILES_MANIFEST" \
+            sed -e 's,\./,,g' < "$COMPRESSED_FILES_MANIFEST" \
                 | cpio -o ${CPIO_REPRODUCIBLE:+--reproducible} --null ${cpio_owner:+-R "$cpio_owner"} -H newc --quiet \
                     >> "${DRACUT_TMPDIR}/initramfs.img"
         ); then
@@ -2680,7 +2680,7 @@ else
     if ! (
         umask 077
         cd "$initdir"
-        sed -e 's,\./,,g's < "$unCOMPRESSED_FILES_MANIFEST" \
+        sed -e 's,\./,,g' < "$UNCOMPRESSED_FILES_MANIFEST" \
             | cpio -o ${CPIO_REPRODUCIBLE:+--reproducible} --null ${cpio_owner:+-R "$cpio_owner"} -H newc --quiet \
             | $compress >> "${DRACUT_TMPDIR}/initramfs.img"
     ); then
