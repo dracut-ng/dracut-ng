@@ -2472,18 +2472,18 @@ dinfo "*** Creating image file '$outfile' ***"
 # The same directories might be printed multiple times (even with sorted input)!
 add_directories() {
     local last_dir path dir
-    while read -r path; do
+    while IFS= read -d '' -r path; do
         dir="${path%/*}"
         parent="${dir}"
         while [ "$parent" != "$last_dir" ] && [ "$parent" != "." ]; do
-            echo "$parent"
+            printf '%s\0' "$parent"
             parent="${parent%/*}"
         done
         last_dir="$dir"
-        echo "$path"
+        printf '%s\0' "$path"
     done
     if [ -n "$last_dir" ]; then
-        echo "."
+        printf '%s\0' "."
     fi
 }
 
@@ -2503,12 +2503,12 @@ create_cpio_file_lists() {
     fi
     (
         cd "$rootdir" || exit 1
-        find . "${COMPRESS_PATTERN[@]}"
-    ) | add_directories | LC_ALL=C sort | uniq > "$compressed_files_manifest"
+        find . \( "${COMPRESS_PATTERN[@]}" \) -print0
+    ) | add_directories | LC_ALL=C sort -zu > "$compressed_files_manifest"
     (
         cd "$rootdir" || exit 1
-        find . \( ! -type d ! \( "${COMPRESS_PATTERN[@]}" \) \) -o \( -type d -empty \)
-    ) | add_directories | LC_ALL=C sort | uniq > "$uncompressed_files_manifest"
+        find . \( \( ! -type d ! \( "${COMPRESS_PATTERN[@]}" \) \) -o \( -type d -empty \) \) -print0
+    ) | add_directories | LC_ALL=C sort -zu > "$uncompressed_files_manifest"
 }
 
 if [[ $uefi == yes ]]; then
@@ -2642,7 +2642,7 @@ if [[ -n $enhanced_cpio ]]; then
         if ! (
             umask 077
             cd "$initdir"
-            $enhanced_cpio ${cpio_owner:+--owner "$cpio_owner"} --mtime 0 --data-align \
+            $enhanced_cpio --null ${cpio_owner:+--owner "$cpio_owner"} --mtime 0 --data-align \
                 "$cpio_align" "${DRACUT_TMPDIR}/initramfs.img" < "$COMPRESSED_FILES_MANIFEST"
         ); then
             dfatal "dracut-cpio: creation of $outfile failed"
@@ -2653,7 +2653,7 @@ if [[ -n $enhanced_cpio ]]; then
     if ! (
         umask 077
         cd "$initdir"
-        $enhanced_cpio ${cpio_owner:+--owner "$cpio_owner"} --mtime 0 --data-align \
+        $enhanced_cpio --null ${cpio_owner:+--owner "$cpio_owner"} --mtime 0 --data-align \
             "$cpio_align" "$cpio_outfile" < "$UNCOMPRESSED_FILES_MANIFEST" || exit 1
         [[ $compress == "cat" ]] && exit 0
         $compress < "$cpio_outfile" >> "${DRACUT_TMPDIR}/initramfs.img" \
@@ -2668,8 +2668,9 @@ else
         if ! (
             umask 077
             cd "$initdir"
-            cpio -o ${CPIO_REPRODUCIBLE:+--reproducible} ${cpio_owner:+-R "$cpio_owner"} -H newc --quiet \
-                < "$COMPRESSED_FILES_MANIFEST" >> "${DRACUT_TMPDIR}/initramfs.img"
+            sed -e 's,\./,,g' < "$COMPRESSED_FILES_MANIFEST" \
+                | cpio -o ${CPIO_REPRODUCIBLE:+--reproducible} --null ${cpio_owner:+-R "$cpio_owner"} -H newc --quiet \
+                    >> "${DRACUT_TMPDIR}/initramfs.img"
         ); then
             dfatal "Creation of $outfile failed"
             exit 1
@@ -2679,8 +2680,9 @@ else
     if ! (
         umask 077
         cd "$initdir"
-        cpio -o ${CPIO_REPRODUCIBLE:+--reproducible} ${cpio_owner:+-R "$cpio_owner"} -H newc --quiet \
-            < "$UNCOMPRESSED_FILES_MANIFEST" | $compress >> "${DRACUT_TMPDIR}/initramfs.img"
+        sed -e 's,\./,,g' < "$UNCOMPRESSED_FILES_MANIFEST" \
+            | cpio -o ${CPIO_REPRODUCIBLE:+--reproducible} --null ${cpio_owner:+-R "$cpio_owner"} -H newc --quiet \
+            | $compress >> "${DRACUT_TMPDIR}/initramfs.img"
     ); then
         dfatal "Write $outfile for main portion failed"
         exit 1
