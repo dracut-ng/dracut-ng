@@ -84,7 +84,7 @@ unpack() {
     decompress_unpack /tmp/initramfs-restore-cpio.$$
 
     # Check for a second layer if this layer is not compressed
-    if ((did_decompress)) || [ $SKIP == "cat" ]; then
+    if ((did_decompress)) || [ "$SKIP" == "cat" ]; then
         rm -f -- /tmp/initramfs-restore-cpio.$$
         return
     fi
