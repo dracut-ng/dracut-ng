@@ -34,6 +34,7 @@ depends() {
 # Install the required file(s) and directories for the module in the initramfs.
 install() {
     inst_multiple -o \
+        "$udevrulesdir"/90-image-dissect.rules \
         "$udevrulesdir"/99-systemd.rules \
         "$systemdutildir"/systemd-udevd \
         "$systemdsystemunitdir"/systemd-udevd.service \
