@@ -1073,13 +1073,14 @@ if [[ $regenerate_all == "yes" ]]; then
 fi
 
 if ! [[ $kernel ]]; then
-    if type -P systemd-detect-virt &> /dev/null && systemd-detect-virt -c &> /dev/null; then
+    if type -P systemd-detect-virt &> /dev/null && ! systemd-detect-virt -c &> /dev/null; then
+        kernel="$(uname -r)"
+    else
         # shellcheck disable=SC2012
         kernel="$(cd /lib/modules && ls -1v | tail -1)"
         # shellcheck disable=SC2012
         [[ $kernel ]] || kernel="$(cd /usr/lib/modules && ls -1v | tail -1)"
     fi
-    [[ $kernel ]] || kernel="$(uname -r)"
 fi
 
 # Ensure that the standard search paths are searched.
