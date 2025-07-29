@@ -58,6 +58,10 @@ IMG=$(find_initrd_for_kernel_version "$KERNEL_VERSION")
 if [ -z "$IMG" ]; then
     if [[ -f /boot/initramfs-linux.img ]]; then
         IMG="/boot/initramfs-linux.img"
+    elif [[ -f /boot/initrd.img ]]; then
+        IMG="/boot/initrd.img"
+    elif [[ -f /initrd.img ]]; then
+        IMG="/initrd.img"
     else
         echo "No initramfs image found to restore!"
         exit 1
