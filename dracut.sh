@@ -2496,7 +2496,12 @@ create_cpio_file_lists() {
     if [[ $handle_precompress == split ]]; then
         # If we are not splitting the cpio, we do not need to create a separate
         # manifest for compressed files.
-        COMPRESS_PATTERN=(-false)
+        if [[ $(find . --version 2>&1) != *BusyBox* ]]; then
+            COMPRESS_PATTERN=(-false)
+        else
+            # Busybox find does not support -false, but it can be emulated:
+            COMPRESS_PATTERN=(-name /)
+        fi
     else
         # Inject an early_cpio marker file
         echo 2 > "$rootdir"/early_cpio
