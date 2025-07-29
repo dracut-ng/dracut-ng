@@ -71,14 +71,13 @@ install() {
     if [[ ${hostonly-} ]]; then
         # check if other dracut modules already created an entry for root in /etc/shadow
         if grep -q '^root:' "$initdir/etc/shadow"; then
-            # replace root password in the existing entry in etc/shadow
-            # root password from host takes precedence over root password set by systemd-sysuser in hostonly mode
-            root_password=$(grep '^root:' "${dracutsysrootdir-}"/etc/shadow | cut -d':' -f2)
-            sed -i "/^root:/s/:[^:]*:/:$root_password:/" "$initdir/etc/shadow"
-        else
-            # create a new entry for root in /etc/shadow
-            grep '^root:' "${dracutsysrootdir-}"/etc/shadow >> "$initdir/etc/shadow"
+            grep -v '^root:' "$initdir/etc/shadow" > "$initdir/etc/shadow-"
+            mv "$initdir/etc/shadow-" "$initdir/etc/shadow"
         fi
+        # replace root password in the existing entry in etc/shadow
+        # root password from host takes precedence over root password set by systemd-sysuser in hostonly mode
+        # create a new entry for root in /etc/shadow
+        grep '^root:' "${dracutsysrootdir-}"/etc/shadow >> "$initdir/etc/shadow"
     fi
 
     # install our scripts and hooks

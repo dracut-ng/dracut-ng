@@ -31,6 +31,21 @@ test_setup() {
 
     ln -s / "$TESTDIR"/sysroot
     test_dracut --sysroot "$TESTDIR"/sysroot
+
+    if grep -q '^root:' /etc/shadow; then
+        if ! grep -q '^root:' "$TESTDIR"/initrd/dracut.*/initramfs/etc/shadow; then
+            echo "Entry for root in /etc/shadow is missing, failing the test."
+            rm "$TESTDIR"/initramfs.testing
+        fi
+
+        root_password=$(grep '^root:' "/etc/shadow" | cut -d':' -f2)
+        initramfs_root_password=$(grep '^root:' "$TESTDIR"/initrd/dracut.*/initramfs/etc/shadow | cut -d':' -f2)
+
+        if [ "$root_password" != "$initramfs_root_password" ]; then
+            echo "The password for root does not match, failing the test."
+            rm "$TESTDIR"/initramfs.testing
+        fi
+    fi
 }
 
 # shellcheck disable=SC1090
