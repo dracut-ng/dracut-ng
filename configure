@@ -67,6 +67,7 @@ while (($# > 0)); do
         --disable-dracut-cpio) enable_dracut_cpio=no ;;
         --enable-test) enable_test=yes ;;
         --configprofile) read_arg configprofile "$@" || shift ;;
+        --disable-asciidoctor) disable_asciidoctor=yes ;;
         *) echo "Ignoring unknown option '$1'" ;;
     esac
     shift
@@ -189,6 +190,7 @@ datadir ?= ${datadir:-${prefix}/share}
 sysconfdir ?= ${sysconfdir:-${prefix}/etc}
 sbindir ?= ${sbindir:-${prefix}/sbin}
 mandir ?= ${mandir:-${prefix}/share/man}
+disable_asciidoctor ?= ${disable_asciidoctor:-no}
 enable_documentation ?= ${enable_documentation:-yes}
 enable_test ?= ${enable_test:-no}
 enable_dracut_cpio ?= ${enable_dracut_cpio}

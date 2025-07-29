@@ -42,7 +42,7 @@ else \
 ; fi
 
 RUN dnf -y install --setopt=install_weak_deps=False \
-    asciidoc \
+    asciidoctor \
     bash-completion \
     bluez \
     cargo \

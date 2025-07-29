@@ -46,9 +46,7 @@ emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     app-arch/cpio \
     app-emulation/qemu \
     app-portage/gentoolkit \
-    app-text/asciidoc \
-    app-text/docbook-xml-dtd \
-    app-text/docbook-xsl-stylesheets \
+    dev-ruby/asciidoctor \
     sys-kernel/dracut \
     sys-kernel/gentoo-kernel-bin \
     sys-libs/libxcrypt \

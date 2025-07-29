@@ -20,7 +20,7 @@ FROM docker.io/archlinux
 ENV TEST_FSTYPE=btrfs
 
 RUN pacman --noconfirm -Syu \
-    asciidoc \
+    asciidoctor \
     bluez \
     btrfs-progs \
     cargo \

@@ -27,7 +27,7 @@ ARG DISTRIBUTION
 
 # Packages to pass the BASIC test
 RUN apk add --no-cache \
-    asciidoc \
+    asciidoctor \
     dracut-tests \
     file \
     gcc \
