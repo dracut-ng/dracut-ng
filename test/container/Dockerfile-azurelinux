@@ -10,7 +10,6 @@ if [[ "${PLATFORM}" =~ "amd64" ]]; then \
 ; fi
 
 RUN tdnf -y install --setopt=install_weak_deps=False \
-    asciidoc \
     bash-completion \
     bluez \
     btrfs-progs \
@@ -44,6 +43,7 @@ RUN tdnf -y install --setopt=install_weak_deps=False \
     qemu \
     qemu-kvm \
     rng-tools \
+    rubygem-asciidoctor \
     rsyslog \
     squashfs-tools \
     swtpm \

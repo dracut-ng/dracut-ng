@@ -21,7 +21,6 @@ ENV TEST_FSTYPE=zfs
 ENV CC=clang
 
 RUN xbps-install -Syu xbps && xbps-install -yu \
-    asciidoc \
     bash \
     binutils \
     btrfs-progs \
@@ -55,6 +54,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     pkg-config \
     plymouth \
     qemu \
+    ruby-asciidoctor \
     squashfs-tools \
     systemd-boot-efistub \
     ncurses-base \

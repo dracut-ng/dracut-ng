@@ -12,7 +12,6 @@ FROM registry.opensuse.org/opensuse/tumbleweed:latest
 
 # Install needed packages for the dracut CI container
 RUN zypper --non-interactive install --no-recommends \
-    asciidoc \
     bash-completion \
     btrfsprogs \
     cargo \
@@ -45,6 +44,7 @@ RUN zypper --non-interactive install --no-recommends \
     pciutils \
     python3-pefile \
     qemu \
+    ruby3.4-rubygem-asciidoctor \
     squashfs \
     swtpm \
     systemd-boot \

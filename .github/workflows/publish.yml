@@ -42,7 +42,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get -y update
-          sudo apt-get -y install make asciidoc
+          sudo apt-get -y install make asciidoctor
       - name: Install Antora
         run: npm i antora
       - name: Generate Site
