@@ -2493,18 +2493,18 @@ create_cpio_file_lists() {
     local uncompressed_files_manifest="$3"
     local COMPRESS_PATTERN=(-name '*.gz' -o -name '*.xz' -o -name '*.zst' -o -path './early_cpio')
 
-    if [[ $handle_precompress != split ]]; then
+    if [[ $handle_precompress == split ]]; then
         # If we are not splitting the cpio, we do not need to create a separate
         # manifest for compressed files.
-        compressed_files_manifest="$uncompressed_files_manifest"
+        COMPRESS_PATTERN=(-false)
     else
         # Inject an early_cpio marker file
         echo 2 > "$rootdir"/early_cpio
+        (
+            cd "$rootdir" || exit 1
+            find . \( "${COMPRESS_PATTERN[@]}" \) -print0
+        ) | add_directories | LC_ALL=C sort -zu > "$compressed_files_manifest"
     fi
-    (
-        cd "$rootdir" || exit 1
-        find . \( "${COMPRESS_PATTERN[@]}" \) -print0
-    ) | add_directories | LC_ALL=C sort -zu > "$compressed_files_manifest"
     (
         cd "$rootdir" || exit 1
         find . \( \( ! -type d ! \( "${COMPRESS_PATTERN[@]}" \) \) -o \( -type d -empty \) \) -print0
