@@ -1213,7 +1213,12 @@ if ! [[ $outfile ]]; then
         outfile="${dracutsysrootdir-}$efidir/Linux/linux-$kernel${MACHINE_ID:+-${MACHINE_ID}}${BUILD_ID:+-${BUILD_ID}}.efi"
     else
         if ! [[ $initrdname ]]; then
-            initrdname="initramfs-${kernel}.img"
+            ! [[ -e /etc/os-release ]] || . /etc/os-release
+            if [[ ${ID-} == debian ]] || [[ ${ID_LIKE-} =~ .*debian.* ]] || [[ ${ID_LIKE-} =~ .*ubuntu.* ]]; then
+                initrdname="initrd.img-${kernel}"
+            else
+                initrdname="initramfs-${kernel}.img"
+            fi
         fi
         if [[ -d "${dracutsysrootdir-}"/efi/loader/entries || -L "${dracutsysrootdir-}"/efi/loader/entries ]] \
             && [[ $MACHINE_ID ]] \

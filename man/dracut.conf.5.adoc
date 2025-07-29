@@ -370,7 +370,8 @@ The initrdname configuration option is required to match the
 _initr*$\{kernel\}*_ file pattern and only one file with this pattern should
 exists in the directory where initramfs is loaded from.
 +
-Defaults to _initramfs-$\{kernel\}.img_.
+Defaults to _initramfs-$\{kernel\}.img_ on most systems. For Debian/Ubuntu based
+systems it defaults to _initrd.img-$\{kernel\}_.
 
 == Files
 _/etc/dracut.conf_::
