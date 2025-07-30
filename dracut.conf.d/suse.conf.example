@@ -7,6 +7,7 @@
 hostonly="yes"
 hostonly_cmdline="yes"
 
+initrdname="initrd-$kernel"
 compress="zstd -3 -T0 -q"
 
 i18n_vars="/etc/sysconfig/language:RC_LANG-LANG,RC_LC_ALL-LC_ALL /etc/sysconfig/console:CONSOLE_UNICODEMAP-FONT_UNIMAP,CONSOLE_FONT-FONT,CONSOLE_SCREENMAP-FONT_MAP /etc/sysconfig/keyboard:KEYTABLE-KEYMAP"
