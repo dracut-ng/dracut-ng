@@ -30,7 +30,7 @@ test_setup() {
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync "$TESTDIR"/root.img
 
     ln -s / "$TESTDIR"/sysroot
-    test_dracut --sysroot "$TESTDIR"/sysroot
+    test_dracut --hostonly --sysroot "$TESTDIR"/sysroot
 
     if grep -q '^root:' /etc/shadow; then
         if ! grep -q '^root:' "$TESTDIR"/initrd/dracut.*/initramfs/etc/shadow; then
