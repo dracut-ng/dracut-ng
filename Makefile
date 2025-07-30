@@ -188,6 +188,7 @@ install: all
 	install -m 0755 dracut-logger.sh $(DESTDIR)$(pkglibdir)/dracut-logger.sh
 	install -m 0755 dracut-initramfs-restore.sh $(DESTDIR)$(pkglibdir)/dracut-initramfs-restore
 	cp -arx modules.d dracut.conf.d $(DESTDIR)$(pkglibdir)
+	rm -r $(DESTDIR)$(pkglibdir)/dracut.conf.d/debian/
 	for i in $(configprofile) ; do \
 		cp -arx dracut.conf.d/$$i/* $(DESTDIR)$(pkglibdir)/dracut.conf.d/ ;\
 	done
