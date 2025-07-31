@@ -27,6 +27,23 @@ CFLAGS ?= -O2 -g -Wall -std=gnu99 -D_FILE_OFFSET_BITS=64 -Wformat -Werror=format
 bashcompletiondir ?= ${datadir}/bash-completion/completions
 pkgconfigdatadir ?= $(datadir)/pkgconfig
 
+configs = \
+	fips/10-fips.conf \
+	generic/11-generic.conf \
+	hostonly/10-hostonly.conf \
+	ima/10-ima.conf \
+	no-network/10-no-network.conf \
+	no-xattr/10-no-xattr.conf \
+	rescue/10-rescue.conf \
+	uki-virt/10-uki-virt.conf \
+	$(NULL)
+
+test_configs = \
+	test-makeroot/test-makeroot.conf \
+	test-root/test-root.conf \
+	test/test.conf \
+	$(NULL)
+
 man1pages = man/lsinitrd.1
 
 man5pages = man/dracut.conf.5
@@ -187,13 +204,18 @@ install: all
 	ln -fs dracut-functions.sh $(DESTDIR)$(pkglibdir)/dracut-functions
 	install -m 0755 dracut-logger.sh $(DESTDIR)$(pkglibdir)/dracut-logger.sh
 	install -m 0755 dracut-initramfs-restore.sh $(DESTDIR)$(pkglibdir)/dracut-initramfs-restore
-	cp -arx modules.d dracut.conf.d $(DESTDIR)$(pkglibdir)
-	rm -r $(DESTDIR)$(pkglibdir)/dracut.conf.d/debian/
+	cp -arx modules.d $(DESTDIR)$(pkglibdir)
+	for conf in $(configs); do \
+		install -D -m 0644 "dracut.conf.d/$$conf" "$(DESTDIR)$(pkglibdir)/dracut.conf.d/$$conf"; \
+	done
 	for i in $(configprofile) ; do \
 		cp -arx dracut.conf.d/$$i/* $(DESTDIR)$(pkglibdir)/dracut.conf.d/ ;\
 	done
 ifeq ($(enable_test),yes)
 	cp -arx test $(DESTDIR)$(pkglibdir)
+	for conf in $(test_configs); do \
+		install -D -m 0644 "dracut.conf.d/$$conf" "$(DESTDIR)$(pkglibdir)/dracut.conf.d/$$conf"; \
+	done
 else
 	rm -rf $(DESTDIR)$(pkglibdir)/modules.d/70test*
 endif
