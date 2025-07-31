@@ -29,7 +29,7 @@ EOF
 
     test_dracut \
         --no-kernel --drivers "" \
-        --modules "test" \
+        --add-confdir "test" \
         "${dracut_cpio_params[@]}" \
         --include "$tdir/init.sh" /lib/dracut/hooks/emergency/00-init.sh \
         --install "poweroff" \
