@@ -93,6 +93,7 @@ installkernel() {
                 "=drivers/soc" \
                 "=drivers/spi" \
                 "=drivers/spmi" \
+                "=drivers/usb/cdns3" \
                 "=drivers/usb/chipidea" \
                 "=drivers/usb/dwc2" \
                 "=drivers/usb/dwc3" \
