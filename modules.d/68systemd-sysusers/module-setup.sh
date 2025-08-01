@@ -28,4 +28,7 @@ install() {
     # set read and write permission for the current user
     [[ -f "$initdir/etc/gshadow" ]] && chmod u+rw "$initdir/etc/gshadow"
     [[ -f "$initdir/etc/shadow" ]] && chmod u+rw "$initdir/etc/shadow"
+
+    [[ -f "$initdir/etc/passwd" ]] && chmod 644 "$initdir/etc/passwd"
+    [[ -f "$initdir/etc/group" ]] && chmod 644 "$initdir/etc/group"
 }
