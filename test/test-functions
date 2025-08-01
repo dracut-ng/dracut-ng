@@ -59,9 +59,12 @@ test_dracut() {
     # shellcheck disable=SC2162
     IFS=' ' read -a TEST_DRACUT_ARGS_ARRAY <<< "$TEST_DRACUT_ARGS"
 
-    "$DRACUT" \
+    if ! "$DRACUT" \
         "${TEST_DRACUT_ARGS_ARRAY[@]}" \
-        "$@" "$TESTDIR"/initramfs.testing || return 1
+        "$@" "$TESTDIR"/initramfs.testing; then
+        lsinitrd "$TESTDIR"/initramfs.testing
+        return 1
+    fi
 }
 
 # Wait for the server QEMU has been started up.
