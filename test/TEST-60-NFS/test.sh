@@ -231,7 +231,6 @@ test_run() {
 }
 
 test_setup() {
-    DRACUT_PATH=${DRACUT_PATH:-/sbin /bin /usr/sbin /usr/bin}
     export no_kernel=
     # Detect lib paths
 

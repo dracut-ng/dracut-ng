@@ -214,7 +214,6 @@ bootdev=br0
 }
 
 test_setup() {
-    DRACUT_PATH=${DRACUT_PATH:-/sbin /bin /usr/sbin /usr/bin}
     # shellcheck disable=SC2153
     export kernel=$KVERSION
     export no_kernel=
