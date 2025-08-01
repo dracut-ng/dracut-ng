@@ -3,8 +3,8 @@ Jo Zzsi <jozzsicsataban@gmail.com>
 Laszlo Gombos <laszlo.gombos@gmail.com>
 Victor Lowther <victor.lowther@gmail.com>
 Antonio Alvarez Feijoo <antonio.feijoo@suse.com>
-Jóhann B. Guðmundsson <johannbg@gmail.com>
 Benjamin Drung <benjamin.drung@canonical.com>
+Jóhann B. Guðmundsson <johannbg@gmail.com>
 Amadeusz Żołnowski <aidecoe@aidecoe.name>
 Daniel Molkentin <daniel.molkentin@suse.com>
 Hannes Reinecke <hare@suse.com>
@@ -28,18 +28,19 @@ Frederick Grose <fgrose@sugarlabs.org>
 Beniamino Galvani <bgalvani@redhat.com>
 Pavel Valena <pvalena@redhat.com>
 Ian Wienand <iwienand@redhat.com>
+James Le Cuirot <jlecuirot@microsoft.com>
+Marcos Mello <marcosfrm@gmail.com>
 наб <nabijaczleweli@nabijaczleweli.xyz>
 dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+David Tardon <dtardon@redhat.com>
 Jonathan Lebon <jonathan@jlebon.com>
 Steffen Maier <maier@linux.ibm.com>
 WANG Chao <chaowang@redhat.com>
 Andrew Ammerlaan <andrewammerlaan@gentoo.org>
-David Tardon <dtardon@redhat.com>
 Yu Watanabe <watanabe.yu+github@gmail.com>
 Andrey Borzenkov <arvidjaar@gmail.com>
 David Disseldorp <ddiss@suse.de>
 Frantisek Sumsal <frantisek@sumsal.cz>
-Marcos Mello <marcosfrm@gmail.com>
 Peter Robinson <pbrobinson@fedoraproject.org>
 Thomas Blume <thomas.blume@suse.com>
 Brian C. Lane <bcl@redhat.com>
@@ -73,6 +74,8 @@ Mikhail Novosyolov <m.novosyolov@rosalinux.ru>
 Ondrej Mosnacek <omosnace@redhat.com>
 Tao Liu <ltao@redhat.com>
 dracutng[bot] <dracutng@gombos.dev>
+Adam Williamson <awilliam@redhat.com>
+Alper Nebi Yasak <alpernebiyasak@gmail.com>
 Baoquan He <bhe@redhat.com>
 Brendan Germain <brendan.germain@nasdaqomx.com>
 BtbN <timo@rothenpieler.org>
@@ -84,7 +87,6 @@ Nathan Rini <nate@ucar.edu>
 Radek Vykydal <rvykydal@redhat.com>
 Zbigniew Jędrzejewski-Szmek <zbyszek@in.waw.pl>
 Đoàn Trần Công Danh <congdanhqx@gmail.com>
-Adam Williamson <awilliam@redhat.com>
 Fabian Deutsch <fabiand@fedoraproject.org>
 Jan Macku <jamacku@redhat.com>
 Kamil Rytarowski <n54@gmx.com>
@@ -97,7 +99,6 @@ Benjamin Marzinski <bmarzins@redhat.com>
 Chao Wang <chaowang@redhat.com>
 Cornelius Hoffmann <coding@hoffmn.de>
 Frederic Crozat <fcrozat@suse.com>
-James Le Cuirot <jlecuirot@microsoft.com>
 James Lee <jlee@thestaticvoid.com>
 Jesse Keating <jkeating@redhat.com>
 Masahiro Matsuya <mmatsuya@redhat.com>
@@ -109,12 +110,14 @@ Roberto Sassu <roberto.sassu@polito.it>
 Stefan Reimer <it@startux.de>
 Takashi Iwai <tiwai@suse.de>
 Tony Asleson <tasleson@redhat.com>
+Vitaly Kuznetsov <vkuznets@redhat.com>
 Zoltán Böszörményi <zboszor@gmail.com>
-Alper Nebi Yasak <alpernebiyasak@gmail.com>
+farfalleflickan <6597735+farfalleflickan@users.noreply.github.com>
 Anton Blanchard <anton@samba.org>
 Bill Nottingham <notting@redhat.com>
 Chapman Flack <g2@anastigmatix.net>
 Chris Leech <cleech@redhat.com>
+Coiby Xu <coxu@redhat.com>
 David Cantrell <dcantrell@redhat.com>
 Dennis Gilmore <dennis@ausil.us>
 Doan Tran Cong Danh <congdanhqx@gmail.com>
@@ -143,7 +146,6 @@ Stig Telfer <stelfer@cray.com>
 Thomas Backlund <tmb@mageia.org>
 Topi Miettinen <toiwoton@gmail.com>
 Vasiliy Tolstov <v.tolstov@selfip.ru>
-Vitaly Kuznetsov <vkuznets@redhat.com>
 Wim Muskee <wimmuskee@gmail.com>
 keentux <valentin.lefebvre@suse.com>
 Alan Jenkins <alan-jenkins@tuffmail.co.uk>
@@ -154,10 +156,11 @@ Alexander Wenzel <alexander.wenzel@qbeyond.de>
 Alexey Shabalin <shaba@altlinux.org>
 Andre Russ <andre.russ@sap.com>
 Andreas Schwab <schwab@suse.de>
+Andrew Gunnerson <accounts+github@chiller3.com>
 Ankit Kumar <ankit@linux.vnet.ibm.com>
 Antony Messerli <amesserl@rackspace.com>
 Chao Fan <cfan@redhat.com>
-Coiby Xu <coxu@redhat.com>
+Chris Riches <chris.riches@nutanix.com>
 Daniel Cordero <dracut@0xdc.io>
 Daniel Kahn Gillmor <dkg@fifthhorseman.net>
 Daniel McIlvaney <damcilva@microsoft.com>
@@ -165,6 +168,7 @@ Daniel Schaal <farbing@web.de>
 Daniel Winzen <daniel@danwin1210.de>
 Denis Silakov <dsilakov@virtuozzo.com>
 Dimitri John Ledkov <dimitri.j.ledkov@intel.com>
+Emanuele Giuseppe Esposito <eesposit@redhat.com>
 Erwan Velu <erwan.velu@enovance.com>
 Evgeny Vereshchagin <evvers@ya.ru>
 Fabian Vogt <fvogt@suse.de>
@@ -216,7 +220,6 @@ Vivek Goyal <vgoyal@redhat.com>
 Vladislav Bogdanov <bubble@hoster-ok.com>
 Wenchao Hao <haowenchao@huawei.com>
 dalto8 <57767042+dalto8@users.noreply.github.com>
-farfalleflickan <6597735+farfalleflickan@users.noreply.github.com>
 nkraetzschmar <nkraetzschmar@users.noreply.github.com>
 Érico Rolim <erico.erc@gmail.com>
 “Masahiro <mmatsuya@redhat.com>
@@ -229,7 +232,6 @@ Alexander Sosedkin <asosedkin@redhat.com>
 Alexander Todorov <atodorov@redhat.com>
 Alexey Kodanev <alexey.kodanev@oracle.com>
 Andreas Stieger <astieger@suse.com>
-Andrew Gunnerson <accounts+github@chiller3.com>
 Andrew Halaney <ahalaney@redhat.com>
 Andrew J. Hesford <ajh@sideband.org>
 Andrey Sokolov <keremet@altlinux.org>
@@ -281,7 +283,6 @@ Dorina Kovacs <princessdorinakovacs@gmail.com>
 Duane Griffin <duaneg@dghda.com>
 Dylan Aïssi <dylan.aissi@collabora.com>
 Elan Ruusamäe <glen@delfi.ee>
-Emanuele Giuseppe Esposito <eesposit@redhat.com>
 Enno Boland <g@s01.de>
 Enzo Matsumiya <ematsumiya@suse.de>
 Eugene S. Sobolev <sobolev@protei.ru>
@@ -325,6 +326,7 @@ John Meneghini <jmeneghi@redhat.com>
 Jonas Jelten <jj@sft.lol>
 Jonas Jonsson <jonas@websystem.se>
 Jonas Witschel <diabonas@archlinux.org>
+Karel Zak <kzak@redhat.com>
 Kenneth D'souza <kennethdsouza94@gmail.com>
 Kevin Yung <Kevin.Yung@myob.com>
 Khem Raj <raj.khem@gmail.com>
@@ -341,6 +343,7 @@ Louis Sautier <sautier.louis@gmail.com>
 Luca BRUNO <luca.bruno@coreos.com>
 Lucas C. Villa Real <lucasvr@gmail.com>
 Major Hayden <major@mhtx.net>
+Marc Herbert <marc.herbert@intel.com>
 Marc-Antoine Perennou <Marc-Antoine@Perennou.com>
 Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
 Marian Csontos <mcsontos@redhat.com>
@@ -423,6 +426,7 @@ Yanko Kaneti <yaneti@declera.com>
 You-Sheng Yang <vicamo.yang@canonical.com>
 Zhiguo Deng <bjzgdeng@linux.vnet.ibm.com>
 Ziyue Yang <ziyang@redhat.com>
+dracutng[bot] <dracutng@localhost.localdomain>
 foopub <45460217+foopub@users.noreply.github.com>
 gaoyi <ymuemc@163.com>
 gombi <gombi@>
@@ -449,4 +453,5 @@ realtime-neil <neil@rtr.ai>
 runsisi <runsisi@hust.edu.cn>
 tupper <tupper.bob@gmail.com>
 xtraeme <xtraeme@voidlinux.eu>
+zhuyaliang <15132211195@163.com>
 Дамјан Георгиевски <gdamjan@gmail.com>
