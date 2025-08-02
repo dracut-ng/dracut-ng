@@ -70,7 +70,7 @@ install() {
 
     if [[ ${hostonly-} ]]; then
         # check if other dracut modules already created an entry for root in /etc/shadow
-        if grep -q '^root:' "$initdir/etc/shadow"; then
+        if grep -q '^root:' "$initdir/etc/shadow" > /dev/null 2>&1; then
             grep -v '^root:' "$initdir/etc/shadow" > "$initdir/etc/shadow-"
             mv "$initdir/etc/shadow-" "$initdir/etc/shadow"
         fi
