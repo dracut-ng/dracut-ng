@@ -240,7 +240,7 @@ inst_dir() {
 inst() {
     local dstdir="${dstdir:-"$initdir"}"
     local _ret _hostonly_install
-    if [[ $1 == "-H" ]]; then
+    if [[ $1 == "-H" ]] && [[ $hostonly ]]; then
         _hostonly_install="-H"
         shift
     fi
@@ -257,7 +257,7 @@ inst() {
 inst_simple() {
     local dstdir="${dstdir:-"$initdir"}"
     local _ret _hostonly_install
-    if [[ $1 == "-H" ]]; then
+    if [[ $1 == "-H" ]] && [[ $hostonly ]]; then
         _hostonly_install="-H"
         shift
     fi
@@ -278,7 +278,7 @@ inst_simple() {
 
 inst_symlink() {
     local _ret _hostonly_install
-    if [[ $1 == "-H" ]]; then
+    if [[ $1 == "-H" ]] && [[ $hostonly ]]; then
         _hostonly_install="-H"
         shift
     fi
@@ -296,7 +296,7 @@ inst_symlink() {
 inst_multiple() {
     local dstdir="${dstdir:-"$initdir"}"
     local _ret _hostonly_install
-    if [[ $1 == "-H" ]]; then
+    if [[ $1 == "-H" ]] && [[ $hostonly ]]; then
         _hostonly_install="-H"
         shift
     fi
