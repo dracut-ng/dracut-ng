@@ -1338,6 +1338,10 @@ case $hostonly_mode in
         ;;
 esac
 
+# make sure these variables are never unset
+hostonly=${hostonly-}
+hostonly_mode=${hostonly_mode-}
+
 if [[ $reproducible == yes ]] && [[ -z ${SOURCE_DATE_EPOCH-} ]]; then
     SOURCE_DATE_EPOCH=$(stat -c %Y "$dracutbasedir/dracut-functions.sh")
 fi

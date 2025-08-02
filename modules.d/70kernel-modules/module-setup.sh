@@ -126,7 +126,7 @@ installkernel() {
             dracut_instmods -o -P ".*/(kernel/fs/nfs|kernel/fs/nfsd|kernel/fs/lockd)/.*" '=fs'
         fi
 
-        if [[ ${hostonly-} ]] && [[ "${host_fs_types[*]}" ]]; then
+        if [[ $hostonly ]] && [[ "${host_fs_types[*]}" ]]; then
             hostonly='' instmods "${host_fs_types[@]}"
         fi
 
@@ -143,7 +143,7 @@ installkernel() {
     fi
 
     inst_multiple -o "$depmodd/*.conf"
-    if [[ ${hostonly-} ]]; then
+    if [[ $hostonly ]]; then
         inst_multiple -H -o "$depmodconfdir/*.conf"
     fi
     :
