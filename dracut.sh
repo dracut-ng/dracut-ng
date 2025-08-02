@@ -974,8 +974,6 @@ if ! [[ $kernel ]] && [[ $regenerate_all_l != "yes" ]]; then
     else
         # shellcheck disable=SC2012
         kernel="$(cd /lib/modules && ls -1v | tail -1)"
-        # shellcheck disable=SC2012
-        [[ $kernel ]] || kernel="$(cd /usr/lib/modules && ls -1v | tail -1)"
     fi
 fi
 
