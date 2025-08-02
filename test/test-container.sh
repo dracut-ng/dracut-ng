@@ -8,7 +8,7 @@ if command -v systemd-detect-virt > /dev/null && ! systemd-detect-virt -c &> /de
     exit 1
 fi
 
-set -e
+set -eu
 if [ "${V-}" = "2" ]; then set -x; fi
 
 [[ -d ${0%/*} ]] && cd "${0%/*}"/../
@@ -22,11 +22,11 @@ if [ "${V-}" = "2" ]; then set -x; fi
 )
 
 # disable building documentation by default
-[ -z "$enable_documentation" ] && export enable_documentation=no
+[ -z "${enable_documentation-}" ] && export enable_documentation=no
 
 # shellcheck disable=SC2086
-./configure --enable-test $CONFIGURE_ARG
+./configure --enable-test ${CONFIGURE_ARG-}
 
 # treat warnings as error
 # shellcheck disable=SC2086
-CFLAGS="-Wextra -Werror" make TEST_RUN_ID="${TEST_RUN_ID:=$1}" TESTS="${TESTS:=$2}" V="${V:=1}" $MAKEFLAGS ${TARGETS:=all install check}
+CFLAGS="-Wextra -Werror" make TEST_RUN_ID="${TEST_RUN_ID:=$1}" TESTS="${TESTS:=$2}" V="${V:=1}" ${MAKEFLAGS-} ${TARGETS:=all install check}
