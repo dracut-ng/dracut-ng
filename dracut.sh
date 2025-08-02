@@ -1686,7 +1686,8 @@ if [[ ! $print_cmdline ]]; then
         fi
 
         if ! [[ $kernel_image ]]; then
-            for kernel_image in "${dracutsysrootdir-}/lib/modules/$kernel/vmlinuz" "${dracutsysrootdir-}/boot/vmlinuz-$kernel"; do
+            for kernel_image in "${dracutsysrootdir-}/lib/modules/$kernel/vmlinuz" "${dracutsysrootdir-}/boot/vmlinuz-$kernel" \
+                "${dracutsysrootdir-}/lib/modules/$kernel/vmlinux" "${dracutsysrootdir-}/boot/vmlinux-$kernel"; do
                 [[ -s $kernel_image ]] || continue
                 break
             done
