@@ -87,8 +87,12 @@ jobs:
                     - "20"
                     - "26"
                     - "30"
+                    - "50"
                     - "80"
                     - "81"
+                exclude:
+                    - container: opensuse:latest
+                      test: "50"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm'
@@ -96,7 +100,7 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v4
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
 
     extended-systemd:
         needs: basic
