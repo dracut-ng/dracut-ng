@@ -102,8 +102,6 @@ if ! [[ $KERNEL_VERSION ]]; then
     else
         # shellcheck disable=SC2012
         KERNEL_VERSION="$(cd /lib/modules && ls -1v | tail -1)"
-        # shellcheck disable=SC2012
-        [[ $KERNEL_VERSION ]] || KERNEL_VERSION="$(cd /usr/lib/modules && ls -1v | tail -1)"
     fi
 fi
 
