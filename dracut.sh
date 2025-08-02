@@ -1316,6 +1316,15 @@ check_kernel_compress_support() {
 [[ ${hostonly-} == yes ]] && hostonly="-h"
 [[ ${hostonly-} != "-h" ]] && unset hostonly
 
+if [[ ${hostonly-} ]]; then
+    for i in /sys /proc /run /dev; do
+        if ! findmnt --target "$i" &> /dev/null; then
+            dwarning "Turning off host-only mode: '$i' is not mounted!"
+            unset hostonly
+        fi
+    done
+fi
+
 case $hostonly_mode in
     '')
         [[ ${hostonly-} ]] && hostonly_mode="sloppy"
@@ -1726,15 +1735,6 @@ fi
 
 # Need to be able to have non-root users read stuff (rpcbind etc)
 chmod 755 "$initdir"
-
-if [[ ${hostonly-} ]]; then
-    for i in /sys /proc /run /dev; do
-        if ! findmnt --target "$i" &> /dev/null; then
-            dwarning "Turning off host-only mode: '$i' is not mounted!"
-            unset hostonly
-        fi
-    done
-fi
 
 declare -A host_fs_types=()
 declare -a host_devs=()
