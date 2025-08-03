@@ -231,80 +231,32 @@ test_run() {
 }
 
 test_setup() {
-    DRACUT_PATH=${DRACUT_PATH:-/sbin /bin /usr/sbin /usr/bin}
-    export no_kernel=
-    # Detect lib paths
-
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "url-lib nfs" \
         -I "ip grep setsid" \
         -f "$TESTDIR"/initramfs.root || return 1
 
-    KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)
-    export kernel=$KVERSION
-    export srcmods="/lib/modules/$kernel/"
+    mkdir -p "$TESTDIR"/server/overlay
 
-    rm -rf -- "$TESTDIR"/overlay
+    # Create what will eventually be the server root filesystem onto an overlay
+    "$DRACUT" -N --keep --tmpdir "$TESTDIR"/server/overlay \
+        --add-confdir test-root \
+        -a "bash network-legacy nfs" \
+        --add-drivers "nfsd sunrpc lockd" \
+        -I "exportfs rpc.nfsd rpc.mountd dhcpd" \
+        --install-optional "/etc/netconfig /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services rpc.idmapd /etc/idmapd.conf" \
+        -i "./dhcpd.conf" "/etc/dhcpd.conf" \
+        -f "$TESTDIR"/initramfs.root
 
-    (
-        mkdir -p "$TESTDIR"/server/overlay/source
-        # shellcheck disable=SC2030
-        export initdir=$TESTDIR/server/overlay/source
-        # shellcheck disable=SC1090
-        . "$PKGLIBDIR"/dracut-init.sh
+    mkdir -p "$TESTDIR"/server/overlay/source && mv "$TESTDIR"/server/overlay/dracut.*/initramfs/* "$TESTDIR"/server/overlay/source && rm -rf "$TESTDIR"/server/overlay/dracut.*
 
-        (
-            cd "$initdir" || exit
-            mkdir -p dev sys proc run etc var/run tmp var/lib/{dhcpd,rpcbind}
-            mkdir -p var/lib/nfs/{v4recovery,rpc_pipefs}
-            chmod 777 var/lib/rpcbind var/lib/nfs
-        )
-
-        inst_multiple sh ls shutdown poweroff cat ps ln ip \
-            dmesg mkdir cp exportfs \
-            modprobe rpc.nfsd rpc.mountd \
-            sleep mount chmod rm
-        for _terminfodir in /lib/terminfo /etc/terminfo /usr/share/terminfo; do
-            if [ -f "${_terminfodir}"/l/linux ]; then
-                inst_multiple -o "${_terminfodir}"/l/linux
-                break
-            fi
-        done
-        type -P portmap > /dev/null && inst_multiple portmap
-        type -P rpcbind > /dev/null && inst_multiple rpcbind
-
-        [ -f /etc/netconfig ] && inst_multiple /etc/netconfig
-        type -P dhcpd > /dev/null && inst_multiple dhcpd
-        instmods nfsd sunrpc ipv6 lockd af_packet
-        inst ./server-init.sh /sbin/init
-        inst_simple /etc/os-release
-        inst ./exports /etc/exports
-        inst ./dhcpd.conf /etc/dhcpd.conf
-        inst_multiple -o {,/usr}/etc/nsswitch.conf {,/usr}/etc/rpc \
-            {,/usr}/etc/protocols {,/usr}/etc/services
-        inst_multiple -o rpc.idmapd /etc/idmapd.conf
-
-        inst_libdir_file 'libnfsidmap_nsswitch.so*'
-        inst_libdir_file 'libnfsidmap/*.so*'
-        inst_libdir_file 'libnfsidmap*.so*'
-
-        _nsslibs=$(
-            cat "${dracutsysrootdir-}"/{,usr/}etc/nsswitch.conf 2> /dev/null \
-                | sed -e '/^#/d' -e 's/^.*://' -e 's/\[NOTFOUND=return\]//' \
-                | tr -s '[:space:]' '\n' | sort -u | tr -s '[:space:]' '|'
-        )
-        _nsslibs=${_nsslibs#|}
-        _nsslibs=${_nsslibs%|}
-        inst_libdir_file -n "$_nsslibs" 'libnss_*.so*'
-
-        inst /etc/passwd /etc/passwd
-        inst /etc/group /etc/group
-
-        cp -a /etc/ld.so.conf* "$initdir"/etc
-        ldconfig -r "$initdir"
-        dracut_kernel_post
-    )
+    export initdir=$TESTDIR/server/overlay/source
+    mkdir -p "$initdir"/var/lib/{dhcpd,rpcbind} "$initdir"/var/lib/nfs/{v4recovery,rpc_pipefs}
+    chmod 777 "$initdir"/var/lib/{dhcpd,rpcbind}
+    cp ./server-init.sh "$initdir"/sbin/init
+    cp ./exports "$initdir"/etc/exports
+    cp ./dhcpd.conf "$initdir"/etc/dhcpd.conf
 
     # Make client root inside server root
     # shellcheck disable=SC2031
@@ -314,26 +266,18 @@ test_setup() {
     cp ./client-init.sh "$initdir"/sbin/init
 
     # second, install the files needed to make the root filesystem
-    (
-        # shellcheck disable=SC2030
-        # shellcheck disable=SC2031
-        export initdir=$TESTDIR/server/overlay
-        # shellcheck disable=SC1090
-        . "$PKGLIBDIR"/dracut-init.sh
-        inst_multiple mkfs.ext4 poweroff cp umount sync dd
-        inst_hook initqueue 01 ./create-root.sh
-        inst_hook initqueue/finished 01 ./finished-false.sh
-    )
-
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -i "$TESTDIR"/server/overlay / \
+        --add-confdir test-makeroot \
         -a "bash rootfs-block kernel-modules qemu" \
-        -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
+        --add-drivers "ext4" \
+        -I "mkfs.ext4" \
+        -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
+        -f "$TESTDIR"/initramfs.makeroot
     rm -rf -- "$TESTDIR"/server
 
     declare -a disk_args=()
@@ -349,38 +293,20 @@ test_setup() {
         -initrd "$TESTDIR"/initramfs.makeroot
     test_marker_check dracut-root-block-created
 
-    # Make an overlay with needed tools for the test harness
-    (
-        # shellcheck disable=SC2031
-        # shellcheck disable=SC2030
-        export initdir="$TESTDIR"/overlay
-        mkdir -p "$TESTDIR"/overlay
-        # shellcheck disable=SC1090
-        . "$PKGLIBDIR"/dracut-init.sh
-        inst_multiple poweroff shutdown
-        inst_simple ./client.link /etc/systemd/network/01-client.link
-    )
-
     # Make client's dracut image
     test_dracut \
         --no-hostonly --no-hostonly-cmdline \
+        --include ./client.link /etc/systemd/network/01-client.link \
         -a "dmsquash-live ${USE_NETWORK}"
 
-    (
-        # shellcheck disable=SC2031
-        export initdir="$TESTDIR"/overlay
-        # shellcheck disable=SC1090
-        . "$PKGLIBDIR"/dracut-init.sh
-        rm "$initdir"/etc/systemd/network/01-client.link
-        inst_simple ./server.link /etc/systemd/network/01-server.link
-        inst_hook pre-mount 99 ./wait-if-server.sh
-    )
     # Make server's dracut image
     "$DRACUT" -i "$TESTDIR"/overlay / \
-        -a "network-legacy ${SERVER_DEBUG:+debug}" \
-        -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod i6300esb virtio_net" \
+        -a "bash network-legacy ${SERVER_DEBUG:+debug}" \
+        --include ./server.link /etc/systemd/network/01-server.link \
+        --include ./wait-if-server.sh /lib/dracut/hooks/pre-mount/99-wait-if-server.sh \
+        --add-drivers "ext4" \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.server "$KVERSION"
+        -f "$TESTDIR"/initramfs.server
 }
 
 test_cleanup() {
