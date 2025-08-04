@@ -63,7 +63,7 @@ man8pages = man/dracut.8 \
 
 manpages = $(man1pages) $(man5pages) $(man7pages) $(man8pages)
 
-.PHONY: install clean archive test all check AUTHORS CONTRIBUTORS doc
+.PHONY: install clean distclean archive test all check AUTHORS CONTRIBUTORS doc
 
 all: dracut.pc dracut-install src/skipcpio/skipcpio dracut-util
 
@@ -291,6 +291,9 @@ clean:
 	$(RM) dracut-cpio src/dracut-cpio/target/release/dracut-cpio*
 	$(RM) -rf build/ doc_site/modules/ROOT/pages/man/*
 	$(MAKE) -C test clean
+
+distclean: clean
+	$(RM) Makefile.inc
 
 syncheck:
 	@ret=0;for i in dracut-initramfs-restore.sh modules.d/*/*.sh; do \
