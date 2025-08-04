@@ -70,3 +70,7 @@ if ! git push -u origin release; then
 fi
 
 # tagging and release genaration is no longer automated
+# Once the created release commit is merged, create a (signed) release tag:
+#
+# . ./dracut-version.sh
+# git tag -s -m "Dracut $DRACUT_VERSION release" "$DRACUT_VERSION"
