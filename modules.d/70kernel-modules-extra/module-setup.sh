@@ -35,7 +35,7 @@ installkernel() {
     # Escape a string for usage as a part of extended regular expression.
     # $1 - string to escape
     re_escape() {
-        printf "%s" "$1" | sed 's/\([.+?^$\/\\|()\[]\|\]\)/\\\0/'
+        printf "%s" "$1" | sed 's/\([.+?^$\\|()\[]\|\]\)/\\\0/'
     }
 
     local cfg
