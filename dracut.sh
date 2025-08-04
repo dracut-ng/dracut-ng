@@ -969,7 +969,7 @@ export DRACUT_LOG_LEVEL=warning
 export add_dlopen_features="" omit_dlopen_features=""
 
 if ! [[ $kernel ]] && [[ $regenerate_all_l != "yes" ]]; then
-    if type -P systemd-detect-virt &> /dev/null && ! systemd-detect-virt -c &> /dev/null; then
+    if type -P systemd-detect-virt &> /dev/null && ! systemd-detect-virt -c &> /dev/null && ! systemd-detect-virt -r &> /dev/null; then
         kernel="$(uname -r)"
     else
         # shellcheck disable=SC2012

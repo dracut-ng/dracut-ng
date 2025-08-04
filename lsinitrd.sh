@@ -97,7 +97,7 @@ while (($# > 0)); do
 done
 
 if ! [[ $KERNEL_VERSION ]]; then
-    if type -P systemd-detect-virt &> /dev/null && ! systemd-detect-virt -c &> /dev/null; then
+    if type -P systemd-detect-virt &> /dev/null && ! systemd-detect-virt -c &> /dev/null && ! systemd-detect-virt -r &> /dev/null; then
         KERNEL_VERSION="$(uname -r)"
     else
         # shellcheck disable=SC2012
