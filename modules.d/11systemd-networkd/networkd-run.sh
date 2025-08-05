@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 command -v source_hook > /dev/null || . /lib/dracut-lib.sh
 
