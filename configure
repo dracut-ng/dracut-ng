@@ -22,8 +22,8 @@ fi
 CC="${CC:-cc}"
 PKG_CONFIG="${PKG_CONFIG:-pkg-config}"
 
-# set hostonly by default
-configprofile="${configprofile:-hostonly}"
+# make the default config profile the default
+configprofile="${configprofile:-default}"
 
 # Little helper function for reading args from the commandline.
 # it automatically handles -a b and -a=b variants, and returns 1 if

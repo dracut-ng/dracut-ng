@@ -30,7 +30,7 @@ pkgconfigdatadir ?= $(datadir)/pkgconfig
 configs = \
 	fips/10-fips.conf \
 	generic/11-generic.conf \
-	hostonly/10-hostonly.conf \
+	default/10-default.conf \
 	ima/10-ima.conf \
 	no-network/10-no-network.conf \
 	no-xattr/10-no-xattr.conf \
