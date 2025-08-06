@@ -1125,7 +1125,7 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $hostonly_l ]] && hostonly=$hostonly_l
 [[ $hostonly_cmdline_l ]] && hostonly_cmdline=$hostonly_cmdline_l
 [[ $hostonly_mode_l ]] && hostonly_mode=$hostonly_mode_l
-[[ ${hostonly-} == "yes" ]] && ! [[ $hostonly_cmdline ]] && hostonly_cmdline="yes"
+[[ ${hostonly-} == "yes" ]] && ! [[ $hostonly_cmdline ]] && hostonly_cmdline="no"
 # shellcheck disable=SC2034
 [[ $i18n_install_all_l ]] && i18n_install_all=$i18n_install_all_l
 # shellcheck disable=SC2034
