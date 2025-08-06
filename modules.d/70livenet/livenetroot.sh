@@ -3,6 +3,7 @@
 
 command -v getarg > /dev/null || . /lib/dracut-lib.sh
 command -v fetch_url > /dev/null || . /lib/url-lib.sh
+command -v check_live_ram > /dev/null || . /lib/img-lib.sh
 
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 RETRIES=${RETRIES:-100}
