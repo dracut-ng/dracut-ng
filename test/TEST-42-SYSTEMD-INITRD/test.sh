@@ -92,7 +92,10 @@ test_setup() {
     (
         cd "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/systemd/system/
         for f in dracut*.service; do
-            [ -e "$f" ] && echo "unexpected dracut service found: $f" && return 1
+            if [ -e "$f" ]; then
+                echo "unexpected dracut service found: $f"
+                return 1
+            fi
         done
     )
 
