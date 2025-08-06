@@ -187,6 +187,11 @@ dracutlibdirs() {
 SQUASH_TMPFILE=""
 SQUASH_EXTRACT="$TMPDIR/squash-extract"
 
+# Takes optional pattern arguments
+cpio_extract() {
+    $CAT "$image" 2> /dev/null | cpio -id --quiet $verbose -- "$@"
+}
+
 extract_squash_img() {
     local _img _tmp
 
@@ -332,13 +337,13 @@ unpack_files() {
                     cp -rf "$SQUASH_EXTRACT/$f" "$f"
                     ;;
                 *)
-                    $CAT "$image" 2> /dev/null | cpio -id --quiet $verbose "$f"
+                    cpio_extract "$f"
                     ((ret += $?))
                     ;;
             esac
         done
     else
-        $CAT "$image" 2> /dev/null | cpio -id --quiet $verbose
+        cpio_extract
         ((ret += $?))
 
         extract_squash_img || return 0
