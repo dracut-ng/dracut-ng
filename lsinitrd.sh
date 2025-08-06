@@ -197,6 +197,11 @@ cpio_extract_to_stdout() {
     $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout -- "$@" 2> /dev/null
 }
 
+# Takes optional pattern arguments
+cpio_list() {
+    $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --list -- "$@"
+}
+
 extract_squash_img() {
     local _img _tmp
 
@@ -274,9 +279,9 @@ list_modules() {
 list_files() {
     echo "========================================================================"
     if [ "$sorted" -eq 1 ]; then
-        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --list | sort -n -k5
+        cpio_list | sort -n -k5
     else
-        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --list | sort -k9
+        cpio_list | sort -k9
     fi
     ((ret += $?))
     echo "========================================================================"
@@ -409,7 +414,7 @@ case $bin in
         CAT="cat --"
         is_early=$(cpio_extract_to_stdout early_cpio 2> /dev/null)
         # Debian mkinitramfs does not create the file 'early_cpio', so let's check if firmware files exist
-        [[ "$is_early" ]] || is_early=$(cpio --list --verbose --quiet --to-stdout -- 'kernel/*/microcode/*.bin' < "$image" 2> /dev/null)
+        [[ "$is_early" ]] || is_early=$(cpio_list 'kernel/*/microcode/*.bin' 2> /dev/null)
         if [[ "$is_early" ]]; then
             if [[ -n $unpack ]]; then
                 # should use --unpackearly for early CPIO
