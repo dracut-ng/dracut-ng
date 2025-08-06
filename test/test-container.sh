@@ -29,4 +29,4 @@ if [ "${V-}" = "2" ]; then set -x; fi
 
 # treat warnings as error
 # shellcheck disable=SC2086
-CFLAGS="-Wextra -Werror" make TEST_RUN_ID="${TEST_RUN_ID:=$1}" TESTS="${TESTS:=$2}" V="${V:=1}" ${MAKEFLAGS-} ${TARGETS:=all install check}
+CFLAGS="-Wextra -Werror" make TEST_RUN_ID="${TEST_RUN_ID:=${1-}}" TESTS="${TESTS:=${2-}}" V="${V:=1}" ${MAKEFLAGS-} ${TARGETS:=all install check}
