@@ -894,6 +894,21 @@ oom:
 static char *find_library(const char *soname, const char *src, size_t src_len, const Elf64_Ehdr *match64,
                           const Elf32_Ehdr *match32)
 {
+        /* If the soname is an absolute path, expand it like the RUNPATH, and
+           return it (with the sysroot) without further checks like glibc and
+           musl do. They also support relative paths, but we cannot feasibly
+           support them. Such paths are relative to the current directory of the
+           calling process at runtime, which we cannot know in this context. */
+        if (soname[0] == '/') {
+                _cleanup_free_ char *expanded = expand_runpath(soname, src, match64);
+                if (!expanded)
+                        return NULL;
+
+                char *sysroot_expanded = NULL;
+                _asprintf(&sysroot_expanded, "%s%s", sysrootdir ?: "", expanded);
+                return sysroot_expanded;
+        }
+
         if (match64)
                 FIND_LIBRARY_RUNPATH_FOR_BITS(64, match64);
         else if (match32)
