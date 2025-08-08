@@ -209,6 +209,8 @@ jobs:
                     - opensuse:latest
                 test:
                     - "70"
+                    - "71"
+                    - "72"
                 include:
                     # on openSUSE run tests with network-legacy
                     - container: "opensuse:latest"

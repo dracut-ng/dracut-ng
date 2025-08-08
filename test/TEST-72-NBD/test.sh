@@ -23,11 +23,6 @@ test_check() {
         return 1
     fi
 
-    if ! modinfo -k "$KVERSION" nbd &> /dev/null; then
-        echo "Kernel module nbd does not exist"
-        return 1
-    fi
-
     return 0
 }
 
@@ -205,7 +200,7 @@ make_encrypted_root() {
         -I "cryptsetup" \
         -i ./create-encrypted-root.sh /lib/dracut/hooks/initqueue/01-create-encrypted-root.sh \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
+        -f "$TESTDIR"/initramfs.makeroot
     rm -rf -- "$TESTDIR"/overlay
 
     declare -a disk_args=()
@@ -228,7 +223,7 @@ make_client_root() {
         --add-confdir test-root \
         -I "ip" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
-        -f "$TESTDIR"/initramfs.root "$KVERSION"
+        -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
     cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
 
@@ -241,7 +236,7 @@ make_client_root() {
         -i ./create-client-root.sh /lib/dracut/hooks/initqueue/01-create-client-root.sh \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
+        -f "$TESTDIR"/initramfs.makeroot
 
     declare -a disk_args=()
     declare -i disk_index=0
@@ -280,7 +275,7 @@ EOF
         -i /tmp/config /etc/nbd-server/config \
         -i "./dhcpd.conf" "/etc/dhcpd.conf" \
         --no-hostonly --no-hostonly-cmdline --nohardlink \
-        -f "$TESTDIR"/initramfs.root "$KVERSION"
+        -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/dhcpd "$TESTDIR"/overlay/source/etc/nbd-server
@@ -296,7 +291,7 @@ EOF
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
+        -f "$TESTDIR"/initramfs.makeroot
 
     declare -a disk_args=()
     # shellcheck disable=SC2034  # disk_index used in qemu_add_drive
@@ -339,7 +334,7 @@ test_setup() {
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod drbg virtio_net" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
-        -f "$TESTDIR"/initramfs.server "$KVERSION"
+        -f "$TESTDIR"/initramfs.server
 }
 
 kill_server() {
