@@ -1638,7 +1638,7 @@ static int parse_argv(int argc, char *argv[])
                 {NULL, 0, NULL, 0}
         };
 
-        while ((c = getopt_long(argc, argv, "madfhlL:oD:Hr:Rp:P:s:S:N:v", options, NULL)) != -1) {
+        while ((c = getopt_long(argc, argv, "madfhlL:oD:Hr:Rp:P:s:S:N:vn", options, NULL)) != -1) {
                 switch (c) {
                 case ARG_VERSION:
                         puts(PROGRAM_VERSION_STRING);
