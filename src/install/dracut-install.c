@@ -770,7 +770,7 @@ static char *search_via_ldconf(const char *conf_pattern, const char *soname, con
    expands to the directory of the given src path. $LIB expands to lib if
    match64 is NULL or lib64 otherwise. Returns a newly allocated string even if
    no expansion was necessary. */
-static char *expand_runpath(char *input, const char *src, const Elf64_Ehdr *match64)
+static char *expand_runpath(const char *input, const char *src, const Elf64_Ehdr *match64)
 {
         regex_t regex;
         regmatch_t rmatch[3]; /* 0: full match, 1: without brackets, 2: with brackets */
@@ -780,11 +780,15 @@ static char *expand_runpath(char *input, const char *src, const Elf64_Ehdr *matc
                 return NULL;
         }
 
-        char *result = NULL, *current = input;
+        char *result = strdup(input);
+        if (!result)
+                goto oom;
+
+        const char *current = input;
         int offset = 0;
 
         while (regexec(&regex, current + offset, 3, rmatch, 0) == 0) {
-                char *varname = NULL;
+                const char *varname = NULL;
                 _cleanup_free_ char *varval = NULL;
                 size_t varname_len, varval_len;
 
@@ -823,7 +827,7 @@ static char *expand_runpath(char *input, const char *src, const Elf64_Ehdr *matc
         }
 
         regfree(&regex);
-        return result ?: strdup(current);
+        return result;
 
 oom:
         log_error("Out of memory");
