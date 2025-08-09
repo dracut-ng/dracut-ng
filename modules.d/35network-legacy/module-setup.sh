@@ -15,12 +15,6 @@ depends() {
 }
 
 # called by dracut
-installkernel() {
-    # arping depends on af_packet
-    hostonly='' instmods af_packet
-}
-
-# called by dracut
 install() {
     local _arch
 
