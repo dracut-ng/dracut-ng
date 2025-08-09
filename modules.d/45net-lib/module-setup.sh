@@ -10,6 +10,12 @@ depends() {
     return 0
 }
 
+# called by dracut
+installkernel() {
+    # arping depends on af_packet
+    hostonly='' instmods af_packet
+}
+
 install() {
     inst_script "$moddir/netroot.sh" "/sbin/netroot"
     inst_simple "$moddir/net-lib.sh" "/lib/net-lib.sh"
