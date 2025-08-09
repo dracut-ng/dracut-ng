@@ -206,7 +206,9 @@ jobs:
             fail-fast: false
             matrix:
                 container:
+                    - debian:latest
                     - opensuse:latest
+                    - ubuntu:rolling
                 test:
                     - "70"
                     - "71"
