@@ -96,6 +96,11 @@ while (($# > 0)); do
     shift
 done
 
+CPIO=cpio
+if 3cpio --help 2> /dev/null | grep -q -- --make-directories; then
+    CPIO=3cpio
+fi
+
 if ! [[ $KERNEL_VERSION ]]; then
     if type -P systemd-detect-virt &> /dev/null && ! systemd-detect-virt -c &> /dev/null && ! systemd-detect-virt -r &> /dev/null; then
         KERNEL_VERSION="$(uname -r)"
@@ -189,17 +194,29 @@ SQUASH_EXTRACT="$TMPDIR/squash-extract"
 
 # Takes optional pattern arguments
 cpio_extract() {
-    $CAT "$image" 2> /dev/null | cpio -id --quiet $verbose -- "$@"
+    if [ "$CPIO" = 3cpio ]; then
+        3cpio --extract --make-directories --parts "$PARTS" $verbose "$image" -- "$@"
+    else
+        $CAT "$image" 2> /dev/null | cpio -id --quiet $verbose -- "$@"
+    fi
 }
 
 # Takes optional pattern arguments
 cpio_extract_to_stdout() {
-    $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout -- "$@" 2> /dev/null
+    if [ "$CPIO" = 3cpio ]; then
+        3cpio --extract --parts "$PARTS" --to-stdout "$image" -- "$@"
+    else
+        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout -- "$@" 2> /dev/null
+    fi
 }
 
 # Takes optional pattern arguments
 cpio_list() {
-    $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --list -- "$@"
+    if [ "$CPIO" = 3cpio ]; then
+        3cpio --list --parts "$PARTS" --verbose "$image" -- "$@"
+    else
+        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --list -- "$@"
+    fi
 }
 
 extract_squash_img() {
@@ -412,6 +429,7 @@ read -r -N 6 bin < "$image"
 case $bin in
     $'\x71\xc7'* | 070701)
         CAT="cat --"
+        PARTS=1
         is_early=$(cpio_extract_to_stdout early_cpio 2> /dev/null)
         # Debian mkinitramfs does not create the file 'early_cpio', so let's check if firmware files exist
         [[ "$is_early" ]] || is_early=$(cpio_list 'kernel/*/microcode/*.bin' 2> /dev/null)
@@ -485,9 +503,11 @@ skipcpio() {
     $SKIP "$@" | $ORIG_CAT
 }
 
+PARTS="1-"
 if [[ $SKIP ]]; then
     ORIG_CAT="$CAT"
     CAT=skipcpio
+    PARTS="2-"
 fi
 
 if ((${#filenames[@]} > 1)); then
