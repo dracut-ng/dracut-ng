@@ -67,13 +67,17 @@ test_setup() {
         -i ./systemd-analyze.sh /lib/dracut/hooks/pre-pivot/00-systemd-analyze.sh \
         -i "/bin/true" "/usr/bin/man"
 
-    # shellcheck disable=SC2144 # We're not installing multilib libfido2, so
-    # glob will only match once. More matches would break the test anyway.
-    if pkg-config --exists "libsystemd >= 257" && [ -e /usr/lib*/libfido2.so.1 ] \
+    # shellcheck disable=SC2064
+    trap "$(shopt -p nullglob)" RETURN
+    shopt -q -s nullglob
+    declare -a fidos=(/usr/lib*/libfido2.so.1)
+    if pkg-config --exists "libsystemd >= 257" && ((${#fidos[@]})) \
         && ! lsinitrd "$TESTDIR"/initramfs.testing | grep -E ' usr/lib[^/]*/libfido2\.so\.1\b' > /dev/null; then
         echo "Error: libfido2.so.1 should have been included in the initramfs" >&2
+        lsinitrd "$TESTDIR"/initramfs.testing
         return 1
     fi
+
 }
 
 # shellcheck disable=SC1090

@@ -1073,6 +1073,10 @@ dracut_kernel_post() {
         fi
     fi
 
+    if [[ $handle_precompress == decomp* ]]; then
+        dracut_kernel_post_decomp
+    fi
+
     for _f in modules.builtin modules.builtin.alias modules.builtin.modinfo modules.order; do
         [[ -e $srcmods/$_f ]] && inst_simple "$srcmods/$_f" "/lib/modules/$kernel/$_f"
     done
@@ -1083,7 +1087,71 @@ dracut_kernel_post() {
         dfatal "\"depmod -a $kernel\" failed."
         exit 1
     fi
+}
 
+dracut_kernel_post_decomp() {
+    # Check for the necessary find(1) command for post-processing.
+    if ! find_binary find &> /dev/null; then
+        derror "Will not process kernel modules and firmware as find(1) is not available!"
+        return 1
+    fi
+
+    # Check for necessary compression utilities.
+    local has_decomp has_ext=() cmd ext
+    for cmd in gzip:gz xz:xz zstd:zst; do
+        cmd=${cmd%:*}
+        ext=${cmd#*:}
+        if find_binary "$cmd" &> /dev/null; then
+            has_decomp+=" $cmd"
+            has_ext+=("$ext")
+        else
+            derror "Will not process kernel modules and firmware compressed with '$cmd' as the command is not available!"
+        fi
+    done
+    has_decomp+=" "
+
+    if [[ $has_decomp == " " ]]; then
+        derror "No decompression utilities available, skipping kernel module and firmware decompression!"
+        return 1
+    fi
+
+    # Decompress all firmware and module data for more optimal final
+    # compression ratio.
+    for kerndir in "${dstdir}/lib/firmware" \
+        "${dstdir}/lib/modules/$kernel"; do
+        [ -d "$kerndir" ] && find "$kerndir" -type f -print0 \
+            | while read -r -d $'\0' kernfile; do
+                case "$kernfile" in
+                    *.gz)
+                        ddebug "Decompressing gzipped kernel module/firmware: $kernfile ..."
+                        [[ $has_decomp == *" gzip "* ]] && gzip -d "$kernfile"
+                        ;;
+                    *.xz)
+                        ddebug "Decompressing xz-compressed kernel module/firmware: $kernfile ..."
+                        [[ $has_decomp == *" xz "* ]] && xz -d "$kernfile"
+                        ;;
+                    *.zst)
+                        ddebug "Decompressing zstd-compressed kernel module/firmware: $kernfile ..."
+                        [[ $has_decomp == *" zstd "* ]] && zstd -q --rm -d "$kernfile"
+                        ;;
+                esac
+            done
+    done
+
+    local findpat=(-name "*.${has_ext[0]}") i
+    for ((i = 1; i < ${#has_ext[@]}; i++)); do
+        findpat+=(-o -name "*.${has_ext[i]}")
+    done
+    # Fixup symlinks to compressed firmware.
+    [ -d "${dstdir}/lib/firmware" ] && find "${dstdir}/lib/firmware" \
+        \( "${findpat[@]}" \) \
+        -type l -print0 \
+        | while read -r -d $'\0' fwlink; do
+            ddebug "Fixing up decompressed firmware: $fwlink ..."
+            fwtarget=$(readlink "$fwlink")
+            rm "$fwlink"
+            ln -s "${fwtarget%.*}" "${fwlink%.*}"
+        done
 }
 
 instmods() {
