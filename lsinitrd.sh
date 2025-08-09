@@ -96,6 +96,11 @@ while (($# > 0)); do
     shift
 done
 
+CPIO=cpio
+if 3cpio --help 2> /dev/null | grep -q -- --make-directories; then
+    CPIO=3cpio
+fi
+
 if ! [[ $KERNEL_VERSION ]]; then
     if type -P systemd-detect-virt &> /dev/null && ! systemd-detect-virt -c &> /dev/null && ! systemd-detect-virt -r &> /dev/null; then
         KERNEL_VERSION="$(uname -r)"
@@ -187,6 +192,33 @@ dracutlibdirs() {
 SQUASH_TMPFILE=""
 SQUASH_EXTRACT="$TMPDIR/squash-extract"
 
+# Takes optional pattern arguments
+cpio_extract() {
+    if [ "$CPIO" = 3cpio ]; then
+        3cpio --extract --make-directories --parts "$PARTS" $verbose "$image" -- "$@"
+    else
+        $CAT "$image" 2> /dev/null | cpio -id --quiet $verbose -- "$@"
+    fi
+}
+
+# Takes optional pattern arguments
+cpio_extract_to_stdout() {
+    if [ "$CPIO" = 3cpio ]; then
+        3cpio --extract --parts "$PARTS" --to-stdout "$image" -- "$@"
+    else
+        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout -- "$@" 2> /dev/null
+    fi
+}
+
+# Takes optional pattern arguments
+cpio_list() {
+    if [ "$CPIO" = 3cpio ]; then
+        3cpio --list --parts "$PARTS" --verbose "$image" -- "$@"
+    else
+        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --list -- "$@"
+    fi
+}
+
 extract_squash_img() {
     local _img _tmp
 
@@ -198,8 +230,7 @@ extract_squash_img() {
     # versions.
     for _img in squash-root.img squashfs-root.img erofs-root.img; do
         _tmp="$TMPDIR/$_img"
-        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout -- \
-            $_img > "$_tmp" 2> /dev/null
+        cpio_extract_to_stdout "$_img" > "$_tmp"
         [[ -s $_tmp ]] || continue
 
         SQUASH_TMPFILE="$_tmp"
@@ -245,7 +276,7 @@ extract_files() {
                 cat "$SQUASH_EXTRACT/$f" 2> /dev/null
                 ;;
             *)
-                $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout "$f" 2> /dev/null
+                cpio_extract_to_stdout "$f"
                 ((ret += $?))
                 ;;
         esac
@@ -258,17 +289,16 @@ extract_files() {
 list_modules() {
     echo "dracut modules:"
     # shellcheck disable=SC2046
-    $CAT "$image" | cpio --extract --verbose --quiet --to-stdout -- \
-        $(dracutlibdirs modules.txt) 2> /dev/null
+    cpio_extract_to_stdout $(dracutlibdirs modules.txt)
     ((ret += $?))
 }
 
 list_files() {
     echo "========================================================================"
     if [ "$sorted" -eq 1 ]; then
-        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --list | sort -n -k5
+        cpio_list | sort -n -k5
     else
-        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --list | sort -k9
+        cpio_list | sort -k9
     fi
     ((ret += $?))
     echo "========================================================================"
@@ -296,9 +326,7 @@ list_squash_content() {
 list_cmdline() {
 
     echo "dracut cmdline:"
-    # shellcheck disable=SC2046
-    $CAT "$image" | cpio --extract --verbose --quiet --to-stdout -- \
-        etc/cmdline.d/\*.conf 2> /dev/null
+    cpio_extract_to_stdout etc/cmdline.d/\*.conf
     ((ret += $?))
 
     extract_squash_img || return 0
@@ -332,13 +360,13 @@ unpack_files() {
                     cp -rf "$SQUASH_EXTRACT/$f" "$f"
                     ;;
                 *)
-                    $CAT "$image" 2> /dev/null | cpio -id --quiet $verbose "$f"
+                    cpio_extract "$f"
                     ((ret += $?))
                     ;;
             esac
         done
     else
-        $CAT "$image" 2> /dev/null | cpio -id --quiet $verbose
+        cpio_extract
         ((ret += $?))
 
         extract_squash_img || return 0
@@ -401,9 +429,10 @@ read -r -N 6 bin < "$image"
 case $bin in
     $'\x71\xc7'* | 070701)
         CAT="cat --"
-        is_early=$(cpio --extract --verbose --quiet --to-stdout -- 'early_cpio' < "$image" 2> /dev/null)
+        PARTS=1
+        is_early=$(cpio_extract_to_stdout early_cpio 2> /dev/null)
         # Debian mkinitramfs does not create the file 'early_cpio', so let's check if firmware files exist
-        [[ "$is_early" ]] || is_early=$(cpio --list --verbose --quiet --to-stdout -- 'kernel/*/microcode/*.bin' < "$image" 2> /dev/null)
+        [[ "$is_early" ]] || is_early=$(cpio_list 'kernel/*/microcode/*.bin' 2> /dev/null)
         if [[ "$is_early" ]]; then
             if [[ -n $unpack ]]; then
                 # should use --unpackearly for early CPIO
@@ -474,9 +503,11 @@ skipcpio() {
     $SKIP "$@" | $ORIG_CAT
 }
 
+PARTS="1-"
 if [[ $SKIP ]]; then
     ORIG_CAT="$CAT"
     CAT=skipcpio
+    PARTS="2-"
 fi
 
 if ((${#filenames[@]} > 1)); then
@@ -497,8 +528,7 @@ elif ((${#filenames[@]} > 0)); then
     extract_files
 else
     # shellcheck disable=SC2046
-    version=$($CAT "$image" | cpio --extract --verbose --quiet --to-stdout -- \
-        $(dracutlibdirs 'dracut-*') 2> /dev/null)
+    version=$(cpio_extract_to_stdout $(dracutlibdirs 'dracut-*'))
     ((ret += $?))
     echo "Version: $version"
     echo
@@ -508,8 +538,7 @@ else
     else
         echo -n "Arguments: "
         # shellcheck disable=SC2046
-        $CAT "$image" | cpio --extract --verbose --quiet --to-stdout -- \
-            $(dracutlibdirs build-parameter.txt) 2> /dev/null
+        cpio_extract_to_stdout $(dracutlibdirs build-parameter.txt)
         echo
         list_modules
         list_files
