@@ -770,7 +770,7 @@ static char *search_via_ldconf(const char *conf_pattern, const char *soname, con
    expands to the directory of the given src path. $LIB expands to lib if
    match64 is NULL or lib64 otherwise. Returns a newly allocated string even if
    no expansion was necessary. */
-static char *expand_runpath(char *input, const char *src, const Elf64_Ehdr *match64)
+static char *expand_runpath(const char *input, const char *src, const Elf64_Ehdr *match64)
 {
         regex_t regex;
         regmatch_t rmatch[3]; /* 0: full match, 1: without brackets, 2: with brackets */
@@ -780,11 +780,15 @@ static char *expand_runpath(char *input, const char *src, const Elf64_Ehdr *matc
                 return NULL;
         }
 
-        char *result = NULL, *current = input;
+        char *result = strdup(input);
+        if (!result)
+                goto oom;
+
+        const char *current = input;
         int offset = 0;
 
         while (regexec(&regex, current + offset, 3, rmatch, 0) == 0) {
-                char *varname = NULL;
+                const char *varname = NULL;
                 _cleanup_free_ char *varval = NULL;
                 size_t varname_len, varval_len;
 
@@ -823,7 +827,7 @@ static char *expand_runpath(char *input, const char *src, const Elf64_Ehdr *matc
         }
 
         regfree(&regex);
-        return result ?: strdup(current);
+        return result;
 
 oom:
         log_error("Out of memory");
@@ -890,6 +894,21 @@ oom:
 static char *find_library(const char *soname, const char *src, size_t src_len, const Elf64_Ehdr *match64,
                           const Elf32_Ehdr *match32)
 {
+        /* If the soname is an absolute path, expand it like the RUNPATH, and
+           return it (with the sysroot) without further checks like glibc and
+           musl do. They also support relative paths, but we cannot feasibly
+           support them. Such paths are relative to the current directory of the
+           calling process at runtime, which we cannot know in this context. */
+        if (soname[0] == '/') {
+                _cleanup_free_ char *expanded = expand_runpath(soname, src, match64);
+                if (!expanded)
+                        return NULL;
+
+                char *sysroot_expanded = NULL;
+                _asprintf(&sysroot_expanded, "%s%s", sysrootdir ?: "", expanded);
+                return sysroot_expanded;
+        }
+
         if (match64)
                 FIND_LIBRARY_RUNPATH_FOR_BITS(64, match64);
         else if (match32)
@@ -1638,7 +1657,7 @@ static int parse_argv(int argc, char *argv[])
                 {NULL, 0, NULL, 0}
         };
 
-        while ((c = getopt_long(argc, argv, "madfhlL:oD:Hr:Rp:P:s:S:N:v", options, NULL)) != -1) {
+        while ((c = getopt_long(argc, argv, "madfhlL:oD:Hr:Rp:P:s:S:N:vn", options, NULL)) != -1) {
                 switch (c) {
                 case ARG_VERSION:
                         puts(PROGRAM_VERSION_STRING);
