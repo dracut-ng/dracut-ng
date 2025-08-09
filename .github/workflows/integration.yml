@@ -87,6 +87,7 @@ jobs:
                     - "20"
                     - "26"
                     - "30"
+                    - "50"
                     - "80"
                     - "81"
         container:
@@ -96,7 +97,7 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v4
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
 
     extended-systemd:
         needs: basic
