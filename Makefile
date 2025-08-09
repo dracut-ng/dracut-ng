@@ -203,12 +203,19 @@ install: all
 	ln -fs dracut-functions.sh $(DESTDIR)$(pkglibdir)/dracut-functions
 	install -m 0755 dracut-logger.sh $(DESTDIR)$(pkglibdir)/dracut-logger.sh
 	install -m 0755 dracut-initramfs-restore.sh $(DESTDIR)$(pkglibdir)/dracut-initramfs-restore
-	cp -arx modules.d $(DESTDIR)$(pkglibdir)
+	for module in modules.d/*; do \
+		if test -L "$$module"; then cp -d "$$module" "$(DESTDIR)$(pkglibdir)/modules.d"; continue; fi; \
+		install -m 0755 -d "$$module" "$(DESTDIR)$(pkglibdir)/$$module"; \
+		for file in "$$module"/*; do \
+			mode=0755; test -x "$$file" || mode=0644; \
+			install -m "$$mode" "$$file" "$(DESTDIR)$(pkglibdir)/$$file"; \
+		done; \
+	done
 	for conf in $(configs); do \
 		install -D -m 0644 "dracut.conf.d/$$conf" "$(DESTDIR)$(pkglibdir)/dracut.conf.d/$$conf"; \
 	done
 	for i in $(configprofile) ; do \
-		cp -arx dracut.conf.d/$$i/* $(DESTDIR)$(pkglibdir)/dracut.conf.d/ ;\
+		install -m 0644 dracut.conf.d/$$i/* $(DESTDIR)$(pkglibdir)/dracut.conf.d/ ;\
 	done
 ifeq ($(enable_test),yes)
 	cp -arx test $(DESTDIR)$(pkglibdir)
