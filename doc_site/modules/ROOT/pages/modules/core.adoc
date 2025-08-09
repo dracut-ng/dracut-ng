@@ -109,6 +109,10 @@ code, there are no specific types or categories for dracut modules.
 | Arranges for arbitrary partitions to be mounted before rootfs
 |
 
+| fstab-initramfs
+| Provide an fstab for the initramfs
+|
+
 | hwdb
 | Includes hardware database
 | utils
