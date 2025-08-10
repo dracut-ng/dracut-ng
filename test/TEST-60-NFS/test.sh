@@ -265,7 +265,6 @@ test_setup() {
     echo "TEST FETCH FILE" > "$initdir"/root/fetchfile
     cp ./client-init.sh "$initdir"/sbin/init
 
-    # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
