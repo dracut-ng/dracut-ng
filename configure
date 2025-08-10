@@ -22,8 +22,27 @@ fi
 CC="${CC:-cc}"
 PKG_CONFIG="${PKG_CONFIG:-pkg-config}"
 
-# set hostonly by default
-configprofile="${configprofile:-hostonly}"
+# set configprofile based on ID and ID_LIKE from os-release
+if [[ -f /etc/os-release ]]; then
+    . /etc/os-release
+elif [[ -f /usr/lib/os-release ]]; then
+    . /usr/lib/os-release
+fi
+
+case " $ID $ID_LIKE " in
+    *" debian "*)
+        configprofile=debian
+        ;;
+    *" fedora "*)
+        configprofile=fedora
+        ;;
+    *" suse "*)
+        configprofile=opensuse
+        ;;
+    *)
+        configprofile=hostonly
+        ;;
+esac
 
 # Little helper function for reading args from the commandline.
 # it automatically handles -a b and -a=b variants, and returns 1 if
