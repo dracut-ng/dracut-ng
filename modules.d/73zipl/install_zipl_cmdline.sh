@@ -18,7 +18,7 @@ if ! mount -o ro "${DEV}" ${MNT}; then
 fi
 
 if [ -f ${MNT}/dracut-cmdline.conf ]; then
-    cp ${MNT}/dracut-cmdline.conf /etc/cmdline.d/99zipl.conf
+    cp ${MNT}/dracut-cmdline.conf /etc/cmdline.d/20-zipl.conf
 fi
 
 if [ -f ${MNT}/active_devices.txt ]; then
@@ -30,7 +30,7 @@ fi
 
 umount ${MNT}
 
-if [ -f /etc/cmdline.d/99zipl.conf ]; then
+if [ -f /etc/cmdline.d/20-zipl.conf ]; then
     systemctl restart dracut-cmdline.service
     systemctl restart systemd-udev-trigger.service
 fi

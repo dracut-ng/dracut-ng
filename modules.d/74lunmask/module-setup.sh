@@ -63,7 +63,7 @@ install() {
         local _lunmask
 
         for _lunmask in $(cmdline); do
-            printf "%s\n" "$_lunmask" >> "${initdir}/etc/cmdline.d/95lunmask.conf"
+            printf "%s\n" "$_lunmask" >> "${initdir}/etc/cmdline.d/20-lunmask.conf"
         done
     fi
 }

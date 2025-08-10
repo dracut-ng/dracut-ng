@@ -33,7 +33,7 @@ install() {
     if [[ $hostonly_cmdline == "yes" ]]; then
         local _cio_accept
         _cio_accept=$(cmdline)
-        [[ $_cio_accept ]] && printf "%s\n" "$_cio_accept" >> "${initdir}/etc/cmdline.d/01cio_accept.conf"
+        [[ $_cio_accept ]] && printf "%s\n" "$_cio_accept" >> "${initdir}/etc/cmdline.d/20-cio_accept.conf"
     fi
 
     inst_hook cmdline 20 "$moddir/parse-cio_accept.sh"

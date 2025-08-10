@@ -119,7 +119,7 @@ install() {
 
     ln -fs /proc/self/mounts "$initdir/etc/mtab"
     if [[ $ro_mnt == yes ]]; then
-        echo ro >> "${initdir}/etc/cmdline.d/base.conf"
+        echo ro >> "${initdir}/etc/cmdline.d/20-base.conf"
     fi
 
     echo "dracut-$DRACUT_VERSION" > "$initdir/lib/dracut/dracut-$DRACUT_VERSION"

@@ -246,23 +246,23 @@ For example
 
 [,console]
 ----
-# dracut --include cmdline-preset /etc/cmdline.d/mycmdline.conf initramfs-cmdline-pre.img
+# dracut --include cmdline-preset /etc/cmdline.d/50-mycmdline.conf initramfs-cmdline-pre.img
 ----
 will create an initramfs image, where the file cmdline-preset will be copied
-inside the initramfs to _/etc/cmdline.d/mycmdline.conf_.
+inside the initramfs to _/etc/cmdline.d/50-mycmdline.conf_.
 
 [,console]
 ----
 # mkdir -p rd.live.overlay/etc/cmdline.d
 # mkdir -p rd.live.overlay/etc/conf.d
-# echo "ip=dhcp" >> rd.live.overlay/etc/cmdline.d/mycmdline.conf
+# echo "ip=dhcp" >> rd.live.overlay/etc/cmdline.d/50-mycmdline.conf
 # echo export FOO=testtest >> rd.live.overlay/etc/conf.d/testvar.conf
 # echo export BAR=testtest >> rd.live.overlay/etc/conf.d/testvar.conf
 # tree rd.live.overlay/
 rd.live.overlay/
 `-- etc
     |-- cmdline.d
-    |   `-- mycmdline.conf
+    |   `-- 50-mycmdline.conf
     `-- conf.d
         `-- testvar.conf
 
@@ -297,7 +297,7 @@ server about the ip address for the machine. The dhcp server can also serve an
 additional root-path, which will set the root device for dracut. With this
 mechanism, you have static configuration on your client machine and a
 centralized boot configuration on your TFTP/DHCP server. If you can't pass a
-kernel command line, then you can inject _/etc/cmdline.d/mycmdline.conf_, with a
+kernel command line, then you can inject _/etc/cmdline.d/50-mycmdline.conf_, with a
 method described in <<Injecting>>.
 
 === Reducing the Image Size
