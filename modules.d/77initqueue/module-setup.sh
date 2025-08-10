@@ -14,7 +14,10 @@ install() {
     if dracut_module_included "systemd"; then
         inst_script "$moddir/dracut-initqueue.sh" /usr/bin/dracut-initqueue
         inst_simple "$moddir/dracut-initqueue.service" "$systemdsystemunitdir/dracut-initqueue.service"
-        $SYSTEMCTL -q --root "$initdir" add-wants initrd.target dracut-initqueue.service
+        inst_simple "$systemdsystemunitdir"/initrd.target.wants/dracut-initqueue.service
+
+        # Enable systemd type unit(s)
+        $SYSTEMCTL -q --root "$initdir" enable dracut-initqueue.service
     fi
 
     dracut_need_initqueue

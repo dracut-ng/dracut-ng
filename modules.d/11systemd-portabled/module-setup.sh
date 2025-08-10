@@ -54,6 +54,7 @@ install() {
         "$systemdutildir/portable/profile/strict/*.conf" \
         "$systemdutildir/portable/profile/trusted/*.conf" \
         "$systemdsystemunitdir"/systemd-portabled.service \
+        "$systemdsystemunitdir"/initrd.target.wants/systemd-portabled.service \
         "$systemdsystemunitdir/systemd-portabled.service.d/*.conf" \
         "$systemdsystemunitdir"/dbus-org.freedesktop.portable1.service \
         portablectl
@@ -62,7 +63,6 @@ install() {
     touch "$initdir"/etc/resolv.conf
 
     # Enable systemd type unit(s)
-    $SYSTEMCTL -q --root "$initdir" add-wants initrd.target systemd-portabled.service
     $SYSTEMCTL -q --root "$initdir" enable systemd-portabled.service
 
     # Install the hosts local user configurations if enabled.
