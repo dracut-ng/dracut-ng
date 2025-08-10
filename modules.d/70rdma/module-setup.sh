@@ -20,7 +20,7 @@ install() {
     inst /etc/rdma/modules/roce.conf
     inst /usr/libexec/mlx4-setup.sh
     inst_multiple lspci setpci awk sleep
-    inst_rules 60-rdma-persistent-naming.rules 70-persistent-ipoib.rules 75-rdma-description.rules 90-rdma-hw-modules.rules 90-rdma-ulp-modules.rules
+    inst_rules 60-rdma-persistent-naming.rules 70-persistent-ipoib.rules 75-rdma-description.rules 90-rdma-hw-modules.rules 90-rdma-ulp-modules.rules 90-rdma-umad.rules
     inst_multiple -o \
         "$systemdsystemunitdir"/rdma-hw.target \
         "$systemdsystemunitdir"/rdma-load-modules@.service
