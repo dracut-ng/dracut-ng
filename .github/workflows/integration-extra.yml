@@ -37,7 +37,6 @@ jobs:
                     - gentoo:latest
                     - gentoo:amd64-openrc
                     - opensuse:latest
-                    - ubuntu:latest
                     - ubuntu:devel
                     - ubuntu:rolling
                     - void:latest

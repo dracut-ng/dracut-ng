@@ -22,7 +22,6 @@ on:  # yamllint disable-line rule:truthy
                     - "arch:latest"
                     - "debian:latest"
                     - "debian:sid"
-                    - "ubuntu:latest"
                     - "ubuntu:devel"
                     - "ubuntu:rolling"
                     - "opensuse:latest"

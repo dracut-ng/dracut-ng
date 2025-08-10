@@ -39,7 +39,7 @@ jobs:
                     - {dockerfile: 'Dockerfile-fedora', tag: 'fedora:latest'}
                     - {dockerfile: 'Dockerfile-opensuse', tag: 'opensuse:latest'}
                     - {dockerfile: 'Dockerfile-arch', tag: 'arch:latest'}
-                    - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:latest'}
+                    - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:rolling'}
                     - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:latest'}
                     - {dockerfile: 'Dockerfile-void', tag: 'void:latest'}
                 exclude:
