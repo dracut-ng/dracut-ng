@@ -236,7 +236,7 @@ set_ifname() {
         done
         break
     done
-    echo "ifname=$name$num:$mac" >> /etc/cmdline.d/45-ifname.conf
+    echo "ifname=$name$num:$mac" >> /etc/cmdline.d/20-ifname.conf
     echo "$num" > "/tmp/set_ifname_$name"
     echo "$name$num"
 }
@@ -355,7 +355,7 @@ ibft_to_cmdline() {
             fi
 
         done
-    ) >> /etc/cmdline.d/40-ibft.conf
+    ) >> /etc/cmdline.d/20-ibft.conf
 }
 
 parse_iscsi_root() {

@@ -73,7 +73,7 @@ install() {
     if [[ $hostonly_cmdline == "yes" ]]; then
         local _raidconf
         _raidconf=$(cmdline)
-        [[ $_raidconf ]] && printf "%s\n" "$_raidconf" >> "${initdir}/etc/cmdline.d/90mdraid.conf"
+        [[ $_raidconf ]] && printf "%s\n" "$_raidconf" >> "${initdir}/etc/cmdline.d/20-mdraid.conf"
     fi
 
     inst_rules 63-md-raid-arrays.rules 64-md-raid-assembly.rules

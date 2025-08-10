@@ -67,10 +67,10 @@ install() {
     if [[ $hostonly_cmdline == "yes" ]]; then
         local _journaldev
         _journaldev=$(cmdline_journal)
-        [[ $_journaldev ]] && printf "%s\n" "$_journaldev" >> "${initdir}/etc/cmdline.d/95root-journaldev.conf"
+        [[ $_journaldev ]] && printf "%s\n" "$_journaldev" >> "${initdir}/etc/cmdline.d/20-root-journaldev.conf"
         local _rootdev
         _rootdev=$(cmdline_rootfs)
-        [[ $_rootdev ]] && printf "%s\n" "$_rootdev" >> "${initdir}/etc/cmdline.d/95root-dev.conf"
+        [[ $_rootdev ]] && printf "%s\n" "$_rootdev" >> "${initdir}/etc/cmdline.d/20-root-dev.conf"
     fi
 
     inst_multiple umount
