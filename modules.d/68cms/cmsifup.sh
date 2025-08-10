@@ -28,7 +28,7 @@ fi
     for i in $DNS1 $DNS2; do
         echo "nameserver=$i"
     done
-} > /etc/cmdline.d/80-cms.conf
+} > /etc/cmdline.d/20-cms.conf
 
 [ -e "/tmp/net.ifaces" ] && read -r IFACES < /tmp/net.ifaces
 IFACES="$IFACES $DEVICE"

@@ -27,7 +27,7 @@ done
 systemctl try-reload-or-restart systemd-networkd.service
 
 if [ -n "$netroot" ] || [ -e /tmp/net.ifaces ]; then
-    echo rd.neednet >> /etc/cmdline.d/networkd.conf
+    echo rd.neednet >> /etc/cmdline.d/20-networkd.conf
 fi
 
 if getargbool 0 rd.neednet; then

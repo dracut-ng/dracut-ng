@@ -63,7 +63,7 @@ install() {
 
     if [[ $hostonly_cmdline == "yes" ]]; then
         _resumeconf=$(cmdline)
-        [[ $_resumeconf ]] && printf "%s\n" "$_resumeconf" >> "${initdir}/etc/cmdline.d/95resume.conf"
+        [[ $_resumeconf ]] && printf "%s\n" "$_resumeconf" >> "${initdir}/etc/cmdline.d/20-resume.conf"
     fi
 
     # if systemd is included and has the hibernate-resume tool, use it and nothing else

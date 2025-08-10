@@ -201,7 +201,7 @@ install() {
     if [[ $hostonly_cmdline == "yes" ]]; then
         local _iscsiconf
         _iscsiconf=$(cmdline)
-        [[ $_iscsiconf ]] && printf "%s\n" "$_iscsiconf" >> "${initdir}/etc/cmdline.d/95iscsi.conf"
+        [[ $_iscsiconf ]] && printf "%s\n" "$_iscsiconf" >> "${initdir}/etc/cmdline.d/20-iscsi.conf"
     fi
 
     inst_hook cmdline 90 "$moddir/parse-iscsiroot.sh"

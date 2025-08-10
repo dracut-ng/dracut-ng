@@ -81,7 +81,7 @@ install() {
     if [[ $hostonly_cmdline == "yes" ]]; then
         local _cryptconf
         _cryptconf=$(cmdline)
-        [[ $_cryptconf ]] && printf "%s\n" "$_cryptconf" >> "${initdir}/etc/cmdline.d/90crypt.conf"
+        [[ $_cryptconf ]] && printf "%s\n" "$_cryptconf" >> "${initdir}/etc/cmdline.d/20-crypt.conf"
     fi
 
     inst_hook cmdline 30 "$moddir/parse-crypt.sh"

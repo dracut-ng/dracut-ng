@@ -61,6 +61,6 @@ install() {
         local _zipl
         _zipl=$(cmdline)
 
-        [[ $_zipl ]] && printf "%s\n" "$_zipl" > "${initdir}/etc/cmdline.d/91zipl.conf"
+        [[ $_zipl ]] && printf "%s\n" "$_zipl" > "${initdir}/etc/cmdline.d/19-zipl.conf"
     fi
 }

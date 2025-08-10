@@ -41,7 +41,7 @@ To debug the shutdown process, you can get a shell in the shutdown procedure
 by injecting "rd.break=pre-shutdown rd.shell" or "rd.break=shutdown rd.shell".
 ----
 # mkdir -p /run/initramfs/etc/cmdline.d
-# echo "rd.break=pre-shutdown rd.shell" > /run/initramfs/etc/cmdline.d/debug.conf
+# echo "rd.break=pre-shutdown rd.shell" > /run/initramfs/etc/cmdline.d/50-debug.conf
 # touch /run/initramfs/.need_shutdown
 ----
 

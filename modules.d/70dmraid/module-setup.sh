@@ -68,7 +68,7 @@ install() {
 
     if [[ $hostonly_cmdline == "yes" ]]; then
         _raidconf=$(cmdline)
-        [[ $_raidconf ]] && printf "%s\n" "$_raidconf" >> "${initdir}/etc/cmdline.d/90dmraid.conf"
+        [[ $_raidconf ]] && printf "%s\n" "$_raidconf" >> "${initdir}/etc/cmdline.d/20-dmraid.conf"
     fi
 
     inst_multiple dmraid

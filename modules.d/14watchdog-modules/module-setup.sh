@@ -25,7 +25,7 @@ installkernel() {
         echo "rd.driver.pre=\"$(
             IFS=,
             echo "${!_drivers[*]}"
-        )\"" > "${initdir}"/etc/cmdline.d/00-watchdog.conf
+        )\"" > "${initdir}"/etc/cmdline.d/20-watchdog.conf
     fi
     return 0
 }

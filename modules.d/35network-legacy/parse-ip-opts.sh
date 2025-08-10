@@ -42,7 +42,7 @@ BOOTDEV=$(getarg bootdev=)
 
 if [ -n "$NEEDBOOTDEV" ] && getargbool 1 rd.neednet; then
     #[ -z "$BOOTDEV" ] && warn "Please supply bootdev argument for multiple ip= lines"
-    echo "rd.neednet=1" > /etc/cmdline.d/dracut-neednet.conf
+    echo "rd.neednet=1" > /etc/cmdline.d/20-dracut-neednet.conf
     info "Multiple ip= arguments: assuming rd.neednet=1"
 else
     unset NEEDBOOTDEV
@@ -130,7 +130,7 @@ for p in $(getargs ip=); do
             "$(expr substr "$dev" 9 2)" \
             "$(expr substr "$dev" 11 2)" \
             "$(expr substr "$dev" 13 2)" \
-            >> /etc/cmdline.d/80-enx.conf
+            >> /etc/cmdline.d/20-enx.conf
     fi
 done
 

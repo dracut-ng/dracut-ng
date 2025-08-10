@@ -416,7 +416,7 @@ fi
 ROOTFLAGS="$(getarg rootflags)"
 
 if [ "$overlayfs" = required ]; then
-    echo "rd.live.overlay.overlayfs=1" > /etc/cmdline.d/dmsquash-need-overlay.conf
+    echo "rd.live.overlay.overlayfs=1" > /etc/cmdline.d/20-dmsquash-need-overlay.conf
 fi
 
 if [ -n "$overlayfs" ]; then
