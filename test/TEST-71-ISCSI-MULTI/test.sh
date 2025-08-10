@@ -152,7 +152,6 @@ test_setup() {
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/nfs/rpc_pipefs
     cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
 
-    # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
@@ -195,7 +194,6 @@ test_setup() {
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/dhcpd "$TESTDIR"/overlay/source/etc/iscsi
     cp ./server-init.sh "$TESTDIR"/overlay/source/sbin/init
 
-    # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.

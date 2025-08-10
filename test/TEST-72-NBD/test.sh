@@ -190,7 +190,6 @@ make_encrypted_root() {
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
     cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
 
-    # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
@@ -227,7 +226,6 @@ make_client_root() {
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
     cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
 
-    # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
@@ -281,7 +279,6 @@ EOF
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/dhcpd "$TESTDIR"/overlay/source/etc/nbd-server
     cp ./server-init.sh "$TESTDIR"/overlay/source/sbin/init
 
-    # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
