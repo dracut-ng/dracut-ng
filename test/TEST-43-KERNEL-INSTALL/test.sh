@@ -63,7 +63,7 @@ test_setup() {
     echo 'initrd_generator=dracut' >> /run/kernel/install.conf
 
     # enable test dracut config
-    cp /usr/lib/dracut/test/dracut.conf.d/test/test.conf /usr/lib/dracut/dracut.conf.d/
+    cp /usr/lib/dracut/dracut.conf.d/test/*.conf /usr/lib/dracut/dracut.conf.d/
 
     # enable rescue boot config
     cp /usr/lib/dracut/dracut.conf.d/rescue/*.conf /usr/lib/dracut/dracut.conf.d/
