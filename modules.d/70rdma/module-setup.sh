@@ -7,6 +7,7 @@ check() {
 }
 
 depends() {
+    echo systemd
     return 0
 }
 
