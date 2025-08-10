@@ -142,7 +142,7 @@ Udev events can add scripts here with `/sbin/initqueue`.
 If `/sbin/initqueue` is called with the `--onetime` option, the script
 will be removed after it was run.
 +
-If `/lib/dracut/hooks/initqueue/work` is created and `udev >= 143` then
+If `/lib/dracut/hooks/initqueue/work` is created then
 this loop can process the jobs in parallel to the udevtrigger.
 +
 If the udev queue is empty and no root device is found or no root
