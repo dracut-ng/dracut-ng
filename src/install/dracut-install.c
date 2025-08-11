@@ -93,6 +93,7 @@ static Hashmap *items_failed = NULL;
 static Hashmap *modules_loaded = NULL;
 static Hashmap *modules_suppliers = NULL;
 static Hashmap *processed_suppliers = NULL;
+static Hashmap *processed_deps = NULL;
 static Hashmap *modalias_to_kmod = NULL;
 static Hashmap *add_dlopen_features = NULL;
 static Hashmap *omit_dlopen_features = NULL;
@@ -1136,12 +1137,20 @@ skip:
    Both ELF binaries and scripts with shebangs are handled. */
 static int resolve_deps(const char *src, Hashmap *pdeps)
 {
-        _cleanup_free_ char *fullsrcpath = NULL;
-
-        fullsrcpath = get_real_file(src, true);
+        char *fullsrcpath = get_real_file(src, true);
         log_debug("resolve_deps('%s') -> get_real_file('%s', true) = '%s'", src, src, fullsrcpath);
         if (!fullsrcpath)
                 return 0;
+
+        switch (hashmap_put(processed_deps, fullsrcpath, fullsrcpath)) {
+        case -EEXIST:
+                free(fullsrcpath);
+                return 0;
+        case -ENOMEM:
+                log_error("Out of memory");
+                free(fullsrcpath);
+                return -ENOMEM;
+        }
 
         _cleanup_close_ int fd = open(fullsrcpath, O_RDONLY | O_CLOEXEC);
         if (fd < 0) {
@@ -1845,27 +1854,10 @@ static int parse_argv(int argc, char *argv[])
 static int resolve_lazy(int argc, char **argv)
 {
         int i;
-        size_t destrootdirlen = strlen(destrootdir);
         int ret = 0;
-        char *item;
         for (i = 0; i < argc; i++) {
-                const char *src = argv[i];
-                char *p = argv[i];
-
-                log_debug("resolve_deps('%s')", src);
-
-                if (strstr(src, destrootdir)) {
-                        p = &argv[i][destrootdirlen];
-                }
-
-                if (check_hashmap(items, p)) {
-                        continue;
-                }
-
-                item = strdup(p);
-                hashmap_put(items, item, item);
-
-                ret += resolve_deps(src, NULL);
+                log_debug("resolve_deps('%s')", argv[i]);
+                ret += resolve_deps(argv[i], NULL);
         }
         return ret;
 }
@@ -3015,13 +3007,14 @@ int main(int argc, char **argv)
         items = hashmap_new(string_hash_func, string_compare_func);
         items_failed = hashmap_new(string_hash_func, string_compare_func);
         processed_suppliers = hashmap_new(string_hash_func, string_compare_func);
+        processed_deps = hashmap_new(string_hash_func, string_compare_func);
         modalias_to_kmod = hashmap_new(string_hash_func, string_compare_func);
 
         dlopen_features[0] = add_dlopen_features = hashmap_new(string_hash_func, string_compare_func);
         dlopen_features[1] = omit_dlopen_features = hashmap_new(string_hash_func, string_compare_func);
 
         if (!items || !items_failed || !processed_suppliers || !modules_loaded ||
-            !add_dlopen_features || !omit_dlopen_features) {
+            !processed_deps || !add_dlopen_features || !omit_dlopen_features) {
                 log_error("Out of memory");
                 r = EXIT_FAILURE;
                 goto finish1;
@@ -3100,6 +3093,9 @@ finish2:
         while ((i = hashmap_steal_first(processed_suppliers)))
                 item_free(i);
 
+        while ((i = hashmap_steal_first(processed_deps)))
+                item_free(i);
+
         for (size_t j = 0; j < 2; j++) {
                 char ***array;
                 Iterator it;
@@ -3125,6 +3121,7 @@ finish2:
         hashmap_free(modules_loaded);
         hashmap_free(modules_suppliers);
         hashmap_free(processed_suppliers);
+        hashmap_free(processed_deps);
         hashmap_free(modalias_to_kmod);
 
         if (arg_mod_filter_path)
