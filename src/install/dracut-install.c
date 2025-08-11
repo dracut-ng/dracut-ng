@@ -951,9 +951,10 @@ static void resolve_deps_dlopen_parse_json(Hashmap *pdeps, Hashmap *deps, const 
         for (size_t entry_idx = 0; entry_idx < sd_json_variant_elements(dlopen_json); entry_idx++) {
                 sd_json_variant *entry = sd_json_variant_by_index(dlopen_json, entry_idx);
                 sd_json_variant *feature_json = sd_json_variant_by_key(entry, "feature");
+                const char *feature = NULL;
 
                 if (feature_json && sd_json_variant_is_string(feature_json)) {
-                        const char *feature = sd_json_variant_string(feature_json);
+                        feature = sd_json_variant_string(feature_json);
                         const char *name = src_soname ?: basename(fullsrcpath);
 
                         Iterator i;
@@ -988,12 +989,15 @@ static void resolve_deps_dlopen_parse_json(Hashmap *pdeps, Hashmap *deps, const 
 
                         const char *soname = sd_json_variant_string(soname_json);
                         if (hashmap_get(pdeps, soname))
-                                continue;
+                                goto skip;
 
                         char *library = find_library(soname, fullsrcpath, src_len, match64, match32);
-                        if (!library || hashmap_put_strdup_key(deps, soname, library) < 0)
-                                log_warning("WARNING: could not locate dlopen dependency %s requested by '%s'", soname, fullsrcpath);
+                        if (library && hashmap_put_strdup_key(deps, soname, library) == 0)
+                                goto skip;
                 }
+
+                log_warning("WARNING: could not locate dlopen dependency for %s feature requested by '%s'", feature ?: "unnamed",
+                            fullsrcpath);
 skip:
         }
 }
