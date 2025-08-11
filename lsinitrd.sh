@@ -230,7 +230,7 @@ extract_squash_img() {
     done
 
     if [[ -z $SQUASH_TMPFILE ]]; then
-        SQUASH_TMPFILE=none
+        SQUASH_TMPDIR=none
         return 1
     fi
 
