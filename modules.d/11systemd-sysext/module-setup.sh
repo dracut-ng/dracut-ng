@@ -47,6 +47,8 @@ install() {
         "$systemdsystemunitdir/systemd-confext${_suffix}.service.d/*.conf" \
         "$systemdsystemunitdir"/systemd-sysext${_suffix}.service \
         "$systemdsystemunitdir/systemd-sysext${_suffix}.service.d/*.conf" \
+        "$systemdsystemunitdir"/initrd.target.wants/systemd-confext${_suffix}.service \
+        "$systemdsystemunitdir"/initrd.target.wants/systemd-sysext${_suffix}.service \
         systemd-confext systemd-sysext
 
     # Enable systemd type unit(s)
