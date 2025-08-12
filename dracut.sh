@@ -2293,6 +2293,13 @@ for d in $(ldconfig_paths); do
     rmdir -p --ignore-fail-on-non-empty "$initdir/$d" > /dev/null 2>&1
 done
 
+# Takes a cpio file and optional pattern arguments
+cpio_extract() {
+    local file="$1"
+    shift
+    cpio --extract --file "$file" --quiet -- "$@"
+}
+
 if [[ $early_microcode == yes ]]; then
     dinfo "*** Generating early-microcode cpio image ***"
     ucode_dir=(amd-ucode intel-ucode)
@@ -2342,7 +2349,7 @@ if [[ $early_microcode == yes ]]; then
                 for _ucodedir in "${early_microcode_image_dir[@]}"; do
                     for _ucodename in "${early_microcode_image_name[@]}"; do
                         [[ -e "$_ucodedir/$_ucodename" ]] \
-                            && cpio --extract --file "$_ucodedir/$_ucodename" --quiet \
+                            && cpio_extract "$_ucodedir/$_ucodename" \
                                 "kernel/x86/microcode/${ucode_dest[$idx]}"
                         if [[ -e "$_dest_dir/${ucode_dest[$idx]}" ]]; then
                             dinfo "*** Using microcode found in '$_ucodedir/$_ucodename' ***"
