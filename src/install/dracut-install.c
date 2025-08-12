@@ -631,7 +631,11 @@ static char *check_lib_match(const char *dirname, const char *basename, const ch
         if (fstat(fd, &sb) < 0)
                 goto finish2;
 
-        void *map = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+        size_t lib_len = sb.st_size;
+        if (lib_len == 0)
+                goto finish2;
+
+        void *map = mmap(NULL, lib_len, PROT_READ, MAP_PRIVATE, fd, 0);
         if (map == MAP_FAILED)
                 goto finish2;
 
@@ -1148,6 +1152,9 @@ static int resolve_deps(const char *src, Hashmap *pdeps)
         }
 
         size_t src_len = sb.st_size;
+        if (src_len == 0)
+                return 0;
+
         void *map = mmap(NULL, src_len, PROT_READ, MAP_PRIVATE, fd, 0);
         if (map == MAP_FAILED) {
                 log_error("ERROR: cannot mmap '%s': %m", fullsrcpath);
