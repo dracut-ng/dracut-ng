@@ -35,8 +35,7 @@ test_setup() {
     dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync "$TESTDIR"/root.img
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync "$TESTDIR"/root.img
 
-    # TODO: remove the requirement for hostonly-mode=sloppy
-    test_dracut --hostonly-mode=sloppy --add "$USE_NETWORK"
+    test_dracut --add-drivers "virtio_net" --add "$USE_NETWORK"
 }
 
 # shellcheck disable=SC1090
