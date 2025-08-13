@@ -69,7 +69,7 @@ install() {
     local -A _allow
     local config_dir
 
-    # shellcheck disable=SC2317  # called later by for_each_host_dev_and_slaves
+    # shellcheck disable=SC2317,SC2329  # called later by for_each_host_dev_and_slaves
     add_hostonly_mpath_conf() {
         if is_mpath "$1"; then
             local _dev
