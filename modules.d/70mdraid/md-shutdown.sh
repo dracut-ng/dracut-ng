@@ -9,7 +9,7 @@ _do_md_shutdown() {
     info "Disassembling mdraid devices."
     mdadm -vv --stop --scan | vinfo
     ret=$((ret + $?))
-    if [ "x$final" != "x" ]; then
+    if [ -n "$final" ]; then
         info "/proc/mdstat:"
         vinfo < /proc/mdstat
     fi
