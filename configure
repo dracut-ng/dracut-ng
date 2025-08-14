@@ -39,9 +39,6 @@ case " $ID $ID_LIKE " in
     *" suse "*)
         configprofile=opensuse
         ;;
-    *)
-        configprofile=hostonly
-        ;;
 esac
 
 # Little helper function for reading args from the commandline.
