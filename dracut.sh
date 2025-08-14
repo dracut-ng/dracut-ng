@@ -2025,7 +2025,7 @@ if [[ $kernel_only != yes ]]; then
     ln -sfn ../run "$initdir/var/run"
     ln -sfn ../run/lock "$initdir/var/lock"
 else
-    for d in lib "$libdirs"; do
+    for d in lib $libdirs; do
         [[ -e "${initdir}${prefix}/$d" ]] && continue
         if [ -h "/$d" ]; then
             inst "/$d" "${prefix}/$d"
