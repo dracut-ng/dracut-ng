@@ -253,7 +253,7 @@ Directory to search for ACPI tables if acpi_override= is set to yes.
 Combine early microcode with ramdisk (default=yes).
 
 *stdloglvl*="__\{0-6\}__"::
-Specify logging level for standard error (default=4).
+Specify logging level for standard error (default=3).
 +
 .Logging Levels
 [cols="1,1"]

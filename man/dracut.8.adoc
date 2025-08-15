@@ -306,13 +306,15 @@ example:
     Output debug information of the build process.
 
 **-v, --verbose**::
-    Increase verbosity level (default is info(4)).
+    Increase verbosity level (default is warnings(3)).
+    Could be specified multiple times.
 
 **--version**::
     Display version and exit.
 
 **-q, --quiet**::
-    Decrease verbosity level (default is info(4)).
+    Decrease verbosity level (default is warnings(3)).
+    Could be specified multiple times.
 
 **-c, --conf** _<dracut configuration file>_::
     Specify configuration file to use.

@@ -1116,7 +1116,7 @@ export SYSTEMCTL=${SYSTEMCTL:-systemctl}
 ((${#libdirs_l[@]})) && libdirs="${libdirs_l[*]}"
 
 [[ $stdloglvl_l ]] && stdloglvl=$stdloglvl_l
-[[ ! ${stdloglvl-} ]] && stdloglvl=4
+[[ ! ${stdloglvl-} ]] && stdloglvl=3
 stdloglvl=$((stdloglvl + verbosity_mod_l))
 ((stdloglvl > 6)) && stdloglvl=6
 ((stdloglvl < 0)) && stdloglvl=0
