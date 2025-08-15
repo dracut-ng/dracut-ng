@@ -156,6 +156,16 @@ after udev has settled and the basic device drivers have been loaded.
 
 All module installation information is in the file module-setup.sh.
 
+The following are the most commonly used shell variables used inside
+drauct modules. These shell variables are always declared and assigned
+values (the assigned value might be an empty string). There is a
+compatibility promise on these variables between dracut releases.
+Module should only read (and not write) these variables.
+ * `$hostonly` (could be an empty string)
+ * `$hostonly_mode` (could be an empty string)
+ * `$hostonly_cmdline` (not an empty string)
+ * `$moddir` (not an empty string)
+
 First we create a check() function, which just exits with 0 indicating that this
 module should be included by default.
 
