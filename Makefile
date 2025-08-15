@@ -315,7 +315,7 @@ syncheck:
 	done;exit $$ret
 ifeq ($(HAVE_SHELLCHECK),yes)
 ifeq ($(HAVE_SHFMT),yes)
-	shellcheck $$(shfmt -f .)
+	shellcheck $$(shfmt -f *)
 else
 	find . -name '*.sh' -print0 | xargs -0 shellcheck
 endif
