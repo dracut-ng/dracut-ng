@@ -41,6 +41,6 @@ jobs:
             options: '--privileged'
         steps:
             - name: "Checkout Repository"
-              uses: actions/checkout@v4
+              uses: actions/checkout@v5
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
