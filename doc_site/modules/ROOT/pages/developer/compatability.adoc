@@ -36,10 +36,10 @@ Dependencies for the generated initramfs:
 
 [cols="1,1"]
 |===
-|udev/systemd (debian 12) | 252
-|linux-kernel (debian 12) | 6.1
-|bash (debian 12)         | 5.2
-|eudev (alpine/void)      | 3.2.14
-|busybox (alpine)         | 1.37
-|qemu (debian 12)         | 7.2
+|udev/systemd (Debian 13) | 257
+|linux-kernel (Debian 13) | 6.12
+|bash (Debian 13)         | 5.2
+|eudev (Alpine/Void)      | 3.2.14
+|busybox (Alpine)         | 1.37
+|qemu (Ubuntu 25.04)      | 9.2
 |===
