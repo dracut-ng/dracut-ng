@@ -68,3 +68,6 @@ jobs:
                   tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}-${{ matrix.architecture.tag }}
                   push: ${{ github.event_name == 'push' ||  github.event_name == 'schedule' }}
                   platforms: ${{ matrix.architecture.platform }}
+                  build-args: |
+                      DISTRIBUTION=${{ matrix.config.tag }}
+                      PLATFORM=${{ matrix.config.platform }}
