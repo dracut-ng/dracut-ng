@@ -24,6 +24,7 @@ mandir ?= ${prefix}/share/man
 CFLAGS ?= -O2 -g -Wall -std=gnu99 -D_FILE_OFFSET_BITS=64 -Wformat -Werror=format-security -Wp,-D_FORTIFY_SOURCE=2
 bashcompletiondir ?= ${datadir}/bash-completion/completions
 pkgconfigdatadir ?= $(datadir)/pkgconfig
+ARCH ?= $(shell uname -m)
 
 configs = \
 	fips/10-fips.conf \
@@ -280,9 +281,14 @@ endif
 		rm -rf $(DESTDIR)$(pkglibdir)/test/TEST-[0-9][0-9]-*SYSTEMD* ;\
 		rm -rf $(DESTDIR)$(pkglibdir)/modules.d/*systemd* $(DESTDIR)$(mandir)/*.service.* ; \
 		for i in bluetooth connman dbus* fido2 lvmmerge lvmthinpool-monitor memstrack pcsc pkcs11 rngd squash* tpm2-tss; do \
-			rm -rf $(DESTDIR)$(pkglibdir)/modules.d/[0-9][0-9]$${i}; \
+			rm -r $(DESTDIR)$(pkglibdir)/modules.d/[0-9][0-9]$${i}; \
 		done \
 	fi
+ifeq ($(ARCH),s390x)
+	for f in cio_ignore cms dasd dasd_mod dcssblk zfcp zipl znet; do \
+		rm -r $(DESTDIR)$(pkglibdir)/modules.d/[0-9][0-9]$${i}; \
+	done
+endif
 
 clean:
 	$(RM) *~
