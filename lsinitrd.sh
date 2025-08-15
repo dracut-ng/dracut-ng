@@ -480,7 +480,7 @@ type "${CAT%% *}" > /dev/null 2>&1 || {
     exit 1
 }
 
-# shellcheck disable=SC2317  # assigned to CAT and $CAT called later
+# shellcheck disable=SC2317,SC2329  # assigned to CAT and $CAT called later
 skipcpio() {
     $SKIP "$@" | $ORIG_CAT
 }
@@ -493,7 +493,7 @@ fi
 if ((${#filenames[@]} > 1)); then
     TMPFILE="$TMPDIR/initrd.cpio"
     $CAT "$image" 2> /dev/null > "$TMPFILE"
-    # shellcheck disable=SC2317  # assigned to CAT and $CAT called later
+    # shellcheck disable=SC2317,SC2329  # assigned to CAT and $CAT called later
     pre_decompress() {
         cat "$TMPFILE"
     }

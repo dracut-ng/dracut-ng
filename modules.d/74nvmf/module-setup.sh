@@ -7,7 +7,7 @@ check() {
     require_binaries nvme jq || return 1
     require_kernel_modules nvme_fabrics || return 1
 
-    # shellcheck disable=SC2317  # called later by for_each_host_dev_and_slaves
+    # shellcheck disable=SC2317,SC2329  # called later by for_each_host_dev_and_slaves
     is_nvmf() {
         local _dev=$1
         local trtype
@@ -79,7 +79,7 @@ cmdline() {
     local _hostnqn
     local _hostid
 
-    # shellcheck disable=SC2317  # called later by for_each_host_dev_and_slaves
+    # shellcheck disable=SC2317,SC2329  # called later by for_each_host_dev_and_slaves
     gen_nvmf_cmdline() {
         local _dev=$1
         local trtype

@@ -135,7 +135,7 @@ install_iscsiroot() {
 install_softiscsi() {
     [ -d /sys/firmware/ibft ] && return 0
 
-    # shellcheck disable=SC2317  # called later by for_each_host_dev_and_slaves
+    # shellcheck disable=SC2317,SC2329  # called later by for_each_host_dev_and_slaves
     is_softiscsi() {
         local _dev=$1
         local iscsi_dev

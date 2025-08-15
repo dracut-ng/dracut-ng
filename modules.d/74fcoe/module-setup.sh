@@ -2,7 +2,7 @@
 
 # called by dracut
 check() {
-    # shellcheck disable=SC2317  # called later by for_each_host_dev_and_slaves
+    # shellcheck disable=SC2317,SC2329  # called later by for_each_host_dev_and_slaves
     is_fcoe() {
         block_is_fcoe "$1" || return 1
     }

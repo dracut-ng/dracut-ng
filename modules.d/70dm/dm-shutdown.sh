@@ -46,13 +46,13 @@ _do_dm_shutdown() {
     info "Disassembling device-mapper devices"
     for dev in /sys/block/dm-*; do
         [ -e "${dev}" ] || continue
-        if [ "x$final" != "x" ]; then
+        if [ -n "$final" ]; then
             _remove_dm "${dev##*/}" "$final" || ret=$?
         else
             _remove_dm "${dev##*/}" "$final" > /dev/null 2>&1 || ret=$?
         fi
     done
-    if [ "x$final" != "x" ]; then
+    if [ -n "$final" ]; then
         info "dmsetup ls --tree"
         dmsetup ls --tree 2>&1 | vinfo
     fi
@@ -60,7 +60,7 @@ _do_dm_shutdown() {
 }
 
 if command -v dmsetup > /dev/null \
-    && [ "x$(dmsetup status)" != "xNo devices found" ]; then
+    && [ "$(dmsetup status)" != "No devices found" ]; then
     _do_dm_shutdown "$1"
 else
     :
