@@ -75,16 +75,6 @@ module implements onto the initrd.  For the most part, this amounts
 to copying files from the host system onto the initrd in a controlled
 manner.
 
-The following are the most commonly used shell variables used inside
-drauct modules. These shell variables are always declared and assigned
-values (the assigned value might be an empty string). There is a
-compatibility promise on these variables between dracut releases.
-Module should only read (and not write) these variables.
- * `$hostonly` (could be an empty string)
- * `$hostonly_mode` (could be an empty string)
- * `$hostonly_cmdline` (not an empty string)
- * `$moddir` (not an empty string)
-
 ==== `module-setup.sh` function API
 
 `install()`::
