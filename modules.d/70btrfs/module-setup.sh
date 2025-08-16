@@ -58,6 +58,6 @@ install() {
     inst btrfs /sbin/btrfs
 
     if [[ $hostonly_cmdline == "yes" ]]; then
-        printf "%s\n" "$(cmdline)" > "${initdir}/etc/cmdline.d/00-btrfs.conf"
+        printf "%s\n" "$(cmdline)" > "${initdir}/etc/cmdline.d/20-btrfs.conf"
     fi
 }

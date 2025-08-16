@@ -53,7 +53,7 @@ install() {
     if [[ $hostonly_cmdline == "yes" ]]; then
         local _lvmconf
         _lvmconf=$(cmdline)
-        [[ $_lvmconf ]] && printf "%s\n" "$_lvmconf" >> "${initdir}/etc/cmdline.d/90lvm.conf"
+        [[ $_lvmconf ]] && printf "%s\n" "$_lvmconf" >> "${initdir}/etc/cmdline.d/20-lvm.conf"
     fi
 
     inst_rules "$moddir/64-lvm.rules"

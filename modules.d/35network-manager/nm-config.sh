@@ -7,7 +7,7 @@ command -v getargbool > /dev/null || . /lib/dracut-lib.sh
     || nm_service_name="nm-initrd"
 
 if [ -n "$netroot" ] || [ -e /tmp/net.ifaces ]; then
-    echo rd.neednet >> /etc/cmdline.d/35-neednet.conf
+    echo rd.neednet >> /etc/cmdline.d/20-neednet.conf
 fi
 
 if getargbool 0 rd.debug; then

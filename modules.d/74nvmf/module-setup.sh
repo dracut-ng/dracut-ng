@@ -140,7 +140,7 @@ install() {
     if [[ $hostonly_cmdline == "yes" ]]; then
         local _nvmf_args
         _nvmf_args=$(cmdline)
-        [[ "$_nvmf_args" ]] && printf "%s" "$_nvmf_args" >> "${initdir}/etc/cmdline.d/95nvmf-args.conf"
+        [[ "$_nvmf_args" ]] && printf "%s" "$_nvmf_args" >> "${initdir}/etc/cmdline.d/20-nvmf-args.conf"
     fi
     inst_simple -H "/etc/nvme/hostnqn"
     inst_simple -H "/etc/nvme/hostid"

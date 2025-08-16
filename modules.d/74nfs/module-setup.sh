@@ -84,7 +84,7 @@ install() {
     if [[ $hostonly_cmdline == "yes" ]]; then
         local _netconf
         _netconf="$(cmdline)"
-        [[ $_netconf ]] && printf "%s\n" "$_netconf" >> "${initdir}/etc/cmdline.d/95nfs.conf"
+        [[ $_netconf ]] && printf "%s\n" "$_netconf" >> "${initdir}/etc/cmdline.d/20-nfs.conf"
     fi
 
     if [[ -f "${dracutsysrootdir-}/lib/modprobe.d/nfs.conf" ]]; then

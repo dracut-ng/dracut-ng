@@ -109,7 +109,7 @@ install() {
     if [[ $hostonly_cmdline == "yes" ]]; then
         local _fcoeconf
         _fcoeconf=$(cmdline)
-        [[ $_fcoeconf ]] && printf "%s\n" "$_fcoeconf" >> "${initdir}/etc/cmdline.d/95fcoe.conf"
+        [[ $_fcoeconf ]] && printf "%s\n" "$_fcoeconf" >> "${initdir}/etc/cmdline.d/20-fcoe.conf"
     fi
     inst_multiple "/etc/fcoe/cfg-*"
 
