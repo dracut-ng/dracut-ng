@@ -1319,8 +1319,12 @@ check_kernel_compress_support() {
     return $?
 }
 
-[[ ${hostonly-} == yes ]] && hostonly="-h"
-[[ ${hostonly-} != "-h" ]] && unset hostonly
+# hostonly shell variable defaults to "-h" if not specified
+if [[ ${hostonly-} == "no" ]]; then
+    unset hostonly
+else
+    hostonly="-h"
+fi
 
 if [[ ${hostonly-} ]]; then
     for i in /sys /proc /run /dev; do
