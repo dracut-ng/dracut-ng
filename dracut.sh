@@ -2737,6 +2737,7 @@ if [[ $uefi == yes ]]; then
         if ukify build \
             --linux "$kernel_image" \
             --initrd "${DRACUT_TMPDIR}/initramfs.img" \
+            --uname "$kernel" \
             ${uefi_cmdline:+--cmdline @"$uefi_cmdline"} \
             ${uefi_osrelease:+--os-release @"$uefi_osrelease"} \
             ${uefi_splash_image:+--splash "$uefi_splash_image"} \
