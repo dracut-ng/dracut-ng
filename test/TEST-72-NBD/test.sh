@@ -42,8 +42,8 @@ run_server() {
         -net nic,macaddr=52:54:00:12:34:56,model=virtio \
         -net socket,listen=127.0.0.1:12340 \
         -append "panic=1 oops=panic softlockup_panic=1 rd.luks=0 systemd.crash_reboot quiet root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_serverroot rootfstype=ext4 rw console=ttyS0,115200n81 ${SERVER_DEBUG-}" \
-        -initrd "$TESTDIR"/initramfs.server \
-        -pidfile "$TESTDIR"/server.pid -daemonize
+        -pidfile "$TESTDIR"/server.pid -daemonize \
+        -initrd "$TESTDIR"/initramfs.server
     chmod 644 "$TESTDIR"/server.pid
 
     if ! [[ ${SERIAL-} ]]; then

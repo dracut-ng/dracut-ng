@@ -39,8 +39,8 @@ run_server() {
         -net nic,macaddr=52:54:00:42:00:01,model=virtio \
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
         -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=LABEL=dracut rootfstype=ext4 rw console=ttyS0,115200n81 ${SERVER_DEBUG-}" \
-        -initrd "$TESTDIR"/initramfs.server \
-        -pidfile "$TESTDIR"/server.pid -daemonize
+        -pidfile "$TESTDIR"/server.pid -daemonize \
+        -initrd "$TESTDIR"/initramfs.server
 
     chmod 644 -- "$TESTDIR"/server.pid
 
