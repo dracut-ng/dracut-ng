@@ -51,6 +51,7 @@ jobs:
                     - "41"
                     - "42"
                     - "43"
+                    - "50"
                     - "80"
                     - "81"
                     - "82"
@@ -83,7 +84,6 @@ jobs:
             fail-fast: false
             matrix:
                 network:
-                    - ""
                     - network-manager
                     - systemd-networkd
                     - network-legacy
