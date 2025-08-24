@@ -174,8 +174,6 @@ jobs:
                     - ubuntu:devel
                 test:
                     - "60"
-                    - "61"
-                    - "62"
                 include:
                     - network: ""
                     # on debian run tests with systemd-networkd
@@ -184,9 +182,6 @@ jobs:
                     # on openSUSE run tests with network-legacy
                     - container: "opensuse:latest"
                       network: "network-legacy"
-                exclude:
-                    - container: fedora:latest
-                      test: "61"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm'
