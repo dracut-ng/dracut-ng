@@ -7,7 +7,7 @@
 # - busybox default shell (no dash installed)
 # - gzip compression
 # - dbus-daemon
-# - network: none
+# - network: networkmanager
 
 # Not installed
 # - cargo (to increase coverage)
@@ -17,7 +17,6 @@
 # - multipath-tools (does not work well)
 # - ovmf (systemd-boot-efistub, UEFI, UKI is not available)
 # - kernel-install is not available
-# - networkmanager (does not work with dracut)
 
 ARG DISTRIBUTION=alpine
 FROM docker.io/${DISTRIBUTION}
@@ -26,6 +25,7 @@ FROM docker.io/${DISTRIBUTION}
 ARG DISTRIBUTION
 
 # Packages to pass the BASIC test
+# Use dracut-tests package to install dependencies for test suite
 RUN apk add --no-cache \
     asciidoctor \
     dracut-tests \
@@ -38,29 +38,7 @@ RUN apk add --no-cache \
     musl-dev \
     musl-fts-dev
 
-# Packages for all tests, only enabled for alpine:edge
-RUN \
-if [ "$DISTRIBUTION" = "alpine:edge" ] ; then \
-    apk add --no-cache \
-    btrfs-progs \
-    cpio \
-    cryptsetup \
-    device-mapper \
-    elogind \
-    gpg \
-    jq \
-    kbd \
-    keyutils \
-    libcap-utils \
-    losetup \
-    lvm2 \
-    mdadm \
-    nvme-cli \
-    parted \
-    plymouth-themes \
-    procps \
-    squashfs-tools \
-    util-linux-misc \
-    util-linux-login \
-    xorriso \
-; fi
+# Packages for recent changes that are not yet released or packaged by dracut-tests
+RUN apk add --no-cache \
+    networkmanager-cli \
+    networkmanager-initrd-generator
