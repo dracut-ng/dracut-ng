@@ -109,6 +109,25 @@ find_initrd_for_kernel_version() {
     local kernel_version="$1"
     local base_path files initrd machine_id
 
+    if command -v bootctl > /dev/null && command -v jq > /dev/null; then
+        # get proper path to $BOOT
+        base_path=$(bootctl -x)
+        # get initrd key of the selected bootloader entry (i.e., the one that
+        # is actually used to boot the system)
+        mapfile -t files < <(bootctl --json=pretty list 2> /dev/null | jq -r '.[] | select(.isSelected).initrd[]' 2> /dev/null)
+        if [[ ${#files[@]} -ge 1 ]] && [[ -e "${base_path}${files[0]}" ]]; then
+            echo "${base_path}${files[0]}"
+            return
+        fi
+        # if the selected bootloader entry does not have any initrd keys, check
+        # the default (maybe the current selected entry was removed)
+        mapfile -t files < <(bootctl --json=pretty list 2> /dev/null | jq -r '.[] | select(.isDefault).initrd[]' 2> /dev/null)
+        if [[ ${#files[@]} -ge 1 ]] && [[ -e "${base_path}${files[0]}" ]]; then
+            echo "${base_path}${files[0]}"
+            return
+        fi
+    fi
+
     if [[ -d /efi/Default ]] || [[ -d /boot/Default ]] || [[ -d /boot/efi/Default ]]; then
         machine_id="Default"
     elif [[ -s /etc/machine-id ]]; then
