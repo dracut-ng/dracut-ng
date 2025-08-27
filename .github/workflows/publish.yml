@@ -48,7 +48,7 @@ jobs:
       - name: Generate Site
         run: make doc_site
       - name: Upload Artifacts
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: build/site
       - name: Deploy to GitHub Pages
