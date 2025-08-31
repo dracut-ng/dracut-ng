@@ -3,10 +3,10 @@
 # - systemd-networkd
 # - bash
 # - dbus-daemon
-# - network: network-legacy, systemd-networkd
+# - network (systemd): network-legacy, systemd-networkd
+# - network (OpenRC): networkmanager
 
 # Not installed
-# - NetworkManager (to increase coverage)
 # - busybox (to increase coverage)
 # - dash (to increase coverage)
 # - rng-tools (to increase coverage)
@@ -81,7 +81,9 @@ if [ "$OPTION" = "systemd" ] ; then \
     sys-fs/mdadm \
     sys-fs/multipath-tools \
     sys-fs/squashfs-tools \
-    sys-libs/glibc \
-; fi ;\
+    sys-libs/glibc ;\
+else \
+    emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace net-misc/networkmanager ;\
+fi ;\
 rm -rf /var/cache/* /usr/share/doc/* /usr/share/man/* ;\
 emerge --depclean --with-bdeps=n
