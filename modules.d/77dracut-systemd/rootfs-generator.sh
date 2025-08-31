@@ -89,7 +89,7 @@ if [ "$rootok" = "1" ]; then
 
     generator_wait_for_dev "${root#block:}"
     generator_fsck_after_pre_mount "${root#block:}"
-    strstr "$(cat /proc/cmdline)" 'root=' || generator_mount_rootfs "${root#block:}" "$(getarg rootfstype=)" "$(getarg rootflags=)"
+    strstr " $(cat /proc/cmdline)" ' root=' || generator_mount_rootfs "${root#block:}" "$(getarg rootfstype=)" "$(getarg rootflags=)"
 fi
 
 exit 0
