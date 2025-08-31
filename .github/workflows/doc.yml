@@ -28,7 +28,7 @@ jobs:
                     - fedora:latest
                     - gentoo:latest
                     - opensuse:latest
-                    - ubuntu:rolling
+                    - ubuntu:devel
                     - void:latest
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
