@@ -14,7 +14,7 @@ check() {
     if [[ $hostonly ]] || [[ $mount_needs ]]; then
         # Resuming won't work if swap is on a netdevice
         swap_on_netdevice && return 255
-        if grep -rq 'resume=' /proc/cmdline /etc/cmdline /etc/cmdline.d /etc/kernel/cmdline /usr/lib/kernel/cmdline 2> /dev/null; then
+        if grep -rqE '(^| )resume=' /proc/cmdline /etc/cmdline /etc/cmdline.d /etc/kernel/cmdline /usr/lib/kernel/cmdline 2> /dev/null; then
             # hibernation support requested on kernel command line
             return 0
         else
