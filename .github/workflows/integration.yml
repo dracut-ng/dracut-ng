@@ -36,7 +36,7 @@ jobs:
                     - fedora:latest
                     - gentoo:latest
                     - opensuse:latest
-                    - ubuntu:rolling
+                    - ubuntu:devel
                     - void:latest
                 test:
                     - "10"
@@ -78,7 +78,7 @@ jobs:
                     - fedora:latest
                     - gentoo:latest
                     - opensuse:latest
-                    - ubuntu:rolling
+                    - ubuntu:devel
                     - void:latest
                 test:
                     - "11"
@@ -115,7 +115,7 @@ jobs:
                     - fedora:latest
                     - gentoo:latest
                     - opensuse:latest
-                    - ubuntu:rolling
+                    - ubuntu:devel
                 test:
                     - "40"
                     - "41"
@@ -171,7 +171,7 @@ jobs:
                     - fedora:latest
                     - gentoo:latest
                     - opensuse:latest
-                    - ubuntu:rolling
+                    - ubuntu:devel
                 test:
                     - "60"
                     - "61"
