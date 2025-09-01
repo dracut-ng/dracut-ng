@@ -321,7 +321,7 @@ test_setup() {
 
     test_dracut \
         --no-hostonly --no-hostonly-cmdline \
-        -a "${USE_NETWORK}" \
+        -a "watchdog ${USE_NETWORK}" \
         -i "./client.link" "/etc/systemd/network/01-client.link" \
         -i "/tmp/crypttab" "/etc/crypttab" \
         -i "/tmp/key" "/etc/key"

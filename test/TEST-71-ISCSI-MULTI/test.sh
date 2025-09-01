@@ -220,7 +220,7 @@ test_setup() {
     # Make client's dracut image
     test_dracut \
         --no-hostonly --no-hostonly-cmdline \
-        --add "$USE_NETWORK" \
+        --add "watchdog $USE_NETWORK" \
         -i ./client-persistent-lan0.link /etc/systemd/network/01-persistent-lan0.link \
         -i ./client-persistent-lan1.link /etc/systemd/network/01-persistent-lan1.link
 
