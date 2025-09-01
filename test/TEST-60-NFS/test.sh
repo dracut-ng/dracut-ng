@@ -296,7 +296,7 @@ test_setup() {
     test_dracut \
         --no-hostonly --no-hostonly-cmdline \
         --include ./client.link /etc/systemd/network/01-client.link \
-        -a "dmsquash-live ${USE_NETWORK}"
+        -a "watchdog dmsquash-live ${USE_NETWORK}"
 
     # Make server's dracut image
     "$DRACUT" -i "$TESTDIR"/overlay / \
