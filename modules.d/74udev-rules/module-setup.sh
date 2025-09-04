@@ -102,9 +102,19 @@ install() {
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
         inst_dir "$udevconfdir"
+
+        declare -a udevrules=()
+        for rule in "$udevrulesconfdir"/*.rules; do
+            [ -e "$rule" ] || continue
+            if [[ $rule =~ "$udevrulesconfdir"/70-snap.*.rules ]]; then
+                continue
+            fi
+            udevrules+=("$rule")
+        done
+
         inst_multiple -H -o \
             "$udevconfdir"/udev.conf \
             "$udevconfdir/udev.conf.d/*.conf" \
-            "$udevrulesconfdir/*.rules"
+            "${udevrules[@]}"
     fi
 }
