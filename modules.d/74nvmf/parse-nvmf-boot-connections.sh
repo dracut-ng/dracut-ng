@@ -326,6 +326,8 @@ fi
 
 /sbin/initqueue --settled --onetime --name nvmf-connect-settled /sbin/nvmf-autoconnect.sh settled
 /sbin/initqueue --timeout --onetime --name nvmf-connect-timeout /sbin/nvmf-autoconnect.sh timeout
+# Make sure the autoconnect script is run at least once
+echo '[ -f /tmp/nvmf.done ]' > "$hookdir/initqueue/finished/74-nvmf.sh"
 
 # shellcheck disable=SC2034
 rootok=1
