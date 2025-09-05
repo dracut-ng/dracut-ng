@@ -6,6 +6,11 @@
 
 [ "$RD_DEBUG" != yes ] || set -x
 
+# parse-nvmf-boot-connections.sh creates a "finished" script that
+# waits for the file /tmp/nvmf.done.
+# Make sure the file is created when this script has been called once.
+trap 'echo ok >/tmp/nvmf.done' 0
+
 if [ "$1" = timeout ]; then
     [ ! -f /sys/class/fc/fc_udev_device/nvme_discovery ] \
         || echo add > /sys/class/fc/fc_udev_device/nvme_discovery
