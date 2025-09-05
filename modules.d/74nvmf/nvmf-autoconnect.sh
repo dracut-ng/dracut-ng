@@ -6,6 +6,8 @@
 
 [ "$RD_DEBUG" != yes ] || set -x
 
+trap 'echo ok >/tmp/nvmf.done' 0
+
 if [ "$1" = timeout ]; then
     [ ! -f /sys/class/fc/fc_udev_device/nvme_discovery ] \
         || echo add > /sys/class/fc/fc_udev_device/nvme_discovery
