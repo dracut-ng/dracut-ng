@@ -320,9 +320,15 @@ if [ -e /tmp/nvmf_needs_network ] || [ -e /tmp/valid_nbft_entry_found ]; then
     echo "rd.neednet=1" > /etc/cmdline.d/nvmf-neednet.conf
     # netroot is a global variable that is present in all "sourced" scripts
     # shellcheck disable=SC2034
-    netroot=nbft
+    [ "$netroot" ] || netroot=nbft
     rm -f /tmp/nvmf_needs_network
 fi
 
 /sbin/initqueue --settled --onetime --name nvmf-connect-settled /sbin/nvmf-autoconnect.sh settled
 /sbin/initqueue --timeout --onetime --name nvmf-connect-timeout /sbin/nvmf-autoconnect.sh timeout
+# Make sure the autoconnect script is run at least once
+echo '[ -f /tmp/nvmf.done ]' > "$hookdir/initqueue/finished/95-nvmf.sh"
+
+# shellcheck disable=SC2034
+rootok=1
+[ -z "$root" ] && root="nvmf"
