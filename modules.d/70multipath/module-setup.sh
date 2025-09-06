@@ -144,7 +144,7 @@ EOF
     if [[ $hostonly_cmdline == "yes" ]]; then
         local _conf
         _conf=$(cmdline)
-        [[ $_conf ]] && echo "$_conf" >> "${initdir}/etc/cmdline.d/90multipath.conf"
+        [[ $_conf ]] && echo "$_conf" >> "${initdir}/etc/cmdline.d/20-multipath.conf"
     fi
 
     if dracut_module_included "systemd"; then
