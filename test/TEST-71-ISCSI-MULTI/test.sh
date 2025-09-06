@@ -182,7 +182,7 @@ test_setup() {
     rm -rf -- "$TESTDIR"/overlay
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
-        -a "network-legacy iscsi" \
+        -a "$USE_NETWORK iscsi" \
         -d "iscsi_tcp crc32c ipv6 af_packet" \
         -I "ip grep sleep setsid chmod modprobe pidof tgtd tgtadm" \
         --install-optional "/etc/netconfig dhcpd /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
@@ -227,7 +227,7 @@ test_setup() {
     # Make server's dracut image
     "$DRACUT" -i "$TESTDIR"/overlay / \
         --add-confdir test \
-        -a "rootfs-block kernel-modules network-legacy ${SERVER_DEBUG:+debug}" \
+        -a "rootfs-block kernel-modules $USE_NETWORK ${SERVER_DEBUG:+debug}" \
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod drbg virtio_net" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
