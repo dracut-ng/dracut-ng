@@ -92,12 +92,39 @@ jobs:
                 network:
                     - network-manager
                     - systemd-networkd
-                    - network-legacy
                 container:
                     - arch:latest
                     - debian:latest
                 test:
                     - "50"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            options: '--device=/dev/kvm'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v5
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    network-legacy:
+        name: ${{ matrix.test }} on ${{ matrix.container }} ${{ matrix.network }} networking
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+        concurrency:
+            group: network-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                network:
+                    - network-legacy
+                container:
+                    - opensuse:latest
+                test:
+                    - "50"
+                    - "60"
+                    - "70"
+                    - "71"
+                    - "72"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm'
