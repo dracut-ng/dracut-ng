@@ -59,6 +59,12 @@ jobs:
                     # https://github.com/dracut-ng/dracut-ng/issues/1224
                     - container: gentoo:amd64-openrc
                       test: "43"
+                    # https://github.com/dracut-ng/dracut-ng/issues/1590
+                    - container: ubuntu:devel
+                      test: "30"
+                    # https://github.com/dracut-ng/dracut-ng/issues/1590
+                    - container: ubuntu:rolling
+                      test: "30"
                     # https://github.com/dracut-ng/dracut-ng/issues/1315
                     - container: azurelinux:3.0
                       test: "41"
