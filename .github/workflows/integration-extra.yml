@@ -65,9 +65,6 @@ jobs:
                     # https://github.com/dracut-ng/dracut-ng/issues/1590
                     - container: ubuntu:rolling
                       test: "30"
-                    # https://github.com/dracut-ng/dracut-ng/issues/1315
-                    - container: azurelinux:3.0
-                      test: "41"
                     # https://github.com/dracut-ng/dracut-ng/issues/1314
                     - container: azurelinux:3.0
                       test: "43"
