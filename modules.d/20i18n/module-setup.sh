@@ -204,9 +204,6 @@ install() {
         fi
         shopt -q -u nocasematch
 
-        # Gentoo user may have KEYMAP set to something like "-u pl2",
-        KEYMAP=${KEYMAP#-* }
-
         # openSUSE user may have KEYMAP set to something like ".gz"
         KEYMAP=${KEYMAP/.gz/}
 
