@@ -242,7 +242,7 @@ test_setup() {
     # Create what will eventually be the server root filesystem onto an overlay
     "$DRACUT" -N --keep --tmpdir "$TESTDIR"/server/overlay \
         --add-confdir test-root \
-        -a "bash network-legacy nfs" \
+        -a "bash $USE_NETWORK nfs" \
         --add-drivers "nfsd sunrpc lockd" \
         -I "exportfs rpc.nfsd rpc.mountd dhcpd" \
         --install-optional "/etc/netconfig /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services rpc.idmapd /etc/idmapd.conf" \
@@ -300,7 +300,7 @@ test_setup() {
 
     # Make server's dracut image
     "$DRACUT" -i "$TESTDIR"/overlay / \
-        -a "bash network-legacy ${SERVER_DEBUG:+debug}" \
+        -a "bash $USE_NETWORK ${SERVER_DEBUG:+debug}" \
         --include ./server.link /etc/systemd/network/01-server.link \
         --include ./wait-if-server.sh /lib/dracut/hooks/pre-mount/99-wait-if-server.sh \
         --add-drivers "ext4" \
