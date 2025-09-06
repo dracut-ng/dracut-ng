@@ -267,7 +267,7 @@ EOF
 
     "$DRACUT" --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
-        -a "network-legacy" \
+        -a "$USE_NETWORK" \
         -I "ip grep sleep nbd-server chmod modprobe pidof" \
         --install-optional "/etc/netconfig dhcpd /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
         -i /tmp/config /etc/nbd-server/config \
@@ -284,7 +284,7 @@ EOF
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -N -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
-        -a "network-legacy" \
+        -a "$USE_NETWORK" \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
         --nomdadmconf \
         --no-hostonly-cmdline -N \
@@ -328,7 +328,7 @@ test_setup() {
 
     "$DRACUT" -N -i "$TESTDIR"/overlay / \
         --add-confdir test \
-        -a "network-legacy ${SERVER_DEBUG:+debug}" \
+        -a "$USE_NETWORK ${SERVER_DEBUG:+debug}" \
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod drbg virtio_net" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
