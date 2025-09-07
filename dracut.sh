@@ -270,7 +270,7 @@ Creates initial ramdisk images for preloading modules
                         Specify the compressor and compressor specific options
                          used by mksquashfs if squash module is called when
                          building the initramfs.
-  --enhanced-cpio       Attempt to reflink cpio file data using dracut-cpio.
+  --enhanced-cpio       Attempt to reflink cpio file data using 3cpio/dracut-cpio.
   --list-modules        List all available dracut modules.
   -M, --show-modules    Print included module's name to standard output during
                          build.
@@ -1356,6 +1356,7 @@ hostonly_mode=${hostonly_mode-}
 
 if [[ $reproducible == yes ]] && [[ -z ${SOURCE_DATE_EPOCH-} ]]; then
     SOURCE_DATE_EPOCH=$(stat -c %Y "$dracutbasedir/dracut-functions.sh")
+    export SOURCE_DATE_EPOCH
 fi
 
 if [[ -z $DRACUT_KMODDIR_OVERRIDE && -n $drivers_dir ]]; then
@@ -1416,6 +1417,7 @@ trap 'exit 1;' SIGINT
 
 readonly initdir="${DRACUT_TMPDIR}/initramfs"
 readonly squashdir="$initdir/squash_root"
+readonly manifest="${DRACUT_TMPDIR}/manifest"
 mkdir -p "$initdir"
 
 if [[ $early_microcode == yes ]] || { [[ $acpi_override == yes ]] && [[ -d $acpi_table_dir ]]; }; then
@@ -1459,13 +1461,22 @@ elif [[ -n $persistent_policy && ! -d "/dev/disk/${persistent_policy}" ]]; then
     unset persistent_policy
 fi
 
+CPIO=cpio
+if 3cpio --help 2> /dev/null | grep -q -- --create; then
+    CPIO=3cpio
+fi
+
 if [[ $enhanced_cpio == "yes" ]]; then
     enhanced_cpio="$dracutbasedir/dracut-cpio"
-    if [[ -x $enhanced_cpio ]]; then
+    if 3cpio --help 2> /dev/null | grep -q -- --data-align; then
+        # align based on statfs optimal transfer size
+        cpio_align=$(stat --file-system -c "%s" -- "$initdir")
+        unset enhanced_cpio
+    elif [[ -x $enhanced_cpio ]]; then
         # align based on statfs optimal transfer size
         cpio_align=$(stat --file-system -c "%s" -- "$initdir")
     else
-        dinfo "--enhanced-cpio ignored due to lack of dracut-cpio"
+        dinfo "--enhanced-cpio ignored due to lack of 3cpio >= 0.10 or dracut-cpio"
         unset enhanced_cpio
     fi
 else
@@ -2305,7 +2316,11 @@ done
 cpio_extract() {
     local file="$1"
     shift
-    cpio --extract --file "$file" --quiet -- "$@"
+    if [[ $CPIO == 3cpio ]]; then
+        3cpio --extract "$file" -- "$@"
+    else
+        cpio --extract --file "$file" --quiet -- "$@"
+    fi
 }
 
 if [[ $early_microcode == yes ]]; then
@@ -2480,7 +2495,7 @@ clamp_mtimes() {
         | xargs -r -0 touch -h -m -c --date="@${SOURCE_DATE_EPOCH?}"
 }
 
-if [[ ${SOURCE_DATE_EPOCH-} ]]; then
+if [[ ${SOURCE_DATE_EPOCH-} ]] && [[ $CPIO != 3cpio ]]; then
     clamp_mtimes "$initdir"
 
     if [[ "$(cpio --help)" == *--reproducible* ]]; then
@@ -2498,17 +2513,31 @@ if [[ $do_hardlink == yes ]] && command -v hardlink > /dev/null; then
 
     # Hardlink itself breaks mtimes on directories as we may have added/removed
     # dir entries. Fix those up.
-    if [[ ${SOURCE_DATE_EPOCH-} ]]; then
+    if [[ ${SOURCE_DATE_EPOCH-} ]] && [[ $CPIO != 3cpio ]]; then
         clamp_mtimes "$initdir" -type d
     fi
 fi
 
 [[ $EUID != 0 ]] && cpio_owner="0:0"
 
+[[ $EUID == 0 ]] || owner_override="\t\t\t0\t0"
+path_to_manifest() {
+    local basedir="$1"
+    local relpath
+    while IFS= read -r path; do
+        if [[ $path == "$basedir" ]]; then
+            relpath=.
+        else
+            relpath="${path#"$basedir"/}"
+        fi
+        printf "%s\t%s${owner_override-}\n" "$path" "${relpath}"
+    done
+}
+
 if [[ $create_early_cpio == yes ]]; then
     echo 1 > "$early_cpio_dir/d/early_cpio"
 
-    if [[ ${SOURCE_DATE_EPOCH-} ]]; then
+    if [[ ${SOURCE_DATE_EPOCH-} ]] && [[ $CPIO != 3cpio ]]; then
         clamp_mtimes "$early_cpio_dir/d"
     fi
 
@@ -2525,6 +2554,9 @@ if [[ $create_early_cpio == yes ]]; then
             dfatal "dracut-cpio: creation of $outfile failed"
             exit 1
         fi
+    elif [[ $CPIO == 3cpio ]]; then
+        echo "#cpio" >> "$manifest"
+        find "$early_cpio_dir/d" | LANG=C sort | path_to_manifest "$early_cpio_dir/d" >> "$manifest"
     else
         if ! (
             umask 077
@@ -2572,12 +2604,15 @@ case $compress in
         else
             compress="$DRACUT_COMPRESS_BZIP2 -9"
         fi
+        compress_3cpio="bzip2 -9"
         ;;
     lzma)
         compress="$DRACUT_COMPRESS_LZMA -9 -T0"
+        compress_3cpio="lzma -9"
         ;;
     xz)
         compress="$DRACUT_COMPRESS_XZ --check=crc32 --lzma2=dict=1MiB -T0"
+        compress_3cpio=xz
         ;;
     gzip | pigz)
         if [[ $compress == pigz ]] || command -v "$DRACUT_COMPRESS_PIGZ" &> /dev/null; then
@@ -2587,17 +2622,58 @@ case $compress in
         else
             compress="$DRACUT_COMPRESS_GZIP -n -9"
         fi
+        compress_3cpio="gzip -9"
         ;;
     lzo | lzop)
         compress="$DRACUT_COMPRESS_LZOP -9"
+        compress_3cpio="lzop -9"
         ;;
     lz4)
         compress="$DRACUT_COMPRESS_LZ4 -l -9"
+        compress_3cpio="lz4 -9"
         ;;
     zstd)
         compress="$DRACUT_COMPRESS_ZSTD -15 -q -T0"
+        compress_3cpio="zstd -15"
+        ;;
+    cat)
+        compress_3cpio=
         ;;
 esac
+
+if [[ $CPIO == 3cpio ]] && ! [[ -v compress_3cpio ]]; then
+    case "${compress%% *}" in
+        "$DRACUT_COMPRESS_LBZIP2" | "$DRACUT_COMPRESS_BZIP2" | lbzip2 | bzip2 | */lbzip2 | */bzip2)
+            compress_3cpio="bzip2 -9"
+            ;;
+        "$DRACUT_COMPRESS_LZMA" | lzma | */lzma)
+            compress_3cpio="lzma -9"
+            ;;
+        "$DRACUT_COMPRESS_XZ" | xz | */xz)
+            compress_3cpio=xz
+            ;;
+        "$DRACUT_COMPRESS_PIGZ" | "$DRACUT_COMPRESS_GZIP" | pigz | gzip | */pigz | */gzip)
+            compress_3cpio="gzip -9"
+            ;;
+        "$DRACUT_COMPRESS_LZOP" | lzop | */lzop)
+            compress_3cpio="lzop -9"
+            ;;
+        "$DRACUT_COMPRESS_ZSTD" | zstd | */zstd)
+            compress_3cpio="zstd -15"
+            ;;
+        "$DRACUT_COMPRESS_LZ4" | lz4 | */lz4)
+            compress_3cpio="lz4 -9"
+            ;;
+        "$DRACUT_COMPRESS_CAT" | cat | */cat)
+            compress_3cpio=
+            ;;
+        *)
+            derror "custom compressor $1 not supported with 3cpio"
+            exit 1
+            ;;
+    esac
+    dwarn "custom compressor '${compres}' mapped to 3cpio config '${compress_3cpio}'"
+fi
 
 if [[ -n $enhanced_cpio ]]; then
     if [[ $compress == "cat" ]]; then
@@ -2623,6 +2699,17 @@ if [[ -n $enhanced_cpio ]]; then
         exit 1
     fi
     unset cpio_outfile
+elif [[ $CPIO == 3cpio ]]; then
+    if [[ -z $compress_3cpio ]]; then
+        echo "#cpio" >> "$manifest"
+    else
+        echo "#cpio: $compress_3cpio" >> "$manifest"
+    fi
+    find "$initdir" | LANG=C sort | path_to_manifest "$initdir" >> "$manifest"
+    if ! 3cpio --create ${cpio_align:+--data-align="${cpio_align}"} "${DRACUT_TMPDIR}/initramfs.img" < "$manifest"; then
+        dfatal "Creation of $outfile failed"
+        exit 1
+    fi
 else
     if ! (
         umask 077
