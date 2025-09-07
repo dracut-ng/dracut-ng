@@ -141,7 +141,7 @@ test_setup() {
     "$DRACUT" --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -I "ip grep setsid" \
-        --no-hostonly --no-hostonly-cmdline --nohardlink \
+        --no-hostonly \
         -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/nfs/rpc_pipefs
@@ -155,7 +155,7 @@ test_setup() {
         -a "crypt lvm mdraid" \
         -I "setsid blockdev" \
         -i ./create-client-root.sh /lib/dracut/hooks/initqueue/01-create-client-root.sh \
-        --no-hostonly-cmdline -N \
+        -N \
         -f "$TESTDIR"/initramfs.makeroot
     rm -rf -- "$TESTDIR"/overlay
 
@@ -214,7 +214,7 @@ test_setup() {
 
     # Make client's dracut image
     test_dracut \
-        --no-hostonly --no-hostonly-cmdline \
+        --no-hostonly \
         --add "watchdog $USE_NETWORK" \
         -i ./client-persistent-lan0.link /etc/systemd/network/01-persistent-lan0.link \
         -i ./client-persistent-lan1.link /etc/systemd/network/01-persistent-lan1.link
@@ -226,7 +226,7 @@ test_setup() {
         -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod drbg virtio_net" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
-        --no-hostonly-cmdline -N \
+        -N \
         -f "$TESTDIR"/initramfs.server
 }
 

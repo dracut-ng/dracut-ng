@@ -180,7 +180,7 @@ make_encrypted_root() {
     "$DRACUT" --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -I "ip grep" \
-        --no-hostonly --no-hostonly-cmdline --nohardlink \
+        --no-hostonly \
         -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
     cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
@@ -193,7 +193,7 @@ make_encrypted_root() {
         -a "crypt lvm mdraid" \
         -I "cryptsetup" \
         -i ./create-encrypted-root.sh /lib/dracut/hooks/initqueue/01-create-encrypted-root.sh \
-        --no-hostonly-cmdline -N \
+        -N \
         -f "$TESTDIR"/initramfs.makeroot
     rm -rf -- "$TESTDIR"/overlay
 
@@ -216,7 +216,7 @@ make_client_root() {
     "$DRACUT" --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -I "ip" \
-        --no-hostonly --no-hostonly-cmdline --nohardlink \
+        --no-hostonly \
         -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
     cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
@@ -228,7 +228,7 @@ make_client_root() {
         --add-confdir test-makeroot \
         -i ./create-client-root.sh /lib/dracut/hooks/initqueue/01-create-client-root.sh \
         --nomdadmconf \
-        --no-hostonly-cmdline -N \
+        -N \
         -f "$TESTDIR"/initramfs.makeroot
 
     declare -a disk_args=()
@@ -267,7 +267,7 @@ EOF
         --install-optional "/etc/netconfig dhcpd /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
         -i /tmp/config /etc/nbd-server/config \
         -i "./dhcpd.conf" "/etc/dhcpd.conf" \
-        --no-hostonly --no-hostonly-cmdline --nohardlink \
+        --no-hostonly \
         -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
@@ -282,7 +282,7 @@ EOF
         -a "$USE_NETWORK" \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
         --nomdadmconf \
-        --no-hostonly-cmdline -N \
+        -N \
         -f "$TESTDIR"/initramfs.makeroot
 
     declare -a disk_args=()
@@ -315,7 +315,7 @@ test_setup() {
     echo -n test > /tmp/key
 
     test_dracut \
-        --no-hostonly --no-hostonly-cmdline \
+        --no-hostonly \
         -a "watchdog ${USE_NETWORK}" \
         -i "./client.link" "/etc/systemd/network/01-client.link" \
         -i "/tmp/crypttab" "/etc/crypttab" \
