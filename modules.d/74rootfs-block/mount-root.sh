@@ -27,36 +27,11 @@ mount_root() {
     done
 
     fsckoptions=
-    if [ -f "$NEWROOT"/etc/sysconfig/readonly-root ]; then
-        # shellcheck disable=SC1090
-        . "$NEWROOT"/etc/sysconfig/readonly-root
-    fi
-
-    if [ -f "$NEWROOT"/fastboot ]; then
-        fastboot=yes
-    fi
 
     if ! getargbool 0 rd.skipfsck; then
-        if [ -f "$NEWROOT"/fsckoptions ]; then
-            read -r fsckoptions < "$NEWROOT"/fsckoptions
-        fi
 
-        if [ -f "$NEWROOT"/forcefsck ] || getargbool 0 forcefsck; then
+        if getargbool 0 forcefsck; then
             fsckoptions="-f $fsckoptions"
-        elif [ -f "$NEWROOT"/.autofsck ]; then
-            # shellcheck disable=SC1090
-            [ -f "$NEWROOT"/etc/sysconfig/autofsck ] \
-                && . "$NEWROOT"/etc/sysconfig/autofsck
-            if [ "$AUTOFSCK_DEF_CHECK" = "yes" ]; then
-                AUTOFSCK_OPT="$AUTOFSCK_OPT -f"
-            fi
-            if [ -n "$AUTOFSCK_SINGLEUSER" ]; then
-                warn "*** Warning -- the system did not shut down cleanly. "
-                warn "*** Dropping you to a shell; the system will continue"
-                warn "*** when you leave the shell."
-                emergency_shell
-            fi
-            fsckoptions="$AUTOFSCK_OPT $fsckoptions"
         fi
     fi
 
@@ -109,11 +84,6 @@ mount_root() {
     elif ! are_lists_eq , "$rflags" "$_rflags_ro" defaults; then
         info "Remounting ${root#block:} with -o ${rflags}"
         mount -o remount "$NEWROOT" 2>&1 | vinfo
-    fi
-
-    if ! getargbool 0 rd.skipfsck; then
-        [ -f "$NEWROOT"/forcefsck ] && rm -f -- "$NEWROOT"/forcefsck 2> /dev/null
-        [ -f "$NEWROOT"/.autofsck ] && rm -f -- "$NEWROOT"/.autofsck 2> /dev/null
     fi
 }
 

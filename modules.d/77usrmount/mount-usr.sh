@@ -25,25 +25,8 @@ fsck_usr() {
     local _fsopts="$3"
     local _fsckoptions
 
-    if [ -f "$NEWROOT"/fsckoptions ]; then
-        read -r _fsckoptions < "$NEWROOT"/fsckoptions
-    fi
-
-    if [ -f "$NEWROOT"/forcefsck ] || getargbool 0 forcefsck; then
+    if getargbool 0 forcefsck; then
         _fsckoptions="-f $_fsckoptions"
-    elif [ -f "$NEWROOT"/.autofsck ]; then
-        # shellcheck disable=SC1090
-        [ -f "$NEWROOT"/etc/sysconfig/autofsck ] && . "$NEWROOT"/etc/sysconfig/autofsck
-        if [ "$AUTOFSCK_DEF_CHECK" = "yes" ]; then
-            AUTOFSCK_OPT="$AUTOFSCK_OPT -f"
-        fi
-        if [ -n "$AUTOFSCK_SINGLEUSER" ]; then
-            warn "*** Warning -- the system did not shut down cleanly. "
-            warn "*** Dropping you to a shell; the system will continue"
-            warn "*** when you leave the shell."
-            emergency_shell
-        fi
-        _fsckoptions="$AUTOFSCK_OPT $_fsckoptions"
     fi
 
     fsck_single "$_dev" "$_fs" "$_fsopts" "$_fsckoptions"
