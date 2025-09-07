@@ -41,15 +41,16 @@ client_run() {
 
 test_run() {
     client_run "no option specified"
-    client_run "readonly root" "ro"
-    client_run "writeable root" "rw"
+    client_run "readonly root and writeable /usr" "ro"
+    client_run "writeable root and /usr" "rw"
+    client_run "readonly root and /usr" "ro rd.fstab=0"
 }
 
 test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
-        --mount "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root /usr btrfs subvol=usr,ro" \
+        --mount "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root /usr btrfs subvol=usr,rw" \
         -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 
