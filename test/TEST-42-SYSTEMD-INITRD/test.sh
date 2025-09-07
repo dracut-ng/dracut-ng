@@ -54,7 +54,7 @@ test_setup() {
         --add-confdir test-makeroot \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
         --nomdadmconf \
-        --no-hostonly-cmdline -N \
+        -N \
         -f "$TESTDIR"/initramfs.makeroot
 
     declare -a disk_args=()
