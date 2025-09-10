@@ -198,7 +198,9 @@ jobs:
             fail-fast: false
             matrix:
                 container:
+                    - debian:latest
                     - opensuse:latest
+                    - ubuntu:devel
                 test:
                     - "70"
                     - "71"
