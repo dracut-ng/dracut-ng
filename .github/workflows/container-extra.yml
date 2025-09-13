@@ -47,8 +47,6 @@ jobs:
                     - {dockerfile: 'Dockerfile-fedora', tag: 'centos:stream10-development', registry: 'quay.io/centos'}
                     - {dockerfile: 'Dockerfile-azurelinux', tag: 'azurelinux:3.0', registry: 'mcr.microsoft.com'}
                 exclude:
-                   - config: {tag: 'alpine:edge'}
-                     architecture: {platform: 'linux/arm64'}
                    - config: {tag: 'arch:latest'}
                      architecture: {platform: 'linux/arm64'}
                    - config: {tag: 'gentoo:amd64-openrc'}
