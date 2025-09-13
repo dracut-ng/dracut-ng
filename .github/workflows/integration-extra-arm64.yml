@@ -24,6 +24,7 @@ jobs:
             fail-fast: false
             matrix:
                 container:
+                    - alpine
                     - debian
                     - opensuse
                     - ubuntu

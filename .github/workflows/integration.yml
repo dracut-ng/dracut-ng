@@ -223,6 +223,7 @@ jobs:
             fail-fast: false
             matrix:
                 container:
+                    - alpine:latest
                     - debian:latest
                     - opensuse:latest
                     - ubuntu:rolling
