@@ -137,6 +137,13 @@ Run test in extra verbose mode (enabled for debug logging):: {empty}
 $ V=2 test/test.sh
 ----
 
+Run test 20 with `btrfs` omitting `systemd` dracut module on `debian` :: {empty}
++
+[,console]
+----
+$ TESTS="20" TEST_FSTYPE=btrfs TEST_DRACUT_ARGS="--omit systemd" test/test.sh debian
+----
+
 === On bare metal
 
 For the testsuite to pass, you will have to install at least the software packages
