@@ -1,6 +1,6 @@
 # Test coverage provided by this container:
 # - arm64
-# - default hostonly
+# - strict hostonly
 # - xfs
 # - memstrack
 # - ndctl (for nvdimm)
