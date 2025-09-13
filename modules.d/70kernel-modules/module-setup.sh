@@ -121,6 +121,8 @@ installkernel() {
             fi
         fi
 
+        hostonly='' instmods sg sr_mod sd_mod scsi_dh ata_piix
+
         # if not on strict hostonly mode, install all known filesystems,
         # if the required list is not set via the filesystems variable
         if [[ $hostonly_mode != "strict" ]] && [[ -z $filesystems ]]; then

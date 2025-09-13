@@ -3,6 +3,8 @@ set -eu
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on ext4 filesystem"
 
+export TEST_FSTYPE="ext4"
+
 test_run() {
     declare -a disk_args=()
     # shellcheck disable=SC2034  # disk_index used in qemu_add_drive
@@ -29,7 +31,7 @@ test_setup() {
     dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync "$TESTDIR"/root.img
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync "$TESTDIR"/root.img
 
-    test_dracut
+    test_dracut -v -vv --hostonly-mode="strict" -o "network crypt lvm mdraid hwdb virtiofs dm lunmask qemu-net"
 }
 
 # shellcheck disable=SC1090
