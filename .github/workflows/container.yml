@@ -43,8 +43,6 @@ jobs:
                     - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:latest'}
                     - {dockerfile: 'Dockerfile-void', tag: 'void:latest'}
                 exclude:
-                   - config: {tag: 'alpine:latest'}
-                     architecture: {platform: 'linux/arm64'}
                    - config: {tag: 'arch:latest'}
                      architecture: {platform: 'linux/arm64'}
         runs-on: ${{ matrix.architecture.runner }}
