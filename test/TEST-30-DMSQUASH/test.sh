@@ -80,7 +80,7 @@ test_run() {
 
 test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
-    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -i ./test-init.sh /sbin/init-persist \
         -f "$TESTDIR"/initramfs.root

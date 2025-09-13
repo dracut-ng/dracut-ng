@@ -226,7 +226,7 @@ test_run() {
 }
 
 test_setup() {
-    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "url-lib nfs" \
         -I "ip grep setsid" \
@@ -235,7 +235,7 @@ test_setup() {
     mkdir -p "$TESTDIR"/server/overlay
 
     # Create what will eventually be the server root filesystem onto an overlay
-    "$DRACUT" -N --keep --tmpdir "$TESTDIR"/server/overlay \
+    "$DRACUT" --tmpdir "$TESTDIR"/server/overlay \
         --add-confdir test-root \
         -a "bash $USE_NETWORK nfs" \
         --add-drivers "nfsd sunrpc lockd" \
@@ -265,12 +265,8 @@ test_setup() {
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -i "$TESTDIR"/server/overlay / \
         --add-confdir test-makeroot \
-        -a "bash rootfs-block kernel-modules qemu" \
-        --add-drivers "ext4" \
-        -I "mkfs.ext4" \
+        -a "bash" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        --nomdadmconf \
-        -N \
         -f "$TESTDIR"/initramfs.makeroot
     rm -rf -- "$TESTDIR"/server
 
@@ -298,7 +294,6 @@ test_setup() {
         -a "bash $USE_NETWORK ${SERVER_DEBUG:+debug}" \
         --include ./server.link /etc/systemd/network/01-server.link \
         --include ./wait-if-server.sh /lib/dracut/hooks/pre-mount/99-wait-if-server.sh \
-        --add-drivers "ext4" \
         -N \
         -f "$TESTDIR"/initramfs.server
 }

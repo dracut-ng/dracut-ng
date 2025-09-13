@@ -130,7 +130,7 @@ test_check() {
 
 test_setup() {
     # Create what will eventually be the client root filesystem onto an overlay
-    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -I "ip grep setsid" \
         -f "$TESTDIR"/initramfs.root
@@ -147,7 +147,6 @@ test_setup() {
         -a "crypt lvm mdraid" \
         -I "setsid blockdev" \
         -i ./create-client-root.sh /lib/dracut/hooks/initqueue/01-create-client-root.sh \
-        -N \
         -f "$TESTDIR"/initramfs.makeroot
     rm -rf -- "$TESTDIR"/overlay
 
@@ -167,7 +166,7 @@ test_setup() {
     rm -- "$TESTDIR"/marker.img
 
     # Create what will eventually be the server root filesystem onto an overlay
-    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "$USE_NETWORK" \
         -d "iscsi_tcp crc32c ipv6" \
@@ -183,7 +182,7 @@ test_setup() {
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -N -i "$TESTDIR"/overlay / \
+    "$DRACUT" -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
         -f "$TESTDIR"/initramfs.makeroot
@@ -207,7 +206,6 @@ test_setup() {
     "$DRACUT" \
         -a "$USE_NETWORK" \
         --add-confdir test \
-        -d "piix ide-gd_mod ata_piix ext4 sd_mod drbg virtio_net virtio_pci virtio_scsi" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i ./wait-if-server.sh /lib/dracut/hooks/pre-mount/99-wait-if-server.sh \
         -N \
