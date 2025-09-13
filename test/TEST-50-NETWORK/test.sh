@@ -26,7 +26,7 @@ test_run() {
 
 test_setup() {
     # create root filesystem
-    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" --tmpdir "$TESTDIR" \
         -I "ip" \
         -i "./assertion.sh" "/assertion.sh" \
         --add-confdir test-root \

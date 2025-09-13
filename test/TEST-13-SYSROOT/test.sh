@@ -22,7 +22,7 @@ test_run() {
 
 test_setup() {
     # create root filesystem
-    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -f "$TESTDIR"/initramfs.root
 

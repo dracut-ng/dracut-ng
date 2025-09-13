@@ -177,7 +177,7 @@ client_run() {
 make_encrypted_root() {
     rm -fr "$TESTDIR"/overlay
     # Create what will eventually be our root filesystem onto an overlay
-    "$DRACUT" --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -I "ip grep" \
         --no-hostonly \
@@ -193,7 +193,6 @@ make_encrypted_root() {
         -a "crypt lvm mdraid" \
         -I "cryptsetup" \
         -i ./create-encrypted-root.sh /lib/dracut/hooks/initqueue/01-create-encrypted-root.sh \
-        -N \
         -f "$TESTDIR"/initramfs.makeroot
     rm -rf -- "$TESTDIR"/overlay
 
@@ -213,7 +212,7 @@ make_encrypted_root() {
 
 make_client_root() {
     rm -fr "$TESTDIR"/overlay
-    "$DRACUT" --keep --tmpdir "$TESTDIR" \
+    "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -I "ip" \
         --no-hostonly \
@@ -227,8 +226,6 @@ make_client_root() {
     "$DRACUT" -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -i ./create-client-root.sh /lib/dracut/hooks/initqueue/01-create-client-root.sh \
-        --nomdadmconf \
-        -N \
         -f "$TESTDIR"/initramfs.makeroot
 
     declare -a disk_args=()
@@ -277,12 +274,10 @@ EOF
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -N -i "$TESTDIR"/overlay / \
+    "$DRACUT" -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -a "$USE_NETWORK" \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
-        --nomdadmconf \
-        -N \
         -f "$TESTDIR"/initramfs.makeroot
 
     declare -a disk_args=()
@@ -324,7 +319,6 @@ test_setup() {
     "$DRACUT" -N -i "$TESTDIR"/overlay / \
         --add-confdir test \
         -a "$USE_NETWORK ${SERVER_DEBUG:+debug}" \
-        -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod drbg virtio_net" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
         -f "$TESTDIR"/initramfs.server
