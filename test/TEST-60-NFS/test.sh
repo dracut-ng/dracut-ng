@@ -287,11 +287,11 @@ test_setup() {
     test_dracut \
         --no-hostonly \
         --include ./client.link /etc/systemd/network/01-client.link \
-        -a "watchdog dmsquash-live ${USE_NETWORK}"
+        -a "watchdog dmsquash-live qemu-net ${USE_NETWORK}"
 
     # Make server's dracut image
     "$DRACUT" -i "$TESTDIR"/overlay / \
-        -a "bash $USE_NETWORK ${SERVER_DEBUG:+debug}" \
+        -a "bash qemu-net $USE_NETWORK ${SERVER_DEBUG:+debug}" \
         --include ./server.link /etc/systemd/network/01-server.link \
         --include ./wait-if-server.sh /lib/dracut/hooks/pre-mount/99-wait-if-server.sh \
         -N \
