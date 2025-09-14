@@ -40,5 +40,6 @@ RUN apk add --no-cache \
 
 # Packages for recent changes that are not yet released or packaged by dracut-tests
 RUN apk add --no-cache \
+    dnsmasq \
     networkmanager-cli \
     networkmanager-initrd-generator
