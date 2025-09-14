@@ -227,7 +227,7 @@ test_run() {
 test_setup() {
     "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
-        -a "url-lib nfs" \
+        -a "$USE_NETWORK url-lib nfs" \
         -I "ip grep setsid" \
         -f "$TESTDIR"/initramfs.root || return 1
 

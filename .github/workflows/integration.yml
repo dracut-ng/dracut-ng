@@ -171,11 +171,11 @@ jobs:
             matrix:
                 container:
                     - arch:latest
-                    - debian:latest
                     - fedora:latest
-                    - gentoo:latest
                     - opensuse:latest
                     - ubuntu:devel
+                network:
+                    - network-manager
                 test:
                     - "60"
         container:
