@@ -372,6 +372,9 @@ exists in the directory where initramfs is loaded from.
 +
 Defaults to _initramfs-$\{kernel\}.img_.
 
+*keep=*"__{yes|no}__"::
+Keep (do not delete) the temporary initramfs directory for debugging purposes.
+
 == Files
 _/etc/dracut.conf_::
 Old configuration file. It is recommended to use individual files in
