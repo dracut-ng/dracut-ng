@@ -6,7 +6,7 @@ check() {
 }
 
 depends() {
-    echo "rootfs-block kernel-modules qemu"
+    echo "rootfs-block kernel-modules qemu initqueue"
 }
 
 install() {
