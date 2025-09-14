@@ -1710,7 +1710,8 @@ if [[ ! $print_cmdline ]]; then
 
         if ! [[ $kernel_image ]]; then
             for kernel_image in "${dracutsysrootdir-}/lib/modules/$kernel/vmlinuz" "${dracutsysrootdir-}/boot/vmlinuz-$kernel" \
-                "${dracutsysrootdir-}/lib/modules/$kernel/vmlinux" "${dracutsysrootdir-}/boot/vmlinux-$kernel"; do
+                "${dracutsysrootdir-}/lib/modules/$kernel/vmlinux" "${dracutsysrootdir-}/boot/vmlinux-$kernel" \
+                "${dracutsysrootdir-}/lib/modules/$kernel/Image"; do
                 [[ -s $kernel_image ]] || continue
                 break
             done
