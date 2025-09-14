@@ -79,18 +79,17 @@ jobs:
               uses: actions/checkout@v5
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
-    network:
+    network-systemd:
         name: ${{ matrix.test }} on ${{ matrix.container }} ${{ matrix.network }} networking
         runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
-            group: network-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
+            group: network-systemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
             matrix:
                 network:
-                    - network-manager
                     - systemd-networkd
                 container:
                     - arch:latest
@@ -105,12 +104,45 @@ jobs:
               uses: actions/checkout@v5
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    network-manager:
+        name: ${{ matrix.test }} on ${{ matrix.container }} ${{ matrix.network }} networking
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+        concurrency:
+            group: network-manager-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                network:
+                    - network-manager
+                container:
+                    - arch:latest
+                    - debian:latest
+                    - debian:sid
+                    - fedora:latest
+                    - fedora:rawhide
+                    - gentoo:amd64-openrc
+                    - opensuse:latest
+                test:
+                    - "60"
+                    - "70"
+                    - "71"
+                    - "72"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            options: '--device=/dev/kvm'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v5
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     network-legacy:
         name: ${{ matrix.test }} on ${{ matrix.container }} ${{ matrix.network }} networking
         runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
-            group: network-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
+            group: network-legacy-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
