@@ -15,6 +15,10 @@ set_vmlinux_env() {
         fi
 
         if ! [ -f "$VMLINUZ" ]; then
+            VMLINUZ="/lib/modules/${KVERSION}/Image"
+        fi
+
+        if ! [ -f "$VMLINUZ" ]; then
             [[ -f /etc/machine-id ]] && read -r MACHINE_ID < /etc/machine-id
 
             if [[ ${MACHINE_ID-} ]] && { [[ -d /boot/${MACHINE_ID} ]] || [[ -L /boot/${MACHINE_ID} ]]; }; then
@@ -33,6 +37,7 @@ set_vmlinux_env() {
 
     ! [ -f "${VMLINUZ-}" ] && VMLINUZ=$(find /boot/vmlinuz-* -type f 2> /dev/null | tail -1)
     ! [ -f "${VMLINUZ-}" ] && VMLINUZ=$(find /lib/modules/ -type f -name vmlinuz 2> /dev/null | tail -1)
+    ! [ -f "${VMLINUZ-}" ] && VMLINUZ=$(find /lib/modules/ -type f -name Image 2> /dev/null | tail -1)
 
     if ! [ -f "$VMLINUZ" ]; then
         echo "Could not find a Linux kernel version to test with!" >&2
