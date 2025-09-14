@@ -64,9 +64,6 @@ jobs:
                     - container: debian:sid
                       test: "12"
                     # https://github.com/dracut-ng/dracut-ng/issues/1590
-                    - container: ubuntu:devel
-                      test: "30"
-                    # https://github.com/dracut-ng/dracut-ng/issues/1590
                     - container: ubuntu:rolling
                       test: "30"
                     # https://github.com/dracut-ng/dracut-ng/issues/1314
