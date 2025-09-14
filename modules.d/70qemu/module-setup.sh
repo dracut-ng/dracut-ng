@@ -15,7 +15,7 @@ check() {
 installkernel() {
     # qemu specific modules
     hostonly='' instmods \
-        ata_piix ata_generic pata_acpi cdrom sr_mod ahci \
+        ata_piix ata_generic pata_acpi cdrom sr_mod sd_mod ahci \
         virtio_blk virtio virtio_crypto virtio_ring virtio_pci \
         virtio_scsi virtio_console virtio_rng virtio_mem \
         spapr-vscsi \
