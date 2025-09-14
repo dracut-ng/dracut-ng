@@ -18,7 +18,7 @@ jobs:
         runs-on: ubuntu-24.04-arm
         timeout-minutes: 20
         concurrency:
-            group: arm64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            group: extra-arm64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
