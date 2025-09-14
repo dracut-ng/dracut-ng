@@ -214,14 +214,14 @@ test_setup() {
     # Make client's dracut image
     test_dracut \
         --no-hostonly \
-        --add "watchdog $USE_NETWORK" \
+        --add "watchdog qemu-net $USE_NETWORK" \
         -i ./client-persistent-lan0.link /etc/systemd/network/01-persistent-lan0.link \
         -i ./client-persistent-lan1.link /etc/systemd/network/01-persistent-lan1.link
 
     # Make server's dracut image
     "$DRACUT" -i "$TESTDIR"/overlay / \
         --add-confdir test \
-        -a "$USE_NETWORK ${SERVER_DEBUG:+debug}" \
+        -a "qemu-net $USE_NETWORK ${SERVER_DEBUG:+debug}" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
         -N \
