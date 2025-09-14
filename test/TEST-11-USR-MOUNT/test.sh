@@ -29,7 +29,7 @@ client_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE $client_opts" \
+        -append "$TEST_KERNEL_CMDLINE $client_opts rd.overlay.auto" \
         -initrd "$TESTDIR"/initramfs.testing
 
     if ! test_marker_check; then
@@ -82,6 +82,7 @@ test_setup() {
     fi
 
     test_dracut \
+        -a overlayfs \
         --add-drivers "btrfs"
 }
 
