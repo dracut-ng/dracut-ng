@@ -7,7 +7,7 @@
 # - zstd compression
 # - verbose logging for tests
 # - dbus-daemon
-# - network: network-legacy, network-manager, systemd-networkd
+# - network: network-manager, systemd-networkd
 
 # Not installed
 # - iscsiuio (iscsiuio.socket missing, see https://bugs.debian.org/1056733)
@@ -52,7 +52,6 @@ RUN \
     gpg \
     iputils-arping \
     iputils-ping \
-    isc-dhcp-client \
     isc-dhcp-server \
     jq \
     kbd \
