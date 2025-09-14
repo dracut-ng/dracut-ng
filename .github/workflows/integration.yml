@@ -90,10 +90,6 @@ jobs:
                     - "50"
                     - "80"
                     - "81"
-                exclude:
-                    # https://github.com/dracut-ng/dracut-ng/issues/1590
-                    - container: ubuntu:devel
-                      test: "30"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm'
