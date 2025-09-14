@@ -53,6 +53,7 @@ RUN \
     gpg \
     iputils-arping \
     iputils-ping \
+    iproute2 \
     isc-dhcp-server \
     jq \
     kbd \
