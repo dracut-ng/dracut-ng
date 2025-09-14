@@ -47,6 +47,7 @@ emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     app-emulation/qemu \
     app-portage/gentoolkit \
     dev-ruby/asciidoctor \
+    net-dns/dnsmasq \
     sys-kernel/dracut \
     sys-kernel/gentoo-kernel-bin \
     sys-libs/libxcrypt \

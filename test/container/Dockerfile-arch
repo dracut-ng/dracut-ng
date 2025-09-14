@@ -27,6 +27,7 @@ RUN pacman --noconfirm -Syu \
     cpio \
     dhcp \
     dmraid \
+    dnsmasq \
     dracut \
     elfutils \
     erofs-utils \

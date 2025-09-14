@@ -30,6 +30,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     cryptsetup \
     dhclient \
     dhcp \
+    dnsmasq \
     e2fsprogs \
     edk2-ovmf \
     elfutils \

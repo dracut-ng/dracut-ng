@@ -18,6 +18,7 @@ RUN tdnf -y install --setopt=install_weak_deps=False \
     cifs-utils \
     cryptsetup \
     dhcpcd \
+    dnsmasq \
     e2fsprogs \
     fuse3 \
     gcc \
