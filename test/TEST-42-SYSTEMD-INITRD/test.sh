@@ -75,7 +75,8 @@ test_setup() {
         --no-compress \
         --kernel-only \
         -m "kernel-modules qemu" \
-        -d "ext4 sd_mod" \
+        --filesystems="ext4" \
+        -d "sd_mod" \
         -f "$TESTDIR"/initramfs-test
 
     # vanilla kernel-independent systemd-based minimal initrd without dracut specific customizations

@@ -82,7 +82,7 @@ test_setup() {
     fi
 
     test_dracut \
-        --add-drivers "btrfs"
+        --filesystems " btrfs "
 }
 
 # shellcheck disable=SC1090
