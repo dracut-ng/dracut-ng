@@ -62,7 +62,6 @@ client_test() {
     declare -i disk_index=0
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
     qemu_add_drive disk_index disk_args "$TESTDIR"/marker2.img marker2 1
-    cmdline="$cmdline rd.net.timeout.dhcp=30"
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
