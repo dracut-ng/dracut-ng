@@ -1171,6 +1171,17 @@ is_qemu_virtualized() {
     # do not consult /sys and do not detect virt environment in non-hostonly mode
     ! [[ ${hostonly-} ]] && return 1
 
+    for i in /sys/class/dmi/id/*_vendor; do
+        [[ -f $i ]] || continue
+        read -r vendor < "$i"
+        echo "debugme1 $vendor"
+        [[ $vendor == "QEMU" ]] && return 0
+        [[ $vendor == "Red Hat" ]] && return 0
+        [[ $vendor == "Bochs" ]] && return 0
+    done
+
+    echo "debugme2 $vendor"
+
     if type -P systemd-detect-virt > /dev/null 2>&1; then
         if ! vm=$(systemd-detect-virt --vm 2> /dev/null); then
             return 255
@@ -1180,12 +1191,5 @@ is_qemu_virtualized() {
         [[ $vm == "bochs" ]] && return 0
     fi
 
-    for i in /sys/class/dmi/id/*_vendor; do
-        [[ -f $i ]] || continue
-        read -r vendor < "$i"
-        [[ $vendor == "QEMU" ]] && return 0
-        [[ $vendor == "Red Hat" ]] && return 0
-        [[ $vendor == "Bochs" ]] && return 0
-    done
     return 1
 }
