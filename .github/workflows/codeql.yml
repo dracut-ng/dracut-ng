@@ -24,7 +24,7 @@ jobs:
     name: Analyze
     runs-on: ubuntu-latest
     concurrency:
-      group: ${{ github.workflow }}-${{ matrix.language }}-${{ github.ref }}
+      group: codeql-${{ github.workflow }}-${{ matrix.language }}-${{ github.ref }}
       cancel-in-progress: true
     permissions:
       actions: read

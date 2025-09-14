@@ -19,7 +19,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
-            group: basic-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            group: extra-basic-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
@@ -84,7 +84,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
-            group: network-systemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
+            group: extra-network-systemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
@@ -109,7 +109,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
-            group: network-manager-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
+            group: extra-network-manager-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
@@ -142,7 +142,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
-            group: network-legacy-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
+            group: extra-network-legacy-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
@@ -171,7 +171,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
-            group: omitsystemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            group: extra-omitsystemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
