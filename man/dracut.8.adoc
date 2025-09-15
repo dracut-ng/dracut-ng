@@ -786,7 +786,7 @@ _/etc/cmdline_::
     /etc/cmdline.d/*.conf.
 
 _/etc/cmdline.d/*.conf_::
-    Can contain additional command line options. It is recomended to use an
+    Can contain additional command line options. It is recommended to use an
     ordering schema for these conf files in the range of 50-59.
     Dracut generated conf files are placed in the 10-49 and 60-99 ordering range.
 
