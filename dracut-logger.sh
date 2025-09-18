@@ -360,7 +360,7 @@ _do_dlog() {
 # @retval 1 if level is out of range.
 _do_dlog_batch() {
     # Return early if level out of range
-    _lvl2char "$1" >/dev/null || return 1
+    _lvl2char "$1" > /dev/null || return 1
 
     # shellcheck disable=SC1003
     sed -e '$a\' - | tee \
@@ -368,7 +368,7 @@ _do_dlog_batch() {
         >(_do_dlog_batch_syslog "$1") \
         >(_do_dlog_batch_filelog "$1") \
         >(_do_dlog_batch_kmsglog "$1") \
-        >/dev/null
+        > /dev/null
 }
 
 ## @brief Batch processor for logging to standard error.
@@ -383,7 +383,7 @@ _do_dlog_batch_stdlog() {
         lvlc=$(_lvl2char "$lvl") || return 1
         awk -v prefix="dracut[${lvlc}]: " '{ print prefix $0 }' >&2
     else
-        cat >/dev/null
+        cat > /dev/null
     fi
 }
 
@@ -404,7 +404,7 @@ _do_dlog_batch_syslog() {
             logger -t "dracut[$$]" -p "${syslog_lvlc}"
         fi
     else
-        cat >/dev/null
+        cat > /dev/null
     fi
 }
 
@@ -418,9 +418,9 @@ _do_dlog_batch_filelog() {
     local lvlc
     if ((lvl <= fileloglvl)) && [[ -w $logfile ]] && [[ -f $logfile ]]; then
         lvlc=$(_lvl2char "$lvl") || return 1
-        awk -v prefix="${lvlc}: " '{ print prefix $0 }' >>"${logfile}"
+        awk -v prefix="${lvlc}: " '{ print prefix $0 }' >> "${logfile}"
     else
-        cat >/dev/null
+        cat > /dev/null
     fi
 }
 
@@ -435,9 +435,9 @@ _do_dlog_batch_kmsglog() {
     if ((lvl <= kmsgloglvl)); then
         kmsg_lvlc="$(_dlvl2syslvl "$lvl")" || return 1
         awk -v lvlc="${kmsg_lvlc}" -v prefix="dracut[$$] " \
-            '{ if (NR==1) printf "<%s>" lvlc; print prefix $0 }' >/dev/kmsg
+            '{ if (NR==1) printf "<%s>" lvlc; print prefix $0 }' > /dev/kmsg
     else
-        cat >/dev/null
+        cat > /dev/null
     fi
 }
 
