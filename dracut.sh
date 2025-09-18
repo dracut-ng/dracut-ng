@@ -1143,7 +1143,8 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $lvmconf_l ]] && lvmconf=$lvmconf_l
 [[ $dracutbasedir ]] || dracutbasedir="${dracutsysrootdir-}"/usr/lib/dracut
 [[ $fw_dir ]] || {
-    fw_path_para=$(< /sys/module/firmware_class/parameters/path)
+    [[ -e /sys/module/firmware_class/parameters/path ]] \
+        && fw_path_para=$(< /sys/module/firmware_class/parameters/path)
     fw_dir="${fw_path_para:+${dracutsysrootdir-}$fw_path_para:}${dracutsysrootdir-}/lib/firmware/updates/$kernel:${dracutsysrootdir-}/lib/firmware/updates:${dracutsysrootdir-}/lib/firmware/$kernel:${dracutsysrootdir-}/lib/firmware"
 }
 [[ $tmpdir_l ]] && tmpdir="$tmpdir_l"
