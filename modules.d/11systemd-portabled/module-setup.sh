@@ -19,8 +19,6 @@ check() {
 # Module dependency requirements.
 depends() {
 
-    # This module has external dependency on other module(s).
-    echo dbus
     # Return 0 to include the dependent module(s) in the initramfs.
     return 0
 
