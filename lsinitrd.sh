@@ -408,6 +408,7 @@ if ((${#filenames[@]} <= 0)) && [[ -z $unpack ]] && [[ -z $unpackearly ]]; then
     echo "========================================================================"
 fi
 
+unset skip
 read -r -N 6 bin < "$image"
 case $bin in
     $'\x71\xc7'* | 070701)
@@ -428,13 +429,13 @@ case $bin in
                 list_files
             fi
             if [[ -f "$dracutbasedir/src/skipcpio/skipcpio" ]]; then
-                SKIP="$dracutbasedir/src/skipcpio/skipcpio"
+                skip="$dracutbasedir/src/skipcpio/skipcpio"
             else
-                SKIP="$dracutbasedir/skipcpio"
+                skip="$dracutbasedir/skipcpio"
             fi
-            if ! [[ -x $SKIP ]]; then
+            if ! [[ -x $skip ]]; then
                 echo
-                echo "'$SKIP' not found, cannot display remaining contents!" >&2
+                echo "'$skip' not found, cannot display remaining contents!" >&2
                 echo
                 exit 0
             fi
@@ -442,8 +443,8 @@ case $bin in
         ;;
 esac
 
-if [[ $SKIP ]]; then
-    bin="$($SKIP "$image" | { read -r -N 6 bin && echo "$bin"; })"
+if [[ $skip ]]; then
+    bin="$($skip "$image" | { read -r -N 6 bin && echo "$bin"; })"
 else
     read -r -N 6 bin < "$image"
 fi
@@ -482,10 +483,10 @@ type "${CAT%% *}" > /dev/null 2>&1 || {
 
 # shellcheck disable=SC2317,SC2329  # assigned to CAT and $CAT called later
 skipcpio() {
-    $SKIP "$@" | $ORIG_CAT
+    $skip "$@" | $ORIG_CAT
 }
 
-if [[ $SKIP ]]; then
+if [[ $skip ]]; then
     ORIG_CAT="$CAT"
     CAT=skipcpio
 fi
