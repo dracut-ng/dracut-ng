@@ -191,3 +191,39 @@ jobs:
               uses: actions/checkout@v5
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: TEST_DRACUT_ARGS="--omit systemd" ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    hostonlystrict:
+        name: ${{ matrix.test }} on ${{ matrix.container }} with hostonly-mode strict
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+        concurrency:
+            group: extra-hostonlystrict-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                container:
+                    - fedora:latest
+                test:
+                    - "10"
+                    - "11"
+                    - "12"
+                    - "13"
+                    - "20"
+                    - "26"
+                    - "30"
+                    - "40"
+                    - "41"
+                    - "42"
+                    - "43"
+                    - "50"
+                    - "80"
+                    - "81"
+                    - "82"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            options: '--device=/dev/kvm --privileged'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v5
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: TEST_DRACUT_ARGS="--hostonly-mode strict" ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
