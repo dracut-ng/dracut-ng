@@ -264,6 +264,8 @@ Creates initial ramdisk images for preloading modules
                          passed compression program.  Make sure your kernel
                          knows how to decompress the generated initramfs,
                          otherwise you will not be able to boot.
+  --compress-level [LEVEL]
+                        Compression level passed to compression program.
   --no-compress         Do not compress the generated initramfs. This will
                          override any other compression options.
   --squash-compressor [COMPRESSION]
@@ -418,6 +420,7 @@ rearrange_params() {
             --long sysroot: \
             --long stdlog: \
             --long compress: \
+            --long compress-level: \
             --long squash-compressor: \
             --long prefix: \
             --long rebuild: \
@@ -748,6 +751,11 @@ while :; do
             ;;
         --compress)
             compress_l="$2"
+            PARMS_TO_STORE+=" '$2'"
+            shift
+            ;;
+        --compress-level)
+            compress_level_l="$2"
             PARMS_TO_STORE+=" '$2'"
             shift
             ;;
@@ -1152,6 +1160,15 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $tmpdir ]] || tmpdir="${dracutsysrootdir-}"/var/tmp
 [[ $INITRD_COMPRESS ]] && compress=$INITRD_COMPRESS
 [[ $compress_l ]] && compress=$compress_l
+[[ $compress_level_l ]] && {
+    compress_level_bzip2=$compress_level_l
+    compress_level_gzip=$compress_level_l
+    compress_level_lz4=$compress_level_l
+    compress_level_lzma=$compress_level_l
+    compress_level_lzop=$compress_level_l
+    compress_level_xz=$compress_level_l
+    compress_level_zstd=$compress_level_l
+}
 [[ $squash_compress_l ]] && squash_compress=$squash_compress_l
 [[ $enhanced_cpio_l ]] && enhanced_cpio=$enhanced_cpio_l
 [[ $show_modules_l ]] && show_modules=$show_modules_l
@@ -2570,34 +2587,34 @@ fi
 case $compress in
     bzip2 | lbzip2)
         if [[ $compress == lbzip2 ]] || command -v "$DRACUT_COMPRESS_LBZIP2" &> /dev/null; then
-            compress="$DRACUT_COMPRESS_LBZIP2 -9"
+            compress="$DRACUT_COMPRESS_LBZIP2 -${compress_level_bzip2-9}"
         else
-            compress="$DRACUT_COMPRESS_BZIP2 -9"
+            compress="$DRACUT_COMPRESS_BZIP2 -${compress_level_bzip2-9}"
         fi
         ;;
     lzma)
-        compress="$DRACUT_COMPRESS_LZMA -9 -T0"
+        compress="$DRACUT_COMPRESS_LZMA -${compress_level_lzma-9} -T0"
         ;;
     xz)
-        compress="$DRACUT_COMPRESS_XZ --check=crc32 --lzma2=dict=1MiB -T0"
+        compress="${DRACUT_COMPRESS_XZ}${compress_level_xz:+" -${compress_level_xz}"} --check=crc32 --lzma2=dict=1MiB -T0"
         ;;
     gzip | pigz)
         if [[ $compress == pigz ]] || command -v "$DRACUT_COMPRESS_PIGZ" &> /dev/null; then
-            compress="$DRACUT_COMPRESS_PIGZ -9 -n -T -R"
+            compress="$DRACUT_COMPRESS_PIGZ -${compress_level_gzip-9} -n -T -R"
         elif command -v gzip &> /dev/null && $DRACUT_COMPRESS_GZIP --help 2>&1 | grep -q rsyncable; then
-            compress="$DRACUT_COMPRESS_GZIP -n -9 --rsyncable"
+            compress="$DRACUT_COMPRESS_GZIP -n -${compress_level_gzip-9} --rsyncable"
         else
-            compress="$DRACUT_COMPRESS_GZIP -n -9"
+            compress="$DRACUT_COMPRESS_GZIP -n -${compress_level_gzip-9}"
         fi
         ;;
     lzo | lzop)
-        compress="$DRACUT_COMPRESS_LZOP -9"
+        compress="$DRACUT_COMPRESS_LZOP -${compress_level_lzop-9}"
         ;;
     lz4)
-        compress="$DRACUT_COMPRESS_LZ4 -l -9"
+        compress="$DRACUT_COMPRESS_LZ4 -l -${compress_level_lz4-9}"
         ;;
     zstd)
-        compress="$DRACUT_COMPRESS_ZSTD -15 -q -T0"
+        compress="$DRACUT_COMPRESS_ZSTD -${compress_level_zstd-15} -q -T0"
         ;;
 esac
 
