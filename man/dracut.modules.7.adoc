@@ -224,6 +224,10 @@ $hostonly:: If the $hostonly variable is set, then the module check() function
 should be in "hostonly" mode, which means, that the check() should only return
 0, if the module is really needed to boot this specific host.
 
+Avoid making decisions inside this function based on the value of the
+$hostonly_mode variable. This principle ensures the inclusion of the
+same dracut modules in both sloppy and strict modes.
+
 check() should return with:
 
 0:: Include the dracut module in the initramfs.
