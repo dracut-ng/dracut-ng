@@ -276,6 +276,7 @@ Creates initial ramdisk images for preloading modules
                          build.
   --keep                Keep the temporary initramfs for debugging purposes.
   --printsize           Print out the module install size.
+  --printconfig         Print the computed configuration and exit.
   --sshkey [SSHKEY]     Add SSH key to initramfs (use with ssh-client module).
   --logfile [FILE]      Logfile to use (overrides configuration setting).
   --reproducible        Create reproducible images.
@@ -467,6 +468,7 @@ rearrange_params() {
             --long show-modules \
             --long keep \
             --long printsize \
+            --long printconfig \
             --long regenerate-all \
             --long parallel \
             --long noimageifnotneeded \
@@ -881,6 +883,7 @@ while :; do
             ;;
         --keep) keep="yes" ;;
         --printsize) printsize="yes" ;;
+        --printconfig) printconfig="yes" ;;
         --regenerate-all) regenerate_all_l="yes" ;;
         -p | --parallel) parallel_l="yes" ;;
         --noimageifnotneeded) noimageifnotneeded="yes" ;;
@@ -1964,6 +1967,42 @@ export initdir dracutbasedir \
     prefix filesystems drivers \
     hostonly_cmdline loginstall \
     squashdir squash_compress
+
+if [[ $printconfig ]]; then
+    for v in add_dracutmodules \
+        add_fstab \
+        debug \
+        dracutmodules \
+        drivers \
+        fileloglvl \
+        filesystems \
+        force_add_dracutmodules \
+        fscks \
+        fw_dir \
+        hostonly_cmdline \
+        kernel_only \
+        kmsgloglvl \
+        libdirs \
+        logfile \
+        loginstall \
+        lvmconf \
+        mdadmconf \
+        no_kernel \
+        nofscks \
+        omit_dracutmodules \
+        omit_drivers \
+        prefix \
+        ro_mnt \
+        squash_compress \
+        sshkey \
+        use_fstab; do
+        if [[ -n ${!v} ]]; then
+            echo "dracutconfig: $v=${!v}"
+        fi
+    done
+
+    exit 0
+fi
 
 mods_to_load=""
 # check all our modules to see if they should be sourced.

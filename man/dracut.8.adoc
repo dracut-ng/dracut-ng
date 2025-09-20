@@ -578,6 +578,9 @@ will not be able to boot. Equivalent to "--compress=zstd -15 -q -T0".
 **--keep**::
     Keep the initramfs temporary directory for debugging purposes.
 
+**--printconfig**::
+    Print the computed configuration and exit.
+
 **--printsize**::
     Print out the module install size.
 
