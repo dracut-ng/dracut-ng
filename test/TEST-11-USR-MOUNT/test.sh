@@ -44,6 +44,7 @@ test_run() {
     client_run "readonly root and writeable /usr" "ro"
     client_run "writeable root and /usr" "rw"
     client_run "readonly root and /usr" "ro rd.fstab=0"
+    client_run "readonly root snapshot" "rd.fstab=0 subvol=snapshot-root"
 }
 
 test_setup() {
