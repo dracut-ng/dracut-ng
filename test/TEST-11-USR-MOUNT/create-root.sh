@@ -12,6 +12,8 @@ btrfs subvolume create /root/usr
 cp -a -t /root /source/*
 mkdir -p /root/run
 btrfs filesystem sync /root
+# read-only snapshot of /root
+btrfs subvolume snapshot -r /root /root/snapshot-root
 umount /root
 echo "dracut-root-block-created" | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
 poweroff -f
