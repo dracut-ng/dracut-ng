@@ -13,11 +13,6 @@ test_check() {
         echo "This test needs kernel-install to run."
         return 1
     fi
-
-    if [[ $(kernel-install --version | grep -oP '(?<=systemd )\d+') -lt 255 ]]; then
-        echo "This test requires support for kernel-install add-all (v255)"
-        return 1
-    fi
 }
 
 test_run() {
