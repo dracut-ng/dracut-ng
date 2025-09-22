@@ -56,6 +56,11 @@ test_setup() {
 
     KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)
 
+    # workaround for kernel-install for Debian
+    if ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ]; then
+        ln -sf /boot/vmlinuz-"$KVERSION" /usr/lib/modules/"$KVERSION"/vmlinuz
+    fi
+
     dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync "$TESTDIR"/root.img
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync "$TESTDIR"/root.img
 

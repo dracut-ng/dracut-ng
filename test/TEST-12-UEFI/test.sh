@@ -17,6 +17,11 @@ test_check() {
     fi
 
     [[ -n "$(ovmf_code)" ]]
+
+    if command -v systemd-detect-virt > /dev/null && ! systemd-detect-virt -c &> /dev/null; then
+        echo "This test assumes that it runs inside a CI container."
+        return 1
+    fi
 }
 
 client_run() {
@@ -49,6 +54,11 @@ test_setup() {
         "$TESTDIR"/tmp-initramfs.root
 
     KVERSION=$(determine_kernel_version "$TESTDIR"/tmp-initramfs.root)
+
+    # workaround for kernel-install for Debian
+    if ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ]; then
+        ln -sf /boot/vmlinuz-"$KVERSION" /usr/lib/modules/"$KVERSION"/vmlinuz
+    fi
 
     mksquashfs "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/squashfs.img -quiet -no-progress
 
