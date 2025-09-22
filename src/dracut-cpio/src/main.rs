@@ -939,7 +939,19 @@ mod tests {
 
     fn gnu_cpio_create(stdinput: &[u8], out: &str) {
         let mut proc = Command::new("cpio")
-            .args(&["--quiet", "-o", "-H", "newc", "--reproducible", "-F", out])
+            // As of GNU cpio commit 6a94d5e ("New option --ignore-dirnlink"),
+            // the --reproducible option hardcodes archived directory nlink
+            // values as 2. Omit it and use the dir.st_nlink value.
+            .args(&[
+                "--quiet",
+                "-o",
+                "-H",
+                "newc",
+                "--ignore-devno",
+                "--renumber-inodes",
+                "-F",
+                out,
+            ])
             .stdin(Stdio::piped())
             .spawn()
             .expect("GNU cpio failed to start");
@@ -1522,7 +1534,8 @@ mod tests {
                 "-o",
                 "-H",
                 "newc",
-                "--reproducible",
+                "--ignore-devno",
+                "--renumber-inodes",
                 "-F",
                 "gnu.cpio",
                 "--null",
