@@ -31,18 +31,7 @@ installkernel() {
 
 # Install the required file(s) and directories for the module in the initramfs.
 install() {
-
-    # It's intended to work only with raw binary disk images contained in
-    # regular files, but not with directory trees.
-    local _nonraw
-    _nonraw=$(portablectl --no-pager --no-legend list | grep -v " raw " | cut -d ' ' -f1 | tr '\n' ' ')
-    if [ -n "$_nonraw" ]; then
-        dwarn "systemd-portabled: this module only installs raw disk images in the initramfs; skipping: $_nonraw"
-    fi
-
     inst_multiple -o \
-        "/var/lib/portables/*.raw" \
-        "/usr/lib/portables/*.raw" \
         "$tmpfilesdir/portables.conf" \
         "$dbussystem"/org.freedesktop.portable1.conf \
         "$dbussystemservices"/org.freedesktop.portable1.service \
@@ -66,7 +55,6 @@ install() {
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
-            "/etc/portables/*.raw" \
             "$systemdutilconfdir/system.attached/*" \
             "$systemdutilconfdir/system.attached/*/*" \
             "$systemdutilconfdir/portable/profile/default/*.conf" \
