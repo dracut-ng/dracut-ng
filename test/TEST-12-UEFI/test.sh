@@ -16,10 +16,12 @@ test_check() {
         return 1
     fi
 
-    [[ -n "$(ovmf_code)" ]]
-
     if command -v systemd-detect-virt > /dev/null && ! systemd-detect-virt -c &> /dev/null; then
         echo "This test assumes that it runs inside a CI container."
+        return 1
+    fi
+
+    if [[ -z "$(ovmf_code)" ]]; then
         return 1
     fi
 }
