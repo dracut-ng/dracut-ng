@@ -73,7 +73,7 @@ test_setup() {
 
     local dracut_modules="resume systemd-udevd systemd-journald systemd-tmpfiles systemd-cryptsetup systemd-emergency systemd-ac-power systemd-coredump systemd-creds systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup systemd-hostnamed systemd-timedated"
 
-    if [ -f /usr/lib/systemd/systemd-networkd ] && [ -e "${PKGLIBDIR}/modules.d/00systemd-network-management/module-setup.sh" ]; then
+    if [ -f /usr/lib/systemd/systemd-networkd ]; then
         dracut_modules="$dracut_modules systemd-network-management"
     fi
 
