@@ -10,6 +10,10 @@ test_check() {
     (command -v cpio && command -v find && command -v diff) &> /dev/null
 }
 
+cpio_create() {
+    find . -print0 | sort -z | cpio -o --null -H newc
+}
+
 cpio_list_first() {
     local file="$1"
     cpio --extract --quiet --list < "$file"
@@ -22,8 +26,7 @@ skipcpio_simple() {
     for ((i = 0; i < 3; i++)); do
         echo "first archive file $i" >> ./"$i"
     done
-    find . -print0 | sort -z \
-        | cpio -o --null -H newc > "$CPIO_TESTDIR/skipcpio_simple.cpio"
+    cpio_create > "$CPIO_TESTDIR/skipcpio_simple.cpio"
     popd
 
     mkdir -p "$CPIO_TESTDIR/skipcpio_simple/second_archive"
@@ -33,8 +36,7 @@ skipcpio_simple() {
         echo "second archive file $i" >> ./"$i"
     done
 
-    find . -print0 | sort -z \
-        | cpio -o --null -H newc >> "$CPIO_TESTDIR/skipcpio_simple.cpio"
+    cpio_create >> "$CPIO_TESTDIR/skipcpio_simple.cpio"
     popd
 
     cpio_list_first "$CPIO_TESTDIR/skipcpio_simple.cpio" \
