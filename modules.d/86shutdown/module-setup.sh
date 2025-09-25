@@ -18,6 +18,6 @@ install() {
     ln_r /var/lib/dracut/hooks /lib/dracut/hooks
 
     for _d in $hookdirs shutdown shutdown-emergency; do
-        mkdir -m 0755 -p "${initdir}"/lib/dracut/hooks/"$_d"
+        mkdir -m 0755 -p "${initdir}"/var/lib/dracut/hooks/"$_d"
     done
 }
