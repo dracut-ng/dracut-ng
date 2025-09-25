@@ -2706,7 +2706,7 @@ if [[ $kernel_only != yes ]]; then
 
     for _d in $hookdirs; do
         # shellcheck disable=SC2174
-        mkdir -m 0755 -p "${initdir}/lib/dracut/hooks/$_d"
+        mkdir -m 0755 -p "${initdir}/var/lib/dracut/hooks/$_d"
     done
     if [[ $EUID == "0" ]] && ! [[ $DRACUT_NO_MKNOD ]]; then
         [[ -c ${initdir}/dev/null ]] || mknod "${initdir}"/dev/null c 1 3
