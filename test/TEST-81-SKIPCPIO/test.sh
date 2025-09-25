@@ -10,6 +10,11 @@ test_check() {
     (command -v cpio && command -v find && command -v diff) &> /dev/null
 }
 
+cpio_list_first() {
+    local file="$1"
+    cpio --extract --quiet --list < "$file"
+}
+
 skipcpio_simple() {
     mkdir -p "$CPIO_TESTDIR/skipcpio_simple/first_archive"
     pushd "$CPIO_TESTDIR/skipcpio_simple/first_archive"
@@ -32,7 +37,7 @@ skipcpio_simple() {
         | cpio -o --null -H newc >> "$CPIO_TESTDIR/skipcpio_simple.cpio"
     popd
 
-    cpio -i --list < "$CPIO_TESTDIR/skipcpio_simple.cpio" \
+    cpio_list_first "$CPIO_TESTDIR/skipcpio_simple.cpio" \
         > "$CPIO_TESTDIR/skipcpio_simple.list"
     cat << EOF | diff - "$CPIO_TESTDIR/skipcpio_simple.list"
 .
@@ -47,7 +52,8 @@ EOF
         skipcpio_path="${PKGLIBDIR}"
     fi
     "$skipcpio_path"/skipcpio "$CPIO_TESTDIR/skipcpio_simple.cpio" \
-        | cpio -i --list > "$CPIO_TESTDIR/skipcpio_simple.list"
+        > "$CPIO_TESTDIR/skipped.cpio"
+    cpio_list_first "$CPIO_TESTDIR/skipped.cpio" > "$CPIO_TESTDIR/skipcpio_simple.list"
     cat << EOF | diff - "$CPIO_TESTDIR/skipcpio_simple.list"
 .
 10
