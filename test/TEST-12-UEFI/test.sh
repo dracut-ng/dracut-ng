@@ -56,11 +56,7 @@ test_setup() {
         "$TESTDIR"/tmp-initramfs.root
 
     KVERSION=$(determine_kernel_version "$TESTDIR"/tmp-initramfs.root)
-
-    # workaround for kernel-install for Debian
-    if ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ]; then
-        ln -sf /boot/vmlinuz-"$KVERSION" /usr/lib/modules/"$KVERSION"/vmlinuz
-    fi
+    KIMAGE=$(determine_kernel_image "$KVERSION")
 
     mksquashfs "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/squashfs.img -quiet -no-progress
 
@@ -90,7 +86,7 @@ test_setup() {
 
         # using kernell-install to invoke dracut
         mkdir -p "$BOOT_ROOT/$TOKEN/$KVERSION" "$BOOT_ROOT/loader/entries"
-        kernel-install add-all
+        kernel-install add "$KVERSION" "$KIMAGE"
 
         mv "$TESTDIR"/EFI/Linux/*.efi "$TESTDIR"/ESP/EFI/BOOT/BOOTX64.efi
 

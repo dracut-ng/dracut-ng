@@ -50,11 +50,7 @@ test_setup() {
         -f "$TESTDIR"/initramfs.root
 
     KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)
-
-    # workaround for kernel-install for Debian
-    if ! [ -e /usr/lib/modules/"$KVERSION"/vmlinuz ]; then
-        ln -sf /boot/vmlinuz-"$KVERSION" /usr/lib/modules/"$KVERSION"/vmlinuz
-    fi
+    KIMAGE=$(determine_kernel_image "$KVERSION")
 
     dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync "$TESTDIR"/root.img
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync "$TESTDIR"/root.img
@@ -70,7 +66,7 @@ test_setup() {
 
     # using kernell-install to invoke dracut
     mkdir -p "$BOOT_ROOT/$TOKEN/$KVERSION" "$BOOT_ROOT/loader/entries" "$BOOT_ROOT/$TOKEN/0-rescue/loader/entries"
-    kernel-install add-all
+    kernel-install add "$KVERSION" "$KIMAGE"
 }
 
 # shellcheck disable=SC1090
