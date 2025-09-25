@@ -7,16 +7,29 @@ set -eu
 TEST_DESCRIPTION="test skipcpio"
 
 test_check() {
-    (command -v cpio && command -v find && command -v diff) &> /dev/null
+    if ! command -v 3cpio &> /dev/null && ! command -v cpio &> /dev/null; then
+        echo "Neither 3cpio nor cpio are available."
+        return 1
+    fi
+
+    (command -v find && command -v diff) &> /dev/null
 }
 
 cpio_create() {
-    find . -print0 | sort -z | cpio -o --null -H newc
+    if command -v 3cpio &> /dev/null; then
+        find . | sort | 3cpio --create
+    else
+        find . -print0 | sort -z | cpio -o --null -H newc
+    fi
 }
 
 cpio_list_first() {
     local file="$1"
-    cpio --extract --quiet --list < "$file"
+    if command -v 3cpio &> /dev/null; then
+        3cpio --list --parts 1 "$file"
+    else
+        cpio --extract --quiet --list < "$file"
+    fi
 }
 
 skipcpio_simple() {
