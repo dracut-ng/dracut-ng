@@ -364,35 +364,34 @@ setdebug() {
 
 setdebug
 
-source_all() {
-    local f
-    local _dir
-    _dir=$1
-    shift
-    [ "$_dir" ] && [ -d "/$_dir" ] || return
-    for f in "/$_dir"/*.sh; do
-        if [ -e "$f" ]; then
-            # shellcheck disable=SC1090
-            # shellcheck disable=SC2240
-            . "$f" "$@"
-        fi
-    done
-}
-
 hookdir=/var/lib/dracut/hooks
 export hookdir
+
+list_hooks() {
+    local dir="$1"
+    local pattern="$2"
+    [ -z "$pattern" ] && pattern="*.sh"
+    local hook
+
+    for hook in "$hookdir/$dir/"$pattern; do
+	    [ -f "$hook" ] && echo "$hook"
+    done
+}
 
 source_hook() {
     local _dir
     _dir=$1
     shift
-    source_all "/var/lib/dracut/hooks/$_dir" "$@"
+    for f in $(list_hooks "$_dir"); do
+        # shellcheck disable=SC1090
+        # shellcheck disable=SC2240
+        . "$f" "$@"
+    done
 }
 
 check_finished() {
     local f rc=0
-    for f in "$hookdir"/initqueue/finished/*.sh; do
-        [ "$f" = "$hookdir/initqueue/finished/*.sh" ] && return 0
+    for f in $(list_hooks "initqueue/finished"); do
         # shellcheck disable=SC1090
         if [ -e "$f" ] && (. "$f"); then
             rm -f "$f"
