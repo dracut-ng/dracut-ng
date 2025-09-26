@@ -108,7 +108,7 @@ command -v test_cleanup &> /dev/null || test_cleanup() {
 }
 
 determine_kernel_version() {
-    lsinitrd "$1" | grep modules.dep | head -1 | rev | cut -d'/' -f2 | rev
+    lsinitrd "$1" | grep ^Kernel: | cut -d' ' -f2
 }
 
 determine_kernel_image() {

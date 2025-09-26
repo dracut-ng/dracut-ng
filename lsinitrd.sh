@@ -512,6 +512,8 @@ else
     version=$(cpio_extract_to_stdout $(dracutlibdirs 'dracut-*'))
     ((ret += $?))
     echo "Version: $version"
+    kernel=$($CAT "$image" | cpio --extract --quiet --list 'usr/lib/modules/*/modules.dep' | rev | cut -d'/' -f2 | rev)
+    [[ -n $kernel ]] && echo "Kernel: $kernel"
     echo
     if [ "$modules" -eq 1 ]; then
         list_modules
