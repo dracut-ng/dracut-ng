@@ -2034,6 +2034,21 @@ if [[ $print_cmdline ]]; then
     exit 0
 fi
 
+create_directories() {
+    local prefix="$1"
+    shift
+    for d in "$@"; do
+        d=${d#/}
+        [[ -e "${initdir}${prefix}/$d" ]] && continue
+        if [ -L "/$d" ]; then
+            inst_symlink "/$d" "${prefix}/$d"
+        else
+            # shellcheck disable=SC2174
+            mkdir -m 0755 -p "${initdir}${prefix}/$d"
+        fi
+    done
+}
+
 # Create some directory structure first
 # shellcheck disable=SC2174
 [[ $prefix ]] && mkdir -m 0755 -p "${initdir}${prefix}"
@@ -2051,38 +2066,14 @@ if [[ $prefix ]]; then
 fi
 
 if [[ $kernel_only != yes ]]; then
-    for d in usr usr/bin usr/sbin bin etc lib sbin tmp var var/tmp $libdirs; do
-        d=${d#/}
-        [[ -e "${initdir}${prefix}/$d" ]] && continue
-        if [ -L "/$d" ]; then
-            inst_symlink "/$d" "${prefix}/$d"
-        else
-            # shellcheck disable=SC2174
-            mkdir -m 0755 -p "${initdir}${prefix}/$d"
-        fi
-    done
-
-    for d in dev proc sys sysroot root run; do
-        if [ -L "/$d" ]; then
-            inst_symlink "/$d"
-        else
-            # shellcheck disable=SC2174
-            mkdir -m 0755 -p "$initdir/$d"
-        fi
-    done
-
+    # shellcheck disable=SC2086
+    create_directories "$prefix" usr usr/bin usr/sbin bin etc lib sbin tmp var var/tmp $libdirs
+    create_directories "" dev proc sys sysroot root run
     ln -sfn ../run "$initdir/var/run"
     ln -sfn ../run/lock "$initdir/var/lock"
 else
-    for d in lib $libdirs; do
-        [[ -e "${initdir}${prefix}/$d" ]] && continue
-        if [ -h "/$d" ]; then
-            inst "/$d" "${prefix}/$d"
-        else
-            # shellcheck disable=SC2174
-            mkdir -m 0755 -p "${initdir}${prefix}/$d"
-        fi
-    done
+    # shellcheck disable=SC2086
+    create_directories "$prefix" lib $libdirs
 fi
 
 mkdir -p "${initdir}"/lib/dracut
