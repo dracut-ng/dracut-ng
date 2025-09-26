@@ -130,8 +130,7 @@ fi
 _check_shutdown() {
     local __f
     local __s=0
-    for __f in "$hookdir"/shutdown/*.sh; do
-        [ -e "$__f" ] || continue
+    for __f in $(list_hooks "shutdown"); do
         # shellcheck disable=SC1090 disable=SC2240
         if (final="$1" . "$__f" "$1"); then
             rm -f -- "$__f"
