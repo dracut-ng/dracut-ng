@@ -2318,7 +2318,8 @@ done
 if [[ $do_strip == yes ]]; then
     # Prefer strip from elfutils for package size
     declare strip_cmd
-    strip_cmd=$(command -v eu-strip)
+    strip_cmd="${STRIP}"
+    [ -z "$strip_cmd" ] && strip_cmd=$(command -v eu-strip)
     [ -z "$strip_cmd" ] && strip_cmd="strip"
 
     for p in "$strip_cmd" xargs find; do
