@@ -7,7 +7,29 @@ set -eu
 TEST_DESCRIPTION="test skipcpio"
 
 test_check() {
-    (command -v cpio && command -v find && command -v diff) &> /dev/null
+    if ! command -v 3cpio &> /dev/null && ! command -v cpio &> /dev/null; then
+        echo "Neither 3cpio nor cpio are available."
+        return 1
+    fi
+
+    (command -v find && command -v diff) &> /dev/null
+}
+
+cpio_create() {
+    if command -v 3cpio &> /dev/null; then
+        find . | sort | 3cpio --create
+    else
+        find . -print0 | sort -z | cpio -o --null -H newc
+    fi
+}
+
+cpio_list_first() {
+    local file="$1"
+    if command -v 3cpio &> /dev/null; then
+        3cpio --list --parts 1 "$file"
+    else
+        cpio --extract --quiet --list < "$file"
+    fi
 }
 
 skipcpio_simple() {
@@ -17,8 +39,7 @@ skipcpio_simple() {
     for ((i = 0; i < 3; i++)); do
         echo "first archive file $i" >> ./"$i"
     done
-    find . -print0 | sort -z \
-        | cpio -o --null -H newc > "$CPIO_TESTDIR/skipcpio_simple.cpio"
+    cpio_create > "$CPIO_TESTDIR/skipcpio_simple.cpio"
     popd
 
     mkdir -p "$CPIO_TESTDIR/skipcpio_simple/second_archive"
@@ -28,11 +49,10 @@ skipcpio_simple() {
         echo "second archive file $i" >> ./"$i"
     done
 
-    find . -print0 | sort -z \
-        | cpio -o --null -H newc >> "$CPIO_TESTDIR/skipcpio_simple.cpio"
+    cpio_create >> "$CPIO_TESTDIR/skipcpio_simple.cpio"
     popd
 
-    cpio -i --list < "$CPIO_TESTDIR/skipcpio_simple.cpio" \
+    cpio_list_first "$CPIO_TESTDIR/skipcpio_simple.cpio" \
         > "$CPIO_TESTDIR/skipcpio_simple.list"
     cat << EOF | diff - "$CPIO_TESTDIR/skipcpio_simple.list"
 .
@@ -47,7 +67,8 @@ EOF
         skipcpio_path="${PKGLIBDIR}"
     fi
     "$skipcpio_path"/skipcpio "$CPIO_TESTDIR/skipcpio_simple.cpio" \
-        | cpio -i --list > "$CPIO_TESTDIR/skipcpio_simple.list"
+        > "$CPIO_TESTDIR/skipped.cpio"
+    cpio_list_first "$CPIO_TESTDIR/skipped.cpio" > "$CPIO_TESTDIR/skipcpio_simple.list"
     cat << EOF | diff - "$CPIO_TESTDIR/skipcpio_simple.list"
 .
 10
