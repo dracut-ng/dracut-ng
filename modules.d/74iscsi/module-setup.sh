@@ -192,8 +192,8 @@ install() {
     inst_multiple umount iscsi-iname iscsiadm iscsid
     inst_binary sort
 
-    inst_simple /etc/iscsi/iscsid.conf
     if [[ $hostonly ]]; then
+        inst_simple /etc/iscsi/iscsid.conf
         inst_simple /etc/iscsi/initiatorname.iscsi
     fi
 
