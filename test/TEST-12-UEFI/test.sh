@@ -16,11 +16,6 @@ test_check() {
         return 1
     fi
 
-    if command -v systemd-detect-virt > /dev/null && ! systemd-detect-virt -c &> /dev/null && ! systemd-detect-virt -r &> /dev/null; then
-        echo "This test assumes that it runs inside a chroot or CI container."
-        return 1
-    fi
-
     if [[ -z "$(ovmf_code)" ]]; then
         return 1
     fi
@@ -70,19 +65,21 @@ test_setup() {
 
         echo "Using ukify via kernel-install to create UKI"
 
-        mkdir -p /etc/kernel
+        export KERNEL_INSTALL_CONF_ROOT="$TESTDIR"/kernel-install
+        mkdir -p "$KERNEL_INSTALL_CONF_ROOT"
 
         {
             echo 'initrd_generator=dracut'
             echo 'layout=uki'
             echo 'uki_generator=ukify'
-        } >> /etc/kernel/install.conf
+        } >> "$KERNEL_INSTALL_CONF_ROOT/install.conf"
 
-        echo "$TEST_KERNEL_CMDLINE root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root" >> /etc/kernel/cmdline
+        echo "$TEST_KERNEL_CMDLINE root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root" >> "$KERNEL_INSTALL_CONF_ROOT/cmdline"
 
         # enable test dracut config
-        cp "${basedir}"/dracut.conf.d/test/* "${basedir}"/dracut.conf.d/uki-virt/* /usr/lib/dracut/dracut.conf.d/
-        echo 'add_drivers+=" squashfs "' >> /usr/lib/dracut/dracut.conf.d/extra.conf
+        mkdir -p /run/initramfs/dracut.conf.d
+        cp "${basedir}"/dracut.conf.d/test/* "${basedir}"/dracut.conf.d/uki-virt/* /run/initramfs/dracut.conf.d/
+        echo 'add_drivers+=" squashfs "' >> /run/initramfs/dracut.conf.d/extra.conf
 
         # using kernell-install to invoke dracut
         mkdir -p "$BOOT_ROOT/$TOKEN/$KVERSION" "$BOOT_ROOT/loader/entries"
