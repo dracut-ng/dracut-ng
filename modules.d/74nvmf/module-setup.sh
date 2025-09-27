@@ -160,8 +160,8 @@ install() {
 
     inst_multiple nvme jq
     inst_hook cmdline 92 "$moddir/parse-nvmf-boot-connections.sh"
-    inst_simple "/etc/nvme/discovery.conf"
-    inst_simple "/etc/nvme/config.json"
+    inst_simple -H "/etc/nvme/discovery.conf"
+    inst_simple -H "/etc/nvme/config.json"
     inst_rules /usr/lib/udev/rules.d/71-nvmf-iopolicy-netapp.rules
     inst_rules "$moddir/95-nvmf-initqueue.rules"
 }
