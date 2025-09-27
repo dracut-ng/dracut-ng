@@ -38,17 +38,10 @@ install() {
     inst_dir "$dbussession"
     inst_dir "$dbussystem"
     inst_dir "$dbussystemservices"
-    inst_dir "$dbusconfdir"
-    inst_dir "$dbusinterfacesconfdir"
-    inst_dir "$dbusservicesconfdir"
-    inst_dir "$dbussessionconfdir"
-    inst_dir "$dbussystemconfdir"
-    inst_dir "$dbussystemservicesconfdir"
 
     inst_multiple -o \
         "$dbus"/system.conf \
         "$dbussystem"/org.freedesktop.systemd1.conf \
-        "$dbusservicesconfdir"/org.freedesktop.systemd1.service \
         "$dbussystemservices"/org.freedesktop.systemd1.service \
         "$systemdsystemunitdir"/dbus.service \
         "$systemdsystemunitdir"/dbus.socket \
@@ -78,8 +71,15 @@ install() {
 
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
+        inst_dir "$dbusconfdir"
+        inst_dir "$dbusinterfacesconfdir"
+        inst_dir "$dbusservicesconfdir"
+        inst_dir "$dbussessionconfdir"
+        inst_dir "$dbussystemconfdir"
+        inst_dir "$dbussystemservicesconfdir"
         inst_multiple -H -o \
             "$dbusconfdir"/system.conf \
+            "$dbusservicesconfdir"/org.freedesktop.systemd1.service \
             "$systemdsystemconfdir"/dbus.socket \
             "$systemdsystemconfdir"/dbus.socket.d/*.conf \
             "$systemdsystemconfdir"/dbus.service \
