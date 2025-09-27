@@ -116,7 +116,7 @@ determine_kernel_image() {
     local paths=(
         "/lib/modules/${kversion}/vmlinuz"
         "/lib/modules/${kversion}/vmlinux"
-        "lib/modules/${kversion}/Image"
+        "/lib/modules/${kversion}/Image"
         "/boot/vmlinuz-${kversion}"
         "/boot/vmlinux-${kversion}"
     )
