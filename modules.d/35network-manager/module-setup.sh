@@ -44,8 +44,12 @@ install() {
 
         # teaming support under systemd+dbus
         inst_multiple -o \
-            "$dbussystem"/teamd.conf \
-            "$dbussystemconfdir"/teamd.conf
+            "$dbussystem"/teamd.conf
+
+        if [[ $hostonly ]]; then
+            inst_multiple -H -o \
+                "$dbussystemconfdir"/teamd.conf
+        fi
 
         # Install a configuration snippet to prevent the automatic creation of
         # "Wired connection #" DHCP connections for Ethernet interfaces
