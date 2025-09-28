@@ -7,8 +7,8 @@ set -eu
 TEST_DESCRIPTION="test skipcpio"
 
 test_check() {
-    if ! command -v 3cpio &> /dev/null && ! command -v cpio &> /dev/null; then
-        echo "Neither 3cpio nor cpio are available."
+    if ! 3cpio --help 2> /dev/null | grep -q -- --create && ! command -v cpio &> /dev/null; then
+        echo "Neither 3cpio >= 0.10 nor cpio are available."
         return 1
     fi
 
@@ -16,7 +16,7 @@ test_check() {
 }
 
 cpio_create() {
-    if command -v 3cpio &> /dev/null; then
+    if 3cpio --help 2> /dev/null | grep -q -- --create; then
         find . | sort | 3cpio --create
     else
         find . -print0 | sort -z | cpio -o --null -H newc
@@ -25,7 +25,7 @@ cpio_create() {
 
 cpio_list_first() {
     local file="$1"
-    if command -v 3cpio &> /dev/null; then
+    if 3cpio --help 2> /dev/null | grep -q -- --parts; then
         3cpio --list --parts 1 "$file"
     else
         cpio --extract --quiet --list < "$file"
