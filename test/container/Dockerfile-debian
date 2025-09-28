@@ -9,10 +9,6 @@
 # - dbus-daemon
 # - network: network-manager, systemd-networkd
 
-# Not installed
-# - iscsiuio (iscsiuio.socket missing, see https://bugs.debian.org/1056733)
-# - busybox-static
-
 ARG DISTRIBUTION=debian
 FROM docker.io/${DISTRIBUTION}
 
@@ -55,6 +51,7 @@ RUN \
     iputils-ping \
     iproute2 \
     isc-dhcp-server \
+    iscsiuio \
     jq \
     kbd \
     kmod \
