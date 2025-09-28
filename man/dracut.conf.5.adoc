@@ -130,6 +130,27 @@ kernel cannot decompress.
 +
 To disable compression, use "cat".
 
+*compress_level_bzip2=*"__\{1-9\}__"::
+Compression level when using bzip2 compression (default=9).
+
+*compress_level_gzip=*"__\{1-9\}__"::
+Compression level when using gzip compression (default=9).
+
+*compress_level_lz4=*"__\{1-12\}__"::
+Compression level when using lz4 compression (default=9).
+
+*compress_level_lzma=*"__\{0-9\}__"::
+Compression level when using lzma compression (default=9).
+
+*compress_level_lzop=*"__\{1-9\}__"::
+Compression level when using lzop compression (default=9).
+
+*compress_level_xz=*"__\{0-9\}__"::
+Compression level when using xz compression (default=unset, i.e. use xz default).
+
+*compress_level_zstd=*"__\{1-19\}__"::
+Compression level when using zstd compression (default=15).
+
 *squash_compress=*"__{<compressor [args ...]>}__"::
 Compress the squashfs image using the passed compressor and compressor specific
 options for `mksquashfs`.  You can refer to `mksquashfs` manual for supported
