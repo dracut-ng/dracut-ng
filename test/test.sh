@@ -49,7 +49,7 @@ fi
 # clear previous test run
 TARGETS='clean all install check' "$PODMAN" run --rm -it \
     --device=/dev/kvm --privileged \
-    -e V -e TESTS -e TEST_RUN_ID -e TARGETS -e MAKEFLAGS -e TEST_DRACUT_ARGS -e TEST_FSTYPE \
+    -e V -e TESTS -e TEST_RUN_ID -e TARGETS -e MAKEFLAGS -e TEST_DRACUT_ARGS ${TEST_FSTYPE:+-e TEST_FSTYPE} \
     -v "$PWD"/:/z \
     "$CONTAINER" \
     /z/test/test-container.sh
