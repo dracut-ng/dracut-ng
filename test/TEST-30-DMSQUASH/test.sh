@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -eu
 
+[ -z "${TEST_FSTYPE-}" ] && TEST_FSTYPE="ext4"
+
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="live root on a squash filesystem"
 
@@ -125,9 +127,23 @@ EOF
         mkfs.ext4 -q -L dracut_iso -d "$TESTDIR"/iso/ "$TESTDIR"/root_iso.img && sync "$TESTDIR"/root_iso.img
     fi
 
+    local dracut_modules="dmsquash-live-autooverlay convertfs pollcdrom kernel-modules kernel-modules-extra qemu qemu-net"
+
+    if type -p ntfs-3g &> /dev/null; then
+        dracut_modules="$dracut_modules dmsquash-live-ntfs"
+    fi
+
+    if type -p NetworkManager &> /dev/null; then
+        dracut_modules="$dracut_modules network-manager"
+        if type -p curl &> /dev/null; then
+            dracut_modules="$dracut_modules livenet"
+        fi
+    fi
+
     test_dracut \
         --no-hostonly \
-        --modules "dmsquash-live-autooverlay kernel-modules"
+        --add-drivers "${TEST_FSTYPE}" \
+        --modules " $dracut_modules "
 }
 
 # shellcheck disable=SC1090
