@@ -174,8 +174,6 @@ jobs:
                     - fedora:latest
                     - opensuse:latest
                     - ubuntu:devel
-                network:
-                    - network-manager
                 test:
                     - "60"
         container:
@@ -198,6 +196,7 @@ jobs:
             fail-fast: false
             matrix:
                 container:
+                    - arch:latest
                     - opensuse:latest
                 test:
                     - "70"
