@@ -149,6 +149,7 @@ Run test 10 with `rdma` package installed on `fedora` :: {empty}
 [,console]
 ----
 $ TESTS="10" TEST_CONTAINER_COMMAND="dnf -y install rdma" test/test.sh fedora
+----
 
 === On bare metal
 
