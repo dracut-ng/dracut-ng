@@ -27,6 +27,9 @@ if [ "${V-}" = "2" ]; then set -x; fi
 # shellcheck disable=SC2086
 ./configure --enable-test ${CONFIGURE_ARG-}
 
+# allow the execution of arbitrary commands within the test container
+[[ -n ${TEST_CONTAINER_COMMAND-} ]] && eval "$TEST_CONTAINER_COMMAND"
+
 # treat warnings as error
 # shellcheck disable=SC2086
 CFLAGS="-Wextra -Werror" make TEST_RUN_ID="${TEST_RUN_ID:=${1-}}" TESTS="${TESTS:=${2-}}" V="${V:=1}" ${MAKEFLAGS-} ${TARGETS:=all install check}
