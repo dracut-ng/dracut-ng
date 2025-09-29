@@ -66,12 +66,12 @@ jobs:
                     # https://github.com/dracut-ng/dracut-ng/issues/1590
                     - container: ubuntu:rolling
                       test: "30"
-                    # https://github.com/dracut-ng/dracut-ng/issues/1314
-                    - container: azurelinux:3.0
-                      test: "43"
                     # https://github.com/dracut-ng/dracut-ng/issues/1677
                     - container: arch:latest
                       test: "41"
+                    # https://github.com/dracut-ng/dracut-ng/issues/1727
+                    - container: debian:sid
+                      test: "30"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm --privileged'
@@ -120,7 +120,6 @@ jobs:
                 container:
                     - arch:latest
                     - debian:latest
-                    - debian:sid
                     - fedora:latest
                     - fedora:rawhide
                     - gentoo:amd64-openrc
