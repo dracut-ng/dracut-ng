@@ -1,12 +1,9 @@
 #!/bin/bash
 
 pkglib_dir() {
-    local _dirs="/usr/lib/plymouth /usr/libexec/plymouth/"
-    local _arch=${DRACUT_ARCH:-$(uname -m)}
-    [ -n "$_arch" ] && _dirs+=" /usr/lib/$_arch/plymouth"
-    for _dir in $_dirs; do
-        if [ -x "${dracutsysrootdir-}$_dir"/plymouth-populate-initrd ]; then
-            echo "$_dir"
+    for _dir in /usr/libexec $libdirs; do
+        if [ -x "${dracutsysrootdir-}$_dir/plymouth/plymouth-populate-initrd" ]; then
+            echo "$_dir/plymouth"
             return
         fi
     done
