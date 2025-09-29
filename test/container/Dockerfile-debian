@@ -95,6 +95,7 @@ RUN \
     tgt \
     thin-provisioning-tools \
     tpm2-tools \
+    util-linux-extra \
     xorriso \
     zstd \
     && apt-get clean
