@@ -382,6 +382,17 @@ source_hook() {
     done
 }
 
+rm_hooks() {
+    local _dir
+    local _pattern
+    _dir=$1
+    [ -z "$_dir" ] && exit 1
+    _pattern=$2
+    [ -z "$_pattern" ] && exit 1
+    # shellcheck disable=SC2086
+    rm -f -- "$hookdir/$_dir/"$_pattern
+}
+
 check_finished() {
     local f rc=0
     for f in $(list_hooks "initqueue/finished"); do
@@ -1063,7 +1074,8 @@ check_meminfo() {
 }
 
 remove_hostonly_files() {
-    rm -fr /etc/cmdline /etc/cmdline.d/*.conf "$hookdir"/initqueue/finished/*.sh
+    rm -fr /etc/cmdline /etc/cmdline.d/*.conf
+    rm_hooks "initqueue/finished" "*.sh"
     if [ -f /lib/dracut/hostonly-files ]; then
         while read -r line || [ -n "$line" ]; do
             [ -e "$line" ] || [ -h "$line" ] || continue
