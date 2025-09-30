@@ -12,6 +12,29 @@ pkglib_dir() {
     done
 }
 
+read_setting_from_config() {
+    local setting="$1"
+    local config_file="$2"
+    sed -n "s/^${setting}= *\([^ ]\+\) */\1/p" "$config_file"
+}
+
+use_simpledrm() {
+    local config use_simpledrm config_dirs=()
+    if [[ $hostonly ]]; then
+        config_dirs+=("${dracutsysrootdir-}/etc/plymouth/plymouthd.conf")
+    fi
+    for config in "${config_dirs[@]}" "${dracutsysrootdir-}/usr/share/plymouth/plymouthd.defaults"; do
+        use_simpledrm=$(read_setting_from_config UseSimpledrm "$config")
+        if [[ $use_simpledrm -ge 1 ]]; then
+            return 0
+        fi
+        if [[ $use_simpledrm == "0" ]]; then
+            return 1
+        fi
+    done
+    return 1
+}
+
 # called by dracut
 check() {
     [[ "$mount_needs" ]] && return 1
@@ -24,7 +47,11 @@ check() {
 
 # called by dracut
 depends() {
-    echo drm
+    if use_simpledrm; then
+        echo simpledrm
+    else
+        echo drm
+    fi
 }
 
 # called by dracut
