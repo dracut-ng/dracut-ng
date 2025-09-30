@@ -1,7 +1,25 @@
 #!/bin/bash
 
+read_setting_from_config() {
+    local setting="$1"
+    local config_file="$2"
+    sed -n "s/^${setting}= *\([^ ]\+\) */\1/p" "$config_file"
+}
+
+get_plymouth_theme() {
+    local config theme
+    for config in "${dracutsysrootdir-}/etc/plymouth/plymouthd.conf" "${dracutsysrootdir-}/usr/share/plymouth/plymouthd.defaults"; do
+        theme=$(read_setting_from_config Theme "$config")
+        if [[ -n $theme ]]; then
+            echo "$theme"
+            return
+        fi
+    done
+    echo spinner
+}
+
 PLYMOUTH_LOGO_FILE="/usr/share/pixmaps/system-logo-white.png"
-PLYMOUTH_THEME=$(plymouth-set-default-theme)
+PLYMOUTH_THEME=$(get_plymouth_theme)
 
 inst_multiple plymouthd plymouth
 
