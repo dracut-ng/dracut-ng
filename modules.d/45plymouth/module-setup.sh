@@ -67,7 +67,7 @@ install() {
 
     inst_multiple readlink
 
-    inst_multiple plymouthd plymouth plymouth-set-default-theme
+    inst_multiple plymouthd plymouth
 
     if ! dracut_module_included "systemd"; then
         inst_hook pre-trigger 10 "$moddir"/plymouth-pretrigger.sh
