@@ -102,13 +102,6 @@ ret=0
 
 case "$COMMAND" in
     add)
-        if [[ -f $LOADER_ENTRY ]] && [[ -f "$BOOT_DIR_ABS/$KERNEL" ]] \
-            && [[ -f "$BOOT_DIR_ABS/$INITRD" ]]; then
-            [[ $KERNEL_INSTALL_VERBOSE == 1 ]] \
-                && echo "Skipping, there is already a rescue image generated with the same input parameters"
-            exit 0
-        fi
-
         # source our config dir
         for f in $(dropindirs_sort ".conf" "/etc/dracut.conf.d" "/usr/lib/dracut/dracut.conf.d"); do
             if [[ -e $f ]]; then
@@ -120,6 +113,28 @@ case "$COMMAND" in
         if [[ $dracut_rescue_image != "yes" ]]; then
             [[ $KERNEL_INSTALL_VERBOSE == 1 ]] \
                 && echo "Skipping, 'dracut_rescue_image' not set to 'yes' in any dracut configuration file"
+            exit 0
+        fi
+
+        if [[ -e "${BLS_DIR}/${MACHINE_ID}-${KERNEL_VERSION}.conf" ]]; then
+            FILE_ENTRY="${BLS_DIR}/${MACHINE_ID}-${KERNEL_VERSION}.conf"
+        else
+            FILE_ENTRY="${KERNEL_IMAGE%/*}/bls.conf"
+        fi
+        line1=$(head -n 1 "$FILE_ENTRY")
+        line2=$(head -n 1 "$LOADER_ENTRY")
+        line1_mod="${line1//${KERNEL_VERSION}/0-rescue-${MACHINE_ID}}"
+        if [ "$line1_mod" != "$line2" ]; then
+            echo "Rescue version $line2 is different from this kernel release ($line1_mod)! making a new rescue entry"
+            # Deleting initrd and img to generate them again
+            [[ -f "$BOOT_DIR_ABS/$INITRD" ]] && rm "$BOOT_DIR_ABS/$INITRD"
+            [[ -f "$BOOT_DIR_ABS/$KERNEL" ]] && rm "$BOOT_DIR_ABS/$KERNEL"
+        fi
+
+        if [[ -f $LOADER_ENTRY ]] && [[ -f "$BOOT_DIR_ABS/$KERNEL" ]] \
+            && [[ -f "$BOOT_DIR_ABS/$INITRD" ]]; then
+            [[ $KERNEL_INSTALL_VERBOSE == 1 ]] \
+                && echo "Skipping, there is already a rescue image generated with the same input parameters"
             exit 0
         fi
 
@@ -150,11 +165,7 @@ case "$COMMAND" in
                 echo "initrd     $BOOT_DIR/initrd"
             } > "$LOADER_ENTRY"
         else
-            if [[ -e "${BLS_DIR}/${MACHINE_ID}-${KERNEL_VERSION}.conf" ]]; then
-                cp -aT "${BLS_DIR}/${MACHINE_ID}-${KERNEL_VERSION}.conf" "$LOADER_ENTRY"
-            else
-                cp -aT "${KERNEL_IMAGE%/*}/bls.conf" "$LOADER_ENTRY"
-            fi
+            cp -aT "$FILE_ENTRY" "$LOADER_ENTRY"
             sed -i "s/${KERNEL_VERSION}/0-rescue-${MACHINE_ID}/" "$LOADER_ENTRY"
         fi
 
