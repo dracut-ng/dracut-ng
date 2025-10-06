@@ -14,9 +14,6 @@ install() {
     inst "$moddir/shutdown.sh" "$prefix/shutdown"
     mkdir -m 0755 -p "${initdir}"/var/lib/dracut/hooks
 
-    # symlink to old hooks location for compatibility
-    ln_r /var/lib/dracut/hooks /lib/dracut/hooks
-
     for _d in $hookdirs shutdown shutdown-emergency; do
         mkdir -m 0755 -p "${initdir}"/var/lib/dracut/hooks/"$_d"
     done

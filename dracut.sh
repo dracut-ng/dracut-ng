@@ -1994,11 +1994,13 @@ dracut_kernel_post() {
 }
 
 if [[ "$(ln --help)" == *--relative* ]]; then
+    # shellcheck disable=SC2329
     ln_r() {
         local dstdir="${dstdir:-"$initdir"}"
         ln -sfnr "${dstdir}/$1" "${dstdir}/$2"
     }
 else
+    # shellcheck disable=SC2329
     ln_r() {
         local dstdir="${dstdir:-"$initdir"}"
         local _source=$1
@@ -2700,9 +2702,6 @@ if [[ $kernel_only != yes ]]; then
     ((${#install_items[@]} > 0)) && inst_multiple ${install_items[@]}
     # shellcheck disable=SC2068
     ((${#install_optional_items[@]} > 0)) && inst_multiple -o ${install_optional_items[@]}
-
-    # symlink to old hooks location for compatibility
-    ln_r /var/lib/dracut/hooks /lib/dracut/hooks
 
     for _d in $hookdirs; do
         # shellcheck disable=SC2174

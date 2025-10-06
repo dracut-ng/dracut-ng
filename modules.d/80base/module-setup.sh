@@ -88,9 +88,6 @@ install() {
     mkdir -m 0755 -p "${initdir}"/lib/dracut
     mkdir -m 0755 -p "${initdir}"/var/lib/dracut/hooks
 
-    # symlink to old hooks location for compatibility
-    ln_r /var/lib/dracut/hooks /lib/dracut/hooks
-
     mkdir -p "${initdir}"/tmp
 
     inst_simple "$moddir/dracut-lib.sh" "/lib/dracut-lib.sh"

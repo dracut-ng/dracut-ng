@@ -10,6 +10,8 @@ Wants=systemd-journald.socket
 ConditionPathExists=/usr/lib/initrd-release
 ConditionPathExistsGlob=|/etc/cmdline.d/*.conf
 ConditionDirectoryNotEmpty=|/var/lib/dracut/hooks/cmdline
+ConditionDirectoryNotEmpty=|/etc/dracut/hooks/cmdline
+ConditionDirectoryNotEmpty=|/lib/dracut/hooks/cmdline
 ConditionKernelCommandLine=|rd.break=cmdline
 Conflicts=shutdown.target emergency.target
 
