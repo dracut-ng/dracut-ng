@@ -362,12 +362,22 @@ export hookdir
 list_hooks() {
     local _dir
     local _pattern
+    local _hook
     _dir=$1
     _pattern=$2
     [ -z "$_pattern" ] && _pattern="*.sh"
-    for hook in "$hookdir/$_dir/"$_pattern; do
-	    [ "$hook" = "$hookdir/$_dir/$_pattern" ] && break
-	    [ -f "$hook" ] && echo "$hook"
+    for _f in "/var/lib/dracut/hooks/$_dir/"$_pattern "/etc/dracut/hooks/$_dir/"$_pattern "/lib/dracut/hooks/$_dir/"$_pattern; do
+        [ ! -f "$_f" ] && continue
+        echo "${_f##*/}"
+    done | sort -u | while read -r _hook; do
+        # Hooks are executed in the alphabetical order. It is also allowed to
+        # override hooks by creating a file with the same name in a directory
+        # which has higher priority. '/var/lib/dracut/hooks' gets top priority,
+        # '/etc/dracut/hooks' comes after and /lib/dracut/hooks is the least
+        # priviliged location.
+        [ -f "/var/lib/dracut/hooks/$_dir/$_hook" ] && echo "/var/lib/dracut/hooks/$_dir/$_hook"
+        [ -f "/etc/dracut/hooks/$_dir/$_hook" ] && echo "/etc/dracut/hooks/$_dir/$_hook"
+        [ -f "/lib/dracut/hooks/$_dir/$_hook" ] && echo "/lib/dracut/hooks/$_dir/$_hook"
     done
 }
 
