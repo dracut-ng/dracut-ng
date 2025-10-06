@@ -47,6 +47,17 @@ These hooks are plain directories containing shell scripts ending with ".sh",
 which are sourced by init.
 Common used functions are in _dracut-lib.sh_, which can be sourced by any script.
 
+dracut looks for custom hook scripts in subdirectories (cmdline, pre-udev,
+pre-trigger, initqueue, pre-mount, mount, pre-pivot, cleanup) of the following
+locations:  _/var/lib/dracut/hooks_, _/etc/dracut/hooks_, and
+_/lib/dracut/hooks_. The intended use of these locations is: standard,
+distribution shipped scripts are put to _/lib/dracut/hooks_; _/etc/dracut/hooks_
+is used as a local override; dracut modules create (and remove) scripts in
+runtime in _/var/lib/dracut/hooks_. If a hook with the same name exists in
+multiple locations simultaneously, the most privileged location
+(_/var/lib/dracut/hooks_, then _/etc/dracut/hooks_, and then
+_/lib/dracut/hooks_) wins and only one instance of the hook is executed.
+
 === Hook: cmdline
 
 The _cmdline_ hook is a place to insert scripts to parse the kernel command line
