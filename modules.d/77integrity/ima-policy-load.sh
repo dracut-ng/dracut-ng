@@ -32,6 +32,9 @@ load_ima_policy() {
         info "Loading the provided IMA custom policy"
         printf '%s' "${IMAPOLICYPATH}" > "${IMASECDIR}"/policy \
             || cat "${IMAPOLICYPATH}" > "${IMASECDIR}"/policy
+    } || {
+        getargbool 0 "rd.ima.require_policy_file" \
+        && die "IMA policy required but not loaded"
     }
 
     return 0
