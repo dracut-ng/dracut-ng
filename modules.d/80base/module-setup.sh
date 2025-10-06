@@ -42,6 +42,7 @@ install() {
         sed \
         setsid \
         sleep \
+        sort \
         tr \
         umount
 
@@ -87,9 +88,8 @@ install() {
     [ -e "${initdir}/lib" ] || mkdir -m 0755 -p "${initdir}"/lib
     mkdir -m 0755 -p "${initdir}"/lib/dracut
     mkdir -m 0755 -p "${initdir}"/var/lib/dracut/hooks
-
-    # symlink to old hooks location for compatibility
-    ln_r /var/lib/dracut/hooks /lib/dracut/hooks
+    mkdir -m 0755 -p "${initdir}"/etc/dracut/hooks
+    mkdir -m 0755 -p "${initdir}"/lib/dracut/hooks
 
     mkdir -p "${initdir}"/tmp
 

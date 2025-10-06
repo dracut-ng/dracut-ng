@@ -2043,11 +2043,13 @@ dracut_kernel_post() {
 }
 
 if [[ "$(ln --help)" == *--relative* ]]; then
+    # shellcheck disable=SC2329
     ln_r() {
         local dstdir="${dstdir:-"$initdir"}"
         ln -sfnr "${dstdir}/$1" "${dstdir}/$2"
     }
 else
+    # shellcheck disable=SC2329
     ln_r() {
         local dstdir="${dstdir:-"$initdir"}"
         local _source=$1
@@ -2735,7 +2737,6 @@ mkdir -p "${initdir}"/lib/dracut
 
 if [[ $kernel_only != yes ]]; then
     mkdir -p "${initdir}/etc/cmdline.d"
-    mkdir -m 0755 -p "${initdir}"/var/lib/dracut/hooks
 
     # FIXME: handle legacy item split
     # shellcheck disable=SC2068
@@ -2743,12 +2744,11 @@ if [[ $kernel_only != yes ]]; then
     # shellcheck disable=SC2068
     ((${#install_optional_items[@]} > 0)) && inst_multiple -o ${install_optional_items[@]}
 
-    # symlink to old hooks location for compatibility
-    ln_r /var/lib/dracut/hooks /lib/dracut/hooks
-
-    for _d in $hookdirs; do
-        # shellcheck disable=SC2174
-        mkdir -m 0755 -p "${initdir}/lib/dracut/hooks/$_d"
+    for _h in "/var/lib/dracut/hooks" "/etc/dracut/hooks" "/lib/dracut/hooks"; do
+        for _d in $hookdirs; do
+            # shellcheck disable=SC2174
+            mkdir -m 0755 -p "${initdir}$_h/$_d"
+        done
     done
     if [[ $EUID == "0" ]] && ! [[ $DRACUT_NO_MKNOD ]]; then
         [[ -c ${initdir}/dev/null ]] || mknod "${initdir}"/dev/null c 1 3
