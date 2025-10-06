@@ -123,18 +123,25 @@ You are encouraged to provide a `README` that describes what the module is for.
 
 == Hooks
 
-init has the following hook points to inject scripts:
+Dracut init looks for custom hook scripts in the following locations
+(`HOOKDIR` below): `/var/lib/dracut/hooks`, `/etc/dracut/hooks`, and
+`/lib/dracut/hooks`. The intended use of these locations is: standard,
+distribution shipped scripts are put to `/lib/dracut/hooks`;
+`/etc/dracut/hooks` is used as a local override; dracut modules create
+(and remove) scripts in runtime in `/var/lib/dracut/hooks` (and `$hookdir`
+variable is provided). The following hook points to inject scripts are
+currently supported:
 
-`/var/lib/dracut/hooks/cmdline/*.sh`::
+`HOOKDIR/cmdline/*.sh`::
 scripts for command line parsing
 
-`/var/lib/dracut/hooks/pre-udev/*.sh`::
+`HOOKDIR/pre-udev/*.sh`::
 scripts to run before udev is started
 
-`/var/lib/dracut/hooks/pre-trigger/*.sh`::
+`HOOKDIR/pre-trigger/*.sh`::
 scripts to run before the main udev trigger is pulled
 
-`/var/lib/dracut/hooks/initqueue/*.sh`::
+`HOOKDIR/initqueue/*.sh`::
 runs in parallel to the udev trigger
 +
 Udev events can add scripts here with `/sbin/initqueue`.
@@ -151,23 +158,23 @@ a timeout.
 +
 Scripts can remove themselves from the initqueue by `rm $job`.
 
-`/var/lib/dracut/hooks/pre-mount/*.sh`::
+`HOOKDIR/pre-mount/*.sh`::
 scripts to run before the root filesystem is mounted
 +
 Network filesystems like NFS that do not use device files are an
 exception. Root can be mounted already at this point.
 
-`/var/lib/dracut/hooks/mount/*.sh`::
+`HOOKDIR/mount/*.sh`::
 scripts to mount the root filesystem
 +
 If the udev queue is empty and no root device is found or no root
 filesystem was mounted, the user will be dropped to a shell after
 a timeout.
 
-`/var/lib/dracut/hooks/pre-pivot/*.sh`::
+`HOOKDIR/pre-pivot/*.sh`::
 scripts to run before latter initramfs cleanups
 
-`/var/lib/dracut/hooks/cleanup/*.sh`::
+`HOOKDIR/cleanup/*.sh`::
 scripts to run before the real init is executed and the initramfs
 disappears
 +
