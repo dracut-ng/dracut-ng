@@ -1797,4 +1797,46 @@ mod tests {
             assert!(gmd.rdev() == dmd.rdev());
         }
     }
+
+    // Inode numbers are unique (for non-hardlinks) within the archive, so
+    // device ID mapping is unnecessary. Confirm that dracut-cpio behaves like
+    // GNU cpio --ignore-devno. Check this by archiving the /tmp directory
+    // alongside a working-directory nested file; despite differing source
+    // device IDs, the archived major/minor numbers should be zero.
+    #[test]
+    fn test_archive_major_minor() {
+        let mut twd = TempWorkDir::new();
+        twd.create_tmp_file("file1", 0);
+        let twd_md = fs::symlink_metadata(PathBuf::from("file1")).unwrap();
+
+        let slash_tmp_md = match fs::symlink_metadata(PathBuf::from("/tmp")) {
+            Err(_) => {
+                println!("SKIPPED: this test requires /tmp stat access");
+                return;
+            },
+            Ok(md) => md,
+        };
+
+        if twd_md.dev() == slash_tmp_md.dev() {
+            println!("SKIPPED: this test requires a unique /tmp device ID");
+            return;
+        }
+        let file_list: &str = "file1\n/tmp\n";
+
+        gnu_cpio_create(file_list.as_bytes(), "gnu.cpio");
+        twd.cleanup_files.push(PathBuf::from("gnu.cpio"));
+
+        let f = fs::File::create("dracut.cpio").unwrap();
+        let mut writer = io::BufWriter::new(f);
+        let mut reader = io::BufReader::new(file_list.as_bytes());
+        let wrote = archive_loop(&mut reader, &mut writer, &ArchiveProperties::default()).unwrap();
+        twd.cleanup_files.push(PathBuf::from("dracut.cpio"));
+        assert!(wrote > NEWC_HDR_LEN);
+
+        let status = Command::new("diff")
+            .args(&["gnu.cpio", "dracut.cpio"])
+            .status()
+            .expect("diff failed to start");
+        assert!(status.success());
+    }
 }
