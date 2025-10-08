@@ -41,7 +41,6 @@ install() {
     # regular files, but not with directory trees.
 
     inst_multiple -o \
-        "/usr/lib/confexts/*.raw" \
         "/usr/lib/extension-release.d/extension-release.*" \
         "$systemdsystemunitdir"/systemd-confext${_suffix}.service \
         "$systemdsystemunitdir/systemd-confext${_suffix}.service.d/*.conf" \
@@ -64,10 +63,7 @@ install() {
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
-            "/etc/extensions/*.raw" \
             "/etc/extension-release.d/extension-release.*" \
-            "/var/lib/confexts/*.raw" \
-            "/var/lib/extensions/*.raw" \
             "$systemdsystemconfdir"/systemd-confext${_suffix}.service \
             "$systemdsystemconfdir/systemd-confext${_suffix}.service.d/*.conf" \
             "$systemdsystemconfdir"/systemd-sysext${_suffix}.service \
