@@ -4,11 +4,6 @@ set -eu
 TEST_DESCRIPTION="kernel-install with root filesystem on ext4 filesystem"
 
 test_check() {
-    if command -v systemd-detect-virt > /dev/null && ! systemd-detect-virt -c &> /dev/null && ! systemd-detect-virt -r &> /dev/null; then
-        echo "This test assumes that it runs inside a chroot or CI container."
-        return 1
-    fi
-
     if ! command -v kernel-install > /dev/null; then
         echo "This test needs kernel-install to run."
         return 1
@@ -55,14 +50,14 @@ test_setup() {
     dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync "$TESTDIR"/root.img
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync "$TESTDIR"/root.img
 
-    mkdir -p /run/kernel
+    mkdir -p /run/kernel /run/initramfs/dracut.conf.d
     echo 'initrd_generator=dracut' >> /run/kernel/install.conf
 
     # enable test dracut config
-    cp /usr/lib/dracut/dracut.conf.d/test/*.conf /usr/lib/dracut/dracut.conf.d/
+    cp "${basedir}"/dracut.conf.d/test/*.conf /run/initramfs/dracut.conf.d/
 
     # enable rescue boot config
-    cp /usr/lib/dracut/dracut.conf.d/rescue/*.conf /usr/lib/dracut/dracut.conf.d/
+    cp "${basedir}"/dracut.conf.d/rescue/*.conf /run/initramfs/dracut.conf.d/
 
     # using kernell-install to invoke dracut
     mkdir -p "$BOOT_ROOT/$TOKEN/$KVERSION" "$BOOT_ROOT/loader/entries" "$BOOT_ROOT/$TOKEN/0-rescue/loader/entries"
