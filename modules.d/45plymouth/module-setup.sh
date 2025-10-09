@@ -54,8 +54,7 @@ depends() {
 # called by dracut
 install() {
     PKGLIBDIR=$(pkglib_dir)
-    if grep -q nash "${dracutsysrootdir-}${PKGLIBDIR}"/plymouth-populate-initrd \
-        || [ ! -x "${dracutsysrootdir-}${PKGLIBDIR}"/plymouth-populate-initrd ]; then
+    if [ ! -x "${dracutsysrootdir-}${PKGLIBDIR}"/plymouth-populate-initrd ]; then
         # shellcheck disable=SC1090
         . "$moddir"/plymouth-populate-initrd.sh
     else
