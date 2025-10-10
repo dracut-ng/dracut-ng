@@ -323,6 +323,10 @@ kernel-modules:
   - changed-files:
       - any-glob-to-any-file: 'modules.d/[0-9][0-9]kernel-modules/*'
 
+kernel-modules-export:
+  - changed-files:
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]kernel-modules-export/*'
+
 kernel-modules-extra:
   - changed-files:
       - any-glob-to-any-file: 'modules.d/[0-9][0-9]kernel-modules-extra/*'
