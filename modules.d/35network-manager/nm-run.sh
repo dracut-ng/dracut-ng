@@ -13,10 +13,11 @@ if [ -z "${DRACUT_SYSTEMD-}" ]; then
             break
         done
     fi
+fi
 
-    if [ -s /run/NetworkManager/initrd/hostname ]; then
-        cat /run/NetworkManager/initrd/hostname > /proc/sys/kernel/hostname
-    fi
+if [ -e /usr/lib/systemd/system/nm-initrd.service ] \
+    && [ -s /run/NetworkManager/initrd/hostname ]; then
+    cat /run/NetworkManager/initrd/hostname > /proc/sys/kernel/hostname
 fi
 
 kf_get_string() {
