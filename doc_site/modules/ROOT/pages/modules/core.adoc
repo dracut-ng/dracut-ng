@@ -205,6 +205,10 @@ code, there are no specific types or categories for dracut modules.
 | mount block fallback device as rootfs
 | device
 
+| kernel-modules-export
+| make kernel modules from initramfs available to rootfs
+| kernel
+
 | securityfs
 | mount securityfs early
 | filesystem

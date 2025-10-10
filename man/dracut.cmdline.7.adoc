@@ -149,6 +149,10 @@ Misc
     force loading kernel module <drivername> after all automatic loading modules
     have been loaded. This parameter can be specified multiple times.
 
+**rd.driver.export**::
+    making all drivers from initramfs available to rootfs after switch_root.
+    This parameter can be set to 'force' for exporting over existing modules.
+
 **rd.retry=**__<seconds>__::
     specify how long dracut should retry the initqueue to configure devices.
     The default is 180 seconds. After 2/3 of the time, degraded raids are force
