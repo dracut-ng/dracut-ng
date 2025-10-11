@@ -106,6 +106,7 @@ int main(int argc, char **argv)
 
         /* check, if this is a cpio archive */
         if (memcmp(buf.cpio.h.c_magic, CPIO_MAGIC, CPIO_MAGIC_LEN)) {
+                fprintf(stderr, "No CPIO header found.\n");
                 goto cat_rest;
         }
 
@@ -172,6 +173,7 @@ int main(int argc, char **argv)
                                         pr_err("fseek\n");
                                         goto end;
                                 }
+                                fprintf(stderr, "CPIO data and any trailing zeros end at position %ld.\n", (pos-1));
                                 break;
                         }
 
