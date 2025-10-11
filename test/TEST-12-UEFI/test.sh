@@ -58,8 +58,7 @@ test_setup() {
     mkdir -p "$TESTDIR"/ESP/EFI/BOOT "$TESTDIR"/dracut.conf.d
 
     # This is the preferred way to build uki with dracut on a systemd based system
-    if command -v systemd-detect-virt &> /dev/null && systemd-detect-virt -c &> /dev/null \
-        && command -v kernel-install &> /dev/null \
+    if command -v kernel-install &> /dev/null \
         && command -v systemctl &> /dev/null \
         && command -v ukify &> /dev/null; then
 
