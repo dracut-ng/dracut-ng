@@ -80,6 +80,13 @@ int main(int argc, char **argv)
         int ret = EXIT_FAILURE;
         unsigned long filesize;
         unsigned long filename_length;
+        int debug_output = 0;
+
+        if (getenv("DEBUG_SKIPCPIO")) {
+                if (strcmp(getenv("DEBUG_SKIPCPIO"), "1") == 0) {
+                        debug_output = 1;
+                }
+        }
 
         if (argc != 2) {
                 fprintf(stderr, "Usage: %s <file>\n", argv[0]);
@@ -106,6 +113,9 @@ int main(int argc, char **argv)
 
         /* check, if this is a cpio archive */
         if (memcmp(buf.cpio.h.c_magic, CPIO_MAGIC, CPIO_MAGIC_LEN)) {
+                if (debug_output) {
+                        fprintf(stderr, "No CPIO header found.\n");
+                }
                 goto cat_rest;
         }
 
@@ -171,6 +181,9 @@ int main(int argc, char **argv)
                                 if (fseek(f, pos, SEEK_SET)) {
                                         pr_err("fseek\n");
                                         goto end;
+                                }
+                                if (debug_output) {
+                                        fprintf(stderr, "CPIO data and any trailing zeros end at position %ld.\n", (pos-1));
                                 }
                                 break;
                         }
