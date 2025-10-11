@@ -2119,6 +2119,12 @@ if [[ $kernel_only != yes ]]; then
     mkdir -p "${initdir}/etc/cmdline.d"
     mkdir -m 0755 -p "${initdir}"/var/lib/dracut/hooks
 
+    # FIXME: handle legacy item split
+    # shellcheck disable=SC2068
+    ((${#install_items[@]} > 0)) && inst_multiple ${install_items[@]}
+    # shellcheck disable=SC2068
+    ((${#install_optional_items[@]} > 0)) && inst_multiple -o ${install_optional_items[@]}
+
     # symlink to old hooks location for compatibility
     ln_r /var/lib/dracut/hooks /lib/dracut/hooks
 
@@ -2238,12 +2244,6 @@ if [[ $no_kernel != yes ]]; then
 fi
 
 if [[ $kernel_only != yes ]]; then
-    # FIXME: handle legacy item split
-    # shellcheck disable=SC2068
-    ((${#install_items[@]} > 0)) && inst_multiple ${install_items[@]}
-    # shellcheck disable=SC2068
-    ((${#install_optional_items[@]} > 0)) && inst_multiple -o ${install_optional_items[@]}
-
     if [[ $kernel_cmdline ]] && [[ $uefi != yes ]]; then
         printf "%s\n" "$kernel_cmdline" >> "${initdir}/etc/cmdline.d/10-default.conf"
     fi
