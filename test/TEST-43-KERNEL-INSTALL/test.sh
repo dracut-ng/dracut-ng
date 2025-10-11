@@ -47,7 +47,7 @@ test_setup() {
     KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)
     KIMAGE=$(determine_kernel_image "$KVERSION")
 
-    dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync "$TESTDIR"/root.img
+    dd if=/dev/zero of="$TESTDIR"/root.img bs=512MiB count=1 status=none && sync "$TESTDIR"/root.img
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync "$TESTDIR"/root.img
 
     mkdir -p /run/kernel /run/initramfs/dracut.conf.d
