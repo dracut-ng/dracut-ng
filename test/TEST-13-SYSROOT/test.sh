@@ -24,6 +24,7 @@ test_setup() {
     # create root filesystem
     "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
+        -m test-root \
         -f "$TESTDIR"/initramfs.root
 
     dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync "$TESTDIR"/root.img

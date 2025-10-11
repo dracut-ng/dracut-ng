@@ -48,6 +48,7 @@ test_setup() {
     # Create what will eventually be our root filesystem
     "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
+        -m test-root \
         "$TESTDIR"/tmp-initramfs.root
 
     KVERSION=$(determine_kernel_version "$TESTDIR"/tmp-initramfs.root)

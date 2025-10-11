@@ -93,7 +93,7 @@ test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
-        -a "$dracut_modules" \
+        -a "test-root $dracut_modules" \
         -f "$TESTDIR"/initramfs.root
 
     KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)

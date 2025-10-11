@@ -42,6 +42,7 @@ test_setup() {
     # shellcheck disable=SC2153
     "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
+        -m test-root \
         -f "$TESTDIR"/initramfs.root
 
     KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)

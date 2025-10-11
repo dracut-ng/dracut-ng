@@ -116,6 +116,7 @@ test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
+        -m test-root \
         -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
 

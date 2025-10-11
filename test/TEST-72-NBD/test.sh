@@ -179,6 +179,7 @@ make_encrypted_root() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
+        -m test-root \
         -I "ip grep" \
         --no-hostonly \
         -f "$TESTDIR"/initramfs.root
@@ -214,6 +215,7 @@ make_client_root() {
     rm -fr "$TESTDIR"/overlay
     "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
+        -m test-root \
         -I "ip" \
         --no-hostonly \
         -f "$TESTDIR"/initramfs.root
@@ -259,6 +261,7 @@ EOF
 
     "$DRACUT" --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
+        -m test-root \
         -a "$USE_NETWORK" \
         -I "ip grep sleep nbd-server chmod modprobe pidof" \
         --install-optional "/etc/netconfig dhcpd /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \

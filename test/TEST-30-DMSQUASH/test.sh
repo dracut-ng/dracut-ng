@@ -84,6 +84,7 @@ test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
+        -m test-root \
         -i ./test-init.sh /sbin/init-persist \
         -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/rootfs && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/rootfs && rm -rf "$TESTDIR"/dracut.*

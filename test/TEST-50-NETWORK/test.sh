@@ -30,6 +30,7 @@ test_setup() {
         -I "ip" \
         -i "./assertion.sh" "/assertion.sh" \
         --add-confdir test-root \
+        -m test-root \
         -f "$TESTDIR"/initramfs.root "$KVERSION"
 
     dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync "$TESTDIR"/root.img

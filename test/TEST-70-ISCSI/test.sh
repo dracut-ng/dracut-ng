@@ -132,6 +132,7 @@ test_setup() {
     # Create what will eventually be the client root filesystem onto an overlay
     "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
+        -m test-root \
         -I "ip grep setsid" \
         -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
@@ -168,6 +169,7 @@ test_setup() {
     # Create what will eventually be the server root filesystem onto an overlay
     "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
+        -m test-root \
         -a "$USE_NETWORK" \
         -d "iscsi_tcp crc32c ipv6" \
         -I "modprobe chmod ip setsid pidof tgtd tgtadm /etc/passwd" \

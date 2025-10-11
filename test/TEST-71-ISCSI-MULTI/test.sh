@@ -140,6 +140,7 @@ test_setup() {
     rm -rf -- "$TESTDIR"/overlay
     "$DRACUT" --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
+        -m test-root \
         -I "ip grep setsid" \
         --no-hostonly \
         -f "$TESTDIR"/initramfs.root
@@ -176,6 +177,7 @@ test_setup() {
     rm -rf -- "$TESTDIR"/overlay
     "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
+        -m test-root \
         -a "$USE_NETWORK iscsi" \
         -d "iscsi_tcp crc32c ipv6 af_packet" \
         -I "ip grep sleep setsid chmod modprobe pidof tgtd tgtadm" \
