@@ -121,10 +121,6 @@ jobs:
                     - "41"
                     - "42"
                     - "43"
-                exclude:
-                    # https://github.com/dracut-ng/dracut-ng/issues/1677
-                    - container: arch:latest
-                      test: "41"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm --privileged'
