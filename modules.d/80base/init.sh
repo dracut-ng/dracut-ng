@@ -183,8 +183,7 @@ while :; do
         rm -f -- "$hookdir"/initqueue/work
     fi
 
-    for job in "$hookdir"/initqueue/*.sh; do
-        [ -e "$job" ] || break
+    for job in $(list_hooks "initqueue"); do
         # shellcheck disable=SC2097 disable=SC1090 disable=SC2098
         job=$job . "$job"
         check_finished && break 2
@@ -192,8 +191,7 @@ while :; do
 
     $UDEV_QUEUE_EMPTY > /dev/null 2>&1 || continue
 
-    for job in "$hookdir"/initqueue/settled/*.sh; do
-        [ -e "$job" ] || break
+    for job in $(list_hooks "initqueue/settled"); do
         # shellcheck disable=SC2097 disable=SC1090 disable=SC2098
         job=$job . "$job"
         check_finished && break 2
@@ -205,8 +203,7 @@ while :; do
     sleep 0.5
 
     if [ $main_loop -gt $((2 * RDRETRY / 3)) ]; then
-        for job in "$hookdir"/initqueue/timeout/*.sh; do
-            [ -e "$job" ] || break
+        for job in $(list_hooks "initqueue/timeout"); do
             # shellcheck disable=SC2097 disable=SC1090 disable=SC2098
             job=$job . "$job"
             udevadm settle --timeout=0 > /dev/null 2>&1 || main_loop=0
@@ -241,9 +238,9 @@ while :; do
         usable_root "$NEWROOT" && break
         umount "$NEWROOT"
     fi
-    for f in "$hookdir"/mount/*.sh; do
+    for f in $(list_hooks "mount"); do
         # shellcheck disable=SC1090
-        [ -f "$f" ] && . "$f"
+        . "$f"
         if ismounted "$NEWROOT"; then
             usable_root "$NEWROOT" && break
             warn "$NEWROOT has no proper rootfs layout, ignoring and removing offending mount hook"

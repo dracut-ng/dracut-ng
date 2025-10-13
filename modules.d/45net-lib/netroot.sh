@@ -58,9 +58,9 @@ if [ -z "$2" ]; then
 
         # FIXME!
         unset rootok
-        for f in "$hookdir"/cmdline/90*.sh; do
+        for f in $(list_hooks "cmdline" "90*.sh"); do
             # shellcheck disable=SC1090
-            [ -f "$f" ] && . "$f"
+            . "$f"
         done
     else
         rootok="1"
