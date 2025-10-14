@@ -54,7 +54,7 @@ set_vmlinux_env() {
 [[ -x "/usr/bin/qemu-system-${ARCH}" ]] && BIN="/usr/bin/qemu-system-${ARCH}" && ARGS=(-cpu "$QEMU_CPU")
 [[ -z ${NO_KVM-} && -c /dev/kvm && -x "/usr/bin/qemu-system-${ARCH}" ]] && BIN="/usr/bin/qemu-system-${ARCH}" && ARGS=(-enable-kvm -cpu host)
 
-[[ $BIN ]] || {
+[[ ${BIN-} ]] || {
     echo "Could not find a working KVM or QEMU to test with!" >&2
     echo "Please install kvm or qemu." >&2
     exit 1
