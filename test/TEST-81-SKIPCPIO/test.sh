@@ -75,6 +75,29 @@ EOF
 11
 12
 EOF
+
+    DEBUG_SKIPCPIO=1 "$skipcpio_path"/skipcpio "$CPIO_TESTDIR/skipcpio_simple.cpio" \
+        > /dev/null 2> "$CPIO_TESTDIR/debug.log"
+    if [ ! -s "$CPIO_TESTDIR/debug.log" ]; then
+        echo "Debug log file is missing or empty."
+        return 1
+    fi
+    if ! grep -q "CPIO data and any trailing zeros end at position" "$CPIO_TESTDIR/debug.log"; then
+        echo "Expected debug message not found in log."
+        return 1
+    fi
+
+    truncate -s 1K "$CPIO_TESTDIR/empty.img"
+    DEBUG_SKIPCPIO=1 "$skipcpio_path"/skipcpio "$CPIO_TESTDIR/empty.img" > /dev/null \
+        2> "$CPIO_TESTDIR/debug.log"
+    if [ ! -s "$CPIO_TESTDIR/debug.log" ]; then
+        echo "Debug log file is missing or empty."
+        return 1
+    fi
+    if ! grep -q "No CPIO header found." "$CPIO_TESTDIR/debug.log"; then
+        echo "Expected debug message not found in log."
+        return 1
+    fi
 }
 
 test_run() {
