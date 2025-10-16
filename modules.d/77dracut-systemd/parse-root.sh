@@ -26,7 +26,7 @@ if [ "$rootok" = "1" ]; then
         # after remote-fs-pre.target since the initqueue is ordered before it so
         # it will never actually show up (think Tang-pinned rootfs).
         cat > "$hookdir/initqueue/finished/devexists-${root_name}.sh" << EOF
-if ! grep -q After=remote-fs-pre.target /run/systemd/generator/systemd-cryptsetup@*.service 2>/dev/null; then
+if ! grep -qs After=remote-fs-pre.target /run/systemd/generator/systemd-cryptsetup@*.service; then
     [ -e "$root_dev" ]
 fi
 EOF

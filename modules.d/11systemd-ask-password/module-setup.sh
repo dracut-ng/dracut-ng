@@ -27,7 +27,7 @@ depends() {
         # - ramfb is not enough
         # Therefore, depend on the drm module if virtio_gpu is loaded on the system.
         if [[ ${DRACUT_ARCH:-$(uname -m)} == arm* || ${DRACUT_ARCH:-$(uname -m)} == aarch64 ]] \
-            && grep -r -q "virtio:d00000010v" /sys/bus/virtio/devices/*/modalias 2> /dev/null; then
+            && grep -r -qs "virtio:d00000010v" /sys/bus/virtio/devices/*/modalias; then
             echo drm
         fi
     fi

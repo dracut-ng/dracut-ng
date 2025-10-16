@@ -57,7 +57,7 @@ dhcpopts_create() {
 for _i in /sys/class/net/*; do
     [ -d "$_i" ] || continue
     state="/run/NetworkManager/devices/$(cat "$_i"/ifindex)"
-    grep -q '^connection-uuid=' "$state" 2> /dev/null || continue
+    grep -qs '^connection-uuid=' "$state" || continue
     ifname="${_i##*/}"
     dhcpopts_create "$state" > /tmp/dhclient."$ifname".dhcpopts
     source_hook initqueue/online "$ifname"
