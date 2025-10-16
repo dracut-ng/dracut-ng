@@ -118,18 +118,18 @@ install() {
 
     inst_multiple -o nologin
     {
-        grep '^adm:' "${dracutsysrootdir-}"/etc/passwd 2> /dev/null
+        grep -s '^adm:' "${dracutsysrootdir-}"/etc/passwd
         # we don't use systemd-networkd, but the user is in systemd.conf tmpfiles snippet
-        grep '^systemd-network:' "${dracutsysrootdir-}"/etc/passwd 2> /dev/null
+        grep -s '^systemd-network:' "${dracutsysrootdir-}"/etc/passwd
     } >> "$initdir/etc/passwd"
 
     {
-        grep '^wheel:' "${dracutsysrootdir-}"/etc/group 2> /dev/null
-        grep '^adm:' "${dracutsysrootdir-}"/etc/group 2> /dev/null
-        grep '^utmp:' "${dracutsysrootdir-}"/etc/group 2> /dev/null
-        grep '^root:' "${dracutsysrootdir-}"/etc/group 2> /dev/null
+        grep -s '^wheel:' "${dracutsysrootdir-}"/etc/group
+        grep -s '^adm:' "${dracutsysrootdir-}"/etc/group
+        grep -s '^utmp:' "${dracutsysrootdir-}"/etc/group
+        grep -s '^root:' "${dracutsysrootdir-}"/etc/group
         # we don't use systemd-networkd, but the user is in systemd.conf tmpfiles snippet
-        grep '^systemd-network:' "${dracutsysrootdir-}"/etc/group 2> /dev/null
+        grep -s '^systemd-network:' "${dracutsysrootdir-}"/etc/group
     } >> "$initdir/etc/group"
 
     local _systemdbinary="$systemdutildir"/systemd

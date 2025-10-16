@@ -66,11 +66,11 @@ install() {
     # add common users in /etc/passwd, it will be used by nfs/ssh currently
     # use password for hostonly images to facilitate secure sulogin in emergency console
     [[ $hostonly ]] && pwshadow='x'
-    grep '^root:' "$initdir/etc/passwd" > /dev/null 2>&1 || echo "root:$pwshadow:0:0::/root:/bin/sh" >> "$initdir/etc/passwd"
+    grep -qs '^root:' "$initdir/etc/passwd" || echo "root:$pwshadow:0:0::/root:/bin/sh" >> "$initdir/etc/passwd"
 
     if [[ $hostonly ]]; then
         # check if other dracut modules already created an entry for root in /etc/shadow
-        if grep -q '^root:' "$initdir/etc/shadow" > /dev/null 2>&1; then
+        if grep -qs '^root:' "$initdir/etc/shadow"; then
             grep -v '^root:' "$initdir/etc/shadow" > "$initdir/etc/shadow-"
             mv "$initdir/etc/shadow-" "$initdir/etc/shadow"
         fi
