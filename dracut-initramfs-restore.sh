@@ -99,7 +99,7 @@ elif [[ -f erofs-root.img ]]; then
     fi
 fi
 
-if grep -q -w selinux /sys/kernel/security/lsm 2> /dev/null \
+if grep -qs -w selinux /sys/kernel/security/lsm \
     && [ -e /etc/selinux/config ] && [ -x /usr/sbin/setfiles ]; then
     . /etc/selinux/config
     if [[ $SELINUX != "disabled" && -n $SELINUXTYPE ]]; then

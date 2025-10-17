@@ -73,7 +73,7 @@ do_dhcp() {
     fi
 
     if [ -n "$_timeout" ]; then
-        if ! (dhclient --help 2>&1 | grep -q -F -- '--timeout' 2> /dev/null); then
+        if ! (dhclient --help 2>&1 | grep -qs -F -- '--timeout'); then
             warn "rd.net.timeout.dhcp has no effect because dhclient does not implement the --timeout option"
             unset _timeout
         fi

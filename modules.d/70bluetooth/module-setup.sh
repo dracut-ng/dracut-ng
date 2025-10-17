@@ -13,7 +13,7 @@ check() {
         #  * Keyboard (0x40)
         #  * Keyboard/pointing (0xC0)
         # and if Appearance is set to the value defined for keyboard (0x03C1)
-        [ -d "/sys/class/bluetooth" ] && grep -qiE -e 'Class=0x[0-9a-f]{3}5[4c]0' -e 'Appearance=0x03c1' /var/lib/bluetooth/*/*/info 2> /dev/null \
+        [ -d "/sys/class/bluetooth" ] && grep -qsiE -e 'Class=0x[0-9a-f]{3}5[4c]0' -e 'Appearance=0x03c1' /var/lib/bluetooth/*/*/info \
             && dwarn "If you need to use bluetooth, please include it explicitly."
     fi
 

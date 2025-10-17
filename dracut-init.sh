@@ -475,15 +475,15 @@ inst_rule_group_owner() {
 
     # shellcheck disable=SC2013
     for i in $(sed -nr 's/.*OWNER=?"([^ "]+).*/\1/p' "$1"); do
-        if ! grep -Eq "^$i:" "$initdir/etc/passwd" 2> /dev/null; then
-            grep -E "^$i:" "${dracutsysrootdir-}/etc/passwd" 2> /dev/null >> "$initdir/etc/passwd"
+        if ! grep -Eqs "^$i:" "$initdir/etc/passwd"; then
+            grep -Es "^$i:" "${dracutsysrootdir-}/etc/passwd" >> "$initdir/etc/passwd"
         fi
     done
 
     # shellcheck disable=SC2013
     for i in $(sed -nr 's/.*GROUP=?"([^ "]+).*/\1/p' "$1"); do
-        if ! grep -Eq "^$i:" "$initdir/etc/group" 2> /dev/null; then
-            grep -E "^$i:" "${dracutsysrootdir-}/etc/group" 2> /dev/null >> "$initdir/etc/group"
+        if ! grep -Eqs "^$i:" "$initdir/etc/group"; then
+            grep -Es "^$i:" "${dracutsysrootdir-}/etc/group" >> "$initdir/etc/group"
         fi
     done
 }
