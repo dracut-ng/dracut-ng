@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-2.0-or-later
 
 check() {
-    if [[ $hostonly_mode == "strict" ]]; then
+    if [[ $hostonly ]]; then
         return 255
     fi
 

@@ -238,7 +238,7 @@ test_setup() {
         --add-confdir test-root \
         -a "bash $USE_NETWORK nfs" \
         --add-drivers "nfsd sunrpc lockd" \
-        -I "exportfs rpc.nfsd rpc.mountd dhcpd" \
+        -I "exportfs pidof rpc.nfsd rpc.mountd dhcpd" \
         --install-optional "/etc/netconfig /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services rpc.idmapd /etc/idmapd.conf" \
         -i "./dhcpd.conf" "/etc/dhcpd.conf" \
         -f "$TESTDIR"/initramfs.root
@@ -289,7 +289,7 @@ test_setup() {
         -a "watchdog dmsquash-live qemu-net ${USE_NETWORK}"
 
     # Make server's dracut image
-    "$DRACUT" -i "$TESTDIR"/overlay / \
+    "$DRACUT" \
         -a "bash qemu-net $USE_NETWORK ${SERVER_DEBUG:+debug}" \
         --include ./server.link /etc/systemd/network/01-server.link \
         --include ./wait-if-server.sh /lib/dracut/hooks/pre-mount/99-wait-if-server.sh \

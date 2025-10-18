@@ -690,7 +690,6 @@ module_functions=(
 
 # module_check <dracut module> [<forced>] [<module path>]
 # execute the check() function of module-setup.sh of <dracut module>
-# or the "check" script, if module-setup.sh is not found
 # "check $hostonly" is called
 module_check() {
     local _moddir=$3
@@ -717,7 +716,6 @@ module_check() {
 
 # module_check_mount <dracut module> [<module path>]
 # execute the check() function of module-setup.sh of <dracut module>
-# or the "check" script, if module-setup.sh is not found
 # "mount_needs=1 check 0" is called
 module_check_mount() {
     local _moddir=$2
@@ -738,7 +736,6 @@ module_check_mount() {
 
 # module_depends <dracut module> [<module path>]
 # execute the depends() function of module-setup.sh of <dracut module>
-# or the "depends" script, if module-setup.sh is not found
 module_depends() {
     local _moddir=$2
     local _ret
@@ -756,7 +753,6 @@ module_depends() {
 
 # module_cmdline <dracut module> [<module path>]
 # execute the cmdline() function of module-setup.sh of <dracut module>
-# or the "cmdline" script, if module-setup.sh is not found
 module_cmdline() {
     local _moddir=$2
     local _ret
@@ -774,7 +770,6 @@ module_cmdline() {
 
 # module_config <dracut module> [<module path>]
 # execute the config() function of module-setup.sh of <dracut module>
-# or the "config" script, if module-setup.sh is not found
 module_config() {
     local _moddir=$2
     local _ret
@@ -792,7 +787,6 @@ module_config() {
 
 # module_install <dracut module> [<module path>]
 # execute the install() function of module-setup.sh of <dracut module>
-# or the "install" script, if module-setup.sh is not found
 module_install() {
     local _moddir=$2
     local _ret
@@ -810,7 +804,6 @@ module_install() {
 
 # module_installkernel <dracut module> [<module path>]
 # execute the installkernel() function of module-setup.sh of <dracut module>
-# or the "installkernel" script, if module-setup.sh is not found
 module_installkernel() {
     local _moddir=$2
     local _ret

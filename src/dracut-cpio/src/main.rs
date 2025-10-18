@@ -813,8 +813,6 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
-// tests change working directory, so need to be run with:
-// cargo test -- --test-threads=1 --nocapture
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -823,7 +821,12 @@ mod tests {
     use std::path::PathBuf;
     use std::process::{Command, Stdio};
 
-    struct TempWorkDir {
+    pub static TEST_LOCK: std::sync::Mutex<u32> = std::sync::Mutex::new(0);
+
+    struct TempWorkDir<'a> {
+        // Hold a mutex alongside directory change, to avoid failures due to
+        // multi-threaded "cargo test".
+        cwd_lock: std::sync::MutexGuard<'a, u32>,
         prev_dir: PathBuf,
         parent_tmp_dir: PathBuf,
         cleanup_files: Vec<PathBuf>,
@@ -831,10 +834,10 @@ mod tests {
         ignore_cleanup: bool, // useful for debugging
     }
 
-    impl TempWorkDir {
+    impl TempWorkDir<'_> {
         // create a temporary directory under CWD and cd into it.
         // The directory will be cleaned up when twd goes out of scope.
-        pub fn new() -> TempWorkDir {
+        pub fn new() -> TempWorkDir<'static> {
             let mut buf = [0u8; 16];
             let mut s = String::from("cpio-selftest-");
             fs::File::open("/dev/urandom")
@@ -844,7 +847,14 @@ mod tests {
             for i in &buf {
                 s.push_str(&format!("{:02x}", i).to_string());
             }
+
             let mut twd = TempWorkDir {
+                cwd_lock: TEST_LOCK.lock().unwrap_or_else(|mut e| {
+                    // another test panicked while holding the lock
+                    **e.get_mut() = 1;
+                    TEST_LOCK.clear_poison();
+                    e.into_inner()
+                }),
                 prev_dir: env::current_dir().unwrap(),
                 parent_tmp_dir: {
                     let mut t = env::current_dir().unwrap().clone();
@@ -908,7 +918,7 @@ mod tests {
         }
     }
 
-    impl Drop for TempWorkDir {
+    impl Drop for TempWorkDir<'_> {
         fn drop(&mut self) {
             for f in self.cleanup_files.iter().rev() {
                 if self.ignore_cleanup {
@@ -934,12 +944,25 @@ mod tests {
             }
             println!("returning cwd to {}", self.prev_dir.display());
             env::set_current_dir(self.prev_dir.as_path()).unwrap();
+            // cwd_lock should be dropped automatically
         }
     }
 
     fn gnu_cpio_create(stdinput: &[u8], out: &str) {
         let mut proc = Command::new("cpio")
-            .args(&["--quiet", "-o", "-H", "newc", "--reproducible", "-F", out])
+            // As of GNU cpio commit 6a94d5e ("New option --ignore-dirnlink"),
+            // the --reproducible option hardcodes archived directory nlink
+            // values as 2. Omit it and use the dir.st_nlink value.
+            .args(&[
+                "--quiet",
+                "-o",
+                "-H",
+                "newc",
+                "--ignore-devno",
+                "--renumber-inodes",
+                "-F",
+                out,
+            ])
             .stdin(Stdio::piped())
             .spawn()
             .expect("GNU cpio failed to start");
@@ -1522,7 +1545,8 @@ mod tests {
                 "-o",
                 "-H",
                 "newc",
-                "--reproducible",
+                "--ignore-devno",
+                "--renumber-inodes",
                 "-F",
                 "gnu.cpio",
                 "--null",

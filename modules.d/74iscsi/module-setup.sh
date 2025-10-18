@@ -6,9 +6,9 @@ check() {
     require_binaries iscsi-iname iscsiadm iscsid || return 1
     require_kernel_modules iscsi_tcp || return 1
 
-    # If hostonly strict was requested, fail the check if we are not actually
+    # If hostonly was requested, fail the check if we are not actually
     # booting from root.
-    [[ $hostonly_mode == "strict" ]] || [[ $mount_needs ]] && {
+    [[ $hostonly ]] || [[ $mount_needs ]] && {
         pushd . > /dev/null
         for_each_host_dev_and_slaves block_is_iscsi
         local _is_iscsi=$?
@@ -192,8 +192,8 @@ install() {
     inst_multiple umount iscsi-iname iscsiadm iscsid
     inst_binary sort
 
-    inst_simple /etc/iscsi/iscsid.conf
     if [[ $hostonly ]]; then
+        inst_simple /etc/iscsi/iscsid.conf
         inst_simple /etc/iscsi/initiatorname.iscsi
     fi
 

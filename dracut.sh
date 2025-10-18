@@ -264,18 +264,21 @@ Creates initial ramdisk images for preloading modules
                          passed compression program.  Make sure your kernel
                          knows how to decompress the generated initramfs,
                          otherwise you will not be able to boot.
+  --compress-level [LEVEL]
+                        Compression level passed to compression program.
   --no-compress         Do not compress the generated initramfs. This will
                          override any other compression options.
   --squash-compressor [COMPRESSION]
                         Specify the compressor and compressor specific options
                          used by mksquashfs if squash module is called when
                          building the initramfs.
-  --enhanced-cpio       Attempt to reflink cpio file data using dracut-cpio.
+  --enhanced-cpio       Attempt to reflink cpio file data using 3cpio/dracut-cpio.
   --list-modules        List all available dracut modules.
   -M, --show-modules    Print included module's name to standard output during
                          build.
   --keep                Keep the temporary initramfs for debugging purposes.
   --printsize           Print out the module install size.
+  --printconfig         Print the computed configuration and exit.
   --sshkey [SSHKEY]     Add SSH key to initramfs (use with ssh-client module).
   --logfile [FILE]      Logfile to use (overrides configuration setting).
   --reproducible        Create reproducible images.
@@ -418,6 +421,7 @@ rearrange_params() {
             --long sysroot: \
             --long stdlog: \
             --long compress: \
+            --long compress-level: \
             --long squash-compressor: \
             --long prefix: \
             --long rebuild: \
@@ -467,6 +471,7 @@ rearrange_params() {
             --long show-modules \
             --long keep \
             --long printsize \
+            --long printconfig \
             --long regenerate-all \
             --long parallel \
             --long noimageifnotneeded \
@@ -751,6 +756,11 @@ while :; do
             PARMS_TO_STORE+=" '$2'"
             shift
             ;;
+        --compress-level)
+            compress_level_l="$2"
+            PARMS_TO_STORE+=" '$2'"
+            shift
+            ;;
         --squash-compressor)
             squash_compress_l="$2"
             PARMS_TO_STORE+=" '$2'"
@@ -881,6 +891,7 @@ while :; do
             ;;
         --keep) keep="yes" ;;
         --printsize) printsize="yes" ;;
+        --printconfig) printconfig="yes" ;;
         --regenerate-all) regenerate_all_l="yes" ;;
         -p | --parallel) parallel_l="yes" ;;
         --noimageifnotneeded) noimageifnotneeded="yes" ;;
@@ -1022,7 +1033,7 @@ if [[ -f $conffile ]]; then
 fi
 
 # source our config dir
-for f in $(dropindirs_sort ".conf" "$confdir" ${add_confdir:+"$add_confdir"} "$dracutbasedir/dracut.conf.d"); do
+for f in $(dropindirs_sort ".conf" "$confdir" ${add_confdir:+"$add_confdir"} "$dracutbasedir/dracut.conf.d" "/run/initramfs/dracut.conf.d"); do
     check_conf_file "$f"
     # shellcheck disable=SC1090
     [[ -e $f ]] && . "$f"
@@ -1152,6 +1163,15 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $tmpdir ]] || tmpdir="${dracutsysrootdir-}"/var/tmp
 [[ $INITRD_COMPRESS ]] && compress=$INITRD_COMPRESS
 [[ $compress_l ]] && compress=$compress_l
+[[ $compress_level_l ]] && {
+    compress_level_bzip2=$compress_level_l
+    compress_level_gzip=$compress_level_l
+    compress_level_lz4=$compress_level_l
+    compress_level_lzma=$compress_level_l
+    compress_level_lzop=$compress_level_l
+    compress_level_xz=$compress_level_l
+    compress_level_zstd=$compress_level_l
+}
 [[ $squash_compress_l ]] && squash_compress=$squash_compress_l
 [[ $enhanced_cpio_l ]] && enhanced_cpio=$enhanced_cpio_l
 [[ $show_modules_l ]] && show_modules=$show_modules_l
@@ -1357,6 +1377,7 @@ hostonly_mode=${hostonly_mode-}
 
 if [[ $reproducible == yes ]] && [[ -z ${SOURCE_DATE_EPOCH-} ]]; then
     SOURCE_DATE_EPOCH=$(stat -c %Y "$dracutbasedir/dracut-functions.sh")
+    export SOURCE_DATE_EPOCH
 fi
 
 if [[ -z $DRACUT_KMODDIR_OVERRIDE && -n $drivers_dir ]]; then
@@ -1417,6 +1438,7 @@ trap 'exit 1;' SIGINT
 
 readonly initdir="${DRACUT_TMPDIR}/initramfs"
 readonly squashdir="$initdir/squash_root"
+readonly manifest="${DRACUT_TMPDIR}/manifest"
 mkdir -p "$initdir"
 
 if [[ $early_microcode == yes ]] || { [[ $acpi_override == yes ]] && [[ -d $acpi_table_dir ]]; }; then
@@ -1460,13 +1482,22 @@ elif [[ -n $persistent_policy && ! -d "/dev/disk/${persistent_policy}" ]]; then
     unset persistent_policy
 fi
 
+CPIO=cpio
+if 3cpio --help 2> /dev/null | grep -q -- --create; then
+    CPIO=3cpio
+fi
+
 if [[ $enhanced_cpio == "yes" ]]; then
     enhanced_cpio="$dracutbasedir/dracut-cpio"
-    if [[ -x $enhanced_cpio ]]; then
+    if 3cpio --help 2> /dev/null | grep -q -- --data-align; then
+        # align based on statfs optimal transfer size
+        cpio_align=$(stat --file-system -c "%s" -- "$initdir")
+        unset enhanced_cpio
+    elif [[ -x $enhanced_cpio ]]; then
         # align based on statfs optimal transfer size
         cpio_align=$(stat --file-system -c "%s" -- "$initdir")
     else
-        dinfo "--enhanced-cpio ignored due to lack of dracut-cpio"
+        dinfo "--enhanced-cpio ignored due to lack of 3cpio >= 0.10 or dracut-cpio"
         unset enhanced_cpio
     fi
 else
@@ -1573,54 +1604,54 @@ set_global_var() {
 
 # dbus global variables
 set_global_var "dbus" "dbus" "/usr/share/dbus-1"
-set_global_var "dbus" "dbusconfdir" "/etc/dbus-1"
+[[ $hostonly ]] && set_global_var "dbus" "dbusconfdir" "/etc/dbus-1"
 set_global_var "dbus" "dbusinterfaces" "${dbus}/interfaces"
-set_global_var "dbus" "dbusinterfacesconfdir" "${dbusconfdir}/interfaces"
+[[ $hostonly ]] && set_global_var "dbus" "dbusinterfacesconfdir" "${dbusconfdir}/interfaces"
 set_global_var "dbus" "dbusservices" "${dbus}/services"
-set_global_var "dbus" "dbusservicesconfdir" "${dbusconfdir}/services"
+[[ $hostonly ]] && set_global_var "dbus" "dbusservicesconfdir" "${dbusconfdir}/services"
 set_global_var "dbus" "dbussession" "${dbus}/session.d"
-set_global_var "dbus" "dbussessionconfdir" "${dbusconfdir}/session.d"
+[[ $hostonly ]] && set_global_var "dbus" "dbussessionconfdir" "${dbusconfdir}/session.d"
 set_global_var "dbus" "dbussystem" "${dbus}/system.d"
-set_global_var "dbus" "dbussystemconfdir" "${dbusconfdir}/system.d"
+[[ $hostonly ]] && set_global_var "dbus" "dbussystemconfdir" "${dbusconfdir}/system.d"
 set_global_var "dbus" "dbussystemservices" "${dbus}/system-services"
-set_global_var "dbus" "dbussystemservicesconfdir" "${dbusconfdir}/system-services"
+[[ $hostonly ]] && set_global_var "dbus" "dbussystemservicesconfdir" "${dbusconfdir}/system-services"
 
 # udev global variables
 set_global_var "udev" "udevdir" "/lib/udev:/lib/udev/ata_id" "/usr/lib/udev:/usr/lib/udev/ata_id"
-set_global_var "udev" "udevconfdir" "/etc/udev"
+[[ $hostonly ]] && set_global_var "udev" "udevconfdir" "/etc/udev"
 set_global_var "udev" "udevrulesdir" "${udevdir}/rules.d"
-set_global_var "udev" "udevrulesconfdir" "${udevconfdir}/rules.d"
+[[ $hostonly ]] && set_global_var "udev" "udevrulesconfdir" "${udevconfdir}/rules.d"
 
 # systemd global variables
 set_global_var "systemd" "prefix:systemdprefix" "/usr"
 set_global_var "systemd" "systemdutildir" "/lib/systemd:/lib/systemd/systemd-udevd" "/usr/lib/systemd:/usr/lib/systemd/systemd-udevd"
-set_global_var "systemd" "systemdutilconfdir" "/etc/systemd"
+[[ $hostonly ]] && set_global_var "systemd" "systemdutilconfdir" "/etc/systemd"
 set_global_var "systemd" "environment" "/usr/lib/environment.d"
-set_global_var "systemd" "environmentconfdir" "/etc/environment.d"
+[[ $hostonly ]] && set_global_var "systemd" "environmentconfdir" "/etc/environment.d"
 set_global_var "systemd" "modulesload" "/usr/lib/modules-load.d"
-set_global_var "systemd" "modulesloadconfdir" "/etc/modules-load.d"
+[[ $hostonly ]] && set_global_var "systemd" "modulesloadconfdir" "/etc/modules-load.d"
 set_global_var "systemd" "sysctld" "/usr/lib/sysctl.d"
-set_global_var "systemd" "sysctlconfdir" "/etc/sysctl.d"
+[[ $hostonly ]] && set_global_var "systemd" "sysctlconfdir" "/etc/sysctl.d"
 set_global_var "systemd" "systemdcatalog" "${systemdutildir}/catalog"
 set_global_var "systemd" "systemdnetwork" "${systemdutildir}/network"
-set_global_var "systemd" "systemdnetworkconfdir" "${systemdutilconfdir}/network"
+[[ $hostonly ]] && set_global_var "systemd" "systemdnetworkconfdir" "${systemdutilconfdir}/network"
 set_global_var "systemd" "systemdntpunits" "${systemdutildir}/ntp-units.d"
-set_global_var "systemd" "systemdntpunitsconfdir" "${systemdutilconfdir}/ntp-units.d"
+[[ $hostonly ]] && set_global_var "systemd" "systemdntpunitsconfdir" "${systemdutilconfdir}/ntp-units.d"
 set_global_var "systemd" "systemdportable" "${systemdutildir}/portable"
-set_global_var "systemd" "systemdportableconfdir" "${systemdutilconfdir}/portable"
+[[ $hostonly ]] && set_global_var "systemd" "systemdportableconfdir" "${systemdutilconfdir}/portable"
 set_global_var "systemd" "systemdsystemunitdir" "${systemdutildir}/system"
-set_global_var "systemd" "systemdsystemconfdir" "${systemdutilconfdir}/system"
+[[ $hostonly ]] && set_global_var "systemd" "systemdsystemconfdir" "${systemdutilconfdir}/system"
 set_global_var "systemd" "systemduser" "${systemdutildir}/user"
-set_global_var "systemd" "systemduserconfdir" "${systemdutilconfdir}/user"
+[[ $hostonly ]] && set_global_var "systemd" "systemduserconfdir" "${systemdutilconfdir}/user"
 set_global_var "systemd" "sysusers" "/usr/lib/sysusers.d"
-set_global_var "systemd" "sysusersconfdir" "/etc/sysusers.d"
+[[ $hostonly ]] && set_global_var "systemd" "sysusersconfdir" "/etc/sysusers.d"
 set_global_var "systemd" "tmpfilesdir" "/lib/tmpfiles.d" "/usr/lib/tmpfiles.d"
-set_global_var "systemd" "tmpfilesconfdir" "/etc/tmpfiles.d"
+[[ $hostonly ]] && set_global_var "systemd" "tmpfilesconfdir" "/etc/tmpfiles.d"
 set_global_var "systemd" "modversion:systemdversion" "0"
 
 # libkmod global variables
 set_global_var "libkmod" "depmodd" "/usr/lib/depmod.d"
-set_global_var "libkmod" "depmodconfdir" "/etc/depmod.d"
+[[ $hostonly ]] && set_global_var "libkmod" "depmodconfdir" "/etc/depmod.d"
 
 # Modules should check for JSON support in dracut-install before using it.
 DRACUT_INSTALL_JSON=
@@ -1965,6 +1996,42 @@ export initdir dracutbasedir \
     hostonly_cmdline loginstall \
     squashdir squash_compress
 
+if [[ $printconfig ]]; then
+    for v in add_dracutmodules \
+        add_fstab \
+        debug \
+        dracutmodules \
+        drivers \
+        fileloglvl \
+        filesystems \
+        force_add_dracutmodules \
+        fscks \
+        fw_dir \
+        hostonly_cmdline \
+        kernel_only \
+        kmsgloglvl \
+        libdirs \
+        logfile \
+        loginstall \
+        lvmconf \
+        mdadmconf \
+        no_kernel \
+        nofscks \
+        omit_dracutmodules \
+        omit_drivers \
+        prefix \
+        ro_mnt \
+        squash_compress \
+        sshkey \
+        use_fstab; do
+        if [[ -n ${!v} ]]; then
+            echo "dracutconfig: $v=${!v}"
+        fi
+    done
+
+    exit 0
+fi
+
 mods_to_load=""
 # check all our modules to see if they should be sourced.
 # This builds a list of modules that we will install next.
@@ -2307,7 +2374,11 @@ done
 cpio_extract() {
     local file="$1"
     shift
-    cpio --extract --file "$file" --quiet -- "$@"
+    if [[ $CPIO == 3cpio ]]; then
+        3cpio --extract "$file" -- "$@"
+    else
+        cpio --extract --file "$file" --quiet -- "$@"
+    fi
 }
 
 if [[ $early_microcode == yes ]]; then
@@ -2482,7 +2553,7 @@ clamp_mtimes() {
         | xargs -r -0 touch -h -m -c --date="@${SOURCE_DATE_EPOCH?}"
 }
 
-if [[ ${SOURCE_DATE_EPOCH-} ]]; then
+if [[ ${SOURCE_DATE_EPOCH-} ]] && [[ $CPIO != 3cpio ]]; then
     clamp_mtimes "$initdir"
 
     if [[ "$(cpio --help)" == *--reproducible* ]]; then
@@ -2500,17 +2571,31 @@ if [[ $do_hardlink == yes ]] && command -v hardlink > /dev/null; then
 
     # Hardlink itself breaks mtimes on directories as we may have added/removed
     # dir entries. Fix those up.
-    if [[ ${SOURCE_DATE_EPOCH-} ]]; then
+    if [[ ${SOURCE_DATE_EPOCH-} ]] && [[ $CPIO != 3cpio ]]; then
         clamp_mtimes "$initdir" -type d
     fi
 fi
 
 [[ $EUID != 0 ]] && cpio_owner="0:0"
 
+[[ $EUID == 0 ]] || owner_override="\t\t\t0\t0"
+path_to_manifest() {
+    local basedir="$1"
+    local relpath
+    while IFS= read -r path; do
+        if [[ $path == "$basedir" ]]; then
+            relpath=.
+        else
+            relpath="${path#"$basedir"/}"
+        fi
+        printf "%s\t%s${owner_override-}\n" "$path" "${relpath}"
+    done
+}
+
 if [[ $create_early_cpio == yes ]]; then
     echo 1 > "$early_cpio_dir/d/early_cpio"
 
-    if [[ ${SOURCE_DATE_EPOCH-} ]]; then
+    if [[ ${SOURCE_DATE_EPOCH-} ]] && [[ $CPIO != 3cpio ]]; then
         clamp_mtimes "$early_cpio_dir/d"
     fi
 
@@ -2527,6 +2612,9 @@ if [[ $create_early_cpio == yes ]]; then
             dfatal "dracut-cpio: creation of $outfile failed"
             exit 1
         fi
+    elif [[ $CPIO == 3cpio ]]; then
+        echo "#cpio" >> "$manifest"
+        find "$early_cpio_dir/d" | LANG=C sort | path_to_manifest "$early_cpio_dir/d" >> "$manifest"
     else
         if ! (
             umask 077
@@ -2570,36 +2658,80 @@ fi
 case $compress in
     bzip2 | lbzip2)
         if [[ $compress == lbzip2 ]] || command -v "$DRACUT_COMPRESS_LBZIP2" &> /dev/null; then
-            compress="$DRACUT_COMPRESS_LBZIP2 -9"
+            compress="$DRACUT_COMPRESS_LBZIP2 -${compress_level_bzip2-9}"
         else
-            compress="$DRACUT_COMPRESS_BZIP2 -9"
+            compress="$DRACUT_COMPRESS_BZIP2 -${compress_level_bzip2-9}"
         fi
+        compress_3cpio="bzip2 -${compress_level_bzip2-9}"
         ;;
     lzma)
-        compress="$DRACUT_COMPRESS_LZMA -9 -T0"
+        compress="$DRACUT_COMPRESS_LZMA -${compress_level_lzma-9} -T0"
+        compress_3cpio="lzma -${compress_level_lzma-9}"
         ;;
     xz)
-        compress="$DRACUT_COMPRESS_XZ --check=crc32 --lzma2=dict=1MiB -T0"
+        compress="${DRACUT_COMPRESS_XZ}${compress_level_xz:+" -${compress_level_xz}"} --check=crc32 --lzma2=dict=1MiB -T0"
+        compress_3cpio="xz${compress_level_xz:+" -${compress_level_xz}"}"
         ;;
     gzip | pigz)
         if [[ $compress == pigz ]] || command -v "$DRACUT_COMPRESS_PIGZ" &> /dev/null; then
-            compress="$DRACUT_COMPRESS_PIGZ -9 -n -T -R"
+            compress="$DRACUT_COMPRESS_PIGZ -${compress_level_gzip-9} -n -T -R"
         elif command -v gzip &> /dev/null && $DRACUT_COMPRESS_GZIP --help 2>&1 | grep -q rsyncable; then
-            compress="$DRACUT_COMPRESS_GZIP -n -9 --rsyncable"
+            compress="$DRACUT_COMPRESS_GZIP -n -${compress_level_gzip-9} --rsyncable"
         else
-            compress="$DRACUT_COMPRESS_GZIP -n -9"
+            compress="$DRACUT_COMPRESS_GZIP -n -${compress_level_gzip-9}"
         fi
+        compress_3cpio="gzip -${compress_level_gzip-9}"
         ;;
     lzo | lzop)
-        compress="$DRACUT_COMPRESS_LZOP -9"
+        compress="$DRACUT_COMPRESS_LZOP -${compress_level_lzop-9}"
+        compress_3cpio="lzop -${compress_level_lzop-9}"
         ;;
     lz4)
-        compress="$DRACUT_COMPRESS_LZ4 -l -9"
+        compress="$DRACUT_COMPRESS_LZ4 -l -${compress_level_lz4-9}"
+        compress_3cpio="lz4 -${compress_level_lz4-9}"
         ;;
     zstd)
-        compress="$DRACUT_COMPRESS_ZSTD -15 -q -T0"
+        compress="$DRACUT_COMPRESS_ZSTD -${compress_level_zstd-15} -q -T0"
+        compress_3cpio="zstd -${compress_level_zstd-15}"
+        ;;
+    cat)
+        compress_3cpio=
         ;;
 esac
+
+if [[ $CPIO == 3cpio ]] && ! [[ -v compress_3cpio ]]; then
+    case "${compress%% *}" in
+        "$DRACUT_COMPRESS_LBZIP2" | "$DRACUT_COMPRESS_BZIP2" | lbzip2 | bzip2 | */lbzip2 | */bzip2)
+            compress_3cpio="bzip2 -${compress_level_bzip2-9}"
+            ;;
+        "$DRACUT_COMPRESS_LZMA" | lzma | */lzma)
+            compress_3cpio="lzma -${compress_level_lzma-9}"
+            ;;
+        "$DRACUT_COMPRESS_XZ" | xz | */xz)
+            compress_3cpio="xz${compress_level_xz:+" -${compress_level_xz}"}"
+            ;;
+        "$DRACUT_COMPRESS_PIGZ" | "$DRACUT_COMPRESS_GZIP" | pigz | gzip | */pigz | */gzip)
+            compress_3cpio="gzip -${compress_level_gzip-9}"
+            ;;
+        "$DRACUT_COMPRESS_LZOP" | lzop | */lzop)
+            compress_3cpio="lzop -${compress_level_lzop-9}"
+            ;;
+        "$DRACUT_COMPRESS_ZSTD" | zstd | */zstd)
+            compress_3cpio="zstd -${compress_level_zstd-15}"
+            ;;
+        "$DRACUT_COMPRESS_LZ4" | lz4 | */lz4)
+            compress_3cpio="lz4 -${compress_level_lz4-9}"
+            ;;
+        "$DRACUT_COMPRESS_CAT" | cat | */cat)
+            compress_3cpio=
+            ;;
+        *)
+            derror "custom compressor $1 not supported with 3cpio"
+            exit 1
+            ;;
+    esac
+    dwarn "custom compressor '${compres}' mapped to 3cpio config '${compress_3cpio}'"
+fi
 
 if [[ -n $enhanced_cpio ]]; then
     if [[ $compress == "cat" ]]; then
@@ -2625,6 +2757,17 @@ if [[ -n $enhanced_cpio ]]; then
         exit 1
     fi
     unset cpio_outfile
+elif [[ $CPIO == 3cpio ]]; then
+    if [[ -z $compress_3cpio ]]; then
+        echo "#cpio" >> "$manifest"
+    else
+        echo "#cpio: $compress_3cpio" >> "$manifest"
+    fi
+    find "$initdir" | LANG=C sort | path_to_manifest "$initdir" >> "$manifest"
+    if ! 3cpio --create ${cpio_align:+--data-align="${cpio_align}"} "${DRACUT_TMPDIR}/initramfs.img" < "$manifest"; then
+        dfatal "Creation of $outfile failed"
+        exit 1
+    fi
 else
     if ! (
         umask 077

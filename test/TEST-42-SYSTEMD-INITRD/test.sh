@@ -2,7 +2,7 @@
 set -eu
 
 # shellcheck disable=SC2034
-TEST_DESCRIPTION="root filesystem on a ext4 filesystem with systemd but without dracut-systemd"
+TEST_DESCRIPTION="root filesystem on a ext4 filesystem with systemd but without dracut-systemd and shell"
 
 test_check() {
     command -v systemctl &> /dev/null
@@ -85,9 +85,16 @@ test_setup() {
         -m "systemd-initrd base" \
         "$TESTDIR"/initramfs-systemd-initrd
 
-    # verify that dracut systemd services are not included
     (
-        cd "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/systemd/system/
+        # remove all shell scripts and the shell itself from the generated initramfs
+        # to demonstrate a shell-less optimized boot
+        cd "$TESTDIR"/initrd/dracut.*/initramfs
+        rm "$(realpath bin/sh)"
+        rm bin/sh
+        find . -name "*.sh" -delete
+
+        # verify that dracut systemd services are not included
+        cd usr/lib/systemd/system/
         for f in dracut*.service; do
             if [ -e "$f" ]; then
                 echo "unexpected dracut service found: $f"

@@ -4,18 +4,8 @@ set -eu
 TEST_DESCRIPTION="kernel-install with root filesystem on ext4 filesystem"
 
 test_check() {
-    if command -v systemd-detect-virt > /dev/null && ! systemd-detect-virt -c &> /dev/null; then
-        echo "This test assumes that it runs inside a CI container."
-        return 1
-    fi
-
     if ! command -v kernel-install > /dev/null; then
         echo "This test needs kernel-install to run."
-        return 1
-    fi
-
-    if [[ $(kernel-install --version | grep -oP '(?<=systemd )\d+') -lt 255 ]]; then
-        echo "This test requires support for kernel-install add-all (v255)"
         return 1
     fi
 }
@@ -55,22 +45,23 @@ test_setup() {
         -f "$TESTDIR"/initramfs.root
 
     KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)
+    KIMAGE=$(determine_kernel_image "$KVERSION")
 
     dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none && sync "$TESTDIR"/root.img
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img && sync "$TESTDIR"/root.img
 
-    mkdir -p /run/kernel
+    mkdir -p /run/kernel /run/initramfs/dracut.conf.d
     echo 'initrd_generator=dracut' >> /run/kernel/install.conf
 
     # enable test dracut config
-    cp /usr/lib/dracut/dracut.conf.d/test/*.conf /usr/lib/dracut/dracut.conf.d/
+    cp "${basedir}"/dracut.conf.d/test/*.conf /run/initramfs/dracut.conf.d/
 
     # enable rescue boot config
-    cp /usr/lib/dracut/dracut.conf.d/rescue/*.conf /usr/lib/dracut/dracut.conf.d/
+    cp "${basedir}"/dracut.conf.d/rescue/*.conf /run/initramfs/dracut.conf.d/
 
     # using kernell-install to invoke dracut
     mkdir -p "$BOOT_ROOT/$TOKEN/$KVERSION" "$BOOT_ROOT/loader/entries" "$BOOT_ROOT/$TOKEN/0-rescue/loader/entries"
-    kernel-install add-all
+    kernel-install add "$KVERSION" "$KIMAGE"
 }
 
 # shellcheck disable=SC1090

@@ -19,7 +19,7 @@ depends() {
     for module in network-manager systemd-networkd connman; do
         # install the first viable module, unless there omitted
         module_check $module > /dev/null 2>&1
-        if [[ $? == 255 ]] && ! [[ " $omit_dracutmodules " == *\ $module\ * ]] && check_module "$module"; then
+        if [[ $? == 255 ]] && ! [[ " $omit_dracutmodules " == *\ $module\ * ]]; then
             echo "$module"
             return 0
         fi

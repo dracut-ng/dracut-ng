@@ -37,7 +37,7 @@ _dracut() {
             --enhanced-cpio --rebuild --aggressive-strip --hostonly-cmdline
             --no-hostonly-cmdline --no-hostonly-default-device --nofscks
             --hostonly-i18n --no-hostonly-i18n --lzo --lz4 --no-reproducible
-            --no-uefi --no-machineid --version --parallel
+            --no-uefi --no-machineid --version --parallel --printconfig
             '
         [ARG]='-a -m -o -d -I -k -c -L -r -i
             --kver --add --force-add --add-drivers --force-drivers
@@ -47,7 +47,7 @@ _dracut() {
             --kernel-cmdline --sshkey --persistent-policy --install-optional
             --loginstall --uefi-stub --kernel-image --squash-compressor
             --sysroot --hostonly-mode --hostonly-nics --include --logfile
-            --uefi-splash-image --sbat --add-confdir
+            --uefi-splash-image --sbat --add-confdir --compress-level
             '
     )
 
@@ -65,6 +65,9 @@ _dracut() {
                 ;;
             -a | -m | -o | --add | --modules | --omit)
                 comps=$(dracut --list-modules 2> /dev/null)
+                ;;
+            --compress-level)
+                comps="0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19"
                 ;;
             --persistent-policy)
                 comps=$(

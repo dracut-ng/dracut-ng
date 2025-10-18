@@ -77,6 +77,10 @@ install() {
         "$systemdsystemunitdir"/paths.target \
         "$systemdsystemunitdir"/umount.target \
         "$systemdsystemunitdir"/sys-kernel-config.mount \
+        "$systemdsystemunitdir"/breakpoint-pre-basic.service \
+        "$systemdsystemunitdir"/breakpoint-pre-udev.service \
+        "$systemdsystemunitdir"/breakpoint-pre-mount.service \
+        "$systemdsystemunitdir"/breakpoint-pre-switch-root.service \
         "$systemdsystemunitdir"/systemd-halt.service \
         "$systemdsystemunitdir"/systemd-poweroff.service \
         "$systemdsystemunitdir"/systemd-reboot.service \
