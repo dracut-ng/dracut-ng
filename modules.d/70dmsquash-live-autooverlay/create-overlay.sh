@@ -51,7 +51,8 @@ gatherData() {
         info "Skipping overlay creation: unpartitioned or read-only media detected"
         exit 0
     fi
-    fullDriveSysfsPath=$(readlink -f "${rootDeviceSysfsPath}/..")
+    fullSysfsPath=$(readlink -f "${rootDeviceSysfsPath}")
+    fullDriveSysfsPath="${fullSysfsPath%/*}"
     blockDevice="/dev/${fullDriveSysfsPath##*/}"
     currentPartitionCount=$(grep --count -E "${blockDevice#/dev/}[0-9]+" /proc/partitions)
 
