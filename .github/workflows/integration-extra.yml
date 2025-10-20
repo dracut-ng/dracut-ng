@@ -69,9 +69,6 @@ jobs:
                     # https://github.com/dracut-ng/dracut-ng/issues/1677
                     - container: arch:latest
                       test: "41"
-                    # https://github.com/dracut-ng/dracut-ng/issues/1727
-                    - container: debian:sid
-                      test: "30"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm --privileged'
@@ -95,6 +92,7 @@ jobs:
                 container:
                     - arch:latest
                     - debian:latest
+                    - debian:sid
                 test:
                     - "50"
         container:
@@ -120,6 +118,7 @@ jobs:
                 container:
                     - arch:latest
                     - debian:latest
+                    - debian:sid
                     - fedora:latest
                     - fedora:rawhide
                     - gentoo:amd64-openrc
@@ -129,6 +128,13 @@ jobs:
                     - "70"
                     - "71"
                     - "72"
+                exclude:
+                    # https://github.com/dracut-ng/dracut-ng/issues/446
+                    - container: debian:sid
+                      test: "70"
+                    # https://github.com/dracut-ng/dracut-ng/issues/446
+                    - container: debian:sid
+                      test: "71"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm'
