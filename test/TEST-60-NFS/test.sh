@@ -243,7 +243,9 @@ test_setup() {
         -i "./dhcpd.conf" "/etc/dhcpd.conf" \
         -f "$TESTDIR"/initramfs.root
 
-    mkdir -p "$TESTDIR"/server/overlay/source && mv "$TESTDIR"/server/overlay/dracut.*/initramfs/* "$TESTDIR"/server/overlay/source && rm -rf "$TESTDIR"/server/overlay/dracut.*
+    mkdir -p "$TESTDIR"/server/overlay/source
+    mv "$TESTDIR"/server/overlay/dracut.*/initramfs/* "$TESTDIR"/server/overlay/source
+    rm -rf "$TESTDIR"/server/overlay/dracut.*
 
     export initdir=$TESTDIR/server/overlay/source
     mkdir -p "$initdir"/var/lib/{dhcpd,rpcbind} "$initdir"/var/lib/nfs/{v4recovery,rpc_pipefs}
@@ -255,7 +257,9 @@ test_setup() {
     # Make client root inside server root
     # shellcheck disable=SC2031
     export initdir=$TESTDIR/server/overlay/source/nfs/client
-    mkdir -p "$initdir" && mv "$TESTDIR"/dracut.*/initramfs/* "$initdir" && rm -rf "$TESTDIR"/dracut.*
+    mkdir -p "$initdir"
+    mv "$TESTDIR"/dracut.*/initramfs/* "$initdir"
+    rm -rf "$TESTDIR"/dracut.*
     echo "TEST FETCH FILE" > "$initdir"/root/fetchfile
     cp ./client-init.sh "$initdir"/sbin/init
 

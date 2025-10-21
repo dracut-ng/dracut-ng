@@ -134,7 +134,9 @@ test_setup() {
         --add-confdir test-root \
         -I "ip grep setsid" \
         -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
+    mkdir -p "$TESTDIR"/overlay/source
+    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
+    rm -rf "$TESTDIR"/dracut.*
 
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/nfs/rpc_pipefs
     cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
@@ -174,7 +176,9 @@ test_setup() {
         --install-optional "/etc/netconfig dhcpd /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
         -i "./dhcpd.conf" "/etc/dhcpd.conf" \
         -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
+    mkdir -p "$TESTDIR"/overlay/source
+    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
+    rm -rf "$TESTDIR"/dracut.*
 
     mkdir -p "$TESTDIR"/overlay/source/var/lib/dhcpd
     cp ./server-init.sh "$TESTDIR"/overlay/source/sbin/init

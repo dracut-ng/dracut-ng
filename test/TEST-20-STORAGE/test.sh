@@ -117,7 +117,9 @@ test_setup() {
     "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
+    mkdir -p "$TESTDIR"/overlay/source
+    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
+    rm -rf "$TESTDIR"/dracut.*
 
     # pass enviroment variables to make the root filesystem
     echo "TEST_FSTYPE=${TEST_FSTYPE}" > "$TESTDIR"/overlay/env

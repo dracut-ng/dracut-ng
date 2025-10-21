@@ -182,7 +182,9 @@ make_encrypted_root() {
         -I "ip grep" \
         --no-hostonly \
         -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
+    mkdir -p "$TESTDIR"/overlay/source
+    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
+    rm -rf "$TESTDIR"/dracut.*
     cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
 
     # create an initramfs that will create the target root filesystem.
@@ -217,7 +219,9 @@ make_client_root() {
         -I "ip" \
         --no-hostonly \
         -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
+    mkdir -p "$TESTDIR"/overlay/source
+    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
+    rm -rf "$TESTDIR"/dracut.*
     cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
 
     # create an initramfs that will create the target root filesystem.
@@ -266,7 +270,9 @@ EOF
         -i "./dhcpd.conf" "/etc/dhcpd.conf" \
         --no-hostonly \
         -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
+    mkdir -p "$TESTDIR"/overlay/source
+    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
+    rm -rf "$TESTDIR"/dracut.*
 
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/dhcpd "$TESTDIR"/overlay/source/etc/nbd-server
     cp ./server-init.sh "$TESTDIR"/overlay/source/sbin/init
