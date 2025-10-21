@@ -212,6 +212,22 @@ test_marker_check() {
     return $?
 }
 
+print_test_result() {
+    local ret=${1-1}
+    if [ "$ret" -eq 0 ]; then
+        rm -- test${TEST_RUN_ID:+-$TEST_RUN_ID}.log
+        echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_SUCCESS" "[OK]" "$COLOR_NORMAL"
+    else
+        echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_FAILURE" "[FAILED]" "$COLOR_NORMAL"
+        if [ "${V-}" == "2" ]; then
+            tail -c 1048576 "$(pwd)/server${TEST_RUN_ID:+-$TEST_RUN_ID}.log" "$(pwd)/test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
+            echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_FAILURE" "[FAILED]" "$COLOR_NORMAL"
+        else
+            echo "see $(pwd)/test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
+        fi
+    fi
+}
+
 while (($# > 0)); do
     case $1 in
         --run)
@@ -267,18 +283,7 @@ while (($# > 0)); do
             fi
             ret=$?
             set +o pipefail
-            if [ $ret -eq 0 ]; then
-                rm -- test${TEST_RUN_ID:+-$TEST_RUN_ID}.log
-                echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_SUCCESS" "[OK]" "$COLOR_NORMAL"
-            else
-                echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_FAILURE" "[FAILED]" "$COLOR_NORMAL"
-                if [ "${V-}" == "2" ]; then
-                    tail -c 1048576 "$(pwd)/server${TEST_RUN_ID:+-$TEST_RUN_ID}.log" "$(pwd)/test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
-                    echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_FAILURE" "[FAILED]" "$COLOR_NORMAL"
-                else
-                    echo "see $(pwd)/test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
-                fi
-            fi
+            print_test_result "$ret"
             exit $ret
             ;;
         *) break ;;
