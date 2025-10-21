@@ -219,6 +219,9 @@ print_test_result() {
         echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_SUCCESS" "[OK]" "$COLOR_NORMAL"
     else
         echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_FAILURE" "[FAILED]" "$COLOR_NORMAL"
+        if [[ -f "$TESTDIR"/server.log ]]; then
+            mv "$TESTDIR"/server.log ./server${TEST_RUN_ID:+-$TEST_RUN_ID}.log
+        fi
         if [ "${V-}" == "2" ]; then
             tail -c 1048576 "$(pwd)/server${TEST_RUN_ID:+-$TEST_RUN_ID}.log" "$(pwd)/test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
             echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_FAILURE" "[FAILED]" "$COLOR_NORMAL"
@@ -232,12 +235,14 @@ while (($# > 0)); do
     case $1 in
         --run)
             echo "TEST RUN: $TEST_DESCRIPTION"
-            test_check && test_run
+            test_check
+            test_run
             exit $?
             ;;
         --setup)
             echo "TEST SETUP: $TEST_DESCRIPTION"
-            test_check && test_setup
+            test_check
+            test_setup
             exit $?
             ;;
         --clean)
@@ -257,34 +262,29 @@ while (($# > 0)); do
             else
                 echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_SUCCESS" "[STARTED]" "$COLOR_NORMAL"
             fi
+            trap print_test_result ERR
             if [[ ${V-} == "1" || ${V-} == "2" ]]; then
                 tee_command="tee"
                 set -o pipefail
                 (
-                    test_setup && test_run
-                    ret=$?
+                    test_setup
+                    test_run
                     test_cleanup
-                    if ((ret != 0)) && [[ -f "$TESTDIR"/server.log ]]; then
-                        mv "$TESTDIR"/server.log ./server${TEST_RUN_ID:+-$TEST_RUN_ID}.log
-                    fi
                     rm -fr -- "$TESTDIR"
                     rm -f -- .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
-                    exit $ret
                 ) 2>&1 | "$tee_command" "test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
             else
                 (
-                    test_setup && test_run
-                    ret=$?
+                    test_setup
+                    test_run
                     test_cleanup
                     rm -fr -- "$TESTDIR"
                     rm -f -- .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
-                    exit $ret
                 ) > test${TEST_RUN_ID:+-$TEST_RUN_ID}.log 2>&1
             fi
-            ret=$?
             set +o pipefail
-            print_test_result "$ret"
-            exit $ret
+            print_test_result 0
+            exit 0
             ;;
         *) break ;;
     esac
