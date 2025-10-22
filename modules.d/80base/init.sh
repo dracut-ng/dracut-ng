@@ -147,7 +147,7 @@ getargbool 0 rd.udev.log_level=debug -d rd.udev.log-priority=debug -d rd.udev.de
     && UDEV_LOG=debug
 
 # start up udev and trigger cold plugs
-UDEV_LOG=$UDEV_LOG "$systemdutildir"/systemd-udevd --daemon --resolve-names=never
+SYSTEMD_LOG_LEVEL=$UDEV_LOG "$systemdutildir"/systemd-udevd --daemon --resolve-names=never
 
 UDEV_QUEUE_EMPTY="udevadm settle --timeout=0"
 
