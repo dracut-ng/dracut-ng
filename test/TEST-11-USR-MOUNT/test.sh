@@ -53,7 +53,9 @@ test_setup() {
         --add-confdir test-root \
         --mount "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root /usr btrfs subvol=usr,rw" \
         -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
+    mkdir -p "$TESTDIR"/overlay/source
+    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
+    rm -rf "$TESTDIR"/dracut.*
 
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid

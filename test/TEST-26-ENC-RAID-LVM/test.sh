@@ -57,7 +57,9 @@ test_setup() {
     "$DRACUT" --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
+    mkdir -p "$TESTDIR"/overlay/source
+    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
+    rm -rf "$TESTDIR"/dracut.*
 
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid

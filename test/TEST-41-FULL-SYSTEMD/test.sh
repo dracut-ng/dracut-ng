@@ -98,7 +98,9 @@ test_setup() {
 
     KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)
 
-    mkdir -p "$TESTDIR"/overlay/source && cp -a "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
+    mkdir -p "$TESTDIR"/overlay/source
+    cp -a "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
+    rm -rf "$TESTDIR"/dracut.*
 
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
