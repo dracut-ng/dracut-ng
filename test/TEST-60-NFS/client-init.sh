@@ -6,7 +6,7 @@
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 exec > /dev/console 2>&1
 
-echo "made it to the rootfs! Powering down."
+echo "made it to the rootfs!"
 
 while read -r dev _ fstype opts rest || [ -n "$dev" ]; do
     [ "$fstype" != "nfs" ] && [ "$fstype" != "nfs4" ] && continue
@@ -43,4 +43,6 @@ fi
 : > /dev/watchdog
 
 sync /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker2
+
+echo "Powering down."
 poweroff -f
