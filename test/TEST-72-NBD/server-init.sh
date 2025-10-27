@@ -4,7 +4,7 @@ set -x
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 export TERM=linux
 export PS1='nbdtest-server:\w\$ '
-echo "made it to the rootfs!"
+echo "made it to the NBD server rootfs!"
 echo server > /proc/sys/kernel/hostname
 
 wait_for_if_link() {

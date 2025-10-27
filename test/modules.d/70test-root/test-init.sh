@@ -17,7 +17,7 @@ grep -q '^tmpfs /run tmpfs' /proc/self/mounts \
 : > /dev/watchdog
 
 exec > /dev/console 2>&1
-echo "made it to the rootfs!"
+echo "made it to the test rootfs!"
 
 if command -v systemctl > /dev/null 2>&1; then
     systemctl --failed --no-legend --no-pager >> /run/failed

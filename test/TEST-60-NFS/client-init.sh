@@ -6,7 +6,7 @@
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 exec > /dev/console 2>&1
 
-echo "made it to the rootfs!"
+echo "made it to the NFS client rootfs!"
 
 while read -r dev _ fstype opts rest || [ -n "$dev" ]; do
     [ "$fstype" != "nfs" ] && [ "$fstype" != "nfs4" ] && continue
