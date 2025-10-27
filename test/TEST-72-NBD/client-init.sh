@@ -3,6 +3,7 @@
 
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 exec > /dev/console 2>&1
+echo "made it to the rootfs!"
 
 while read -r dev fs fstype opts rest || [ -n "$dev" ]; do
     [ "$dev" = "rootfs" ] && continue
@@ -11,9 +12,10 @@ while read -r dev fs fstype opts rest || [ -n "$dev" ]; do
     echo "nbd-OK $fstype $opts"
     break
 done < /proc/mounts
-echo "made it to the rootfs! Powering down."
 
 mount -n -o remount,ro /
 
 sync /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
+
+echo "Powering down."
 poweroff -f
