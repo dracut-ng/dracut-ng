@@ -146,6 +146,17 @@ COLOR_FAILURE='\033[0;31m'
 COLOR_WARNING='\033[0;33m'
 COLOR_NORMAL='\033[0;39m'
 
+# override the init script from the test-root dracut module (see module-setup.sh)
+inst_init() {
+    local init_script="$1"
+    local rootdir="$2"
+    if [ -e "$rootdir/sbin/test-init" ]; then
+        cp "$init_script" "$rootdir/sbin/test-init"
+    else
+        cp "$init_script" "$rootdir/sbin/init"
+    fi
+}
+
 # generate qemu arguments for named raw disks
 #
 # qemu_add_drive <index> <args> <filename> <id-name> [<bootindex>]

@@ -139,7 +139,7 @@ test_setup() {
     rm -rf "$TESTDIR"/dracut.*
 
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/nfs/rpc_pipefs
-    cp ./client-init.sh "$TESTDIR"/overlay/source/sbin/init
+    inst_init ./client-init.sh "$TESTDIR"/overlay/source
 
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
@@ -181,7 +181,7 @@ test_setup() {
     rm -rf "$TESTDIR"/dracut.*
 
     mkdir -p "$TESTDIR"/overlay/source/var/lib/dhcpd
-    cp ./server-init.sh "$TESTDIR"/overlay/source/sbin/init
+    inst_init ./server-init.sh "$TESTDIR"/overlay/source
 
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
