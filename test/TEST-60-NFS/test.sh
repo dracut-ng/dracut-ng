@@ -250,7 +250,7 @@ test_setup() {
     export initdir=$TESTDIR/server/overlay/source
     mkdir -p "$initdir"/var/lib/{dhcpd,rpcbind} "$initdir"/var/lib/nfs/{v4recovery,rpc_pipefs}
     chmod 777 "$initdir"/var/lib/{dhcpd,rpcbind}
-    cp ./server-init.sh "$initdir"/sbin/init
+    inst_init ./server-init.sh "$initdir"
     cp ./exports "$initdir"/etc/exports
     cp ./dhcpd.conf "$initdir"/etc/dhcpd.conf
 
@@ -261,7 +261,7 @@ test_setup() {
     mv "$TESTDIR"/dracut.*/initramfs/* "$initdir"
     rm -rf "$TESTDIR"/dracut.*
     echo "TEST FETCH FILE" > "$initdir"/root/fetchfile
-    cp ./client-init.sh "$initdir"/sbin/init
+    inst_init ./client-init.sh "$initdir"
 
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
