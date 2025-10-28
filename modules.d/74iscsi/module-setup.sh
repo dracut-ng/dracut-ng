@@ -220,9 +220,8 @@ install() {
             "$systemdsystemunitdir"/iscsiuio.socket \
             "$systemdsystemunitdir"/sockets.target.wants/iscsid.socket \
             "$systemdsystemunitdir"/sockets.target.wants/iscsiuio.socket
-        if grep -q '^ExecStartPre=/usr/lib/open-iscsi/startup-checks.sh$' "${dracutsysrootdir-}$systemdsystemunitdir/iscsid.service"; then
-            inst_simple /usr/lib/open-iscsi/startup-checks.sh
-        fi
+        sed -i '/ExecStartPre=\/usr\/lib\/open-iscsi\/startup-checks.sh/d' \
+            "${dracutsysrootdir-}$systemdsystemunitdir/iscsid.service"
 
         for i in \
             iscsid.socket \
