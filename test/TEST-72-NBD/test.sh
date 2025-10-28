@@ -276,7 +276,6 @@ EOF
     # devices, volume groups, encrypted partitions, etc.
     "$DRACUT" -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
-        -a "$USE_NETWORK" \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
         -f "$TESTDIR"/initramfs.makeroot
 
