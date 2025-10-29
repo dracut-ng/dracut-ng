@@ -85,6 +85,10 @@ wait_for_server_startup() {
         fi
         sleep 1
     done
+
+    if [ "${V-}" -ge 1 ]; then
+        tail -n "+$((printed_lines + 1))" "$TESTDIR"/server.log
+    fi
 }
 
 ovmf_code() {
