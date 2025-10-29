@@ -88,6 +88,7 @@ wait_for_server_startup() {
 
     if [ "${V-}" -ge 1 ]; then
         tail -n "+$((printed_lines + 1))" "$TESTDIR"/server.log
+        echo "Server has been start up."
     fi
 }
 
