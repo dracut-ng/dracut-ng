@@ -37,7 +37,7 @@ check() {
     [[ "$mount_needs" ]] && return 1
     [[ $(pkglib_dir) ]] || return 1
 
-    require_binaries plymouthd plymouth plymouth-set-default-theme || return 1
+    require_binaries plymouthd plymouth || return 1
 
     return 0
 }
@@ -54,13 +54,8 @@ depends() {
 # called by dracut
 install() {
     PKGLIBDIR=$(pkglib_dir)
-    if [ ! -x "${dracutsysrootdir-}${PKGLIBDIR}"/plymouth-populate-initrd ]; then
-        # shellcheck disable=SC1090
-        . "$moddir"/plymouth-populate-initrd.sh
-    else
-        PLYMOUTH_POPULATE_SOURCE_FUNCTIONS="$dracutfunctions" \
-            "${dracutsysrootdir-}${PKGLIBDIR}"/plymouth-populate-initrd -t "$initdir" 2> /dev/null
-    fi
+    PLYMOUTH_POPULATE_SOURCE_FUNCTIONS="$dracutfunctions" \
+        "${dracutsysrootdir-}${PKGLIBDIR}"/plymouth-populate-initrd -t "$initdir" 2> /dev/null
 
     inst_hook emergency 50 "$moddir"/plymouth-emergency.sh
 
