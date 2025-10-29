@@ -211,17 +211,13 @@ test_run() {
         return 1
     fi
 
-    test_nfsv3 \
-        && test_nfsv4
-
-    ret=$?
+    test_nfsv3
+    test_nfsv4
 
     if [[ -s $TESTDIR/server.pid ]]; then
         kill -TERM "$(cat "$TESTDIR"/server.pid)"
         rm -f -- "$TESTDIR"/server.pid
     fi
-
-    return $ret
 }
 
 test_setup() {
