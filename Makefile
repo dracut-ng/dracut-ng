@@ -286,7 +286,7 @@ endif
 	fi
 ifeq ($(ARCH),s390x)
 	for f in cio_ignore cms dasd dasd_mod dcssblk zfcp zipl znet; do \
-		rm -r $(DESTDIR)$(pkglibdir)/modules.d/[0-9][0-9]$${i}; \
+		rm -r $(DESTDIR)$(pkglibdir)/modules.d/[0-9][0-9]$${f}; \
 	done
 endif
 
