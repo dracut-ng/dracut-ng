@@ -32,10 +32,7 @@ test_setup() {
         --add-confdir test-root \
         -f "$TESTDIR"/initramfs.root "$KVERSION"
 
-    dd if=/dev/zero of="$TESTDIR"/root.img bs=200MiB count=1 status=none
-    sync "$TESTDIR"/root.img
-    mkfs.ext4 -q -L dracut -d "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img
-    sync "$TESTDIR"/root.img
+    build_ext4_image "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img dracut
 
     test_dracut --add-drivers "virtio_net" --add "qemu-net $USE_NETWORK"
 }

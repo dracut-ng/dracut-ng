@@ -151,6 +151,18 @@ COLOR_FAILURE='\033[0;31m'
 COLOR_WARNING='\033[0;33m'
 COLOR_NORMAL='\033[0;39m'
 
+# build an ext4 image from the given directory
+build_ext4_image() {
+    local source_dir="$1"
+    local image="$2"
+    local label="$3"
+
+    dd if=/dev/zero of="$image" bs=200MiB count=1 status=none
+    sync "$image"
+    mkfs.ext4 -q -L "$label" -d "$source_dir" "$image"
+    sync "$image"
+}
+
 # override the init script from the test-root dracut module (see module-setup.sh)
 inst_init() {
     local init_script="$1"
