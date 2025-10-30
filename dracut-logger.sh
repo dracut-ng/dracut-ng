@@ -301,7 +301,8 @@ _dlvl2syslvl() {
 #
 # @param lvl Numeric logging level.
 # @param msg Message.
-# @retval 0 It's always returned, even if logging failed.
+# @retval 0 if level is in range, even if logging fails.
+# @retval 1 if level is out of range.
 #
 # @note This function is not supposed to be called manually. Please use
 # dtrace(), ddebug(), or others instead which wrap this one.
@@ -326,11 +327,13 @@ _do_dlog() {
     local lvlc
     local lvl="$1"
     shift
-    lvlc=$(_lvl2char "$lvl") || return 0
+    lvlc=$(_lvl2char "$lvl") || return 1
     local msg="$*"
     local lmsg="$lvlc: $*"
 
-    ((lvl <= stdloglvl)) && printf -- 'dracut[%s]: %s\n' "$lvlc" "$msg" >&2
+    if ((lvl <= stdloglvl)); then
+        printf -- 'dracut[%s]: %s\n' "$lvlc" "$msg" >&2
+    fi
 
     if ((lvl <= sysloglvl)); then
         if [[ "$_dlogfd" ]]; then
@@ -344,15 +347,19 @@ _do_dlog() {
         echo "$lmsg" >> "$logfile"
     fi
 
-    ((lvl <= kmsgloglvl)) \
-        && echo "<$(_dlvl2syslvl "$lvl")>dracut[$$] $msg" > /dev/kmsg
+    if ((lvl <= kmsgloglvl)); then
+        echo "<$(_dlvl2syslvl "$lvl")>dracut[$$] $msg" > /dev/kmsg
+    fi
+
+    return 0
 }
 
 ## @brief Internal helper function for _do_dlog()
 #
 # @param lvl Numeric logging level.
 # @param msg Message.
-# @retval 0 It's always returned, even if logging failed.
+# @retval 0 if level is in range, even if logging fails.
+# @retval 1 if level is out of range.
 #
 # @note This function is not supposed to be called manually. Please use
 # dtrace(), ddebug(), or others instead which wrap this one.
