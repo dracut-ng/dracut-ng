@@ -354,6 +354,95 @@ _do_dlog() {
     return 0
 }
 
+## @brief Like _do_dlog() but accepts messages on standard input and sends them
+# to the appropriate logging outputs in a batch.
+#
+# @param lvl Numeric logging level.
+# @retval 0 if level is in range, even if logging fails.
+# @retval 1 if level is out of range.
+_do_dlog_batch() {
+    # Return early if level out of range
+    _lvl2char "$1" > /dev/null || return 1
+
+    # shellcheck disable=SC1003
+    sed -e '$a\' - | tee \
+        >(_do_dlog_batch_stdlog "$1") \
+        >(_do_dlog_batch_syslog "$1") \
+        >(_do_dlog_batch_filelog "$1") \
+        >(_do_dlog_batch_kmsglog "$1") \
+        > /dev/null
+}
+
+## @brief Batch processor for logging to standard error.
+#
+# @param lvl Numeric logging level.
+# @retval 0 if level is in range, even if logging fails.
+# @retval 1 if level is out of range.
+_do_dlog_batch_stdlog() {
+    local lvl="$1"
+    local lvlc
+    if ((lvl <= stdloglvl)); then
+        lvlc=$(_lvl2char "$lvl") || return 1
+        awk -v prefix="dracut[${lvlc}]: " '{ print prefix $0 }' >&2
+    else
+        cat > /dev/null
+    fi
+}
+
+## @brief Batch processor for logging to system journal.
+#
+# @param lvl Numeric logging level.
+# @retval 0 if level is in range, even if logging fails.
+# @retval 1 if level is out of range.
+_do_dlog_batch_syslog() {
+    local lvl="$1"
+    local syslog_lvlc
+    if ((lvl <= sysloglvl)); then
+        if [[ "${_dlogfd}" ]]; then
+            syslog_lvlc="$(($(_dlvl2syslvl "$lvl") & 7))" || return 1
+            awk -v prefix="<${syslog_lvlc}>" '{ print prefix $0 }' >&"${_dlogfd}"
+        else
+            syslog_lvlc="$(_lvl2syspri "$lvl")" || return 1
+            logger -t "dracut[$$]" -p "${syslog_lvlc}"
+        fi
+    else
+        cat > /dev/null
+    fi
+}
+
+## @brief Batch processor for logging to log file.
+#
+# @param lvl Numeric logging level.
+# @retval 0 if level is in range, even if logging fails.
+# @retval 1 if level is out of range.
+_do_dlog_batch_filelog() {
+    local lvl="$1"
+    local lvlc
+    if ((lvl <= fileloglvl)) && [[ -w $logfile ]] && [[ -f $logfile ]]; then
+        lvlc=$(_lvl2char "$lvl") || return 1
+        awk -v prefix="${lvlc}: " '{ print prefix $0 }' >> "${logfile}"
+    else
+        cat > /dev/null
+    fi
+}
+
+## @brief Batch processor for logging to kernel log buffer.
+#
+# @param lvl Numeric logging level.
+# @retval 0 if level is in range, even if logging fails.
+# @retval 1 if level is out of range.
+_do_dlog_batch_kmsglog() {
+    local lvl="$1"
+    local kmsg_lvlc
+    if ((lvl <= kmsgloglvl)); then
+        kmsg_lvlc="$(_dlvl2syslvl "$lvl")" || return 1
+        awk -v lvlc="${kmsg_lvlc}" -v prefix="dracut[$$] " \
+            '{ if (NR==1) printf "<%s>" lvlc; print prefix $0 }' > /dev/kmsg
+    else
+        cat > /dev/null
+    fi
+}
+
 ## @brief Internal helper function for _do_dlog()
 #
 # @param lvl Numeric logging level.
@@ -364,23 +453,23 @@ _do_dlog() {
 # @note This function is not supposed to be called manually. Please use
 # dtrace(), ddebug(), or others instead which wrap this one.
 #
-# This function calls _do_dlog() either with parameter msg, or if
-# none is given, it will read standard input and will use every line as
-# a message.
+# This function either calls _do_dlog() with parameter msg, or if none
+# is given, it will pass standard input on to _do_dlog_batch() for batch
+# processing.
 #
 # This enables:
 # dwarn "This is a warning"
 # echo "This is a warning" | dwarn
 dlog() {
     [ -z "$maxloglvl" ] && return 0
-    (($1 <= maxloglvl)) || return 0
+    local lvl="$1"
+    shift
+    ((lvl <= maxloglvl)) || return 0
 
-    if (($# > 1)); then
-        _do_dlog "$@"
+    if (($# > 0)); then
+        _do_dlog "$lvl" "$@"
     else
-        while read -r line || [ -n "$line" ]; do
-            _do_dlog "$1" "$line"
-        done
+        _do_dlog_batch "$lvl"
     fi
 }
 
