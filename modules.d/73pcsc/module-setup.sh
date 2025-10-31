@@ -30,7 +30,8 @@ install() {
 
     inst_multiple -o \
         pcscd \
-        /usr/share/p11-kit/modules/opensc.module
+        /usr/share/p11-kit/modules/opensc.module \
+        /usr/share/p11-kit/modules/opensc-pkcs11.module
 
     # Enable systemd type unit(s)
     for i in \
@@ -51,6 +52,7 @@ install() {
         {"tls/$_arch/",tls/,"$_arch/",}"pcsc/drivers/ifd-ccid.bundle/Contents/Info.plist" \
         {"tls/$_arch/",tls/,"$_arch/",}"pcsc/drivers/ifd-ccid.bundle/Contents/Linux/libccid.so" \
         {"tls/$_arch/",tls/,"$_arch/",}"pcsc/drivers/serial/libccidtwin.so" \
+        {"tls/$_arch/",tls/,"$_arch/",}"libeac.so*" \
         {"tls/$_arch/",tls/,"$_arch/",}"libpcsclite.so.*" \
         {"tls/$_arch/",tls/,"$_arch/",}"libpcsclite_real.so.*"
 
@@ -58,6 +60,7 @@ install() {
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
             /etc/opensc.conf \
+            /etc/opensc/opensc.conf \
             "/etc/reader.conf.d/*"
     fi
 
