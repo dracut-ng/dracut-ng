@@ -436,8 +436,9 @@ _do_dlog_batch_kmsglog() {
     local kmsg_lvlc
     if ((lvl <= kmsgloglvl)); then
         kmsg_lvlc="$(_dlvl2syslvl "$lvl")" || return 1
-        awk -v lvlc="${kmsg_lvlc}" -v prefix="dracut[$$] " \
-            '{ if (NR==1) printf "<%s>", lvlc; print prefix $0 }' > /dev/kmsg
+        # /dev/kmsg is designed to only accept single lines at a time, so the
+        # output of awk has to be line-buffered.
+        awk -v prefix="<${kmsg_lvlc}>dracut[$$] " '{ print prefix $0; fflush() }' > /dev/kmsg
     else
         cat > /dev/null
     fi
