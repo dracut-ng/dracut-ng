@@ -51,6 +51,10 @@ install() {
     inst_script "$moddir/rootfs-generator.sh" "$systemdutildir"/system-generators/dracut-rootfs-generator
 
     inst_hook cmdline 00 "$moddir/parse-root.sh"
+    if dracut_module_included initqueue; then
+        # parse-root.sh injects grep call into initqueue/finished/devexists-${root_name}.sh
+        inst grep
+    fi
 
     for i in \
         dracut-cmdline.service \
