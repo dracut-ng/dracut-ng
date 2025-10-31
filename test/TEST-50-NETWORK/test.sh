@@ -16,7 +16,8 @@ test_run() {
     test_marker_reset
 
     "$testdir"/run-qemu \
-        -nic user,id=lan0,net=10.0.2.0/24,dhcpstart=10.0.2.15,model=virtio-net-pci \
+        -device "virtio-net-pci,netdev=lan0" \
+        -netdev "user,id=lan0,net=10.0.2.0/24,dhcpstart=10.0.2.15" \
         "${disk_args[@]}" \
         -append "$TEST_KERNEL_CMDLINE rd.neednet=1 net.ifnames=0" \
         -initrd "$TESTDIR"/initramfs.testing
