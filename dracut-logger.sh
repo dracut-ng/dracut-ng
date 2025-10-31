@@ -437,7 +437,7 @@ _do_dlog_batch_kmsglog() {
     if ((lvl <= kmsgloglvl)); then
         kmsg_lvlc="$(_dlvl2syslvl "$lvl")" || return 1
         awk -v lvlc="${kmsg_lvlc}" -v prefix="dracut[$$] " \
-            '{ if (NR==1) printf "<%s>" lvlc; print prefix $0 }' > /dev/kmsg
+            '{ if (NR==1) printf "<%s>", lvlc; print prefix $0 }' > /dev/kmsg
     else
         cat > /dev/null
     fi
