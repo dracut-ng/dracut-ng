@@ -16,7 +16,7 @@ if [[ "$KERNEL_INSTALL_IMAGE_TYPE" = "uki" ]]; then
     exit 0
 fi
 
-if [[ "${KERNEL_INSTALL_INITRD_GENERATOR:-dracut}" = "dracut" ]]; then
+if [[ "${KERNEL_INSTALL_INITRD_GENERATOR-}" = "dracut" ]]; then
     # We are the initrd generator
     IMAGE="initrd"
     UEFI_OPTS="--no-uefi"

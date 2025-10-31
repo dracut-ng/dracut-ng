@@ -20,7 +20,7 @@ fi
 if [[ "$KERNEL_INSTALL_UKI_GENERATOR" = "dracut" ]]; then
     # Rescue images currently not compatible with UKIs
     exit 0
-elif [[ "${KERNEL_INSTALL_INITRD_GENERATOR:-dracut}" != "dracut" ]]; then
+elif [[ "${KERNEL_INSTALL_INITRD_GENERATOR-}" != "dracut" ]]; then
     # We are not the initrd generator
     exit 0
 fi

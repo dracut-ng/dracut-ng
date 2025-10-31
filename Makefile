@@ -269,6 +269,8 @@ endif
 ifeq ($(enable_dracut_cpio),yes)
 	install -m 0755 dracut-cpio $(DESTDIR)$(pkglibdir)/dracut-cpio
 endif
+	mkdir -p $(DESTDIR)${prefix}/lib/kernel/install.conf.d
+	install -m 0644 install.conf.d/50-dracut.conf $(DESTDIR)${prefix}/lib/kernel/install.conf.d/50-dracut.conf
 	mkdir -p $(DESTDIR)${prefix}/lib/kernel/install.d
 	install -m 0755 install.d/50-dracut.install $(DESTDIR)${prefix}/lib/kernel/install.d/50-dracut.install
 	install -m 0755 install.d/51-dracut-rescue.install $(DESTDIR)${prefix}/lib/kernel/install.d/51-dracut-rescue.install
