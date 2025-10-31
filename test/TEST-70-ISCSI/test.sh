@@ -130,7 +130,7 @@ test_check() {
 
 test_setup() {
     # Create what will eventually be the client root filesystem onto an overlay
-    "$DRACUT" --tmpdir "$TESTDIR" \
+    call_dracut --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -I "ip grep setsid" \
         -f "$TESTDIR"/initramfs.root
@@ -144,7 +144,7 @@ test_setup() {
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -i "$TESTDIR"/overlay / \
+    call_dracut -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -a "crypt lvm mdraid" \
         -I "setsid blockdev" \
@@ -168,7 +168,7 @@ test_setup() {
     rm -- "$TESTDIR"/marker.img
 
     # Create what will eventually be the server root filesystem onto an overlay
-    "$DRACUT" --tmpdir "$TESTDIR" \
+    call_dracut --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "$USE_NETWORK" \
         -d "iscsi_tcp crc32c ipv6" \
@@ -186,7 +186,7 @@ test_setup() {
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -i "$TESTDIR"/overlay / \
+    call_dracut -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
         -f "$TESTDIR"/initramfs.makeroot
@@ -207,7 +207,7 @@ test_setup() {
     rm -- "$TESTDIR"/marker.img
 
     # Make server's dracut image
-    "$DRACUT" \
+    call_dracut \
         -a "qemu-net $USE_NETWORK" \
         --add-confdir test \
         -i "./server.link" "/etc/systemd/network/01-server.link" \

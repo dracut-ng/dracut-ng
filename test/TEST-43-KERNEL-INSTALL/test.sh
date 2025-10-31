@@ -40,7 +40,7 @@ test_run() {
 test_setup() {
     # create root filesystem
     # shellcheck disable=SC2153
-    "$DRACUT" --tmpdir "$TESTDIR" \
+    call_dracut --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -f "$TESTDIR"/initramfs.root
 

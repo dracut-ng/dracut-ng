@@ -114,7 +114,7 @@ test_makeroot() {
 
 test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
-    "$DRACUT" --tmpdir "$TESTDIR" \
+    call_dracut --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/overlay/source
@@ -129,7 +129,7 @@ test_setup() {
     # devices, volume groups, encrypted partitions, etc.
 
     # shellcheck disable=SC2046
-    "$DRACUT" -i "$TESTDIR"/overlay / \
+    call_dracut -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -a "lvm" \
         -I "grep" \
