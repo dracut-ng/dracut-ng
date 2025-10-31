@@ -7,6 +7,18 @@ export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 ARCH="${ARCH-$(uname -m)}"
 QEMU_CPU="${QEMU_CPU:-max}"
 
+quote_args() {
+    local arg args=()
+    for arg in "$@"; do
+        if [[ -z $arg || $arg =~ [[:space:]\'] ]]; then
+            args+=("'${arg//\'/\'\\\'\'}'")
+        else
+            args+=("$arg")
+        fi
+    done
+    echo "${args[*]}"
+}
+
 set_vmlinux_env() {
     if [[ ${KVERSION-} ]]; then
         VMLINUZ=${VMLINUZ-"/lib/modules/${KVERSION}/vmlinuz"}
@@ -104,5 +116,5 @@ if [[ $* == *-initrd* ]]; then
     ARGS+=(-kernel "$VMLINUZ")
 fi
 
-echo "${0##*/}: $BIN ${ARGS[*]@Q} ${*@Q}"
+echo "${0##*/}: $BIN $(quote_args "${ARGS[@]}") $(quote_args "$@")"
 exec "$BIN" "${ARGS[@]}" "$@"
