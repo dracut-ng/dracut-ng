@@ -321,7 +321,7 @@ test_setup() {
         -i "/tmp/crypttab" "/etc/crypttab" \
         -i "/tmp/key" "/etc/key"
 
-    call_dracut -N -i "$TESTDIR"/overlay / \
+    call_dracut -N \
         --add-confdir test \
         -a "qemu-net $USE_NETWORK ${SERVER_DEBUG:+debug}" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \

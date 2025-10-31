@@ -223,7 +223,7 @@ test_setup() {
         -i ./client-persistent-lan1.link /etc/systemd/network/01-persistent-lan1.link
 
     # Make server's dracut image
-    call_dracut -i "$TESTDIR"/overlay / \
+    call_dracut \
         --add-confdir test \
         -a "qemu-net $USE_NETWORK ${SERVER_DEBUG:+debug}" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
