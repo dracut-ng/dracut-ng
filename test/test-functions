@@ -59,9 +59,31 @@ test_dracut() {
     # shellcheck disable=SC2162
     IFS=' ' read -a TEST_DRACUT_ARGS_ARRAY <<< "$TEST_DRACUT_ARGS"
 
-    "$DRACUT" \
+    call_dracut \
         "${TEST_DRACUT_ARGS_ARRAY[@]}" \
         "$@" "$TESTDIR"/initramfs.testing || return 1
+}
+
+quote_args() {
+    local arg args=()
+    for arg in "$@"; do
+        if [[ -z $arg || $arg =~ [[:space:]\'] ]]; then
+            args+=("'${arg//\'/\'\\\'\'}'")
+        else
+            args+=("$arg")
+        fi
+    done
+    echo "${args[*]}"
+}
+
+# Call dracut and log its call in verbose mode
+call_dracut() {
+    # Uncomment this to debug failures
+    #set -- --stdlog 4 "$@"
+    if [[ ${V-} == "1" || ${V-} == "2" ]]; then
+        echo "Calling $DRACUT $(quote_args "$@")"
+    fi
+    "$DRACUT" "$@"
 }
 
 # Wait for the server QEMU has been started up.

@@ -138,7 +138,7 @@ test_check() {
 test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     rm -rf -- "$TESTDIR"/overlay
-    "$DRACUT" --keep --tmpdir "$TESTDIR" \
+    call_dracut --keep --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -I "ip grep setsid" \
         --no-hostonly \
@@ -152,7 +152,7 @@ test_setup() {
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -i "$TESTDIR"/overlay / \
+    call_dracut -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -a "crypt lvm mdraid" \
         -I "setsid blockdev" \
@@ -176,7 +176,7 @@ test_setup() {
     rm -- "$TESTDIR"/marker.img
 
     rm -rf -- "$TESTDIR"/overlay
-    "$DRACUT" --tmpdir "$TESTDIR" \
+    call_dracut --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "$USE_NETWORK iscsi" \
         -d "iscsi_tcp crc32c ipv6 af_packet" \
@@ -195,7 +195,7 @@ test_setup() {
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -i "$TESTDIR"/overlay / \
+    call_dracut -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
         -f "$TESTDIR"/initramfs.makeroot
@@ -223,7 +223,7 @@ test_setup() {
         -i ./client-persistent-lan1.link /etc/systemd/network/01-persistent-lan1.link
 
     # Make server's dracut image
-    "$DRACUT" -i "$TESTDIR"/overlay / \
+    call_dracut -i "$TESTDIR"/overlay / \
         --add-confdir test \
         -a "qemu-net $USE_NETWORK ${SERVER_DEBUG:+debug}" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \

@@ -91,7 +91,7 @@ test_setup() {
     fi
 
     # Create what will eventually be our root filesystem onto an overlay
-    "$DRACUT" --tmpdir "$TESTDIR" \
+    call_dracut --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "$dracut_modules" \
         -f "$TESTDIR"/initramfs.root
@@ -105,7 +105,7 @@ test_setup() {
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -i "$TESTDIR"/overlay / \
+    call_dracut -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -a "btrfs crypt" \
         -I "mkfs.btrfs cryptsetup" \

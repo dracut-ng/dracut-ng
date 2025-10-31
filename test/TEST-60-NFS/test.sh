@@ -221,7 +221,7 @@ test_run() {
 }
 
 test_setup() {
-    "$DRACUT" --tmpdir "$TESTDIR" \
+    call_dracut --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "$USE_NETWORK url-lib nfs" \
         -I "ip grep setsid" \
@@ -230,7 +230,7 @@ test_setup() {
     mkdir -p "$TESTDIR"/server/overlay
 
     # Create what will eventually be the server root filesystem onto an overlay
-    "$DRACUT" --tmpdir "$TESTDIR"/server/overlay \
+    call_dracut --tmpdir "$TESTDIR"/server/overlay \
         --add-confdir test-root \
         -a "bash $USE_NETWORK nfs" \
         --add-drivers "nfsd sunrpc lockd" \
@@ -262,7 +262,7 @@ test_setup() {
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -i "$TESTDIR"/server/overlay / \
+    call_dracut -i "$TESTDIR"/server/overlay / \
         --add-confdir test-makeroot \
         -a "bash" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
@@ -289,7 +289,7 @@ test_setup() {
         -a "watchdog dmsquash-live qemu-net ${USE_NETWORK}"
 
     # Make server's dracut image
-    "$DRACUT" \
+    call_dracut \
         -a "bash qemu-net $USE_NETWORK ${SERVER_DEBUG:+debug}" \
         --include ./server.link /etc/systemd/network/01-server.link \
         --include ./wait-if-server.sh /lib/dracut/hooks/pre-mount/99-wait-if-server.sh \
