@@ -223,9 +223,7 @@ install() {
         sed -i '/ExecStartPre=\/usr\/lib\/open-iscsi\/startup-checks.sh/d' \
             "${initdir}$systemdsystemunitdir/iscsid.service"
 
-        for i in \
-            iscsid.socket \
-            iscsiuio.socket; do
+        for i in iscsid.socket iscsiuio.socket; do
             $SYSTEMCTL -q --root "$initdir" enable "$i"
         done
 
