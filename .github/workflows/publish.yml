@@ -36,7 +36,7 @@ jobs:
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Install Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v6
         with:
           node-version: '18'
       - name: Install dependencies
