@@ -1086,6 +1086,29 @@ rd.znet=qeth,0.0.0600,0.0.0601,0.0.0602,layer2=1,portname=foo
 rd.znet=ctc,0.0.0600,0.0.0601,protocol=bar
 --
 
+OverlayFS
+~~~~~~~~~
+Requires the dracut 'overlayfs' module.
+
+**rd.live.overlay.overlayfs=**1::
+Enables the use of the *OverlayFS* kernel module, if available, to provide a
+copy-on-write union directory for the root filesystem.  OverlayFS overlays are
+directories of the files that have changed on the read-only base (lower)
+filesystem.  The root filesystem is provided through a special overlay type
+mount that merges at least two directories, designated the lower and the upper.
+If an OverlayFS upper directory is not present on the boot device, a tmpfs
+directory will be created at `/run/overlayfs` to provide temporary storage.
+Persistent storage can be provided on vfat or msdos formatted devices by
+supplying the OverlayFS upper directory within an embedded filesystem that
+supports the creation of trusted.* extended attributes and provides a valid
+d_type in readdir responses, such as with btrfs, ext4, f2fs, & xfs.  On
+non-vfat-formatted devices, a persistent OverlayFS overlay can extend the
+available root filesystem storage up to the capacity of the LiveOS disk device.
++
+The **rd.live.overlay.readonly** option, which allows a persistent overlayfs to
+be mounted read-only through a higher level transient overlay directory, has
+been implemented through the multiple lower layers feature of OverlayFS.
+
 Booting live images
 ~~~~~~~~~~~~~~~~~~~
 Requires the dracut 'dmsquash-live' module.
@@ -1339,28 +1362,6 @@ The advantage of thin snapshots is that they support discards, and will free
 blocks that are not claimed by the filesystem. In this use case, this means
 that memory is given back to the kernel when the filesystem does not claim it
 anymore.
-
-**rd.live.overlay.overlayfs=**1::
-Enables the use of the *OverlayFS* kernel module, if available, to provide a
-copy-on-write union directory for the root filesystem.  OverlayFS overlays are
-directories of the files that have changed on the read-only base (lower)
-filesystem.  The root filesystem is provided through a special overlay type
-mount that merges at least two directories, designated the lower and the upper.
-If an OverlayFS upper directory is not present on the boot device, a tmpfs
-directory will be created at `/run/overlayfs` to provide temporary storage.
-Persistent storage can be provided on vfat or msdos formatted devices by
-supplying the OverlayFS upper directory within an embedded filesystem that
-supports the creation of trusted.* extended attributes and provides a valid
-d_type in readdir responses, such as with btrfs, ext4, f2fs, & xfs.  On
-non-vfat-formatted devices, a persistent OverlayFS overlay can extend the
-available root filesystem storage up to the capacity of the LiveOS disk device.
-Requires the dracut 'overlayfs' module.
-+
-The **rd.live.overlay.readonly** option, which allows a persistent overlayfs to
-be mounted read-only through a higher level transient overlay directory, has
-been implemented through the multiple lower layers feature of OverlayFS.
-Requires the dracut 'overlayfs' module.
-
 
 ZIPL
 ~~~~
