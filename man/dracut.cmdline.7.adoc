@@ -1086,6 +1086,29 @@ rd.znet=qeth,0.0.0600,0.0.0601,0.0.0602,layer2=1,portname=foo
 rd.znet=ctc,0.0.0600,0.0.0601,protocol=bar
 --
 
+OverlayFS
+~~~~~~~~~
+Requires the dracut 'overlayfs' module.
+
+**rd.overlayfs=**1::
+Enables the use of the *OverlayFS* kernel module, if available, to provide a
+copy-on-write union directory for the root filesystem.  OverlayFS overlays are
+directories of the files that have changed on the read-only base (lower)
+filesystem.  The root filesystem is provided through a special overlay type
+mount that merges at least two directories, designated the lower and the upper.
+If an OverlayFS upper directory is not present on the boot device, a tmpfs
+directory will be created at `/run/overlayfs` to provide temporary storage.
+Persistent storage can be provided on vfat or msdos formatted devices by
+supplying the OverlayFS upper directory within an embedded filesystem that
+supports the creation of trusted.* extended attributes and provides a valid
+d_type in readdir responses, such as with btrfs, ext4, f2fs, & xfs.  On
+non-vfat-formatted devices, a persistent OverlayFS overlay can extend the
+available root filesystem storage up to the capacity of the LiveOS disk device.
++
+The **rd.overlayfs.readonly** option, which allows a persistent overlayfs to
+be mounted read-only through a higher level transient overlay directory, has
+been implemented through the multiple lower layers feature of OverlayFS.
+
 Booting live images
 ~~~~~~~~~~~~~~~~~~~
 Requires the dracut 'dmsquash-live' module.
@@ -1129,7 +1152,7 @@ filesystem, which often provide only a small number of gigabytes of free space.
 This shortage could be remedied by building the root filesystem with more
 allocated free space, or the OverlayFS based overlay mount method can be used.
 
-When the *_rd.live.overlay.overlayfs_* option is specified or when
+When the *_rd.overlayfs_* option is specified or when
 *_rd.live.overlay=_* points to an appropriate directory with a sister at
 `/../ovlwork`, then an OverlayFS based overlay mount is employed.  Such a
 persistent OverlayFS overlay can extend the available root filesystem storage
@@ -1293,7 +1316,7 @@ where _<label>_ and _<uuid>_ are the LABEL and UUID of the filesystem specified
 by the **root=**live:__<path|url>__ device.
 
 If a persistent overlay __is detected__ at the standard LiveOS path,
-and *_rd.live.overlay.overlayfs_* is not set to 1, the overlay type (either
+and *_rd.overlayfs_* is not set to 1, the overlay type (either
 Device-mapper or OverlayFS) will be detected and it will be used.
 --
 +
@@ -1339,28 +1362,6 @@ The advantage of thin snapshots is that they support discards, and will free
 blocks that are not claimed by the filesystem. In this use case, this means
 that memory is given back to the kernel when the filesystem does not claim it
 anymore.
-
-**rd.live.overlay.overlayfs=**1::
-Enables the use of the *OverlayFS* kernel module, if available, to provide a
-copy-on-write union directory for the root filesystem.  OverlayFS overlays are
-directories of the files that have changed on the read-only base (lower)
-filesystem.  The root filesystem is provided through a special overlay type
-mount that merges at least two directories, designated the lower and the upper.
-If an OverlayFS upper directory is not present on the boot device, a tmpfs
-directory will be created at `/run/overlayfs` to provide temporary storage.
-Persistent storage can be provided on vfat or msdos formatted devices by
-supplying the OverlayFS upper directory within an embedded filesystem that
-supports the creation of trusted.* extended attributes and provides a valid
-d_type in readdir responses, such as with btrfs, ext4, f2fs, & xfs.  On
-non-vfat-formatted devices, a persistent OverlayFS overlay can extend the
-available root filesystem storage up to the capacity of the LiveOS disk device.
-Requires the dracut 'overlayfs' module.
-+
-The **rd.live.overlay.readonly** option, which allows a persistent overlayfs to
-be mounted read-only through a higher level transient overlay directory, has
-been implemented through the multiple lower layers feature of OverlayFS.
-Requires the dracut 'overlayfs' module.
-
 
 ZIPL
 ~~~~
@@ -1507,6 +1508,10 @@ UNIMAP:: vconsole.font.unimap
 UNICODE:: vconsole.unicode
 
 EXT_KEYMAP:: vconsole.keymap.ext
+
+rd.live.overlay.overlayfs:: rd.overlayfs
+
+rd.live.overlay.readonly:: rd.overlayfs.readonly
 
 Configuration in the Initramfs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

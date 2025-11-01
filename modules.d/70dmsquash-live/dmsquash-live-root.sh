@@ -24,7 +24,7 @@ squash_image=$(getarg rd.live.squashimg)
 
 getargbool 0 rd.live.ram && live_ram="yes"
 getargbool 0 rd.live.overlay.reset && reset_overlay="yes"
-getargbool 0 rd.live.overlay.readonly && readonly_overlay="--readonly" || readonly_overlay=""
+getargbool 0 rd.overlayfs.readonly -d rd.live.overlay.readonly && readonly_overlay="--readonly" || readonly_overlay=""
 getargbool 0 rd.live.overlay.nouserconfirmprompt && overlay_no_user_confirm_prompt="--noprompt" || overlay_no_user_confirm_prompt=""
 overlay=$(getarg rd.live.overlay)
 getargbool 0 rd.writable.fsimg && writable_fsimg="yes"
@@ -32,7 +32,7 @@ overlay_size=$(getarg rd.live.overlay.size=)
 [ -z "$overlay_size" ] && overlay_size=32768
 
 getargbool 0 rd.live.overlay.thin && thin_snapshot="yes"
-getargbool 0 rd.live.overlay.overlayfs && overlayfs="yes"
+getargbool 0 rd.overlayfs -d rd.live.overlay.overlayfs && overlayfs="yes"
 
 # Take a path to a disk label and return the parent disk if it is a partition
 # Otherwise returns the original path
@@ -416,7 +416,7 @@ fi
 ROOTFLAGS="$(getarg rootflags)"
 
 if [ "$overlayfs" = required ]; then
-    echo "rd.live.overlay.overlayfs=1" > /etc/cmdline.d/20-dmsquash-need-overlay.conf
+    echo "rd.overlayfs=1" > /etc/cmdline.d/20-dmsquash-need-overlay.conf
 fi
 
 if [ -n "$overlayfs" ]; then
