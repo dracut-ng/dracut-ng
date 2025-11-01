@@ -33,7 +33,7 @@ client_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE rd.live.overlay.overlayfs=1 root=live:/dev/disk/by-label/dracut $client_opts" \
+        -append "$TEST_KERNEL_CMDLINE rd.overlayfs=1 root=live:/dev/disk/by-label/dracut $client_opts" \
         -initrd "$TESTDIR"/initramfs.testing
 
     if ! test_marker_check; then
