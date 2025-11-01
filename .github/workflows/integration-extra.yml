@@ -128,13 +128,6 @@ jobs:
                     - "70"
                     - "71"
                     - "72"
-                exclude:
-                    # https://github.com/dracut-ng/dracut-ng/issues/446
-                    - container: debian:sid
-                      test: "70"
-                    # https://github.com/dracut-ng/dracut-ng/issues/446
-                    - container: debian:sid
-                      test: "71"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm'
