@@ -217,7 +217,7 @@ dracut_module_path() {
     return 1
 }
 
-if [[ ${hostonly-} == "-h" ]]; then
+if [[ ${hostonly-} == "-h" ]] && [[ $no_kernel != yes ]]; then
     if ! [[ $DRACUT_KERNEL_MODALIASES ]] || ! [[ -f $DRACUT_KERNEL_MODALIASES ]]; then
         export DRACUT_KERNEL_MODALIASES="${DRACUT_TMPDIR}/modaliases"
         $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${srcmods:+--kerneldir "$srcmods"} --modalias > "$DRACUT_KERNEL_MODALIASES"
