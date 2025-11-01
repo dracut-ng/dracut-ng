@@ -118,6 +118,7 @@ the ISO is found set it up as a loop device. Device containing this ISO
 image will stay mounted at /run/initramfs/isoscandev.
 Using iso-scan/filename with a Fedora/Red Hat/CentOS Live iso should just work
 by copying the original kernel cmdline parameters.
+Requires the dracut 'dmsquash-live' module.
 
 [listing]
 .Example
@@ -152,12 +153,14 @@ Misc
 **rd.driver.export**::
     making all drivers from initramfs available to rootfs after switch_root.
     This parameter can be set to 'force' for exporting over existing modules.
+    Requires the dracut 'kernel-modules-export' module.
 
 **rd.retry=**__<seconds>__::
     specify how long dracut should retry the initqueue to configure devices.
     The default is 180 seconds. After 2/3 of the time, degraded raids are force
     started. If you have hardware, which takes a very long time to announce its
     drives, you might want to extend this value.
+    Requires the dracut 'initqueue' module.
 
 **rd.timeout=**__<seconds>__::
     specify how long dracut should wait for devices to appear. The
@@ -166,6 +169,7 @@ Misc
 
 **rd.noverifyssl**::
     accept self-signed certificates for ssl downloads.
+    Requires the dracut 'url-lib' module.
 
 **rd.ctty=**__<terminal device>__::
    specify the controlling terminal for the console.
@@ -176,6 +180,7 @@ Misc
     during shutdown. This avoids the system from blocking when unmounting a file
     system cannot complete and waits indefinitely. Value '0' means to wait
     'forever'. The default is 90 seconds.
+    Requires the dracut 'shutdown' module.
 
 [[dracutkerneldebug]]
 Debug
@@ -233,6 +238,8 @@ It should be attached to any report about dracut problems.
 
 I18N
 ~~~~
+Requires the dracut 'i18n' module.
+
 **rd.vconsole.keymap=**__<keymap base file name>__::
     keyboard translation table loaded by loadkeys; taken from keymaps directory;
     will be written as KEYMAP to _/etc/vconsole.conf_ in the initramfs.
@@ -288,6 +295,8 @@ rd.locale.LANG=pl_PL.utf8
 
 LVM
 ~~~
+Requires the dracut 'lvm' module.
+
 **rd.lvm=0**::
     disable LVM detection
 
@@ -304,6 +313,8 @@ LVM
 
 crypto LUKS
 ~~~~~~~~~~~
+Requires the dracut 'crypt' module.
+
 **rd.luks=0**::
     disable crypto LUKS detection
 
@@ -352,7 +363,7 @@ information.
     of the filesystem on some device. It's REQUIRED. When
     _<keypath>_ ends with '.gpg' it's considered to be key encrypted
     symmetrically with GPG.  You will be prompted for the GPG password on
-    boot. GPG support comes with the 'crypt-gpg' module, which needs to be
+    boot. GPG support requires the 'crypt-gpg' dracut module, which needs to be
     added explicitly.
 +
 _<keydev>_ identifies the device on which the key file resides. It may
@@ -462,6 +473,8 @@ when not needed anymore.
 
 MD RAID
 ~~~~~~~
+Requires the dracut 'mdraid' module.
+
 **rd.md=0**::
     disable MD RAID detection
 
@@ -484,6 +497,8 @@ MD RAID
 
 DM RAID
 ~~~~~~~
+Requires the dracut 'dmraid' module.
+
 **rd.dm=0**::
     disable DM RAID detection
 
@@ -493,6 +508,8 @@ DM RAID
 
 MULTIPATH
 ~~~~~~~~~
+Requires the dracut 'multipath' module.
+
 **rd.multipath=0**::
    disable multipath detection
 
@@ -501,6 +518,8 @@ MULTIPATH
 
 FIPS
 ~~~~
+Requires the dracut 'fips' module.
+
 **rd.fips**::
     enable FIPS
 
@@ -712,6 +731,8 @@ interface name. Better name it "bootnet" or "bluesocket".
 
 NFS
 ~~~
+Requires the dracut 'nfs' module.
+
 **root=**\[_<server-ip>_:]__<root-dir>__[:__<nfs-options>__]::
     mount nfs share from <server-ip>:/<root-dir>, if no server-ip is given, use
     dhcp next_server. If server-ip is an IPv6 address it has to be put in
@@ -764,6 +785,8 @@ NFS
 
 CIFS
 ~~~
+Requires the dracut 'cifs' module.
+
 **root=**cifs://[__<username>__[:__<password>__]@]__<server-ip>__:__<root-dir>__::
     mount cifs share from <server-ip>:/<root-dir>, if no server-ip is given, use
     dhcp next_server. if server-ip is an IPv6 address it has to be put in
@@ -787,6 +810,8 @@ network, when using DHCP with DHCP root-path.
 
 iSCSI
 ~~~~~
+Requires the dracut 'iscsi' module.
+
 **root=**iscsi:[__<username>__:__<password>__[:__<reverse>__:__<password>__]@][__<servername>__]:[__<protocol>__]:[__<port>__][:[__<iscsi_iface_name>__]:[__<netdev_name>__]]:[__<LUN>__]:__<targetname>__::
     protocol defaults to "6", LUN defaults to "0". If the "servername" field is
     provided by BOOTP or DHCP, then that field is used in conjunction with other
@@ -891,6 +916,8 @@ iscsistart -b --param node.session.timeo.replacement_timeout=30
 
 FCoE
 ~~~~
+Requires the dracut 'fcoe' module.
+
 **rd.fcoe=0**::
     disable FCoE and lldpad
 
@@ -905,6 +932,8 @@ NOTE: letters in the MAC-address must be lowercase!
 
 NVMf
 ~~~~
+Requires the dracut 'nvmf' module.
+
 **rd.nonvmf**::
     Disable NVMf
 
@@ -944,6 +973,8 @@ rd.nvmf.discover=fc,nn-0x201700a05634f5bf:pn-0x201900a05634f5bf,nn-0x200000109b5
 
 NBD
 ~~~
+Requires the dracut 'nbd' module.
+
 **root=**??? **netroot=**nbd:__<server>__:__<port/exportname>__[:__<fstype>__[:__<mountopts>__[:__<nbdopts>__]]]::
     mount nbd share from <server>.
 +
@@ -962,6 +993,8 @@ NOTE:
 
 VIRTIOFS
 ~~~~~~~~
+Requires the dracut 'virtiofs' module.
+
 **root=**virtiofs:__<mount-tag>__::
     mount virtiofs share using the tag <mount-tag>.
     The tag name is arbitrary and must match the tag given in the qemu '-device' command.
@@ -981,6 +1014,8 @@ root=virtiofs:host rw
 
 DASD
 ~~~~
+Requires the dracut 'dasd' module.
+
 **rd.dasd=**....::
     same syntax as the kernel module parameter (s390 only).
     For more details on the syntax see the IBM book
@@ -995,6 +1030,8 @@ NOTE:
 
 ZFCP
 ~~~~
+Requires the dracut 'zfcp' module.
+
 **rd.zfcp=**__<zfcp adaptor device bus ID>__,__<WWPN>__,__<FCPLUN>__::
     rd.zfcp can be specified multiple times on the kernel command
     line.
@@ -1026,6 +1063,8 @@ rd.zfcp=0.0.4000
 
 ZNET
 ~~~~
+Requires the dracut 'znet' module.
+
 **rd.znet=**__<nettype>__,__<subchannels>__,__<options>__::
     Activates a channel-attached network interface on s390 architecture.
     <nettype> is one of: qeth, lcs, ctc.
@@ -1049,6 +1088,7 @@ rd.znet=ctc,0.0.0600,0.0.0601,protocol=bar
 
 Booting live images
 ~~~~~~~~~~~~~~~~~~~
+Requires the dracut 'dmsquash-live' module.
 Dracut offers multiple options for live booted images:
 
 =====================
@@ -1314,14 +1354,18 @@ supports the creation of trusted.* extended attributes and provides a valid
 d_type in readdir responses, such as with btrfs, ext4, f2fs, & xfs.  On
 non-vfat-formatted devices, a persistent OverlayFS overlay can extend the
 available root filesystem storage up to the capacity of the LiveOS disk device.
+Requires the dracut 'overlayfs' module.
 +
 The **rd.live.overlay.readonly** option, which allows a persistent overlayfs to
 be mounted read-only through a higher level transient overlay directory, has
 been implemented through the multiple lower layers feature of OverlayFS.
+Requires the dracut 'overlayfs' module.
 
 
 ZIPL
 ~~~~
+Requires the dracut 'zipl' module.
+
 **rd.zipl=**__<path to blockdevice>__::
     Update the dracut commandline with the values found in the
     _dracut-cmdline.conf_ file on the given device.
@@ -1336,6 +1380,8 @@ rd.zipl=UUID=0fb28157-99e3-4395-adef-da3f7d44835a
 
 CIO_IGNORE
 ~~~~~~~~~~
+Requires the dracut 'cio_ignore' module.
+
 **rd.cio_accept=**__<device-ids>__::
     Remove the devices listed in <device-ids> from the default
     cio_ignore kernel command-line settings.
@@ -1351,6 +1397,8 @@ rd.cio_accept=0.0.0180,0.0.0800,0.0.0801,0.0.0802
 
 Plymouth Boot Splash
 ~~~~~~~~~~~~~~~~~~~~
+Requires the dracut 'plymouth' module.
+
 **plymouth.enable=0**::
     disable the plymouth bootsplash completely.
 
