@@ -12,5 +12,6 @@ umount /root
 {
     echo "dracut-root-block-created"
     echo "ID_FS_UUID=$ID_FS_UUID"
-} | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
+} | dd oflag=direct of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
+sync /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
 poweroff -f

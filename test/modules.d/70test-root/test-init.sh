@@ -33,7 +33,8 @@ if [ -s /run/failed ]; then
     cat /run/failed
     echo "**************************FAILED**************************"
 else
-    echo "dracut-root-block-success" | dd oflag=direct,dsync status=none of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
+    echo "dracut-root-block-success" | dd oflag=direct status=none of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
+    sync /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
     echo "All OK"
 fi
 
