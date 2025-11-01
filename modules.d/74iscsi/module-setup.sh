@@ -224,7 +224,9 @@ install() {
             "${initdir}$systemdsystemunitdir/iscsid.service"
 
         for i in iscsid.socket iscsiuio.socket; do
-            $SYSTEMCTL -q --root "$initdir" enable "$i"
+            if [[ -e "${initdir}$systemdsystemunitdir/$i" ]]; then
+                $SYSTEMCTL -q --root "$initdir" enable "$i"
+            fi
         done
 
         mkdir -p "${initdir}/$systemdsystemunitdir/iscsid.service.d"
