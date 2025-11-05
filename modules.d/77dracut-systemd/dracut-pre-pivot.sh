@@ -9,12 +9,13 @@ command -v getarg > /dev/null || . /lib/dracut-lib.sh
 source_conf /etc/conf.d
 
 make_trace_mem "hook pre-pivot" '1:shortmem' '2+:mem' '3+:slab'
-# pre pivot scripts are sourced just before we doing cleanup and switch over
-# to the new root.
+# Pre-pivot scripts are sourced just before cleanup and switching to the
+# new root.
 getargs 'rd.break=pre-pivot' && emergency_shell -n pre-pivot "Break before pre-pivot"
 source_hook pre-pivot
 
-# pre pivot cleanup scripts are sourced just before we switch over to the new root.
+# Pre-pivot cleanup scripts are sourced just before we switch over to the
+# new root.
 getargs 'rd.break=cleanup' && emergency_shell -n cleanup "Break before cleanup"
 source_hook cleanup
 
