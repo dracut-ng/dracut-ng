@@ -34,7 +34,6 @@ configs = \
 	no-network/10-no-network.conf \
 	no-xattr/10-no-xattr.conf \
 	rescue/10-rescue.conf \
-	uki-virt/10-uki-virt.conf \
 	$(NULL)
 
 test_configs = \
