@@ -77,7 +77,7 @@ test_setup() {
 
         # enable test dracut config
         mkdir -p /run/initramfs/dracut.conf.d
-        cp "${basedir}"/dracut.conf.d/test/* "${basedir}"/dracut.conf.d/uki-virt/* /run/initramfs/dracut.conf.d/
+        cp "${basedir}"/dracut.conf.d/test/* ./10-uki-virt.conf /run/initramfs/dracut.conf.d/
         echo 'add_drivers+=" squashfs "' >> /run/initramfs/dracut.conf.d/extra.conf
 
         # using kernell-install to invoke dracut
@@ -91,7 +91,8 @@ test_setup() {
 
     # test with the reference uki config when systemd is available
     if command -v systemctl &> /dev/null; then
-        cp "${basedir}"/dracut.conf.d/uki-virt/* "$TESTDIR"/dracut.conf.d/
+        cp ./10-uki-virt.conf "$TESTDIR"/dracut.conf.d/
+
     fi
 
     echo "Using dracut to create UKI"
