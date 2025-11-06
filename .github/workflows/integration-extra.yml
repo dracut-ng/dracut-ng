@@ -231,7 +231,7 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: USE_NETWORK=${{ matrix.network }} CONFIGURE_ARG='--enable-network-legacy' ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     omitsystemd:
         # run this test on all containers
         name: ${{ matrix.test }} on ${{ matrix.container }} with no systemd

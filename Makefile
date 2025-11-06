@@ -275,6 +275,9 @@ endif
 	install -m 0644 shell-completion/bash/lsinitrd $(DESTDIR)${bashcompletiondir}/lsinitrd
 	mkdir -p $(DESTDIR)${pkgconfigdatadir}
 	install -m 0644 dracut.pc $(DESTDIR)${pkgconfigdatadir}/dracut.pc
+ifneq ($(enable_network_legacy),yes)
+	rm -r $(DESTDIR)$(pkglibdir)/modules.d/[0-9][0-9]network-legacy
+endif
 	if ! [ -n "$(systemdsystemunitdir)" ]; then \
 		rm -rf $(DESTDIR)$(pkglibdir)/test/TEST-[0-9][0-9]-*SYSTEMD* ;\
 		rm -rf $(DESTDIR)$(pkglibdir)/modules.d/*systemd* $(DESTDIR)$(mandir)/man8/*.service.* ; \
