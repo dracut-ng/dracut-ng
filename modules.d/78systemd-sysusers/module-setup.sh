@@ -24,6 +24,10 @@ install() {
         systemd-sysusers --root="$initdir" 2>&1 >&3 | grep -v "^Creating " >&2
     } 3>&1
 
+    # remove sysusers.d configuration from the initrd
+    rm -rf "${initdir}${sysusers}"
+    [[ $hostonly ]] && rm -rf "${initdir}${sysusersconfdir}"
+
     # systemd-sysusers does not set any permission
     # set read and write permission for the current user
     [[ -f "$initdir/etc/gshadow" ]] && chmod u+rw "$initdir/etc/gshadow"
