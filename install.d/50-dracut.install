@@ -74,6 +74,6 @@ dracut -f \
     ${noimageifnotneeded:+--noimageifnotneeded} \
     $([[ $KERNEL_INSTALL_VERBOSE == 1 ]] && echo --verbose) \
     $([[ -n $KERNEL_IMAGE ]] && echo --kernel-image "$KERNEL_IMAGE") \
-    "$UEFI_OPTS" \
+    $UEFI_OPTS \
     --kver "$KERNEL_VERSION" \
     "$KERNEL_INSTALL_STAGING_AREA/$IMAGE" || exit 1
