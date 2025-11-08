@@ -177,7 +177,12 @@ build_ext4_image() {
     local image="$2"
     local label="$3"
 
-    dd if=/dev/zero of="$image" bs=200MiB count=1 status=none
+    local size
+    size="$(du --summarize --block-size 1 "${source_dir}" | cut -f 1)"
+    # Add 8 MB for ext4 journal
+    size="$((size + 8000000))"
+
+    dd if=/dev/zero of="$image" bs="$size" count=1 status=none
     sync "$image"
     mkfs.ext4 -q -L "$label" -d "$source_dir" "$image"
     sync "$image"
