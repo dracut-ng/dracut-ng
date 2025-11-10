@@ -31,7 +31,8 @@ if getargbool 1 rd.shell || getarg rd.break; then
         ) > /dev/"$_tty"
     done < /proc/consoles
     [ -f /etc/profile ] && . /etc/profile
-    [ -z "$PS1" ] && export PS1="$_name:\${PWD}# "
+    [ -z "$PS1" ] && PS1="$_rdshell_name:\${PWD}# "
+    export PS1
 
     if getargbool 0 SYSTEMD_SULOGIN_FORCE; then
         # allows passwordless logins if root account is locked.
