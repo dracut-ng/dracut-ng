@@ -1,7 +1,7 @@
 #!/bin/bash -p
 # temporarly disable some shellcheck warning to be able to preserve commit history
 # before additional commits.
-# shellcheck disable=SC2317,SC2086
+# shellcheck disable=SC2317
 #
 # Generator script for a dracut initramfs
 
@@ -1679,7 +1679,7 @@ inst_dir() {
     else
         _ret=$?
         derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} -d "$@"
-        return $_ret
+        return "$_ret"
     fi
 }
 
@@ -1779,7 +1779,7 @@ dracut_instmods() {
         if ((_silent == 0)); then
             derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${hostonly:+-H} ${omit_drivers:+-N "$omit_drivers"} ${srcmods:+--kerneldir "$srcmods"} -m "$@"
         fi
-        return $_ret
+        return "$_ret"
     fi
 }
 
@@ -1796,7 +1796,7 @@ inst_binary() {
     else
         _ret=$?
         derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"
-        return $_ret
+        return "$_ret"
     fi
 }
 
@@ -1807,7 +1807,7 @@ inst_script() {
     else
         _ret=$?
         derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"
-        return $_ret
+        return "$_ret"
     fi
 }
 
@@ -2157,7 +2157,7 @@ module_check() {
     _ret=$?
     unset "${module_functions[@]}"
     hostonly=$_hostonly
-    return $_ret
+    return "$_ret"
 }
 
 # module_check_mount <dracut module> [<module path>]
@@ -2194,7 +2194,7 @@ module_depends() {
     moddir=$_moddir depends
     _ret=$?
     unset "${module_functions[@]}"
-    return $_ret
+    return "$_ret"
 }
 
 # module_cmdline <dracut module> [<module path>]
