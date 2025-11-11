@@ -3884,7 +3884,7 @@ if [[ $CPIO == 3cpio ]] && ! [[ -v compress_3cpio ]]; then
     dwarn "custom compressor '${compres}' mapped to 3cpio config '${compress_3cpio}'"
 fi
 
-if [[ -n $enhanced_cpio ]]; then
+create_cpio_with_dracut_cpio() {
     if [[ $compress == "cat" ]]; then
         # dracut-cpio appends by default, so any ucode remains
         cpio_outfile="${DRACUT_TMPDIR}/initramfs.img"
@@ -3908,7 +3908,9 @@ if [[ -n $enhanced_cpio ]]; then
         exit 1
     fi
     unset cpio_outfile
-elif [[ $CPIO == 3cpio ]]; then
+}
+
+create_cpio_with_3cpio() {
     if [[ -z $compress_3cpio ]]; then
         echo "#cpio" >> "$manifest"
     else
@@ -3919,7 +3921,9 @@ elif [[ $CPIO == 3cpio ]]; then
         dfatal "Creation of $outfile failed"
         exit 1
     fi
-else
+}
+
+create_cpio_with_cpio() {
     if ! (
         umask 077
         cd "$initdir"
@@ -3930,6 +3934,14 @@ else
         dfatal "Creation of $outfile failed"
         exit 1
     fi
+}
+
+if [[ -n $enhanced_cpio ]]; then
+    create_cpio_with_dracut_cpio
+elif [[ $CPIO == 3cpio ]]; then
+    create_cpio_with_3cpio
+else
+    create_cpio_with_cpio
 fi
 
 if ((maxloglvl >= 5)) && ((verbosity_mod_l >= 0)); then
