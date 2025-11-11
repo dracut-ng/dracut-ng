@@ -8,7 +8,7 @@ generator_wait_for_dev() {
 
     _name=$(dev_unit_name "$1")
     _timeout=$(getarg rd.timeout)
-    _timeout=${_timeout:-0}
+    _timeout=${_timeout:-infinity}
 
     if ! [ -L "$GENERATOR_DIR"/initrd.target.wants/"${_name}".device ]; then
         [ -d "$GENERATOR_DIR"/initrd.target.wants ] || mkdir -p "$GENERATOR_DIR"/initrd.target.wants

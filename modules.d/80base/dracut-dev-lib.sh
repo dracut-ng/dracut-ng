@@ -69,7 +69,7 @@ set_systemd_timeout_for_dev() {
         _timeout=$(getarg rd.timeout)
     fi
 
-    _timeout=${_timeout:-0}
+    _timeout=${_timeout:-infinity}
 
     _name=$(dev_unit_name "$1")
     if ! [ -L "${PREFIX-}/etc/systemd/system/initrd.target.wants/${_name}.device" ]; then
