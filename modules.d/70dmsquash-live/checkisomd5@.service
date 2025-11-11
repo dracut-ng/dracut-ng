@@ -10,5 +10,5 @@ ExecStart=/usr/bin/checkisomd5 --verbose %f
 StandardInput=tty-force
 StandardOutput=inherit
 StandardError=inherit
-TimeoutSec=0
+TimeoutSec=infinity
 SuccessExitStatus=2

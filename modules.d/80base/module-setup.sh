@@ -155,7 +155,7 @@ install() {
                     _pdev=$(get_persistent_dev "$_dev")
 
                     case "$_pdev" in
-                        /dev/?*) wait_for_dev "$_pdev" 0 ;;
+                        /dev/?*) wait_for_dev "$_pdev" "infinity" ;;
                         *) ;;
                     esac
                 done
@@ -163,7 +163,7 @@ install() {
                 for _dev in "${user_devs[@]}"; do
 
                     case "$_dev" in
-                        /dev/?*) wait_for_dev "$_dev" 0 ;;
+                        /dev/?*) wait_for_dev "$_dev" "infinity" ;;
                         *) ;;
                     esac
 
@@ -171,7 +171,7 @@ install() {
                     [[ $_dev == "$_pdev" ]] && continue
 
                     case "$_pdev" in
-                        /dev/?*) wait_for_dev "$_pdev" 0 ;;
+                        /dev/?*) wait_for_dev "$_pdev" "infinity" ;;
                         *) ;;
                     esac
                 done
