@@ -10,7 +10,7 @@ if load_fstype sunrpc rpc_pipefs; then
     if command -v rpcbind > /dev/null && [ -z "$(pidof rpcbind)" ]; then
         . /lib/nfs-lib.sh
         mkdir -p /run/rpcbind
-        chown "$(get_rpc_user):root" /run/rpcbind
+        chown "$(get_rpc_user):" /run/rpcbind
         rpcbind
     fi
 
