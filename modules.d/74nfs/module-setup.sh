@@ -117,7 +117,6 @@ install() {
     inst "$moddir/nfs-lib.sh" "/lib/nfs-lib.sh"
     mkdir -m 0755 -p "$initdir/var/lib/nfs"
     mkdir -m 0755 -p "$initdir/var/lib/nfs/rpc_pipefs"
-    mkdir -m 0770 -p "$initdir/var/lib/rpcbind"
 
     # use the same directory permissions as the host
     [[ -d "${dracutsysrootdir-}"/var/lib/nfs/statd ]] \
