@@ -11,6 +11,11 @@ check() {
     return 255
 }
 
+# Config adjustments before installing anything.
+config() {
+    add_dlopen_features+=" libsystemd-shared-*.so:acl "
+}
+
 # Install the required file(s) and directories for the module in the initramfs.
 install() {
     # Excluding "$tmpfilesdir/home.conf", sets up /home /srv

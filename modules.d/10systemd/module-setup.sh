@@ -16,7 +16,7 @@ check() {
 
 # Config adjustments before installing anything.
 config() {
-    add_dlopen_features+=" libsystemd-shared-*.so:kmod "
+    add_dlopen_features+=" libsystemd-shared-*.so:audit,kmod,mount,seccomp,selinux "
 }
 
 installkernel() {
