@@ -179,6 +179,8 @@ Creates initial ramdisk images for preloading modules
   --tmpdir [DIR]        Temporary directory to be used instead of default
                          ${TMPDIR:-/var/tmp}.
   -r, --sysroot [DIR]   Specify sysroot directory to collect files from.
+  -b, --basedir [DIR]   Specify basedir directory to use for dracut, by
+                         default it is {sysrootdir}/usr/lib/dracut.
   -l, --local           Local mode. Use modules from the current working
                          directory instead of the system-wide installed in
                          /usr/lib/dracut/modules.d.
@@ -394,7 +396,7 @@ rearrange_params() {
     TEMP=$(
         unset POSIXLY_CORRECT
         getopt \
-            -o "a:m:o:d:I:k:c:r:L:fvqlHhMNp" \
+            -o "a:m:o:d:I:k:c:r:L:b:fvqlHhMNp" \
             --long kver: \
             --long add: \
             --long force-add: \
@@ -422,6 +424,7 @@ rearrange_params() {
             --long add-confdir: \
             --long tmpdir: \
             --long sysroot: \
+            --long basedir: \
             --long stdlog: \
             --long compress: \
             --long compress-level: \
@@ -749,6 +752,11 @@ while :; do
             PARMS_TO_STORE+=" '$2'"
             shift
             ;;
+        -b | --basedir)
+            basedir_l="$2"
+            PARMS_TO_STORE+=" '$2'"
+            shift
+            ;;
         -L | --stdlog)
             stdloglvl_l="$2"
             PARMS_TO_STORE+=" '$2'"
@@ -957,6 +965,7 @@ while (($# > 0)); do
 done
 
 [[ $sysroot_l ]] && dracutsysrootdir="$sysroot_l"
+[[ $basedir_l ]] && dracutbasedir="$basedir_l"
 
 export LC_ALL=C
 export LANG=C
