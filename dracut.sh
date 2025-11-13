@@ -1654,13 +1654,22 @@ dracut_no_switch_root() {
 
 dracut_module_path() {
     local _dir
+    local _found
 
     # shellcheck disable=SC2231
     for _dir in "${dracutbasedir}"/modules.d/??${1}; do
-        echo "$_dir"
-        return 0
+        if [ -n "$_found" ]; then
+            derror "Found multiple ${dracutbasedir}/modules.d/??${1}" >&2
+            return 1
+        fi
+        _found="$_dir"
     done
-    return 1
+    if [ -n "$_found" ]; then
+        echo "$_found"
+        return 0
+    else
+        return 1
+    fi
 }
 
 if [[ ${hostonly-} == "-h" ]] && [[ $no_kernel != yes ]]; then
@@ -2281,8 +2290,10 @@ check_mount() {
     [[ " $mods_to_load " == *\ $_mod\ * ]] && return 0
     [[ " $mods_checked_as_dep " == *\ $_mod\ * ]] && return 1
 
-    # This should never happen, but...
-    [[ -d $_moddir ]] || return 1
+    [[ -d $_moddir ]] || {
+        dfatal "Unique ${dracutbasedir}/modules.d/??${_mod}/ not found"
+        exit 1
+    }
 
     [[ $2 ]] || mods_checked_as_dep+=" $_mod "
 
@@ -2346,8 +2357,10 @@ check_module() {
     [[ " $mods_to_load " == *\ $_mod\ * ]] && return 0
     [[ " $mods_checked_as_dep " == *\ $_mod\ * ]] && return 1
 
-    # This should never happen, but...
-    [[ -d $_moddir ]] || return 1
+    [[ -d $_moddir ]] || {
+        dfatal "Unique ${dracutbasedir}/modules.d/??${_mod}/ not found"
+        exit 1
+    }
 
     [[ $2 ]] || mods_checked_as_dep+=" $_mod "
 
