@@ -4,13 +4,13 @@ if load_fstype sunrpc rpc_pipefs; then
     [ ! -d /var/lib/nfs/rpc_pipefs/nfs ] \
         && mount -t rpc_pipefs rpc_pipefs /var/lib/nfs/rpc_pipefs
 
-    # Start rpcbind or rpcbind
+    # Start rpcbind
     # FIXME occasionally saw 'rpcbind: fork failed: No such device' -- why?
     command -v portmap > /dev/null && [ -z "$(pidof portmap)" ] && portmap
     if command -v rpcbind > /dev/null && [ -z "$(pidof rpcbind)" ]; then
         . /lib/nfs-lib.sh
         mkdir -p /run/rpcbind
-        chown "$(get_rpc_user):root" /run/rpcbind
+        chown "$(get_rpc_user):" /run/rpcbind
         rpcbind
     fi
 
