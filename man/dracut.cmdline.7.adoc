@@ -1012,6 +1012,20 @@ See https://gitlab.com/virtio-fs/virtiofsd for more information.
 root=virtiofs:host rw
 --
 
+LUNMASK
+~~~~~~~
+Requires the dracut 'lunmask' module.
+
+**rd.lunmask=**....::
+    lunmask support.
+
+DCSSBLK
+~~~~~~~
+Requires the dracut 'dcssblk' module.
+
+**rd.dcssblk=**....::
+    dcssblk support (s390 only).
+
 DASD
 ~~~~
 Requires the dracut 'dasd' module.
