@@ -14,7 +14,7 @@ check() {
     if [[ $hostonly ]] || [[ $mount_needs ]]; then
         # Resuming won't work if swap is on a netdevice
         swap_on_netdevice && return 255
-        if grep -rqsE '(^| )resume=' /proc/cmdline /etc/cmdline /etc/cmdline.d /etc/kernel/cmdline /usr/lib/kernel/cmdline; then
+        if grep -rqsE '(^| )resume=' /proc/cmdline /etc/kernel/cmdline /usr/lib/kernel/cmdline; then
             # hibernation support requested on kernel command line
             return 0
         else
@@ -71,7 +71,6 @@ install() {
         inst_multiple -o \
             "$systemdutildir"/system-generators/systemd-hibernate-resume-generator \
             "$systemdsystemunitdir"/systemd-hibernate-resume.service \
-            "$systemdsystemunitdir"/systemd-hibernate-resume@.service \
             "$systemdutildir"/systemd-hibernate-resume
         return 0
     fi
