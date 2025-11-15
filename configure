@@ -82,6 +82,7 @@ while (($# > 0)); do
         --enable-dracut-cpio) enable_dracut_cpio=yes ;;
         --disable-dracut-cpio) enable_dracut_cpio=no ;;
         --enable-test) enable_test=yes ;;
+        --enable-network-legacy) enable_network_legacy=yes ;;
         --configprofile) read_arg configprofile "$@" || shift ;;
         --disable-asciidoctor) disable_asciidoctor=yes ;;
         *) echo "Ignoring unknown option '$1'" ;;
@@ -209,6 +210,7 @@ mandir ?= ${mandir:-${prefix}/share/man}
 disable_asciidoctor ?= ${disable_asciidoctor:-no}
 enable_documentation ?= ${enable_documentation:-yes}
 enable_test ?= ${enable_test:-no}
+enable_network_legacy ?= ${enable_network_legacy:-no}
 enable_dracut_cpio ?= ${enable_dracut_cpio}
 bindir ?= ${bindir:-${prefix}/bin}
 KMOD_CFLAGS ?= $(${PKG_CONFIG} --cflags " libkmod >= 23 ") ${KMOD_CFLAGS_EXTRA}
