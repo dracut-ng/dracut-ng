@@ -20,6 +20,11 @@ depends() {
 install() {
     inst_simple /etc/os-release
 
+    if [ -x /usr/bin/gnudd ]; then
+        # use GNU dd instead of uutil's dd due to https://launchpad.net/bugs/2129037
+        inst /usr/bin/gnudd /usr/bin/dd
+    fi
+
     inst_multiple mkdir ln dd mount poweroff umount setsid sync cat grep
 
     if dracut_module_included "systemd"; then
