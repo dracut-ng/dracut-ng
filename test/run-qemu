@@ -77,8 +77,8 @@ set_vmlinux_env() {
     ! [ -f "${VMLINUZ-}" ] && VMLINUZ=$(find /lib/modules/ -type f -name Image 2> /dev/null | tail -1)
 
     if ! [ -f "$VMLINUZ" ]; then
-        echo "Could not find a Linux kernel version to test with!" >&2
-        echo "Please install linux." >&2
+        echo "${0##*/}: Could not find a Linux kernel version to test with!" >&2
+        echo "${0##*/}: Please install linux." >&2
         exit 1
     fi
 }
@@ -92,8 +92,8 @@ set_vmlinux_env() {
 [[ -z ${NO_KVM-} && -c /dev/kvm && -x "/usr/bin/qemu-system-${ARCH}" ]] && BIN="/usr/bin/qemu-system-${ARCH}" && ARGS=(-enable-kvm -cpu host)
 
 [[ ${BIN-} ]] || {
-    echo "Could not find a working KVM or QEMU to test with!" >&2
-    echo "Please install kvm or qemu." >&2
+    echo "${0##*/}: Could not find a working KVM or QEMU to test with!" >&2
+    echo "${0##*/}: Please install kvm or qemu." >&2
     exit 1
 }
 
