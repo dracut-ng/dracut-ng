@@ -53,6 +53,7 @@ install() {
         "$systemdnetwork"/99-default.link \
         "$systemdsystemunitdir"/systemd-networkd.service \
         "$systemdsystemunitdir"/systemd-networkd.socket \
+        "$systemdsystemunitdir"/systemd-networkd-resolve-hook.socket \
         "$systemdsystemunitdir"/systemd-network-generator.service \
         "$systemdsystemunitdir"/systemd-networkd-wait-online.service \
         "$systemdsystemunitdir"/systemd-networkd-wait-online@.service \
@@ -72,6 +73,7 @@ install() {
     for i in \
         systemd-networkd.service \
         systemd-networkd.socket \
+        systemd-networkd-resolve-hook.socket \
         systemd-network-generator.service \
         systemd-networkd-wait-online.service; do
         $SYSTEMCTL -q --root "$initdir" enable "$i"
@@ -87,6 +89,8 @@ install() {
             "$systemdsystemconfdir/systemd-networkd.service.d/*.conf" \
             "$systemdsystemconfdir"/systemd-networkd.socket \
             "$systemdsystemconfdir/systemd-networkd.socket.d/*.conf" \
+            "$systemdsystemconfdir"/systemd-networkd-resolve-hook.socket \
+            "$systemdsystemconfdir/systemd-networkd-resolve-hook.socket.d/*.conf" \
             "$systemdsystemconfdir"/systemd-network-generator.service \
             "$systemdsystemconfdir/systemd-network-generator.service.d/*.conf" \
             "$systemdsystemconfdir"/systemd-networkd-wait-online.service \
