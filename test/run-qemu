@@ -116,13 +116,15 @@ if [[ $ARCH != "s390x" ]]; then
     ARGS+=(-device i6300esb)
 fi
 
+ARGS+=("$@")
+
 # only set -kernel if -initrd is specified
-initrd=$(get_initrd "$@")
+initrd=$(get_initrd "${ARGS[@]}")
 if [[ -n $initrd ]]; then
     KVERSION=$(lsinitrd "$initrd" | grep modules.dep | head -1 | rev | cut -d'/' -f2 | rev)
     set_vmlinux_env
     ARGS+=(-kernel "$VMLINUZ")
 fi
 
-echo "${0##*/}: $BIN $(quote_args "${ARGS[@]}") $(quote_args "$@")"
-exec "$BIN" "${ARGS[@]}" "$@"
+echo "${0##*/}: $BIN $(quote_args "${ARGS[@]}")"
+exec "$BIN" "${ARGS[@]}"
