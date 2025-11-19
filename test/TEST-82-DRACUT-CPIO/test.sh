@@ -38,7 +38,7 @@ EOF
     "$testdir"/run-qemu \
         -daemonize -pidfile "$tdir/vm.pid" \
         -serial "file:$tdir/console.out" \
-        -append "panic=1 oops=panic softlockup_panic=1 console=ttyS0 rd.shell=1" \
+        -append "panic=1 oops=panic softlockup_panic=1 rd.shell=1" \
         -initrd "$tdir/initramfs"
 
     timeout=120

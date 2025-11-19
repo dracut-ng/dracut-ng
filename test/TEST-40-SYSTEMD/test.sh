@@ -50,7 +50,7 @@ test_setup() {
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=/dev/fakeroot quiet console=ttyS0,115200n81" \
+        -append "root=/dev/fakeroot quiet" \
         -initrd "$TESTDIR"/initramfs.makeroot
     test_marker_check dracut-root-block-created
     rm -- "$TESTDIR"/marker.img

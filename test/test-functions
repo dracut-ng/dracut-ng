@@ -33,12 +33,6 @@ fi
 
 ARCH="${ARCH-$(uname -m)}"
 
-case "$ARCH" in
-    amd64 | i?86 | x86_64)
-        TEST_KERNEL_CMDLINE+="console=ttyS0 "
-        ;;
-esac
-
 test_dracut() {
     # directory for test configurations and for the generated initrd (extracted)
     mkdir -p "$TESTDIR"/dracut.conf.d "$TESTDIR"/initrd

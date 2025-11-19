@@ -7,6 +7,20 @@ export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 ARCH="${ARCH-$(uname -m)}"
 QEMU_CPU="${QEMU_CPU:-max}"
 
+add_to_append() {
+    local extra="$1"
+    local i
+
+    for i in "${!ARGS[@]}"; do
+        if [[ ${ARGS[i]} == -append ]]; then
+            ARGS[i + 1]="$extra ${ARGS[i + 1]# }"
+            return
+        fi
+    done
+
+    ARGS+=(-append "$extra")
+}
+
 get_initrd() {
     local next
     for i in $(seq 1 $(($# - 1))); do
@@ -92,15 +106,18 @@ fi
 case "$ARCH" in
     aarch64 | arm64)
         ARGS+=(-M "virt,gic-version=max")
+        console=ttyAMA0
         ;;
     amd64 | i?86 | x86_64)
         ARGS+=(-M q35)
         ;;
     arm | armhf | armv7l)
         ARGS+=(-M virt)
+        console=ttyAMA0
         ;;
     ppc64el | ppc64le)
         ARGS+=(-M "cap-ccf-assist=off,cap-cfpc=broken,cap-ibs=broken,cap-sbbc=broken")
+        console=hvc0
         ;;
 esac
 
@@ -124,6 +141,7 @@ if [[ -n $initrd ]]; then
     KVERSION=$(lsinitrd "$initrd" | grep modules.dep | head -1 | rev | cut -d'/' -f2 | rev)
     set_vmlinux_env
     ARGS+=(-kernel "$VMLINUZ")
+    add_to_append "console=${console:-ttyS0},115200"
 fi
 
 echo "${0##*/}: $BIN $(quote_args "${ARGS[@]}")"

@@ -105,7 +105,7 @@ test_makeroot() {
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=/dev/fakeroot quiet console=ttyS0,115200n81 $client_opts " \
+        -append "root=/dev/fakeroot quiet $client_opts " \
         -initrd "$TESTDIR"/initramfs.makeroot
     test_marker_check dracut-root-block-created
 

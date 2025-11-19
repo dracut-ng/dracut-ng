@@ -81,7 +81,7 @@ test_setup() {
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=/dev/fakeroot quiet console=ttyS0,115200n81" \
+        -append "root=/dev/fakeroot quiet" \
         -initrd "$TESTDIR"/initramfs.makeroot
     test_marker_check dracut-root-block-created
     cryptoUUIDS=$(grep -F --binary-files=text -m 3 ID_FS_UUID "$TESTDIR"/marker.img)
