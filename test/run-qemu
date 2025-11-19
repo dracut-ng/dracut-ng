@@ -7,6 +7,17 @@ export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 ARCH="${ARCH-$(uname -m)}"
 QEMU_CPU="${QEMU_CPU:-max}"
 
+get_initrd() {
+    local next
+    for i in $(seq 1 $(($# - 1))); do
+        if [[ ${!i} == "-initrd" ]]; then
+            next=$((i + 1))
+            echo "${!next}"
+            return
+        fi
+    done
+}
+
 quote_args() {
     local arg args=()
     for arg in "$@"; do
@@ -106,12 +117,9 @@ if [[ $ARCH != "s390x" ]]; then
 fi
 
 # only set -kernel if -initrd is specified
-if [[ $* == *-initrd* ]]; then
-    for arg in "$@"; do
-        [[ $1 == *-initrd* ]] && break
-    done
-
-    KVERSION=$(lsinitrd "$arg" | grep modules.dep | head -1 | rev | cut -d'/' -f2 | rev)
+initrd=$(get_initrd "$@")
+if [[ -n $initrd ]]; then
+    KVERSION=$(lsinitrd "$initrd" | grep modules.dep | head -1 | rev | cut -d'/' -f2 | rev)
     set_vmlinux_env
     ARGS+=(-kernel "$VMLINUZ")
 fi
