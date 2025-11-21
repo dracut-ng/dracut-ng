@@ -14,6 +14,11 @@ check() {
     return 255
 }
 
+# Config adjustments before installing anything.
+config() {
+    add_dlopen_features+=" libsystemd-shared-*.so:blkid "
+}
+
 # Module dependency requirements.
 depends() {
     local deps
