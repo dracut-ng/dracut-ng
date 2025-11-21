@@ -69,9 +69,15 @@ install() {
             inst_simple "$moddir/NetworkManager-wait-online-initrd-dracut.conf" \
                 "$systemdsystemunitdir/NetworkManager-wait-online-initrd.service.d/NetworkManager-wait-online-initrd-dracut.conf"
 
-            $SYSTEMCTL -q --root "$initdir" enable NetworkManager-initrd.service
+            # NetworkManager-1.56 provides a systemd generator to install initrd
+            # services, so they no longer have an "[Install]" section.
+            if [[ -e "$systemdutildir"/system-generators/nm-initrd-generator.sh ]]; then
+                inst "$systemdutildir"/system-generators/nm-initrd-generator.sh
+            else
+                $SYSTEMCTL -q --root "$initdir" enable NetworkManager-initrd.service
+            fi
         else
-            #TODO: remove custom systemd services when NetworkManager-1.54 is the minimum supported version
+            #TODO: remove custom systemd services when NetworkManager-1.56 is the minimum supported version
             inst_simple "$moddir"/nm-initrd.service "$systemdsystemunitdir"/nm-initrd.service
             inst_simple "$moddir"/nm-wait-online-initrd.service "$systemdsystemunitdir"/nm-wait-online-initrd.service
 
