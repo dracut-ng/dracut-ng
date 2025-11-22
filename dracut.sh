@@ -1,7 +1,4 @@
 #!/bin/bash -p
-# temporarly disable some shellcheck warning to be able to preserve commit history
-# before additional commits.
-# shellcheck disable=SC2317
 #
 # Generator script for a dracut initramfs
 
@@ -1574,6 +1571,7 @@ fi
 # helper function for check() in module-setup.sh
 # to check for required installed binaries
 # issues a standardized warning message
+# shellcheck disable=SC2317  # called later
 require_binaries() {
     local _module_name="${moddir##*/}"
     local _ret=0
@@ -1592,6 +1590,7 @@ require_binaries() {
     return "$_ret"
 }
 
+# shellcheck disable=SC2317  # called later
 require_any_binary() {
     local _module_name="${moddir##*/}"
     local _ret=1
@@ -1619,6 +1618,7 @@ require_any_binary() {
 # helper function for check() in module-setup.sh
 # to check for required kernel modules
 # issues a standardized warning message
+# shellcheck disable=SC2317  # called later
 require_kernel_modules() {
     local _module_name="${moddir##*/}"
     local _ret=0
@@ -1640,14 +1640,11 @@ require_kernel_modules() {
     return "$_ret"
 }
 
-dracut_need_initqueue() {
-    : > "$initdir/lib/dracut/need-initqueue"
-}
-
 dracut_module_included() {
     [[ " $mods_to_load $modules_loaded " == *\ $*\ * ]]
 }
 
+# shellcheck disable=SC2317  # called later
 dracut_no_switch_root() {
     : > "$initdir/lib/dracut/no-switch-root"
 }
@@ -1671,6 +1668,8 @@ if [[ ${hostonly-} == "-h" ]] && [[ $no_kernel != yes ]]; then
 fi
 
 [[ ${DRACUT_RESOLVE_LAZY-} ]] || export DRACUT_RESOLVE_DEPS=1
+
+# shellcheck disable=SC2317  # called later
 inst_dir() {
     local _ret
     [[ -e ${initdir}/"$1" ]] && return 0 # already there
@@ -1755,10 +1754,12 @@ inst_multiple() {
     fi
 }
 
+# shellcheck disable=SC2317  # called later
 dracut_install() {
     inst_multiple "$@"
 }
 
+# shellcheck disable=SC2317  # called later
 dracut_instmods() {
     local _ret _silent=0
     local i
@@ -1785,10 +1786,12 @@ dracut_instmods() {
 
 # this is not used within dracut itself, but external modules use it,
 # do not remove it!
+# shellcheck disable=SC2317  # called later
 inst_library() {
     inst "$@"
 }
 
+# shellcheck disable=SC2317  # called later
 inst_binary() {
     local _ret
     if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"; then
@@ -1800,6 +1803,7 @@ inst_binary() {
     fi
 }
 
+# shellcheck disable=SC2317  # called later
 inst_script() {
     local _ret
     if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"; then
@@ -1812,6 +1816,7 @@ inst_script() {
 }
 
 # empty function for compatibility
+# shellcheck disable=SC2317  # called later
 inst_fsck_help() {
     :
 }
@@ -1820,6 +1825,7 @@ inst_fsck_help() {
 # If hostonly mode is set to "strict", hostonly restrictions will still
 # be applied, else will ignore hostonly mode and try to install all
 # given modules.
+# shellcheck disable=SC2317  # called later
 optional_hostonly() {
     if [[ $hostonly_mode == "strict" ]]; then
         printf -- "%s" "${hostonly-}"
@@ -1828,6 +1834,7 @@ optional_hostonly() {
     fi
 }
 
+# shellcheck disable=SC2317  # called later
 mark_hostonly() {
     for i in "$@"; do
         echo "$i" >> "$initdir/lib/dracut/hostonly-files"
@@ -1844,6 +1851,7 @@ mark_hostonly() {
 # rev_lib_symlinks libfoo.so.8.1
 # output: libfoo.so.8 libfoo.so
 # (Only if libfoo.so.8 and libfoo.so exists on host system.)
+# shellcheck disable=SC2317  # called later
 rev_lib_symlinks() {
     local _fn
     local _orig
@@ -1866,6 +1874,7 @@ rev_lib_symlinks() {
 }
 
 # attempt to install any programs specified in a udev rule
+# shellcheck disable=SC2317  # called later
 inst_rule_programs() {
     local _prog _bin
 
@@ -1916,6 +1925,7 @@ inst_rule_programs() {
 }
 
 # attempt to create any groups and users specified in a udev rule
+# shellcheck disable=SC2317  # called later
 inst_rule_group_owner() {
     local i
 
@@ -1934,6 +1944,7 @@ inst_rule_group_owner() {
     done
 }
 
+# shellcheck disable=SC2317  # called later
 inst_rule_initqueue() {
     if grep -q -F initqueue "$1"; then
         dracut_need_initqueue
@@ -1942,6 +1953,7 @@ inst_rule_initqueue() {
 
 # udev rules always get installed in the same place, so
 # create a function to install them to make life simpler.
+# shellcheck disable=SC2317  # called later
 inst_rules() {
     local _target=/etc/udev/rules.d _rule _found
 
@@ -1991,6 +2003,7 @@ build_ld_cache() {
 # install function specialized for hooks
 # $1 = type of hook, $2 = hook priority (lower runs first), $3 = hook
 # All hooks should be POSIX/SuS compliant, they will be sourced by init.
+# shellcheck disable=SC2317  # called later
 inst_hook() {
     local hook
     if ! [[ -f $3 ]]; then
@@ -2019,6 +2032,7 @@ inst_hook() {
 #
 # Lets assume that /bin/baz exists, so it will be installed as /bin/foo in
 # initramfs.
+# shellcheck disable=SC2317  # called later
 inst_any() {
     local to f
 
@@ -2035,6 +2049,7 @@ inst_any() {
 
 # inst_libdir_dir <dir> [<dir>...]
 # Install a <dir> located on a lib directory to the initramfs image
+# shellcheck disable=SC2317  # called later
 inst_libdir_dir() {
     local -a _dirs
     for _dir in $libdirs; do
@@ -2078,6 +2093,7 @@ inst_libdir_file() {
 }
 
 # install sysusers files
+# shellcheck disable=SC2317  # called later
 inst_sysusers() {
     inst_multiple -o "$sysusers/$*" "$sysusers/acct-*-$*"
 
@@ -2087,6 +2103,7 @@ inst_sysusers() {
 }
 
 # get a command to decompress the given file
+# shellcheck disable=SC2317  # called later
 get_decompress_cmd() {
     case "$1" in
         *.gz) echo 'gzip -f -d' ;;
@@ -2101,6 +2118,7 @@ get_decompress_cmd() {
 #
 # Function install targets in the same paths inside overlay but decompressed
 # and without extensions (.gz, .bz2).
+# shellcheck disable=SC2317  # called later
 inst_decompress() {
     local _src _cmd
 
@@ -2117,6 +2135,7 @@ inst_decompress() {
 # It's similar to above, but if file is not compressed, performs standard
 # install.
 # $@ = list of files
+# shellcheck disable=SC2317  # called later
 inst_opt_decompress() {
     local _src
 
@@ -2137,6 +2156,7 @@ module_functions=(
 # module_check <dracut module> [<forced>] [<module path>]
 # execute the check() function of module-setup.sh of <dracut module>
 # "check $hostonly" is called
+# shellcheck disable=SC2317  # called later
 module_check() {
     local _moddir=$3
     local _ret
@@ -2163,6 +2183,7 @@ module_check() {
 # module_check_mount <dracut module> [<module path>]
 # execute the check() function of module-setup.sh of <dracut module>
 # "mount_needs=1 check 0" is called
+# shellcheck disable=SC2317  # called later
 module_check_mount() {
     local _moddir=$2
     local _ret
@@ -2182,6 +2203,7 @@ module_check_mount() {
 
 # module_depends <dracut module> [<module path>]
 # execute the depends() function of module-setup.sh of <dracut module>
+# shellcheck disable=SC2317  # called later
 module_depends() {
     local _moddir=$2
     local _ret
@@ -2268,6 +2290,7 @@ module_installkernel() {
 # check_mount <dracut module> [<use_as_dep>] [<module path>]
 # check_mount checks, if a dracut module is needed for the given
 # device and filesystem types in "${host_fs_types[@]}"
+# shellcheck disable=SC2317  # called later
 check_mount() {
     local _mod=$1
     local _moddir=$3
@@ -2335,6 +2358,7 @@ check_mount() {
 # check if a dracut module is to be used in the initramfs process
 # if <use_as_dep> is set, then the process also keeps track
 # that the modules were checked for the dependency tracking process
+# shellcheck disable=SC2317  # called later
 check_module() {
     local _mod=$1
     local _moddir=$3
@@ -2602,6 +2626,7 @@ else
     }
 fi
 
+# shellcheck disable=SC2317  # called later
 is_qemu_virtualized() {
     # 0 if a virt environment was detected
     # 1 if a virt environment could not be detected

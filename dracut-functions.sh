@@ -1077,3 +1077,7 @@ pe_get_image_base() {
     [[ $? -eq 1 ]] && return 1
     echo "$((16#$base_image))"
 }
+
+dracut_need_initqueue() {
+    : > "$initdir/lib/dracut/need-initqueue"
+}
