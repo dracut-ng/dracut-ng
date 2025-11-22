@@ -26,7 +26,10 @@ dev_unit_name() {
     local dev="$1"
 
     if command -v systemd-escape > /dev/null; then
-        systemd-escape -p -- "$dev"
+        case $dev in
+            */*) systemd-escape -p -- "$dev" ;;
+            *) systemd-escape -- "$dev" ;;
+        esac
         return $?
     fi
 
