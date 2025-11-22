@@ -21,8 +21,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# store for logging
+# functions in this file are meant to be internal to dracut and
+# not meant to be exposed to dracut modules.
+# Please do not use functions from this file in your dracut module
+# Only use functions from dracut-functions.sh
 
+# store for logging
 unset BASH_ENV
 unset GZIP
 
@@ -1571,75 +1575,6 @@ if ! [[ ${libdirs-} ]]; then
     export libdirs
 fi
 
-# helper function for check() in module-setup.sh
-# to check for required installed binaries
-# issues a standardized warning message
-require_binaries() {
-    local _module_name="${moddir##*/}"
-    local _ret=0
-
-    if [[ $1 == "-m" ]]; then
-        _module_name="$2"
-        shift 2
-    fi
-
-    for cmd in "$@"; do
-        if ! find_binary "$cmd" &> /dev/null; then
-            ddebug "Module '${_module_name#[0-9][0-9]}' will not be installed, because command '$cmd' could not be found!"
-            ((_ret++))
-        fi
-    done
-    return "$_ret"
-}
-
-require_any_binary() {
-    local _module_name="${moddir##*/}"
-    local _ret=1
-
-    if [[ $1 == "-m" ]]; then
-        _module_name="$2"
-        shift 2
-    fi
-
-    for cmd in "$@"; do
-        if find_binary "$cmd" &> /dev/null; then
-            _ret=0
-            break
-        fi
-    done
-
-    if ((_ret != 0)); then
-        dinfo "$_module_name: Could not find any command of '$*'!"
-        return 1
-    fi
-
-    return 0
-}
-
-# helper function for check() in module-setup.sh
-# to check for required kernel modules
-# issues a standardized warning message
-require_kernel_modules() {
-    local _module_name="${moddir##*/}"
-    local _ret=0
-
-    # Ignore kernel module requirement for no-kernel build
-    [[ $no_kernel == yes ]] && return 0
-
-    if [[ $1 == "-m" ]]; then
-        _module_name="$2"
-        shift 2
-    fi
-
-    for mod in "$@"; do
-        if ! check_kernel_module "$mod" &> /dev/null; then
-            dinfo "Module '${_module_name#[0-9][0-9]}' will not be installed, because kernel module '$mod' is not available!"
-            ((_ret++))
-        fi
-    done
-    return "$_ret"
-}
-
 dracut_need_initqueue() {
     : > "$initdir/lib/dracut/need-initqueue"
 }
@@ -1671,116 +1606,9 @@ if [[ ${hostonly-} == "-h" ]] && [[ $no_kernel != yes ]]; then
 fi
 
 [[ ${DRACUT_RESOLVE_LAZY-} ]] || export DRACUT_RESOLVE_DEPS=1
-inst_dir() {
-    local _ret
-    [[ -e ${initdir}/"$1" ]] && return 0 # already there
-    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} -d "$@"; then
-        return 0
-    else
-        _ret=$?
-        derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} -d "$@"
-        return "$_ret"
-    fi
-}
-
-inst() {
-    local dstdir="${dstdir:-"$initdir"}"
-    local _ret _hostonly_install
-    if [[ $1 == "-H" ]] && [[ $hostonly ]]; then
-        _hostonly_install="-H"
-        shift
-    fi
-    [[ -e ${dstdir}/"${2:-$1}" ]] && return 0 # already there
-    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${dstdir:+-D "$dstdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} ${_hostonly_install:+-H} "$@"; then
-        return 0
-    else
-        _ret=$?
-        derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${dstdir:+-D "$dstdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} ${_hostonly_install:+-H} "$@"
-        return $_ret
-    fi
-}
-
-inst_simple() {
-    local dstdir="${dstdir:-"$initdir"}"
-    local _ret _hostonly_install
-    if [[ $1 == "-H" ]] && [[ $hostonly ]]; then
-        _hostonly_install="-H"
-        shift
-    fi
-    [[ -e ${dstdir}/"${2:-$1}" ]] && return 0 # already there
-    if [[ $1 == /* ]]; then
-        [[ -e ${dracutsysrootdir-}/${1#"${dracutsysrootdir-}"} ]] || return 1 # no source
-    else
-        [[ -e $1 ]] || return 1 # no source
-    fi
-    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${dstdir:+-D "$dstdir"} ${loginstall:+-L "$loginstall"} ${_hostonly_install:+-H} "$@"; then
-        return 0
-    else
-        _ret=$?
-        derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${dstdir:+-D "$dstdir"} ${loginstall:+-L "$loginstall"} ${_hostonly_install:+-H} "$@"
-        return $_ret
-    fi
-}
-
-inst_symlink() {
-    local _ret _hostonly_install
-    if [[ $1 == "-H" ]] && [[ $hostonly ]]; then
-        _hostonly_install="-H"
-        shift
-    fi
-    [[ -e ${initdir}/"${2:-$1}" ]] && return 0 # already there
-    [[ -L $1 ]] || return 1
-    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} ${_hostonly_install:+-H} "$@"; then
-        return 0
-    else
-        _ret=$?
-        derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} ${_hostonly_install:+-H} "$@"
-        return $_ret
-    fi
-}
-
-inst_multiple() {
-    local dstdir="${dstdir:-"$initdir"}"
-    local _ret _hostonly_install
-    if [[ $1 == "-H" ]] && [[ $hostonly ]]; then
-        _hostonly_install="-H"
-        shift
-    fi
-    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${dstdir:+-D "$dstdir"} -a ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} ${_hostonly_install:+-H} "$@"; then
-        return 0
-    else
-        _ret=$?
-        derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${dstdir:+-D "$dstdir"} -a ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} ${_hostonly_install:+-H} "$@"
-        return $_ret
-    fi
-}
 
 dracut_install() {
     inst_multiple "$@"
-}
-
-dracut_instmods() {
-    local _ret _silent=0
-    local i
-    [[ $no_kernel == yes ]] && return
-    for i in "$@"; do
-        if [[ $i == "--silent" ]]; then
-            _silent=1
-            break
-        fi
-    done
-
-    if $DRACUT_INSTALL \
-        ${dracutsysrootdir:+-r "$dracutsysrootdir"} \
-        ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${hostonly:+-H} ${omit_drivers:+-N "$omit_drivers"} ${srcmods:+--kerneldir "$srcmods"} -m "$@"; then
-        return 0
-    else
-        _ret=$?
-        if ((_silent == 0)); then
-            derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${hostonly:+-H} ${omit_drivers:+-N "$omit_drivers"} ${srcmods:+--kerneldir "$srcmods"} -m "$@"
-        fi
-        return "$_ret"
-    fi
 }
 
 # this is not used within dracut itself, but external modules use it,
@@ -1789,43 +1617,9 @@ inst_library() {
     inst "$@"
 }
 
-inst_binary() {
-    local _ret
-    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"; then
-        return 0
-    else
-        _ret=$?
-        derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"
-        return "$_ret"
-    fi
-}
-
-inst_script() {
-    local _ret
-    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"; then
-        return 0
-    else
-        _ret=$?
-        derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"
-        return "$_ret"
-    fi
-}
-
 # empty function for compatibility
 inst_fsck_help() {
     :
-}
-
-# Use with form hostonly="$(optional_hostonly)" inst_xxxx <args>
-# If hostonly mode is set to "strict", hostonly restrictions will still
-# be applied, else will ignore hostonly mode and try to install all
-# given modules.
-optional_hostonly() {
-    if [[ $hostonly_mode == "strict" ]]; then
-        printf -- "%s" "${hostonly-}"
-    else
-        printf ""
-    fi
 }
 
 mark_hostonly() {
@@ -2075,15 +1869,6 @@ inst_libdir_file() {
         done
     fi
     [[ ${#_files[@]} -gt 0 ]] && inst_multiple "${_files[@]}"
-}
-
-# install sysusers files
-inst_sysusers() {
-    inst_multiple -o "$sysusers/$*" "$sysusers/acct-*-$*"
-
-    if [[ ${hostonly-} ]]; then
-        inst_multiple -H -o "$sysusersconfdir/$*" "$sysusers/acct-*-$*"
-    fi
 }
 
 # get a command to decompress the given file
@@ -2601,33 +2386,6 @@ else
         ln -sfn -- "$(convert_abs_rel "${_dest}" "${_source}")" "${dstdir}/${_dest}"
     }
 fi
-
-is_qemu_virtualized() {
-    # 0 if a virt environment was detected
-    # 1 if a virt environment could not be detected
-    # 255 if any error was encountered
-
-    # do not consult /sys and do not detect virt environment in non-hostonly mode
-    ! [[ ${hostonly-} ]] && return 1
-
-    if type -P systemd-detect-virt > /dev/null 2>&1; then
-        if ! vm=$(systemd-detect-virt --vm 2> /dev/null); then
-            return 255
-        fi
-        [[ $vm == "qemu" ]] && return 0
-        [[ $vm == "kvm" ]] && return 0
-        [[ $vm == "bochs" ]] && return 0
-    fi
-
-    for i in /sys/class/dmi/id/*_vendor; do
-        [[ -f $i ]] || continue
-        read -r vendor < "$i"
-        [[ $vendor == "QEMU" ]] && return 0
-        [[ $vendor == "Red Hat" ]] && return 0
-        [[ $vendor == "Bochs" ]] && return 0
-    done
-    return 1
-}
 
 if type -P systemd-detect-virt &> /dev/null && container=$(systemd-detect-virt -c) &> /dev/null; then
     export DRACUT_NO_MKNOD=1
