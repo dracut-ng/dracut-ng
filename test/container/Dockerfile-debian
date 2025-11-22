@@ -34,7 +34,6 @@ RUN \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
     asciidoctor \
     bluez \
-    bsdextrautils \
     btrfs-progs \
     ca-certificates \
     cargo \

@@ -138,7 +138,7 @@ ARGS+=("$@")
 # only set -kernel if -initrd is specified
 initrd=$(get_initrd "${ARGS[@]}")
 if [[ -n $initrd ]]; then
-    KVERSION=$(lsinitrd "$initrd" | grep modules.dep | head -1 | rev | cut -d'/' -f2 | rev)
+    KVERSION=$(lsinitrd "$initrd" | grep modules.dep | head -1 | sed 's;.*/\([^/]\+\)/modules.dep;\1;')
     set_vmlinux_env
     ARGS+=(-kernel "$VMLINUZ")
     add_to_append "console=${console:-ttyS0},115200"
