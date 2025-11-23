@@ -1911,7 +1911,7 @@ inst_rule_programs() {
             }
         fi
 
-        [[ $_bin ]] && dracut_install "$_bin"
+        [[ $_bin ]] && inst_multiple "$_bin"
     done
 }
 
