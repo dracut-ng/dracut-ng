@@ -906,7 +906,7 @@ iscsistart -b --param node.session.timeo.replacement_timeout=30
 **rd.iscsi.testroute=0**:
     Turn off checking, if the route to the iSCSI target IP is possible before trying to login.
 
-**rd.iscsi.transport=__<transport_name>__**::
+**rd.iscsi.transport=**__<transport_name>__::
     Set the iSCSI transport name (see man:iscsiadm[8,external]). iSCSI offload
     transports like **bnx2i** don't need the network to be up in order to bring
     up iSCSI connections. This parameter indicates that network setup can be
@@ -1311,7 +1311,7 @@ filesystem specified within the +
 **root=**live:__<path to blockdevice>__ or **root=**live:__<url>__ device.
 
 The default *_pathspec_*, when *:auto* or
-no **:__<pathspec>__** is given, is `/<rd.live.dir>/overlay-<label>-<uuid>`,
+no **:**__<pathspec>__ is given, is `/<rd.live.dir>/overlay-<label>-<uuid>`,
 where _<label>_ and _<uuid>_ are the LABEL and UUID of the filesystem specified
 by the **root=**live:__<path|url>__ device.
 

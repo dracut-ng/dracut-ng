@@ -382,7 +382,7 @@ provide a valid _/etc/fstab_.
 **-N, --no-hostonly**::
     Disable host-only mode.
 
-**--hostonly-mode _<mode>_**::
+**--hostonly-mode** _<mode>_::
     Specify the host-only mode to use. _<mode>_ could be one of "sloppy" or
     "strict".
     In "sloppy" host-only mode, extra drivers and modules will be installed, so
@@ -615,7 +615,7 @@ will not be able to boot. Equivalent to "--compress=zstd -15 -q -T0".
     Do not create an image in host-only mode, if no kernel driver is needed
 and no /etc/cmdline/*.conf will be generated into the initramfs.
 
-**--loginstall _<directory>_**::
+**--loginstall** _<directory>_::
     Log all files installed from the host to _<directory>_.
 
 **--uefi**::
@@ -634,21 +634,21 @@ and no /etc/cmdline/*.conf will be generated into the initramfs.
     Affects the default output filename of **--uefi** and will discard the
     <MACHINE_ID> part.
 
-**--uefi-stub _<file>_**::
+**--uefi-stub** _<file>_::
     Specifies the UEFI stub loader, which will load the attached kernel,
     initramfs and kernel command line and boots the kernel. The default is
     _$prefix/lib/systemd/boot/efi/linux<EFI-MACHINE-TYPE-NAME>.efi.stub_.
 
-**--uefi-splash-image _<file>_**::
+**--uefi-splash-image** _<file>_::
     Specifies the UEFI stub loader's splash image. Requires bitmap (**.bmp**)
     image format.
 
-**--kernel-image _<file>_**::
+**--kernel-image** _<file>_::
     Specifies the kernel image, which to include in the UEFI executable. The
     default is _/lib/modules/<KERNEL-VERSION>/vmlinuz_ or
     _/boot/vmlinuz-<KERNEL-VERSION>_.
 
-**--sbat <parameters>**::
+**--sbat** _<parameters>_::
     Specifies the SBAT parameters, which to include in the UEFI executable. By default
     the default SBAT string added is "sbat,1,SBAT Version,sbat,1,
     https://github.com/rhboot/shim/blob/main/SBAT.md".

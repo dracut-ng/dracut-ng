@@ -71,7 +71,7 @@ Now udev is started and the logging for udev is setup.
 === Hook: pre-trigger
 
 In this hook, you can set udev environment variables with **udevadm control
---property=KEY=_value_** or control the further execution of udev with
+--property=KEY=**__value__ or control the further execution of udev with
 udevadm.
 
 === Trigger Udev
