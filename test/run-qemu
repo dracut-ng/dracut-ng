@@ -36,13 +36,26 @@ get_initrd() {
 # Print UEFI firmware file on stdout on success.
 # Return 1 in case no UEFI firmware file was found.
 get_uefi_code() {
-    for path in \
-        "/usr/share/OVMF/OVMF_CODE.fd" \
-        "/usr/share/OVMF/OVMF_CODE_4M.fd" \
-        "/usr/share/edk2/x64/OVMF_CODE.fd" \
-        "/usr/share/edk2/x64/OVMF_CODE.4m.fd" \
-        "/usr/share/edk2-ovmf/OVMF_CODE.fd" \
-        "/usr/share/qemu/ovmf-x86_64-4m.bin"; do
+    local paths=()
+    case "$ARCH" in
+        aarch64 | arm64)
+            paths=("/usr/share/AAVMF/AAVMF_CODE.no-secboot.fd")
+            ;;
+        amd64 | x86_64)
+            paths=(
+                "/usr/share/OVMF/OVMF_CODE.fd"
+                "/usr/share/OVMF/OVMF_CODE_4M.fd"
+                "/usr/share/edk2/x64/OVMF_CODE.fd"
+                "/usr/share/edk2/x64/OVMF_CODE.4m.fd"
+                "/usr/share/edk2-ovmf/OVMF_CODE.fd"
+                "/usr/share/qemu/ovmf-x86_64-4m.bin"
+            )
+            ;;
+        arm | armhf | armv7l)
+            paths=("/usr/share/AAVMF/AAVMF32_CODE.fd")
+            ;;
+    esac
+    for path in "${paths[@]}"; do
         if [[ -s $path ]]; then
             echo -n "$path"
             return 0
@@ -146,8 +159,7 @@ case "$ARCH" in
 esac
 
 if uefi_code=$(get_uefi_code); then
-    ARGS+=(-drive "if=pflash,format=raw,readonly=on,unit=0,file=$uefi_code"
-        -global "driver=cfi.pflash01,property=secure,value=on")
+    ARGS+=(-drive "if=pflash,format=raw,readonly=on,unit=0,file=$uefi_code")
 fi
 
 # Provide rng device sourcing the hosts /dev/urandom and other standard parameters
