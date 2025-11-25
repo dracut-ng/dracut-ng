@@ -16,7 +16,8 @@ test_check() {
         return 1
     fi
 
-    if [[ -z "$(ovmf_code)" ]]; then
+    if ! "$testdir"/run-qemu --check-uefi; then
+        echo "No UEFI firmware (for QEMU) found" >&2
         return 1
     fi
 }
@@ -34,9 +35,7 @@ client_run() {
 
     test_marker_reset
     "$testdir"/run-qemu "${disk_args[@]}" -net none \
-        -drive file=fat:rw:"$TESTDIR"/ESP,format=vvfat,label=EFI \
-        -global driver=cfi.pflash01,property=secure,value=on \
-        -drive if=pflash,format=raw,unit=0,file="$(ovmf_code)",readonly=on
+        -drive file=fat:rw:"$TESTDIR"/ESP,format=vvfat,label=EFI
     test_marker_check
 }
 
