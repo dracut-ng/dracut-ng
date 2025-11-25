@@ -32,6 +32,25 @@ get_initrd() {
     done
 }
 
+# Search for the UEFI firmware file
+# Print UEFI firmware file on stdout on success.
+# Return 1 in case no UEFI firmware file was found.
+get_uefi_code() {
+    for path in \
+        "/usr/share/OVMF/OVMF_CODE.fd" \
+        "/usr/share/OVMF/OVMF_CODE_4M.fd" \
+        "/usr/share/edk2/x64/OVMF_CODE.fd" \
+        "/usr/share/edk2/x64/OVMF_CODE.4m.fd" \
+        "/usr/share/edk2-ovmf/OVMF_CODE.fd" \
+        "/usr/share/qemu/ovmf-x86_64-4m.bin"; do
+        if [[ -s $path ]]; then
+            echo -n "$path"
+            return 0
+        fi
+    done
+    return 1
+}
+
 quote_args() {
     local arg args=()
     for arg in "$@"; do
@@ -97,6 +116,11 @@ set_vmlinux_env() {
     exit 1
 }
 
+if test "${1-}" = "--check-uefi"; then
+    get_uefi_code > /dev/null
+    exit 0
+fi
+
 if test "${1-}" = "--supports"; then
     option="$2"
     "$BIN" -help | grep -q "^$option"
@@ -120,6 +144,11 @@ case "$ARCH" in
         console=hvc0
         ;;
 esac
+
+if uefi_code=$(get_uefi_code); then
+    ARGS+=(-drive "if=pflash,format=raw,readonly=on,unit=0,file=$uefi_code"
+        -global "driver=cfi.pflash01,property=secure,value=on")
+fi
 
 # Provide rng device sourcing the hosts /dev/urandom and other standard parameters
 ARGS+=(-smp 2 -m "${MEMORY-1024}" -nodefaults -vga none -display none -no-reboot -watchdog-action poweroff -device virtio-rng-pci)
