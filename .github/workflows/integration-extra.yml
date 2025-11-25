@@ -74,7 +74,7 @@ jobs:
             options: '--device=/dev/kvm --privileged'
         steps:
             - name: "Checkout Repository"
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     network-systemd:
@@ -100,7 +100,7 @@ jobs:
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     network-manager:
@@ -133,7 +133,7 @@ jobs:
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     network-legacy:
@@ -161,7 +161,7 @@ jobs:
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     omitsystemd:
@@ -189,7 +189,7 @@ jobs:
             options: '--device=/dev/kvm --privileged'
         steps:
             - name: "Checkout Repository"
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: TEST_DRACUT_ARGS="--omit systemd" ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     hostonlystrict:
@@ -225,6 +225,6 @@ jobs:
             options: '--device=/dev/kvm --privileged'
         steps:
             - name: "Checkout Repository"
-              uses: actions/checkout@v5
+              uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: TEST_DRACUT_ARGS="--hostonly-mode strict" ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
