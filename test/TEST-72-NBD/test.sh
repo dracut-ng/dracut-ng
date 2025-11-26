@@ -71,9 +71,8 @@ client_test() {
         -append "$cmdline rd.auto ro" \
         -initrd "$TESTDIR"/initramfs.testing
 
-    # shellcheck disable=SC2181
-    if [[ $? -ne 0 ]] || ! test_marker_check nbd-OK; then
-        echo "CLIENT TEST END: $test_name [FAILED - BAD EXIT]"
+    if ! test_marker_check nbd-OK; then
+        echo "CLIENT TEST END: $test_name [FAILED - MISSING MARKER]"
         return 1
     fi
 
