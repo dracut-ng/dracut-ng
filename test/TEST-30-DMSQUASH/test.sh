@@ -106,12 +106,9 @@ test_setup() {
 2048,652688
 EOF
 
-    sync "$TESTDIR"/root.img
     dd if=/dev/zero of="$TESTDIR"/ext4.img bs=512 count=652688 status=none
-    sync "$TESTDIR"/ext4.img
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/rootfs/ "$TESTDIR"/ext4.img
-    sync "$TESTDIR"/ext4.img
-    dd if="$TESTDIR"/ext4.img of="$TESTDIR"/root.img bs=512 seek=2048 conv=noerror,sync,notrunc
+    dd if="$TESTDIR"/ext4.img of="$TESTDIR"/root.img bs=512 seek=2048 conv=noerror,notrunc
 
     # erofs drive
     qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs 1
@@ -129,7 +126,6 @@ EOF
         mkdir "$TESTDIR"/iso
         xorriso -as mkisofs -output "$TESTDIR"/iso/linux.iso "$TESTDIR"/live/ -volid "ISO" -iso-level 3
         mkfs.ext4 -q -L dracut_iso -d "$TESTDIR"/iso/ "$TESTDIR"/root_iso.img
-        sync "$TESTDIR"/root_iso.img
     fi
 
     local dracut_modules="dmsquash-live-autooverlay convertfs pollcdrom kernel-modules kernel-modules-extra qemu qemu-net"
