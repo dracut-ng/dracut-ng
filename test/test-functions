@@ -298,7 +298,7 @@ while (($# > 0)); do
                     cat test${TEST_RUN_ID:+-$TEST_RUN_ID}.log
                 fi
                 echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_WARNING" "[SKIPPED]" "$COLOR_NORMAL"
-                exit 0
+                exit 77
             else
                 echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_SUCCESS" "[STARTED]" "$COLOR_NORMAL"
             fi
