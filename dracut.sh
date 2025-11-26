@@ -1,7 +1,7 @@
 #!/bin/bash -p
 # temporarly disable some shellcheck warning to be able to preserve commit history
 # before additional commits.
-# shellcheck disable=SC2317
+# shellcheck disable=SC2317,SC2329
 #
 # Generator script for a dracut initramfs
 
