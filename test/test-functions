@@ -171,9 +171,7 @@ build_ext4_image() {
     size="$((size + 8000000))"
 
     dd if=/dev/zero of="$image" bs="$size" count=1 status=none
-    sync "$image"
     mkfs.ext4 -q -L "$label" -d "$source_dir" "$image"
-    sync "$image"
 }
 
 # override the init script from the test-root dracut module (see module-setup.sh)
@@ -228,7 +226,6 @@ qemu_add_drive() {
         fi
 
         dd if=/dev/zero of="${file}" bs=1MiB count="${size}" status=none
-        sync "${file}"
     fi
 
     eval "${2}"'+=(' \
@@ -242,7 +239,6 @@ qemu_add_drive() {
 
 test_marker_reset() {
     dd if=/dev/zero of="$TESTDIR"/marker.img bs=1MiB count=1 status=none
-    sync "$TESTDIR"/marker.img
 }
 
 test_marker_check() {
