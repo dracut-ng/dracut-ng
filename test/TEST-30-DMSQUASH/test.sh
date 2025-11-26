@@ -106,7 +106,8 @@ test_setup() {
 2048,652688
 EOF
 
-    dd if=/dev/zero of="$TESTDIR"/ext4.img bs=512 count=652688 status=none
+    rm -f "$TESTDIR/ext4.img"
+    truncate -s "$((512 * 652688))" "$TESTDIR/ext4.img"
     mkfs.ext4 -q -L dracut -d "$TESTDIR"/rootfs/ "$TESTDIR"/ext4.img
     dd if="$TESTDIR"/ext4.img of="$TESTDIR"/root.img bs=512 seek=2048 conv=noerror,notrunc
 
