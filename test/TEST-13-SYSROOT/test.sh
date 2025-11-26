@@ -29,7 +29,7 @@ test_setup() {
     build_ext4_image "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img dracut
 
     ln -s / "$TESTDIR"/sysroot
-    test_dracut --hostonly --sysroot "$TESTDIR"/sysroot
+    test_dracut --keep --hostonly --sysroot "$TESTDIR"/sysroot
 
     if grep -q '^root:' /etc/shadow; then
         if ! grep -q '^root:' "$TESTDIR"/initrd/dracut.*/initramfs/etc/shadow; then

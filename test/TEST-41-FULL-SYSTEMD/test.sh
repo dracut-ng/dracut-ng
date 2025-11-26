@@ -131,7 +131,7 @@ test_setup() {
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
 
     # force add all available dracut modules that are dependent on systemd
-    test_dracut \
+    test_dracut --keep \
         -a "dracut-systemd $dracut_modules" \
         --add-drivers "btrfs"
 
