@@ -170,7 +170,8 @@ build_ext4_image() {
     # Add 8 MB for ext4 journal
     size="$((size + 8000000))"
 
-    dd if=/dev/zero of="$image" bs="$size" count=1 status=none
+    rm -f "$image"
+    truncate -s "$size" "$image"
     mkfs.ext4 -q -L "$label" -d "$source_dir" "$image"
 }
 
@@ -225,7 +226,8 @@ qemu_add_drive() {
             size=512
         fi
 
-        dd if=/dev/zero of="${file}" bs=1MiB count="${size}" status=none
+        rm -f "$file"
+        truncate -s "${size}M" "$file"
     fi
 
     eval "${2}"'+=(' \
@@ -238,7 +240,8 @@ qemu_add_drive() {
 }
 
 test_marker_reset() {
-    dd if=/dev/zero of="$TESTDIR"/marker.img bs=1MiB count=1 status=none
+    rm -f "$TESTDIR/marker.img"
+    truncate -s 1M "$TESTDIR/marker.img"
 }
 
 test_marker_check() {
