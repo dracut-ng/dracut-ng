@@ -461,7 +461,8 @@ static int library_install(const char *src, const char *lib)
 {
         _cleanup_free_ char *p = NULL;
         _cleanup_free_ char *pdir = NULL, *ppdir = NULL, *pppdir = NULL, *clib = NULL;
-        char *q, *clibdir;
+        char *clib_so_offset, *clibdir;
+        const char *lib_so_offset;
         int r, ret = 0;
 
         r = dracut_install(lib, lib, false, false, true);
@@ -472,9 +473,9 @@ static int library_install(const char *src, const char *lib)
         ret += r;
 
         /* also install lib.so for lib.so.* files */
-        q = strstr(lib, ".so.");
-        if (q) {
-                p = strndup(lib, q - lib + 3);
+        lib_so_offset = strstr(lib, ".so.");
+        if (lib_so_offset) {
+                p = strndup(lib, lib_so_offset - lib + 3);
 
                 /* ignore errors for base lib symlink */
                 if (dracut_install(p, p, false, false, true) == 0)
@@ -512,9 +513,9 @@ static int library_install(const char *src, const char *lib)
         if (dracut_install(clib, clib, false, false, true) == 0)
                 log_debug("Lib install: '%s'", clib);
         /* also install lib.so for lib.so.* files */
-        q = strstr(clib, ".so.");
-        if (q) {
-                q[3] = '\0';
+        clib_so_offset = strstr(clib, ".so.");
+        if (clib_so_offset) {
+                clib_so_offset[3] = '\0';
 
                 /* ignore errors for base lib symlink */
                 if (dracut_install(clib, clib, false, false, true) == 0)
@@ -2580,8 +2581,7 @@ static int install_modules(int argc, char **argv)
 
         struct kmod_module *mod = NULL, *mod_o = NULL;
 
-        const char *abskpath = NULL;
-        char *p;
+        const char *abskpath = NULL, *p;
         int i;
         int modinst = 0;
 
