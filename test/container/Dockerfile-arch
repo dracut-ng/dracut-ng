@@ -60,5 +60,6 @@ RUN pacman --noconfirm -Syu \
     systemd-ukify \
     tgt \
     tpm2-tools \
+    xfsprogs \
     xorriso \
     && yes | pacman -Scc

@@ -82,6 +82,7 @@ if [ "$OPTION" = "systemd" ] ; then \
     sys-fs/mdadm \
     sys-fs/multipath-tools \
     sys-fs/squashfs-tools \
+    sys-fs/xfsprogs \
     sys-libs/glibc ;\
 else \
     emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace net-misc/networkmanager ;\
