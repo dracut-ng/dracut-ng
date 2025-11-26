@@ -18,4 +18,11 @@ mount -n -o remount,ro /
 sync /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
 
 echo "Powering down."
-poweroff -f
+
+if [ -d /usr/lib/systemd/system ]; then
+    # graceful poweroff
+    systemctl poweroff
+else
+    # force immediate poweroff
+    poweroff -f
+fi
