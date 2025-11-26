@@ -70,9 +70,8 @@ client_test() {
         -append "$TEST_KERNEL_CMDLINE $cmdline ro" \
         -initrd "$TESTDIR"/initramfs.testing
 
-    # shellcheck disable=SC2181
-    if [[ $? -ne 0 ]] || ! test_marker_check nfs-OK; then
-        echo "CLIENT TEST END: $test_name [FAILED - BAD EXIT]"
+    if ! test_marker_check nfs-OK; then
+        echo "CLIENT TEST END: $test_name [FAILED - MISSING MARKER]"
         return 1
     fi
 
