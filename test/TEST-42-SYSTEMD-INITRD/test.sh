@@ -82,7 +82,7 @@ test_setup() {
 
     # vanilla kernel-independent systemd-based minimal initrd without dracut specific customizations
     # since dracut-systemd is not included in the generated initrd, only systemd options are supported during boot
-    test_dracut --no-kernel \
+    test_dracut --keep --no-kernel \
         --omit "test systemd-sysctl systemd-modules-load" \
         -m "systemd-initrd base" \
         "$TESTDIR"/initramfs-systemd-initrd
