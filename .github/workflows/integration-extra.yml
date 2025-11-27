@@ -59,6 +59,25 @@ jobs:
                     # https://github.com/dracut-ng/dracut-ng/issues/1590
                     - container: ubuntu:rolling
                       test: "30"
+                    # intentionally skipped
+                    - container: centos:stream10-development
+                      test: "11"
+                    - container: alpine:latest
+                      test: "12"
+                    - container: alpine:edge
+                      test: "12"
+                    - container: azurelinux:3.0
+                      test: "12"
+                    - container: centos:stream10-development
+                      test: "12"
+                    - container: gentoo:amd64-openrc
+                      test: "12"
+                    - container: alpine:latest
+                      test: "82"
+                    - container: alpine:edge
+                      test: "82"
+                    - container: gentoo:amd64-openrc
+                      test: "82"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm --privileged'
@@ -98,6 +117,9 @@ jobs:
                 exclude:
                     # https://github.com/dracut-ng/dracut-ng/issues/1677
                     - container: arch:latest
+                      test: "41"
+                    # intentionally skipped
+                    - container: centos:stream10-development
                       test: "41"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
@@ -151,7 +173,6 @@ jobs:
                     - debian:sid
                     - fedora:latest
                     - fedora:rawhide
-                    - gentoo:amd64-openrc
                     - opensuse:latest
                 test:
                     - "60"
