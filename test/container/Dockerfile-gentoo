@@ -45,16 +45,27 @@ emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     app-alternatives/bc \
     app-alternatives/cpio \
     app-arch/cpio \
+    app-crypt/swtpm \
+    app-crypt/tpm2-tools \
     app-emulation/qemu \
     app-misc/jq \
     app-portage/gentoolkit \
     dev-lang/perl \
+    dev-lang/rust-bin \
+    dev-libs/libfido2 \
     dev-libs/libxslt \
     dev-libs/openssl \
     dev-ruby/asciidoctor \
     net-dns/dnsmasq \
+    net-fs/nfs-utils \
+    net-misc/dhcp \
+    net-wireless/bluez \
     sys-apps/nvme-cli \
+    sys-block/nbd \
+    sys-block/open-iscsi \
     sys-block/parted \
+    sys-block/tgt \
+    sys-boot/plymouth \
     sys-devel/bison \
     sys-devel/flex \
     sys-fs/btrfs-progs \
@@ -68,21 +79,10 @@ emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     sys-libs/libxcrypt \
     virtual/libelf \
     virtual/pkgconfig ;\
-# Dependencies for full testsuite \
+# Dependencies for systemd \
 if [ "$OPTION" = "systemd" ] ; then \
     emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
-    app-crypt/swtpm \
-    app-crypt/tpm2-tools \
-    dev-lang/rust-bin \
-    dev-libs/libfido2 \
-    net-fs/nfs-utils \
-    net-misc/dhcp \
-    net-wireless/bluez \
     sys-apps/systemd \
-    sys-block/nbd \
-    sys-block/open-iscsi \
-    sys-block/tgt \
-    sys-boot/plymouth \
     sys-libs/glibc ;\
 else \
     emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace net-misc/networkmanager ;\
