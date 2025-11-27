@@ -272,9 +272,11 @@ test_marker_check() {
 print_test_result() {
     local ret=${1-1}
     if [ "$ret" -eq 0 ]; then
+        client_test_end
         rm -- test${TEST_RUN_ID:+-$TEST_RUN_ID}.log
         echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_SUCCESS" "[OK]" "$COLOR_NORMAL"
     else
+        client_test_end "FAILED"
         echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_FAILURE" "[FAILED]" "$COLOR_NORMAL"
         if [[ -f "$TESTDIR"/server.log ]]; then
             mv "$TESTDIR"/server.log ./server${TEST_RUN_ID:+-$TEST_RUN_ID}.log
