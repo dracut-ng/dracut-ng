@@ -54,7 +54,7 @@ client_test() {
     local check_opt="$5"
     local nfsinfo opts found expected
 
-    echo "CLIENT TEST START: $test_name"
+    client_test_start "$test_name"
 
     # Need this so kvm-qemu will boot (needs non-/dev/zero local disk)
     declare -a disk_args=()
@@ -71,7 +71,7 @@ client_test() {
         -initrd "$TESTDIR"/initramfs.testing
 
     if ! test_marker_check nfs-OK; then
-        echo "CLIENT TEST END: $test_name [FAILED - MISSING MARKER]"
+        client_test_end "FAILED - MISSING MARKER"
         return 1
     fi
 
@@ -81,7 +81,7 @@ client_test() {
     if [[ ${nfsinfo[0]%%:*} != "$server" ]]; then
         echo "CLIENT TEST INFO: got server: ${nfsinfo[0]%%:*}"
         echo "CLIENT TEST INFO: expected server: $server"
-        echo "CLIENT TEST END: $test_name [FAILED - WRONG SERVER]"
+        client_test_end "FAILED - WRONG SERVER"
         return 1
     fi
 
@@ -105,20 +105,20 @@ client_test() {
         echo "CLIENT TEST INFO: got options: ${nfsinfo[2]%%:*}"
         if [[ $expected -eq 0 ]]; then
             echo "CLIENT TEST INFO: did not expect: $check_opt"
-            echo "CLIENT TEST END: $test_name [FAILED - UNEXPECTED OPTION]"
+            client_test_end "FAILED - UNEXPECTED OPTION"
         else
             echo "CLIENT TEST INFO: missing: $check_opt"
-            echo "CLIENT TEST END: $test_name [FAILED - MISSING OPTION]"
+            client_test_end "FAILED - MISSING OPTION"
         fi
         return 1
     fi
 
     if ! test_marker_check nfsfetch-OK marker2.img; then
-        echo "CLIENT TEST END: $test_name [FAILED - NFS FETCH FAILED]"
+        client_test_end "FAILED - NFS FETCH FAILED"
         return 1
     fi
 
-    echo "CLIENT TEST END: $test_name [OK]"
+    client_test_end
     return 0
 }
 

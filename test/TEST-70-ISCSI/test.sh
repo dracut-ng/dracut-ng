@@ -45,7 +45,7 @@ run_client() {
     local test_name=$1
     local acpitable_file=$2
     shift 2
-    echo "CLIENT TEST START: $test_name"
+    client_test_start "$test_name"
 
     declare -a disk_args=()
     declare -i disk_index=0
@@ -62,11 +62,11 @@ run_client() {
         -initrd "$TESTDIR"/initramfs.testing
 
     if ! test_marker_check iscsi-OK; then
-        echo "CLIENT TEST END: $test_name [FAILED - MISSING MARKER]"
+        client_test_end "FAILED - MISSING MARKER"
         return 1
     fi
 
-    echo "CLIENT TEST END: $test_name [OK]"
+    client_test_end
     return 0
 }
 

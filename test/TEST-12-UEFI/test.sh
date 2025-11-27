@@ -25,7 +25,7 @@ test_check() {
 client_run() {
     local test_name="$1"
 
-    echo "CLIENT TEST START: $test_name"
+    client_test_start "$test_name"
 
     declare -a disk_args=()
     # shellcheck disable=SC2034  # disk_index used in qemu_add_drive

@@ -43,7 +43,7 @@ run_server() {
 run_client() {
     local test_name=$1
     shift
-    echo "CLIENT TEST START: $test_name"
+    client_test_start "$test_name"
 
     declare -a disk_args=()
     declare -i disk_index=0
@@ -58,11 +58,11 @@ run_client() {
         -append "$TEST_KERNEL_CMDLINE rw rd.auto $*" \
         -initrd "$TESTDIR"/initramfs.testing
     if ! test_marker_check iscsi-OK; then
-        echo "CLIENT TEST END: $test_name [FAILED - BAD EXIT]"
+        client_test_end "FAILED - BAD EXIT"
         return 1
     fi
 
-    echo "CLIENT TEST END: $test_name [OK]"
+    client_test_end
     return 0
 }
 

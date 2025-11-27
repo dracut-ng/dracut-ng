@@ -23,7 +23,7 @@ test_check() {
 test_run() {
     LUKSARGS=$(cat "$TESTDIR"/luks.txt)
 
-    echo "CLIENT TEST START: $LUKSARGS"
+    client_test_start "$LUKSARGS"
 
     declare -a disk_args=()
     declare -i disk_index=0
@@ -37,17 +37,17 @@ test_run() {
         -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root ro rd.auto rootwait $LUKSARGS" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check
-    echo "CLIENT TEST END: [OK]"
+    client_test_end
 
     test_marker_reset
 
-    echo "CLIENT TEST START: Any LUKS"
+    client_test_start "Any LUKS"
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rd.auto" \
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check
-    echo "CLIENT TEST END: [OK]"
+    client_test_end
 
     return 0
 }
