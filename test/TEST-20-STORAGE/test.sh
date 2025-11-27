@@ -31,7 +31,7 @@ client_run() {
     shift
     local client_opts="$*"
 
-    echo "CLIENT TEST START: $test_name"
+    client_test_start "$test_name"
 
     declare -a disk_args=()
     declare -i disk_index=0
@@ -55,7 +55,7 @@ client_run() {
         -initrd "$TESTDIR"/initramfs.testing
     test_marker_check
 
-    echo "CLIENT TEST END: $test_name [OK]"
+    client_test_end
 }
 
 test_run() {

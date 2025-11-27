@@ -57,7 +57,7 @@ client_test() {
     local fsopt=${5-ro}
     local found opts nbdinfo
 
-    echo "CLIENT TEST START: $test_name"
+    client_test_start "$test_name"
 
     declare -a disk_args=()
     declare -i disk_index=0
@@ -72,7 +72,7 @@ client_test() {
         -initrd "$TESTDIR"/initramfs.testing
 
     if ! test_marker_check nbd-OK; then
-        echo "CLIENT TEST END: $test_name [FAILED - MISSING MARKER]"
+        client_test_end "FAILED - MISSING MARKER"
         return 1
     fi
 
@@ -80,7 +80,7 @@ client_test() {
     read -r -a nbdinfo < <(awk '{print $2, $3; exit}' "$TESTDIR"/marker.img)
 
     if [[ ${nbdinfo[0]} != "$fstype" ]]; then
-        echo "CLIENT TEST END: $test_name [FAILED - WRONG FS TYPE] \"${nbdinfo[0]}\" != \"$fstype\""
+        client_test_end "FAILED - WRONG FS TYPE: \"${nbdinfo[0]}\" != \"$fstype\""
         return 1
     fi
 
@@ -94,11 +94,11 @@ client_test() {
     done
 
     if [[ ! $found ]]; then
-        echo "CLIENT TEST END: $test_name [FAILED - BAD FS OPTS] \"${nbdinfo[1]}\" != \"$fsopt\""
+        client_test_end "FAILED - BAD FS OPTS: \"${nbdinfo[1]}\" != \"$fsopt\""
         return 1
     fi
 
-    echo "CLIENT TEST END: $test_name [OK]"
+    client_test_end
 }
 
 test_run() {

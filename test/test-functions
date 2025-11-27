@@ -84,6 +84,23 @@ call_dracut() {
     "$DRACUT" "$@"
 }
 
+# Log the start of a client test.
+client_test_start() {
+    local test_name="$1"
+    echo "CLIENT TEST START: $test_name"
+    echo "$test_name" > "$TESTDIR/client_test_name.txt"
+}
+
+# Log the end of a client test if one was started with client_test_start before.
+client_test_end() {
+    local status="${1-OK}"
+    local test_name
+    [[ -e "$TESTDIR/client_test_name.txt" ]] || return 0
+    test_name=$(cat "$TESTDIR/client_test_name.txt")
+    echo "CLIENT TEST END: $test_name [$status]"
+    rm "$TESTDIR/client_test_name.txt"
+}
+
 # Wait for the server QEMU has been started up.
 # It should print "Serving" in the server.log in that case.
 wait_for_server_startup() {
