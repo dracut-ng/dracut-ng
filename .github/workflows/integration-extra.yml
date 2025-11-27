@@ -48,24 +48,54 @@ jobs:
                     - "20"
                     - "26"
                     - "30"
-                    - "40"
-                    - "41"
-                    - "42"
-                    - "43"
                     - "50"
                     - "80"
                     - "81"
                     - "82"
                 exclude:
-                    # https://github.com/dracut-ng/dracut-ng/issues/1224
-                    - container: gentoo:amd64-openrc
-                      test: "43"
                     # https://github.com/dracut-ng/dracut-ng/issues/1407
                     - container: debian:sid
                       test: "12"
                     # https://github.com/dracut-ng/dracut-ng/issues/1590
                     - container: ubuntu:rolling
                       test: "30"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            options: '--device=/dev/kvm --privileged'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v6
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    systemd:
+        # run this test on all containers
+        name: ${{ matrix.test }} on ${{ matrix.container }}
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+        concurrency:
+            group: extra-basic-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                container:
+                    - arch:latest
+                    - azurelinux:3.0
+                    - debian:latest
+                    - debian:sid
+                    - fedora:latest
+                    - fedora:rawhide
+                    - centos:stream10-development
+                    - gentoo:latest
+                    - opensuse:latest
+                    - ubuntu:devel
+                    - ubuntu:rolling
+                test:
+                    - "40"
+                    - "41"
+                    - "42"
+                    - "43"
+                exclude:
                     # https://github.com/dracut-ng/dracut-ng/issues/1677
                     - container: arch:latest
                       test: "41"
