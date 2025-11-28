@@ -33,7 +33,6 @@ if [[ "${DISTRIBUTION}" =~ "centos:" ]]; then \
     dnf -y install epel-release; \
 else \
     dnf -y install --setopt=install_weak_deps=False \
-    btrfs-progs \
     dhcp-server \
     nbd \
     qemu \
@@ -45,6 +44,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     asciidoctor \
     bash-completion \
     bluez \
+    btrfs-progs \
     cargo \
     cifs-utils \
     cryptsetup \
