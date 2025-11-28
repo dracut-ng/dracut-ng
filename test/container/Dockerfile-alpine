@@ -10,7 +10,6 @@
 # - network: networkmanager
 
 # Not installed
-# - cargo (to increase coverage)
 # - dash (to increase coverage)
 # - ntfs-3g (not enabled with linux-virt)
 # - erofs-utils (not enabled with linux-virt)
@@ -40,6 +39,7 @@ RUN apk add --no-cache \
 
 # Packages for recent changes that are not yet released or packaged by dracut-tests
 RUN apk add --no-cache \
+    cargo \
     dnsmasq \
     networkmanager-cli \
     networkmanager-initrd-generator
