@@ -25,6 +25,7 @@ jobs:
             matrix:
                 container:
                     - debian
+                    - gentoo
                     - opensuse
                     - ubuntu
                     - void
@@ -63,6 +64,7 @@ jobs:
             matrix:
                 container:
                     - debian
+                    - gentoo
                     - opensuse
                     - ubuntu
                 test:
@@ -76,6 +78,10 @@ jobs:
                       test: "41"
                     # fails to boot
                     - container: ubuntu
+                      test: "41"
+                exclude:
+                    # fails with key file '/run/credentials/@system/key' missing.
+                    - container: gentoo
                       test: "41"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-arm
