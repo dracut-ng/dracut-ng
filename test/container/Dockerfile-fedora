@@ -41,6 +41,7 @@ else \
 ; fi
 
 RUN dnf -y install --setopt=install_weak_deps=False \
+    3cpio \
     asciidoctor \
     bash-completion \
     bluez \
