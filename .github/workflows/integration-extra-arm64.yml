@@ -79,8 +79,7 @@ jobs:
                     # fails to boot
                     - container: ubuntu
                       test: "41"
-                exclude:
-                    # fails with key file '/run/credentials/@system/key' missing.
+                    # fails with key file '/run/credentials/@system/key' missing
                     - container: gentoo
                       test: "41"
         container:
