@@ -156,6 +156,9 @@ case "$ARCH" in
         ARGS+=(-M "cap-ccf-assist=off,cap-cfpc=broken,cap-ibs=broken,cap-sbbc=broken")
         console=hvc0
         ;;
+    s390x)
+        console=hvc0
+        ;;
 esac
 
 if uefi_code=$(get_uefi_code); then
