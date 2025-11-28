@@ -53,15 +53,13 @@ jobs:
                     - "81"
                     - "82"
                 exclude:
-                    # https://github.com/dracut-ng/dracut-ng/issues/1407
-                    - container: debian:sid
-                      test: "12"
                     # https://github.com/dracut-ng/dracut-ng/issues/1590
                     - container: ubuntu:rolling
                       test: "30"
-                    # intentionally skipped
+                    # btrfs kernel module is not available
                     - container: centos:stream10-development
                       test: "11"
+                    # intentionally skipped
                     - container: alpine:latest
                       test: "12"
                     - container: alpine:edge
@@ -72,12 +70,6 @@ jobs:
                       test: "12"
                     - container: gentoo:amd64-openrc
                       test: "12"
-                    - container: alpine:latest
-                      test: "82"
-                    - container: alpine:edge
-                      test: "82"
-                    - container: gentoo:amd64-openrc
-                      test: "82"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm --privileged'
