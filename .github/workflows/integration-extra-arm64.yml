@@ -27,6 +27,7 @@ jobs:
                     - debian:latest
                     - gentoo:latest
                     - opensuse:latest
+                    - ubuntu:devel
                     - ubuntu:latest
                     - void:latest
                 test:
@@ -66,6 +67,7 @@ jobs:
                     - debian:latest
                     - gentoo:latest
                     - opensuse:latest
+                    - ubuntu:devel
                     - ubuntu:latest
                 test:
                     - "40"
@@ -82,6 +84,9 @@ jobs:
                     # fails with key file '/run/credentials/@system/key' missing
                     - container: gentoo:latest
                       test: "41"
+                    # /boot/vmlinuz-... is missing .efi suffix
+                    - container: ubuntu:devel
+                      test: "43"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-arm
             options: '--privileged'
