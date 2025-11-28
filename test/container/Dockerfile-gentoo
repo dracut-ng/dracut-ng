@@ -15,10 +15,7 @@
 
 ARG OPTION=systemd
 
-FROM docker.io/gentoo/portage:latest AS portage
-
 FROM docker.io/gentoo/stage3:${OPTION}
-COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
 
 # export ARG
 ARG OPTION
@@ -37,6 +34,7 @@ RUN \
     # Support thin volumes and build all of LVM2 including daemons and tools like lvchange \
     echo 'sys-fs/lvm2 thin lvm' >> /etc/portage/package.use/lvm2 ;\
     # Ensure everything is up to date before we start \
+    emerge-webrsync ;\
     emerge --quiet --update --deep --newuse --autounmask-continue=y --with-bdeps=y @world
 
 # Dependencies to pass basic test
