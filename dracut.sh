@@ -1578,11 +1578,6 @@ require_binaries() {
     local _module_name="${moddir##*/}"
     local _ret=0
 
-    if [[ $1 == "-m" ]]; then
-        _module_name="$2"
-        shift 2
-    fi
-
     for cmd in "$@"; do
         if ! find_binary "$cmd" &> /dev/null; then
             ddebug "Module '${_module_name#[0-9][0-9]}' will not be installed, because command '$cmd' could not be found!"
@@ -1595,11 +1590,6 @@ require_binaries() {
 require_any_binary() {
     local _module_name="${moddir##*/}"
     local _ret=1
-
-    if [[ $1 == "-m" ]]; then
-        _module_name="$2"
-        shift 2
-    fi
 
     for cmd in "$@"; do
         if find_binary "$cmd" &> /dev/null; then
@@ -1625,11 +1615,6 @@ require_kernel_modules() {
 
     # Ignore kernel module requirement for no-kernel build
     [[ $no_kernel == yes ]] && return 0
-
-    if [[ $1 == "-m" ]]; then
-        _module_name="$2"
-        shift 2
-    fi
 
     for mod in "$@"; do
         if ! check_kernel_module "$mod" &> /dev/null; then
