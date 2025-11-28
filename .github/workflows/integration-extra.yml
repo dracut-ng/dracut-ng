@@ -14,7 +14,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
     basic:
-        # run this test on all containers
+        # run these tests on all containers
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-24.04
         timeout-minutes: 20
@@ -43,7 +43,6 @@ jobs:
                 test:
                     - "10"
                     - "11"
-                    - "12"
                     - "13"
                     - "20"
                     - "26"
@@ -59,17 +58,37 @@ jobs:
                     # btrfs kernel module is not available
                     - container: centos:stream10-development
                       test: "11"
-                    # intentionally skipped
-                    - container: alpine:latest
-                      test: "12"
-                    - container: alpine:edge
-                      test: "12"
-                    - container: azurelinux:3.0
-                      test: "12"
-                    - container: centos:stream10-development
-                      test: "12"
-                    - container: gentoo:amd64-openrc
-                      test: "12"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            options: '--device=/dev/kvm --privileged'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v6
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    kernel-install:
+        name: ${{ matrix.test }} on ${{ matrix.container }}
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+        concurrency:
+            group: extra-kernel-install-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                container:
+                    - arch:latest
+                    - debian:latest
+                    - debian:sid
+                    - fedora:latest
+                    - fedora:rawhide
+                    - gentoo:latest
+                    - opensuse:latest
+                    - ubuntu:devel
+                    - ubuntu:rolling
+                    - void:latest
+                test:
+                    - "12"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm --privileged'
@@ -79,7 +98,6 @@ jobs:
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     systemd:
-        # run this test on all containers
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-24.04
         timeout-minutes: 20
