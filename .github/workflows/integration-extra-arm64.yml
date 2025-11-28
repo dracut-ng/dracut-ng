@@ -30,11 +30,19 @@ jobs:
                     - void
                 test:
                     - "10"
+                    - "11"
                     - "13"
+                    - "20"
+                    - "26"
                     - "30"
                     - "50"
                     - "80"
                     - "81"
+                    - "82"
+                exclude:
+                    # run-qemu: Could not find a Linux kernel version to test with!
+                    - container: void
+                      test: "82"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-arm
             options: '--privileged'
@@ -58,7 +66,17 @@ jobs:
                     - opensuse
                     - ubuntu
                 test:
+                    - "40"
+                    - "41"
+                    - "42"
                     - "43"
+                exclude:
+                    # mkosi test step fails
+                    - container: opensuse
+                      test: "41"
+                    # fails to boot
+                    - container: ubuntu
+                      test: "41"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-arm
             options: '--privileged'
