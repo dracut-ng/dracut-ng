@@ -24,11 +24,11 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - debian
-                    - gentoo
-                    - opensuse
-                    - ubuntu
-                    - void
+                    - debian:latest
+                    - gentoo:latest
+                    - opensuse:latest
+                    - ubuntu:latest
+                    - void:latest
                 test:
                     - "10"
                     - "11"
@@ -42,10 +42,10 @@ jobs:
                     - "82"
                 exclude:
                     # run-qemu: Could not find a Linux kernel version to test with!
-                    - container: void
+                    - container: void:latest
                       test: "82"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-arm
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-arm
             options: '--privileged'
         steps:
             - name: "Checkout Repository"
@@ -63,10 +63,10 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - debian
-                    - gentoo
-                    - opensuse
-                    - ubuntu
+                    - debian:latest
+                    - gentoo:latest
+                    - opensuse:latest
+                    - ubuntu:latest
                 test:
                     - "40"
                     - "41"
@@ -74,16 +74,16 @@ jobs:
                     - "43"
                 exclude:
                     # mkosi test step fails
-                    - container: opensuse
+                    - container: opensuse:latest
                       test: "41"
                     # fails to boot
-                    - container: ubuntu
+                    - container: ubuntu:latest
                       test: "41"
                     # fails with key file '/run/credentials/@system/key' missing
-                    - container: gentoo
+                    - container: gentoo:latest
                       test: "41"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}:latest-arm
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-arm
             options: '--privileged'
         steps:
             - name: "Checkout Repository"
