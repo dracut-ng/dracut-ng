@@ -182,11 +182,20 @@ jobs:
                     - fedora:latest
                     - fedora:rawhide
                     - opensuse:latest
+                    - ubuntu:devel
+                    - ubuntu:rolling
                 test:
                     - "60"
                     - "70"
                     - "71"
                     - "72"
+                exclude:
+                    # https://github.com/dracut-ng/dracut-ng/issues/1815
+                    - container: ubuntu:devel
+                      test: "72"
+                    # https://github.com/dracut-ng/dracut-ng/issues/1815
+                    - container: ubuntu:rolling
+                      test: "72"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm'
