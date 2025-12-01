@@ -52,9 +52,6 @@ jobs:
                     - "81"
                     - "82"
                 exclude:
-                    # https://github.com/dracut-ng/dracut-ng/issues/1590
-                    - container: ubuntu:rolling
-                      test: "30"
                     # btrfs kernel module is not available on CentOS Stream 10
                     - container: centos:latest
                       test: "11"
