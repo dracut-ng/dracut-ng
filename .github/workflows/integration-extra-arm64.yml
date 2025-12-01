@@ -84,7 +84,7 @@ jobs:
                     # fails with key file '/run/credentials/@system/key' missing
                     - container: gentoo:latest
                       test: "41"
-                    # /boot/vmlinuz-... is missing .efi suffix
+                    # /boot/vmlinuz-... is missing .efi suffix: https://launchpad.net/bugs/2133402
                     - container: ubuntu:devel
                       test: "43"
         container:
@@ -95,4 +95,3 @@ jobs:
               uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
-
