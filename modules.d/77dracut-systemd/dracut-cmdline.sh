@@ -50,8 +50,6 @@ make_trace_mem "hook cmdline" '1+:mem' '1+:iomem' '3+:slab'
 getargs 'rd.break=cmdline' && emergency_shell -n cmdline "Break before cmdline"
 source_hook cmdline
 
-[ -f /lib/dracut/parse-resume.sh ] && . /lib/dracut/parse-resume.sh
-
 case "${root#block:}${root_unset}" in
     LABEL=* | UUID=* | PARTUUID=* | PARTLABEL=*)
         root="block:$(label_uuid_to_dev "${root#block:}")"
