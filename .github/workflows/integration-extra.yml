@@ -33,7 +33,7 @@ jobs:
                     - debian:sid
                     - fedora:latest
                     - fedora:rawhide
-                    - centos:stream10-development
+                    - centos:latest
                     - gentoo:latest
                     - gentoo:amd64-openrc
                     - opensuse:latest
@@ -55,8 +55,8 @@ jobs:
                     # https://github.com/dracut-ng/dracut-ng/issues/1590
                     - container: ubuntu:rolling
                       test: "30"
-                    # btrfs kernel module is not available
-                    - container: centos:stream10-development
+                    # btrfs kernel module is not available on CentOS Stream 10
+                    - container: centos:latest
                       test: "11"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
@@ -114,7 +114,7 @@ jobs:
                     - debian:sid
                     - fedora:latest
                     - fedora:rawhide
-                    - centos:stream10-development
+                    - centos:latest
                     - gentoo:latest
                     - opensuse:latest
                     - ubuntu:devel
@@ -129,7 +129,7 @@ jobs:
                     - container: arch:latest
                       test: "41"
                     # intentionally skipped
-                    - container: centos:stream10-development
+                    - container: centos:latest
                       test: "41"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd

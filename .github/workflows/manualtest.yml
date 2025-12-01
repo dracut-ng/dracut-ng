@@ -16,7 +16,7 @@ on:  # yamllint disable-line rule:truthy
                     - "alpine:latest"
                     - "alpine:edge"
                     - "azurelinux:3.0"
-                    - "centos:stream10-development"
+                    - "centos:latest"
                     - "fedora:latest"
                     - "fedora:rawhide"
                     - "arch:latest"
