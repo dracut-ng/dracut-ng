@@ -28,7 +28,7 @@ jobs:
                     - gentoo:latest
                     - opensuse:latest
                     - ubuntu:devel
-                    - ubuntu:latest
+                    - ubuntu:rolling
                     - void:latest
                 test:
                     - "10"
@@ -68,7 +68,7 @@ jobs:
                     - gentoo:latest
                     - opensuse:latest
                     - ubuntu:devel
-                    - ubuntu:latest
+                    - ubuntu:rolling
                 test:
                     - "40"
                     - "41"
@@ -78,14 +78,14 @@ jobs:
                     # mkosi test step fails
                     - container: opensuse:latest
                       test: "41"
-                    # fails to boot
-                    - container: ubuntu:latest
-                      test: "41"
                     # fails with key file '/run/credentials/@system/key' missing
                     - container: gentoo:latest
                       test: "41"
                     # /boot/vmlinuz-... is missing .efi suffix: https://launchpad.net/bugs/2133402
                     - container: ubuntu:devel
+                      test: "43"
+                    # /boot/vmlinuz-... is missing .efi suffix: https://launchpad.net/bugs/2133402
+                    - container: ubuntu:rolling
                       test: "43"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-arm
