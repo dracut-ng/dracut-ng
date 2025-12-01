@@ -67,7 +67,7 @@ install() {
     fi
 
     # if systemd is included and has the hibernate-resume tool, use it and nothing else
-    if dracut_module_included "systemd" && [[ -x "${dracutsysrootdir-}$systemdutildir/systemd-hibernate-resume" ]]; then
+    if dracut_module_included "systemd"; then
         inst_multiple -o \
             "$systemdutildir"/system-generators/systemd-hibernate-resume-generator \
             "$systemdsystemunitdir"/systemd-hibernate-resume.service \
@@ -84,11 +84,6 @@ install() {
         }
     done
 
-    if ! dracut_module_included "systemd"; then
-        inst_hook cmdline 10 "$moddir/parse-resume.sh"
-    else
-        inst_script "$moddir/parse-resume.sh" /lib/dracut/parse-resume.sh
-    fi
-
+    inst_hook cmdline 10 "$moddir/parse-resume.sh"
     inst_script "$moddir/resume.sh" /lib/dracut/resume.sh
 }

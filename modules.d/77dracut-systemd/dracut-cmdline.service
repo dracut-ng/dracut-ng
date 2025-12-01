@@ -11,8 +11,6 @@ ConditionPathExists=/usr/lib/initrd-release
 ConditionPathExistsGlob=|/etc/cmdline.d/*.conf
 ConditionDirectoryNotEmpty=|/lib/dracut/hooks/cmdline
 ConditionKernelCommandLine=|rd.break=cmdline
-ConditionKernelCommandLine=|resume
-ConditionKernelCommandLine=|noresume
 Conflicts=shutdown.target emergency.target
 
 [Service]
