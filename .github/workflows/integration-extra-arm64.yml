@@ -74,6 +74,7 @@ jobs:
                     - "41"
                     - "42"
                     - "43"
+                    - "44"
                 exclude:
                     # mkosi test step fails
                     - container: opensuse:latest
