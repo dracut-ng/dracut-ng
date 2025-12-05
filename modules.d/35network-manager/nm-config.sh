@@ -6,8 +6,10 @@ command -v getargbool > /dev/null || . /lib/dracut-lib.sh
     && nm_service_name="NetworkManager-initrd" \
     || nm_service_name="nm-initrd"
 
+nm_needs_generate_connections=
 if [ -n "$netroot" ] || [ -e /tmp/net.ifaces ]; then
     echo rd.neednet >> /etc/cmdline.d/20-neednet.conf
+    nm_needs_generate_connections=1
 fi
 
 if getargbool 0 rd.debug; then
@@ -36,7 +38,7 @@ EOF
     fi
 fi
 
-if [ "$nm_service_name" = "nm-initrd" ]; then
+if [ "$nm_service_name" = "nm-initrd" ] || [ "$nm_needs_generate_connections" ]; then
     command -v nm_generate_connections > /dev/null || . /lib/nm-lib.sh
     nm_generate_connections
 fi
