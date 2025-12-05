@@ -156,6 +156,10 @@ case "$ARCH" in
         ARGS+=(-M "cap-ccf-assist=off,cap-cfpc=broken,cap-ibs=broken,cap-sbbc=broken")
         console=hvc0
         ;;
+    riscv64)
+        ARGS+=(-M virt)
+        rng_device=virtio-rng-device
+        ;;
     s390x)
         console=hvc0
         ;;
@@ -166,7 +170,7 @@ if uefi_code=$(get_uefi_code); then
 fi
 
 # Provide rng device sourcing the hosts /dev/urandom and other standard parameters
-ARGS+=(-smp 2 -m "${MEMORY-1024}" -nodefaults -vga none -display none -no-reboot -watchdog-action poweroff -device virtio-rng-pci)
+ARGS+=(-smp 2 -m "${MEMORY-1024}" -nodefaults -vga none -display none -no-reboot -watchdog-action poweroff -device "${rng_device:-virtio-rng-pci}")
 
 if ! [[ $* == *-daemonize* ]] && ! [[ $* == *-daemonize* ]]; then
     ARGS+=(-serial stdio)
