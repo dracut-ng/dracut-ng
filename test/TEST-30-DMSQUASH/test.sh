@@ -63,7 +63,7 @@ test_run() {
     rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
     [ "$rootPartitions" -eq 1 ]
 
-    client_run "autooverlay" "init=/sbin/init-persist rd.live.image rd.live.overlay=LABEL=persist rd.live.dir=LiveOS"
+    client_run "autooverlay" "init=/sbin/init-persist rd.live.image rd.overlay=LABEL=persist rd.live.dir=LiveOS"
 
     rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
     [ "$rootPartitions" -eq 2 ]
@@ -75,6 +75,25 @@ test_run() {
         # Verify that the string "dracut-autooverlay-success" occurs in the second partition in the image file.
         dd if="$TESTDIR"/root.img bs=1MiB status=none \
             | grep -F -a -m 1 -q dracut-autooverlay-success
+    )
+
+    # Test overlayroot= parameter equivalence with rd.overlay=
+    test_marker_reset
+    sfdisk --delete "$TESTDIR"/root.img 2
+    # Wipe the area where partition 2 will be recreated to avoid mkfs prompt
+    dd if=/dev/zero of="$TESTDIR"/root.img bs=1M seek=320 count=50 conv=notrunc status=none
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    [ "$rootPartitions" -eq 1 ]
+
+    client_run "persistent autooverlay" "init=/sbin/init-persist rd.live.image rd.overlay=LABEL=persist rd.live.dir=LiveOS overlayroot=LABEL=persist"
+
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    [ "$rootPartitions" -eq 2 ]
+
+    (
+        set +o pipefail
+        dd if="$TESTDIR"/root.img bs=1MiB status=none \
+            | grep -U --binary-files=binary -F -m 1 -q dracut-autooverlay-success
     )
 
     return 0
