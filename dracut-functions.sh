@@ -1203,3 +1203,9 @@ inst_hook() {
     inst_simple "$3" "$hook"
     chmod u+x "$initdir/$hook"
 }
+
+if ! is_func dinfo > /dev/null 2>&1; then
+    # shellcheck source=./dracut-logger.sh
+    . "${BASH_SOURCE[0]%/*}/dracut-logger.sh"
+    dlog_init
+fi
