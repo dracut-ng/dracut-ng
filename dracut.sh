@@ -1529,19 +1529,15 @@ elif ! [[ $DRACUT_INSTALL ]] && [[ -x $dracutbasedir/src/install/dracut-install 
     DRACUT_INSTALL=$dracutbasedir/src/install/dracut-install
 fi
 
-# Test if dracut-install is a standalone executable with no options.
-# E.g. DRACUT_INSTALL may be set externally as:
+# Test if the configured dracut-install command exists.
+# Catch DRACUT_INSTALL being unset/empty.
+# The variable DRACUT_INSTALL may be set externally as:
 # DRACUT_INSTALL="valgrind dracut-install"
 # or
 # DRACUT_INSTALL="dracut-install --debug"
-# in which case the string cannot be tested for being executable.
-DRINSTALLPARTS=0
-for i in $DRACUT_INSTALL; do
-    DRINSTALLPARTS=$((DRINSTALLPARTS + 1))
-done
-
-if [[ $DRINSTALLPARTS == 1 ]] && ! command -v "$DRACUT_INSTALL" > /dev/null 2>&1; then
-    dfatal "dracut-install not found!"
+# in that case check if the first parameter (e.g. valgrind) is executable.
+if ! command -v "${DRACUT_INSTALL%% *}" > /dev/null 2>&1; then
+    dfatal "${DRACUT_INSTALL:-dracut-install} not found!"
     exit 10
 fi
 
