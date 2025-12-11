@@ -1476,12 +1476,6 @@ else
     export DRACUT_CP="cp --reflink=auto --sparse=auto --preserve=mode,timestamps,links -dfr"
 fi
 
-# is_func <command>
-# Check whether $1 is a function.
-is_func() {
-    [[ "$(type -t "$1")" == "function" ]]
-}
-
 if ! [[ ${dracutbasedir-} ]]; then
     dracutbasedir=${BASH_SOURCE[0]%/*}
     [[ $dracutbasedir == dracut-functions* ]] && dracutbasedir="."
@@ -1489,11 +1483,8 @@ if ! [[ ${dracutbasedir-} ]]; then
     dracutbasedir="$(readlink -f "$dracutbasedir")"
 fi
 
-if ! is_func dinfo > /dev/null 2>&1; then
-    # shellcheck source=./dracut-logger.sh
-    . "$dracutbasedir/dracut-logger.sh"
-    dlog_init
-fi
+# shellcheck source=./dracut-functions.sh
+. "$dracutbasedir"/dracut-functions.sh
 
 if ! [[ ${initdir-} ]]; then
     dfatal "initdir not set"
@@ -1527,9 +1518,6 @@ export srcmods
 DRACUT_TESTBIN=${DRACUT_TESTBIN:-/bin/sh}
 DRACUT_LDCONFIG=${DRACUT_LDCONFIG:-ldconfig}
 PKG_CONFIG=${PKG_CONFIG:-pkg-config}
-
-# shellcheck source=./dracut-functions.sh
-. "$dracutbasedir"/dracut-functions.sh
 
 if ! [[ "${DRACUT_INSTALL-}" ]]; then
     DRACUT_INSTALL=$(find_binary dracut-install)
