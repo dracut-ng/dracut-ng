@@ -6,10 +6,12 @@
 /.buildpath
 /.project
 /Makefile.inc
+/dracut-cpio
 /dracut-install
 /dracut-util
 /dracut.conf.d/*.conf
 /dracut.pc
+/src/dracut-cpio/target/
 /src/install/dracut-install
 /src/skipcpio/skipcpio
 /src/util/util
