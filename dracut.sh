@@ -2541,7 +2541,7 @@ if [[ $no_kernel != yes ]] && ! [[ -d $srcmods ]]; then
     exit 1
 fi
 
-if ! [[ $print_cmdline ]]; then
+if ! [[ $print_cmdline ]] && ! [[ $printconfig ]]; then
     inst "$DRACUT_TESTBIN"
     if ! $DRACUT_INSTALL ${initdir:+-D "$initdir"} ${dracutsysrootdir:+-r "$dracutsysrootdir"} -R "$DRACUT_TESTBIN" &> /dev/null; then
         unset DRACUT_RESOLVE_LAZY
@@ -2706,7 +2706,7 @@ if [[ $no_kernel != yes ]] && [[ -d $srcmods ]]; then
     fi
 fi
 
-if [[ ! $print_cmdline ]]; then
+if ! [[ $print_cmdline ]] && ! [[ $printconfig ]]; then
     if [[ -f $outfile && ! $force ]]; then
         dfatal "Will not override existing initramfs ($outfile) without --force"
         exit 1
