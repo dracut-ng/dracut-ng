@@ -1571,8 +1571,10 @@ if ! [[ ${libdirs-} ]]; then
         [[ -d "${dracutsysrootdir-}/usr/lib" ]] && libdirs+=" /usr/lib"
     fi
 
-    libdirs+=" $(ldconfig_paths)"
+    # shellcheck disable=SC2046  # word splitting is wanted, libraries must not contain spaces
+    libdirs+="$(printf ' %s' $(ldconfig_paths))"
 
+    libdirs="${libdirs# }"
     export libdirs
 fi
 
