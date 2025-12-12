@@ -1532,7 +1532,7 @@ PKG_CONFIG=${PKG_CONFIG:-pkg-config}
 . "$dracutbasedir"/dracut-functions.sh
 
 if ! [[ "${DRACUT_INSTALL-}" ]]; then
-    DRACUT_INSTALL=$(find_binary dracut-install)
+    DRACUT_INSTALL=$(find_binary dracut-install || true)
 fi
 
 if ! [[ $DRACUT_INSTALL ]] && [[ -x $dracutbasedir/dracut-install ]]; then
