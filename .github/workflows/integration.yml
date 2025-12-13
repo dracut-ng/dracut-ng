@@ -54,12 +54,14 @@ jobs:
         needs: basic
         name: syncheck
         runs-on: ubuntu-24.04
+        container:
+            image: ubuntu:devel
         steps:
             - name: "Checkout Repository"
               uses: actions/checkout@v6
             - run: |
-                  sudo apt-get update
-                  sudo apt-get -y install shellcheck shfmt
+                  apt-get update
+                  apt-get -y install shellcheck shfmt make
                   make syncheck
 
     extended:
