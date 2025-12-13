@@ -110,7 +110,7 @@ indent-c:
 .PHONY: indent
 indent: indent-c
 ifeq ($(HAVE_SHFMT),yes)
-	shfmt -w -s .
+	shfmt --apply-ignore -w -s .
 endif
 
 src/dracut-cpio/target/release/dracut-cpio: src/dracut-cpio/src/main.rs
