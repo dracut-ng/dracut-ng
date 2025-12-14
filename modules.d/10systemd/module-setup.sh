@@ -34,7 +34,6 @@ install() {
 
     inst_multiple -o \
         "$systemdutildir"/systemd \
-        "$systemdutildir"/systemd-coredump \
         "$systemdutildir"/systemd-cgroups-agent \
         "$systemdutildir"/systemd-executor \
         "$systemdutildir"/systemd-shutdown \
