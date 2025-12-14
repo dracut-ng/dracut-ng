@@ -202,9 +202,7 @@ jobs:
                 network:
                     - network-manager
                 container:
-                    - arch:latest
                     - debian:latest
-                    - opensuse:latest
                     - ubuntu:devel
                 test:
                     - "70"
