@@ -198,6 +198,8 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
+                network:
+                    - network-manager
                 container:
                     - arch:latest
                     - debian:latest
