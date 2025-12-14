@@ -1114,6 +1114,28 @@ inst() {
     fi
 }
 
+inst_binary() {
+    local _ret
+    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"; then
+        return 0
+    else
+        _ret=$?
+        derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"
+        return "$_ret"
+    fi
+}
+
+inst_script() {
+    local _ret
+    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"; then
+        return 0
+    else
+        _ret=$?
+        derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"
+        return "$_ret"
+    fi
+}
+
 inst_simple() {
     local dstdir="${dstdir:-"$initdir"}"
     local _ret _hostonly_install
@@ -1152,40 +1174,6 @@ inst_multiple() {
     fi
 }
 
-inst_binary() {
-    local _ret
-    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"; then
-        return 0
-    else
-        _ret=$?
-        derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"
-        return "$_ret"
-    fi
-}
-
-inst_script() {
-    local _ret
-    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"; then
-        return 0
-    else
-        _ret=$?
-        derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} "$@"
-        return "$_ret"
-    fi
-}
-
-# Use with form hostonly="$(optional_hostonly)" inst_xxxx <args>
-# If hostonly mode is set to "strict", hostonly restrictions will still
-# be applied, else will ignore hostonly mode and try to install all
-# given modules.
-optional_hostonly() {
-    if [[ $hostonly_mode == "strict" ]]; then
-        printf -- "%s" "${hostonly-}"
-    else
-        printf ""
-    fi
-}
-
 # install function specialized for hooks
 # $1 = type of hook, $2 = hook priority (lower runs first), $3 = hook
 # All hooks should be POSIX/SuS compliant, they will be sourced by init.
@@ -1202,6 +1190,18 @@ inst_hook() {
     hook="/var/lib/dracut/hooks/${1}/${2}-${3##*/}"
     inst_simple "$3" "$hook"
     chmod u+x "$initdir/$hook"
+}
+
+# Use with form hostonly="$(optional_hostonly)" inst_xxxx <args>
+# If hostonly mode is set to "strict", hostonly restrictions will still
+# be applied, else will ignore hostonly mode and try to install all
+# given modules.
+optional_hostonly() {
+    if [[ $hostonly_mode == "strict" ]]; then
+        printf -- "%s" "${hostonly-}"
+    else
+        printf ""
+    fi
 }
 
 if ! is_func dinfo > /dev/null 2>&1; then
