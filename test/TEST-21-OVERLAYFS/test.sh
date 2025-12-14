@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+set -eu
+# shellcheck disable=SC2034
+TEST_DESCRIPTION="Test overlayfs module with persistent device overlay"
+
+test_check() {
+    command -v qemu-kvm &> /dev/null || command -v qemu-system-"$(uname -m)" &> /dev/null || return 1
+    return 0
+}
+
+test_run() {
+    declare -a disk_args=()
+    # shellcheck disable=SC2034  # disk_index used in qemu_add_drive
+    declare -i disk_index=0
+
+    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
+    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root
+    qemu_add_drive disk_index disk_args "$TESTDIR"/overlay.img overlay
+
+    test_marker_reset
+
+    echo "TEST: tmpfs overlay"
+    "$testdir"/run-qemu -nic none \
+        "${disk_args[@]}" \
+        -append "$TEST_KERNEL_CMDLINE rd.overlayfs=1" \
+        -initrd "$TESTDIR"/initramfs.testing || return 1
+
+    test_marker_check || return 1
+    test_marker_reset
+
+    echo "TEST: persistent device overlay (LABEL=OVERLAY)"
+    "$testdir"/run-qemu -nic none \
+        "${disk_args[@]}" \
+        -append "$TEST_KERNEL_CMDLINE overlayroot=LABEL=OVERLAY" \
+        -initrd "$TESTDIR"/initramfs.testing || return 1
+
+    test_marker_check || return 1
+    test_marker_reset
+
+    echo "TEST: persistent device overlay (UUID=$OVERLAY_UUID)"
+    "$testdir"/run-qemu -nic none \
+        "${disk_args[@]}" \
+        -append "$TEST_KERNEL_CMDLINE overlayroot=UUID=$OVERLAY_UUID" \
+        -initrd "$TESTDIR"/initramfs.testing || return 1
+
+    test_marker_check || return 1
+    test_marker_reset
+
+    echo "TEST: fallback to tmpfs (non-existent LABEL)"
+    "$testdir"/run-qemu -nic none \
+        "${disk_args[@]}" \
+        -append "$TEST_KERNEL_CMDLINE overlayroot=LABEL=NONEXISTENT" \
+        -initrd "$TESTDIR"/initramfs.testing || return 1
+
+    test_marker_check || return 1
+
+    return 0
+}
+
+test_setup() {
+    call_dracut --tmpdir "$TESTDIR" \
+        --add-confdir test-root \
+        -i ./test-overlayfs.sh /sbin/init \
+        -f "$TESTDIR"/initramfs.root || return 1
+
+    build_ext4_image "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img dracut || return 1
+
+    dd if=/dev/zero of="$TESTDIR"/overlay.img bs=1M count=100
+    mkfs.ext4 -L OVERLAY "$TESTDIR"/overlay.img
+    # shellcheck disable=SC2034
+    OVERLAY_UUID=$(blkid -s UUID -o value "$TESTDIR"/overlay.img)
+
+    call_dracut --tmpdir "$TESTDIR" \
+        --add overlayfs \
+        --no-hostonly --no-hostonly-cmdline \
+        -f "$TESTDIR"/initramfs.testing || return 1
+
+    return 0
+}
+
+test_cleanup() {
+    return 0
+}
+
+# shellcheck disable=SC1090
+. "$testdir"/test-functions
