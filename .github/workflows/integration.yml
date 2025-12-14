@@ -187,7 +187,7 @@ jobs:
               uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
-    network-advanced:
+    network-iscsi:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-24.04
@@ -206,6 +206,31 @@ jobs:
                 test:
                     - "70"
                     - "71"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            options: '--device=/dev/kvm'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v6
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    network-nbd:
+        needs: basic
+        name: ${{ matrix.test }} on ${{ matrix.container }}
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+        concurrency:
+            group: network-nbd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                container:
+                    - arch:latest
+                    - debian:latest
+                    - opensuse:latest
+                    - ubuntu:devel
+                test:
                     - "72"
                 exclude:
                     # https://github.com/dracut-ng/dracut-ng/issues/1815
