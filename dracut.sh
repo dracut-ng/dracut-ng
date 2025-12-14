@@ -1519,28 +1519,6 @@ DRACUT_TESTBIN=${DRACUT_TESTBIN:-/bin/sh}
 DRACUT_LDCONFIG=${DRACUT_LDCONFIG:-ldconfig}
 PKG_CONFIG=${PKG_CONFIG:-pkg-config}
 
-if ! [[ "${DRACUT_INSTALL-}" ]]; then
-    DRACUT_INSTALL=$(find_binary dracut-install || true)
-fi
-
-if ! [[ $DRACUT_INSTALL ]] && [[ -x $dracutbasedir/dracut-install ]]; then
-    DRACUT_INSTALL=$dracutbasedir/dracut-install
-elif ! [[ $DRACUT_INSTALL ]] && [[ -x $dracutbasedir/src/install/dracut-install ]]; then
-    DRACUT_INSTALL=$dracutbasedir/src/install/dracut-install
-fi
-
-# Test if the configured dracut-install command exists.
-# Catch DRACUT_INSTALL being unset/empty.
-# The variable DRACUT_INSTALL may be set externally as:
-# DRACUT_INSTALL="valgrind dracut-install"
-# or
-# DRACUT_INSTALL="dracut-install --debug"
-# in that case check if the first parameter (e.g. valgrind) is executable.
-if ! command -v "${DRACUT_INSTALL%% *}" > /dev/null 2>&1; then
-    dfatal "${DRACUT_INSTALL:-dracut-install} not found!"
-    exit 10
-fi
-
 # Detect lib paths
 if ! [[ ${libdirs-} ]]; then
     if [[ $($DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} --dry-run -R "$DRACUT_TESTBIN") == */lib64/* ]] &> /dev/null \
