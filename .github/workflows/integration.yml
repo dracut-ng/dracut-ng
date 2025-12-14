@@ -232,13 +232,8 @@ jobs:
                     - arch:latest
                     - debian:latest
                     - opensuse:latest
-                    - ubuntu:devel
                 test:
                     - "72"
-                exclude:
-                    # https://github.com/dracut-ng/dracut-ng/issues/1815
-                    - container: ubuntu:devel
-                      test: "72"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm'
