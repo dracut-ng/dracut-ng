@@ -197,6 +197,7 @@ jobs:
             cancel-in-progress: true
         strategy:
             fail-fast: false
+            max-parallel: 1
             matrix:
                 network:
                     - network-manager
