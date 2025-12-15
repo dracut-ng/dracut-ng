@@ -59,10 +59,9 @@ jobs:
         steps:
             - name: "Checkout Repository"
               uses: actions/checkout@v6
-            - run: |
-                  apt-get update
-                  apt-get -y install shellcheck shfmt make
-                  make syncheck
+            - name: Install dependencies
+              run: apt-get update && apt-get -y install make shellcheck shfmt
+            - run: make syncheck
 
     extended:
         needs: basic
