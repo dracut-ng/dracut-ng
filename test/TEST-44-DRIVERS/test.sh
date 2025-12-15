@@ -29,7 +29,7 @@ test_run() {
     # This test should fail if rd.driver.export is not passed at kernel command-line
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE rd.driver.export" \
+        -append "root=LABEL=dracut $TEST_KERNEL_CMDLINE rd.driver.export" \
         -initrd "$TESTDIR"/initramfs.testing
 
     test_marker_check

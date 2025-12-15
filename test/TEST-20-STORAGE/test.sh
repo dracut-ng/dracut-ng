@@ -46,6 +46,8 @@ client_run() {
 
     if [ "$TEST_FSTYPE" = "zfs" ]; then
         TEST_KERNEL_CMDLINE+=" root=ZFS=dracut/root "
+    else
+        TEST_KERNEL_CMDLINE+=" root=LABEL=dracut "
     fi
 
     test_marker_reset

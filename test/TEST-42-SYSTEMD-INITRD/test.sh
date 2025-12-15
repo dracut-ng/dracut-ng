@@ -25,7 +25,7 @@ client_run() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "$TEST_KERNEL_CMDLINE $client_opts" \
+        -append "root=LABEL=dracut $TEST_KERNEL_CMDLINE $client_opts" \
         -initrd "$TESTDIR"/initramfs.testing
 
     if ! test_marker_check; then
