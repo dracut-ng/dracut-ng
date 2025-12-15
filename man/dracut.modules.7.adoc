@@ -361,6 +361,14 @@ options:
 
 -s:: reduce verbosity.
 
+==== dracut_need_initqueue
+
+Obsolete function as of dracut v108 that expresses a dependency on the initqueue.
+Instead of using this function, add a dracut module dependency for the initqueue
+dracut module.
+This function is maintained only to provide compatibility for modules aimed at older
+dracut releases.
+
 === Initramfs Functions
 
 FIXME

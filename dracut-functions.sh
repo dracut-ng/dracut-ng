@@ -1193,6 +1193,117 @@ inst_hook() {
     chmod u+x "$initdir/$hook"
 }
 
+dracut_need_initqueue() {
+    : > "$initdir/lib/dracut/need-initqueue"
+}
+
+# attempt to install any programs specified in a udev rule
+_inst_rule_programs() {
+    local _prog _bin
+
+    # shellcheck disable=SC2013
+    for _prog in $(sed -nr 's/.*PROGRAM==?"([^ "]+).*/\1/p' "$1"); do
+        _bin=""
+        if [[ -x "${dracutsysrootdir-}${udevdir}/$_prog" ]]; then
+            _bin="${udevdir}"/$_prog
+        elif [[ ${_prog/\$env\{/} == "$_prog" ]]; then
+            _bin=$(find_binary "$_prog") || {
+                dinfo "Skipping program $_prog using in udev rule ${1##*/} as it cannot be found"
+                continue
+            }
+        fi
+
+        [[ $_bin ]] && inst_binary "$_bin"
+    done
+
+    # shellcheck disable=SC2013
+    for _prog in $(sed -nr 's/.*RUN[+=]=?"([^ "]+).*/\1/p' "$1"); do
+        _bin=""
+        if [[ -x "${dracutsysrootdir-}${udevdir}/$_prog" ]]; then
+            _bin=${udevdir}/$_prog
+        elif [[ ${_prog/\$env\{/} == "$_prog" ]] && [[ ${_prog} != "/sbin/initqueue" ]]; then
+            _bin=$(find_binary "$_prog") || {
+                dinfo "Skipping program $_prog using in udev rule ${1##*/} as it cannot be found"
+                continue
+            }
+        fi
+
+        [[ $_bin ]] && inst_binary "$_bin"
+    done
+
+    # shellcheck disable=SC2013
+    for _prog in $(sed -nr 's/.*IMPORT\{program\}==?"([^ "]+).*/\1/p' "$1"); do
+        _bin=""
+        if [[ -x "${dracutsysrootdir-}${udevdir}/$_prog" ]]; then
+            _bin=${udevdir}/$_prog
+        elif [[ ${_prog/\$env\{/} == "$_prog" ]]; then
+            _bin=$(find_binary "$_prog") || {
+                dinfo "Skipping program $_prog using in udev rule ${1##*/} as it cannot be found"
+                continue
+            }
+        fi
+
+        [[ $_bin ]] && inst_multiple "$_bin"
+    done
+}
+
+# attempt to create any groups and users specified in a udev rule
+_inst_rule_group_owner() {
+    local i
+
+    # shellcheck disable=SC2013
+    for i in $(sed -nr 's/.*OWNER=?"([^ "]+).*/\1/p' "$1"); do
+        if ! grep -Eqs "^$i:" "$initdir/etc/passwd"; then
+            grep -Es "^$i:" "${dracutsysrootdir-}/etc/passwd" >> "$initdir/etc/passwd"
+        fi
+    done
+
+    # shellcheck disable=SC2013
+    for i in $(sed -nr 's/.*GROUP=?"([^ "]+).*/\1/p' "$1"); do
+        if ! grep -Eqs "^$i:" "$initdir/etc/group"; then
+            grep -Es "^$i:" "${dracutsysrootdir-}/etc/group" >> "$initdir/etc/group"
+        fi
+    done
+}
+
+_inst_rule_initqueue() {
+    if grep -q -F initqueue "$1"; then
+        dracut_need_initqueue
+    fi
+}
+
+# udev rules always get installed in the same place, so
+# create a function to install them to make life simpler.
+inst_rules() {
+    local _target=/etc/udev/rules.d _rule _found
+
+    inst_dir "${udevdir}/rules.d"
+    inst_dir "$_target"
+    for _rule in "$@"; do
+        if [ "${_rule#/}" = "$_rule" ]; then
+            for r in ${hostonly:+"${dracutsysrootdir-}"/etc/udev/rules.d} "${dracutsysrootdir-}${udevdir}/rules.d"; do
+                [[ -e $r/$_rule ]] || continue
+                _found="$r/$_rule"
+                _inst_rule_programs "$_found"
+                _inst_rule_group_owner "$_found"
+                _inst_rule_initqueue "$_found"
+                inst_simple "$_found"
+            done
+        fi
+        for r in '' "${dracutsysrootdir-}$dracutbasedir/rules.d/"; do
+            # skip rules without an absolute path
+            [[ "${r}$_rule" != /* ]] && continue
+            [[ -f ${r}$_rule ]] || continue
+            _found="${r}$_rule"
+            _inst_rule_programs "$_found"
+            _inst_rule_group_owner "$_found"
+            _inst_rule_initqueue "$_found"
+            inst_simple "$_found" "$_target/${_found##*/}"
+        done
+        [[ $_found ]] || ddebug "Skipping udev rule: $_rule"
+    done
+}
+
 # Use with form hostonly="$(optional_hostonly)" inst_xxxx <args>
 # If hostonly mode is set to "strict", hostonly restrictions will still
 # be applied, else will ignore hostonly mode and try to install all
