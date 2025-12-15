@@ -1,6 +1,11 @@
 #!/bin/sh
 
 command -v incol2 > /dev/null || . /lib/dracut-lib.sh
+command -v nfsroot_to_var > /dev/null || . /lib/nfs-lib.sh
+
+[ -n "$netroot" ] || return 0
+nfsroot_to_var "$netroot"
+str_starts "$nfs" "nfs" || return 0
 
 [ -f /tmp/nfs.rpc_pipefs_path ] && read -r rpcpipefspath < /tmp/nfs.rpc_pipefs_path
 [ -z "$rpcpipefspath" ] && rpcpipefspath=var/lib/nfs/rpc_pipefs
