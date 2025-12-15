@@ -6,8 +6,9 @@
 # releases for out-of-tree dracut modules for functions listed
 # in this file.
 #
-# All functions in this file are meant to be public and documented in
-# dracut.modules man page.
+# All functions in this file starting with an underscore are private functions
+# and must not be called directly. All other functions in this file are meant
+# to be public and documented in dracut.modules man page.
 #
 # Copyright 2005-2009 Red Hat, Inc.  All rights reserved.
 #
