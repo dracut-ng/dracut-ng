@@ -120,13 +120,13 @@ install() {
 
     # use the same directory permissions as the host
     [[ -d "${dracutsysrootdir-}"/var/lib/nfs/statd ]] \
-        && $DRACUT_CP -L --preserve=ownership -t "$initdir"/var/lib/nfs "${dracutsysrootdir-}"/var/lib/nfs/statd \
+        && $DRACUT_CP -L -p -t "$initdir"/var/lib/nfs "${dracutsysrootdir-}"/var/lib/nfs/statd \
         && rm -rf "$initdir"/var/lib/nfs/statd/*
     [[ -d "${dracutsysrootdir-}"/var/lib/nfs/statd/sm ]] \
-        && $DRACUT_CP -L --preserve=ownership -t "$initdir"/var/lib/nfs/statd "${dracutsysrootdir-}"/var/lib/nfs/statd/sm \
+        && $DRACUT_CP -L -p -t "$initdir"/var/lib/nfs/statd "${dracutsysrootdir-}"/var/lib/nfs/statd/sm \
         && rm -rf "$initdir"/var/lib/nfs/statd/sm/*
     [[ -d "${dracutsysrootdir-}"/var/lib/nfs/sm ]] \
-        && $DRACUT_CP -L --preserve=ownership -t "$initdir"/var/lib/nfs "${dracutsysrootdir-}"/var/lib/nfs/sm \
+        && $DRACUT_CP -L -p -t "$initdir"/var/lib/nfs "${dracutsysrootdir-}"/var/lib/nfs/sm \
         && rm -rf "$initdir"/var/lib/nfs/sm/*
 
     # Rather than copy the passwd file in, just set a user for rpcbind
