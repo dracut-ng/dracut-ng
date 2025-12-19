@@ -19,7 +19,6 @@ str_starts "$nfs" "nfs" || return 0
 # FIXME occasionally saw 'rpcbind: fork failed: No such device' -- why?
 command -v portmap > /dev/null && [ -z "$(pidof portmap)" ] && portmap
 if command -v rpcbind > /dev/null && [ -z "$(pidof rpcbind)" ]; then
-    . /lib/nfs-lib.sh
     mkdir -p /run/rpcbind
     chown "$(get_rpc_user):" /run/rpcbind
     rpcbind
