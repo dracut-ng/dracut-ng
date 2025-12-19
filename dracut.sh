@@ -294,7 +294,9 @@ Creates initial ramdisk images for preloading modules
   --loginstall [DIR]    Log all files installed from the host to [DIR].
   --uefi                Create an UEFI executable with the kernel cmdline and
                          kernel combined.
+  --ukify               Enables ukify.
   --no-uefi             Disables UEFI mode.
+  --no-ukify            Disables ukify.
   --no-machineid        Affects the default output filename of the UEFI
                          executable, discarding the <MACHINE_ID> part.
   --uefi-stub [FILE]    Use the UEFI stub [FILE] to create an UEFI executable.
@@ -489,7 +491,9 @@ rearrange_params() {
             --long no-reproducible \
             --long loginstall: \
             --long uefi \
+            --long ukify \
             --long no-uefi \
+            --long no-ukify \
             --long uefi-stub: \
             --long uefi-splash-image: \
             --long kernel-image: \
@@ -906,7 +910,9 @@ while :; do
         --reproducible) reproducible_l="yes" ;;
         --no-reproducible) reproducible_l="no" ;;
         --uefi) uefi_l="yes" ;;
+        --ukify) ukify_l="yes" ;;
         --no-uefi) uefi_l="no" ;;
+        --no-ukify) ukify_l="no" ;;
         --uefi-stub)
             uefi_stub_l="$2"
             PARMS_TO_STORE+=" '$2'"
@@ -1194,6 +1200,7 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $reproducible_l ]] && reproducible="$reproducible_l"
 [[ $loginstall_l ]] && loginstall="$loginstall_l"
 [[ $uefi_l ]] && uefi=$uefi_l
+[[ $ukify_l ]] && ukify=$ukify_l
 [[ $uefi_stub_l ]] && uefi_stub=$(path_rel_to_abs "$uefi_stub_l")
 [[ $uefi_splash_image_l ]] && uefi_splash_image=$(path_rel_to_abs "$uefi_splash_image_l")
 [[ $kernel_image_l ]] && kernel_image=$(path_rel_to_abs "$kernel_image_l")
@@ -3861,7 +3868,7 @@ if [[ $uefi == yes ]]; then
     cp "$uefi_stub" "$tmp_uefi_stub"
     "${OBJCOPY:-objcopy}" --remove-section .sbat "$tmp_uefi_stub" &> /dev/null
 
-    if command -v ukify &> /dev/null; then
+    if command -v ukify &> /dev/null && [[ $ukify != 'no' ]]; then
         dinfo "*** Using ukify to create UKI ***"
         if ukify build \
             --linux "$kernel_image" \

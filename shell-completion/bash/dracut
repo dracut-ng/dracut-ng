@@ -33,11 +33,11 @@ _dracut() {
             --local --hostonly --no-hostonly --fstab --help --bzip2 --lzma
             --xz --zstd --no-compress --gzip --list-modules --show-modules --keep
             --printsize --regenerate-all --noimageifnotneeded --early-microcode
-            --no-early-microcode --print-cmdline --reproducible --uefi
+            --no-early-microcode --print-cmdline --reproducible --uefi --ukify
             --enhanced-cpio --rebuild --aggressive-strip --hostonly-cmdline
             --no-hostonly-cmdline --no-hostonly-default-device --nofscks
             --hostonly-i18n --no-hostonly-i18n --lzo --lz4 --no-reproducible
-            --no-uefi --no-machineid --version --parallel --printconfig
+            --no-uefi --no-ukify --no-machineid --version --parallel --printconfig
             '
         [ARG]='-a -m -o -d -I -k -c -L -r -i
             --kver --add --force-add --add-drivers --force-drivers
