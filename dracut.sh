@@ -1684,37 +1684,6 @@ mark_hostonly() {
     done
 }
 
-# find symlinks linked to given library file
-# $1 = library file
-# Function searches for symlinks by stripping version numbers appended to
-# library filename, checks if it points to the same target and finally
-# prints the list of symlinks to stdout.
-#
-# Example:
-# rev_lib_symlinks libfoo.so.8.1
-# output: libfoo.so.8 libfoo.so
-# (Only if libfoo.so.8 and libfoo.so exists on host system.)
-rev_lib_symlinks() {
-    local _fn
-    local _orig
-    local _links
-
-    [[ ! $1 ]] && return 0
-
-    _fn="$1"
-    _orig="$(readlink -f "$1")"
-    _links=()
-
-    [[ ${_fn} == *.so.* ]] || return 1
-
-    until [[ ${_fn##*.} == so ]]; do
-        _fn="${_fn%.*}"
-        [[ -L ${_fn} ]] && [[ $(readlink -f "${_fn}") == "${_orig}" ]] && _links+=("${_fn}")
-    done
-
-    echo "${_links[*]}}"
-}
-
 # make sure that library links are correct and up to date
 build_ld_cache() {
     local dstdir="${dstdir:-"$initdir"}"
