@@ -1731,50 +1731,6 @@ build_ld_cache() {
     fi
 }
 
-# inst_libdir_dir <dir> [<dir>...]
-# Install a <dir> located on a lib directory to the initramfs image
-inst_libdir_dir() {
-    local -a _dirs
-    for _dir in $libdirs; do
-        for _i in "$@"; do
-            for _d in "${dracutsysrootdir-}$_dir"/$_i; do
-                [[ -d $_d ]] && _dirs+=("${_d#"${dracutsysrootdir-}"}")
-            done
-        done
-    done
-    for _dir in "${_dirs[@]}"; do
-        inst_dir "$_dir"
-    done
-}
-
-# inst_libdir_file [-n <pattern>] <file> [<file>...]
-# Install a <file> located on a lib directory to the initramfs image
-# -n <pattern> install matching files
-inst_libdir_file() {
-    local -a _files=()
-    if [[ $1 == "-n" ]]; then
-        local _pattern=$2
-        shift 2
-        for _dir in $libdirs; do
-            for _i in "$@"; do
-                for _f in "${dracutsysrootdir-}$_dir"/$_i; do
-                    [[ ${_f#"${dracutsysrootdir-}"} =~ $_pattern ]] || continue
-                    [[ -e $_f ]] && _files+=("${_f#"${dracutsysrootdir-}"}")
-                done
-            done
-        done
-    else
-        for _dir in $libdirs; do
-            for _i in "$@"; do
-                for _f in "${dracutsysrootdir-}$_dir"/$_i; do
-                    [[ -e $_f ]] && _files+=("${_f#"${dracutsysrootdir-}"}")
-                done
-            done
-        done
-    fi
-    [[ ${#_files[@]} -gt 0 ]] && inst_multiple "${_files[@]}"
-}
-
 # install sysusers files
 inst_sysusers() {
     inst_multiple -o "$sysusers/$*" "$sysusers/acct-*-$*"
@@ -2221,68 +2177,6 @@ dracut_kernel_post() {
         exit 1
     fi
 
-}
-
-instmods() {
-    # instmods [-c [-s]] <kernel module> [<kernel module> ... ]
-    # instmods [-c [-s]] <kernel subsystem>
-    # install kernel modules along with all their dependencies.
-    # <kernel subsystem> can be e.g. "=block" or "=drivers/usb/storage"
-    # -c check
-    # -s silent
-    local dstdir="${dstdir:-"$initdir"}"
-    local _optional="-o"
-    local _silent
-    local _ret
-
-    [[ $no_kernel == yes ]] && return
-
-    if [[ $1 == '-c' ]]; then
-        unset _optional
-        shift
-    fi
-    if [[ $1 == '-s' ]]; then
-        _silent=1
-        shift
-    fi
-
-    if (($# == 0)); then
-        read -r -d '' -a args
-        set -- "${args[@]}"
-    fi
-
-    if (($# == 0)); then
-        return 0
-    fi
-
-    $DRACUT_INSTALL \
-        ${dstdir:+-D "$dstdir"} \
-        ${dracutsysrootdir:+-r "$dracutsysrootdir"} \
-        ${loginstall:+-L "$loginstall"} \
-        ${hostonly:+-H} \
-        ${omit_drivers:+-N "$omit_drivers"} \
-        ${srcmods:+--kerneldir "$srcmods"} \
-        ${_optional:+-o} \
-        ${_silent:+--silent} \
-        -m "$@"
-    _ret=$?
-
-    if ((_ret != 0)) && [[ -z $_silent ]]; then
-        derror "FAILED: " \
-            "$DRACUT_INSTALL" \
-            ${dstdir:+-D "$dstdir"} \
-            ${dracutsysrootdir:+-r "$dracutsysrootdir"} \
-            ${loginstall:+-L "$loginstall"} \
-            ${hostonly:+-H} \
-            ${omit_drivers:+-N "$omit_drivers"} \
-            ${srcmods:+--kerneldir "$srcmods"} \
-            ${_optional:+-o} \
-            ${_silent:+--silent} \
-            -m "$@"
-    fi
-
-    [[ "$_optional" ]] && return 0
-    return $_ret
 }
 
 if [[ "$(ln --help)" == *--relative* ]]; then
