@@ -3121,7 +3121,7 @@ cpio_extract() {
     if [[ $CPIO == 3cpio ]]; then
         3cpio --extract "$file" -- "$@"
     else
-        cpio --extract --file "$file" --quiet -- "$@"
+        cpio -i -F "$file" --quiet -- "$@"
     fi
 }
 

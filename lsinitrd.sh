@@ -206,7 +206,7 @@ cpio_extract_to_stdout() {
     if [ "$CPIO" = 3cpio ]; then
         3cpio --extract --parts "$parts" --to-stdout "$image" -- "$@"
     else
-        $CAT "$image" 2> /dev/null | cpio --extract --quiet --to-stdout -- "$@"
+        $CAT "$image" 2> /dev/null | cpio -i --quiet --to-stdout -- "$@"
     fi
 }
 
@@ -215,7 +215,7 @@ cpio_list() {
     if [ "$CPIO" = 3cpio ]; then
         3cpio --list --parts "$parts" --verbose "$image" -- "$@"
     else
-        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --list -- "$@"
+        $CAT "$image" 2> /dev/null | cpio -i --verbose --quiet --list -- "$@"
     fi
 }
 
