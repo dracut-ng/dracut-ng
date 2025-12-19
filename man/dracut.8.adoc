@@ -627,8 +627,14 @@ and no /etc/cmdline/*.conf will be generated into the initramfs.
     _/usr/lib/os-release_ or if it exists _/etc/os-release_ and is left out,
     if BUILD_ID is non-existent or empty.
 
+**--ukify**::
+    Enables using ukify to create UKI (default).
+
 **--no-uefi**::
     Disables UEFI mode.
+
+**--no-ukify**::
+    Disables using ukify to create UKI even if ukify is installed.
 
 **--no-machineid**::
     Affects the default output filename of **--uefi** and will discard the
