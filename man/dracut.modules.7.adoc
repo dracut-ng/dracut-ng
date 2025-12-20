@@ -369,6 +369,24 @@ dracut module.
 This function is maintained only to provide compatibility for modules aimed at older
 dracut releases.
 
+==== require_binaries
+
+Helper function for check() in module-setup.sh to check for required installed binaries.
+All of the binaries listed in the arguments of this function should exists in the host.
+Issues a standardized warning message.
+
+==== require_any_binary
+
+Helper function for check() in module-setup.sh to check for required installed binaries.
+At least one of the binaries listed in the arguments of this function should exists in
+the host.
+Issues a standardized warning message.
+
+==== require_kernel_modules
+
+Helper function for check() in module-setup.sh to check for required kernel modules.
+Issues a standardized warning message.
+
 === Initramfs Functions
 
 FIXME
