@@ -17,6 +17,12 @@ installkernel() {
 }
 
 install() {
+    inst_rules \
+        75-net-description.rules \
+        80-net-name-slot.rules \
+        80-net-setup-link.rules \
+        81-net-dhcp.rules
+
     inst_script "$moddir/netroot.sh" "/sbin/netroot"
     inst_simple "$moddir/net-lib.sh" "/lib/net-lib.sh"
     inst_hook pre-udev 50 "$moddir/ifname-genrules.sh"
