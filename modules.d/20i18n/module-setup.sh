@@ -171,6 +171,45 @@ install() {
             done
     }
 
+    # get a command to decompress the given file
+    get_decompress_cmd() {
+        case "$1" in
+            *.gz) echo 'gzip -f -d' ;;
+            *.bz2) echo 'bzip2 -d' ;;
+            *.xz) echo 'xz -f -d' ;;
+            *.zst) echo 'zstd -f -d ' ;;
+        esac
+    }
+
+    # install function decompressing the target and handling symlinks
+    # $@ = list of compressed (gz or bz2) files or symlinks pointing to such files
+    #
+    # Function install targets in the same paths inside overlay but decompressed
+    # and without extensions (.gz, .bz2).
+    inst_decompress() {
+        local _src _cmd
+
+        for _src in "$@"; do
+            _cmd=$(get_decompress_cmd "${_src}")
+            [[ -z ${_cmd} ]] && return 1
+            inst_simple "${_src}"
+            # Decompress with chosen tool.  We assume that tool changes name e.g.
+            # from 'name.gz' to 'name'.
+            ${_cmd} "${initdir}${_src#"${dracutsysrootdir-}"}"
+        done
+    }
+
+    # It's similar to above, but if file is not compressed, performs standard
+    # install.
+    # $@ = list of files
+    inst_opt_decompress() {
+        local _src
+
+        for _src in "$@"; do
+            inst_decompress "${_src}" || inst "${_src}"
+        done
+    }
+
     install_local_i18n() {
         local map
         local maplink
