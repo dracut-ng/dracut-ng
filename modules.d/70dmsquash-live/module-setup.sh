@@ -11,7 +11,7 @@ check() {
 depends() {
     # if dmsetup is not installed, then we cannot support fedora/red hat
     # style live images
-    echo dm rootfs-block img-lib overlayfs initqueue
+    echo dm img-lib overlayfs initqueue
     return 0
 }
 

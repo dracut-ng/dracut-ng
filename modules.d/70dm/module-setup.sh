@@ -6,6 +6,11 @@ check() {
     return 255
 }
 
+depends() {
+    echo rootfs-block
+    return 0
+}
+
 # called by dracut
 installkernel() {
     hostonly=$(optional_hostonly) instmods '=drivers/md' dm_mod dm-cache dm-cache-mq dm-cache-cleaner

@@ -18,7 +18,7 @@ check() {
 
 # called by dracut
 depends() {
-    echo dm rootfs-block initqueue
+    echo dm initqueue
 }
 
 # called by dracut
