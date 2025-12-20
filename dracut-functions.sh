@@ -1438,6 +1438,60 @@ elif ! [[ $DRACUT_INSTALL ]] && [[ -x "${BASH_SOURCE[0]%/*}/src/install/dracut-i
     DRACUT_INSTALL="${BASH_SOURCE[0]%/*}/src/install/dracut-install"
 fi
 
+# helper function for check() in module-setup.sh
+# to check for required installed binaries
+# issues a standardized warning message
+require_binaries() {
+    local _module_name="${moddir##*/}"
+    local _ret=0
+
+    for cmd in "$@"; do
+        if ! find_binary "$cmd" &> /dev/null; then
+            ddebug "Module '${_module_name#[0-9][0-9]}' will not be installed, because command '$cmd' could not be found!"
+            ((_ret++))
+        fi
+    done
+    return "$_ret"
+}
+
+require_any_binary() {
+    local _module_name="${moddir##*/}"
+    local _ret=1
+
+    for cmd in "$@"; do
+        if find_binary "$cmd" &> /dev/null; then
+            _ret=0
+            break
+        fi
+    done
+
+    if ((_ret != 0)); then
+        dinfo "$_module_name: Could not find any command of '$*'!"
+        return 1
+    fi
+
+    return 0
+}
+
+# helper function for check() in module-setup.sh
+# to check for required kernel modules
+# issues a standardized warning message
+require_kernel_modules() {
+    local _module_name="${moddir##*/}"
+    local _ret=0
+
+    # Ignore kernel module requirement for no-kernel build
+    [[ $no_kernel == yes ]] && return 0
+
+    for mod in "$@"; do
+        if ! check_kernel_module "$mod" &> /dev/null; then
+            dinfo "Module '${_module_name#[0-9][0-9]}' will not be installed, because kernel module '$mod' is not available!"
+            ((_ret++))
+        fi
+    done
+    return "$_ret"
+}
+
 # Test if the configured dracut-install command exists.
 # Catch DRACUT_INSTALL being unset/empty.
 # The variable DRACUT_INSTALL may be set externally as:
