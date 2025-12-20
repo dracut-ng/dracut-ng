@@ -15,6 +15,5 @@ install() {
     if [[ $hostonly && -f $conf ]]; then
         inst -H $conf
     fi
-    inst_rules 56-dasd.rules
-    inst_rules 59-dasd.rules
+    inst_rules 56-dasd.rules 59-dasd.rules
 }
