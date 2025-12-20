@@ -136,3 +136,63 @@ jobs:
               uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    omitsystemd-arm64:
+        name: ${{ matrix.test }} on ${{ matrix.container }} with no systemd on arm64
+        runs-on: ubuntu-24.04-arm
+        timeout-minutes: 20
+        concurrency:
+            group: extra-omitsystemd-arm64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                container:
+                    - ubuntu:devel
+                test:
+                    - "10"
+                    - "11"
+                    - "20"
+                    - "26"
+                    - "30"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-arm
+            options: '--device=/dev/kvm --privileged'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v6
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: TEST_DRACUT_ARGS="--omit systemd" ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    hostonlystrict-arm64:
+        name: ${{ matrix.test }} on ${{ matrix.container }} with hostonly-mode strict on arm64
+        runs-on: ubuntu-24.04-arm
+        timeout-minutes: 20
+        concurrency:
+            group: extra-hostonlystrict-arm64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                container:
+                    - ubuntu:devel
+                test:
+                    - "10"
+                    - "11"
+                    - "13"
+                    - "20"
+                    - "26"
+                    - "30"
+                    - "40"
+                    - "41"
+                    - "42"
+                    - "50"
+                    - "80"
+                    - "81"
+                    - "82"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-arm
+            options: '--device=/dev/kvm --privileged'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v6
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: TEST_DRACUT_ARGS="--hostonly-mode strict" ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
