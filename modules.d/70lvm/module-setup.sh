@@ -80,9 +80,6 @@ install() {
 
     inst_rules 11-dm-lvm.rules
 
-    # Gentoo ebuild for LVM2 prior to 2.02.63-r1 doesn't install above rules
-    # files, but provides the one below:
-    inst_rules 64-device-mapper.rules
     # debian udev rules
     inst_rules 56-lvm.rules 60-persistent-storage-lvm.rules
 
