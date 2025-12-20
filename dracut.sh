@@ -1,7 +1,4 @@
 #!/bin/bash -p
-# temporarly disable some shellcheck warning to be able to preserve commit history
-# before additional commits.
-# shellcheck disable=SC2317,SC2329
 #
 # Generator script for a dracut initramfs
 
@@ -1551,6 +1548,7 @@ dracut_module_included() {
     [[ " $mods_to_load $modules_loaded " == *\ $*\ * ]]
 }
 
+# shellcheck disable=SC2317,SC2329
 dracut_no_switch_root() {
     : > "$initdir/lib/dracut/no-switch-root"
 }
@@ -1592,10 +1590,12 @@ inst_symlink() {
     fi
 }
 
+# shellcheck disable=SC2317,SC2329
 dracut_install() {
     inst_multiple "$@"
 }
 
+# shellcheck disable=SC2317,SC2329
 dracut_instmods() {
     local _ret _silent=0
     local i
@@ -1622,15 +1622,18 @@ dracut_instmods() {
 
 # this is not used within dracut itself, but external modules use it,
 # do not remove it!
+# shellcheck disable=SC2317,SC2329
 inst_library() {
     inst "$@"
 }
 
 # empty function for compatibility
+# shellcheck disable=SC2317,SC2329
 inst_fsck_help() {
     :
 }
 
+# shellcheck disable=SC2317,SC2329
 mark_hostonly() {
     for i in "$@"; do
         echo "$i" >> "$initdir/lib/dracut/hostonly-files"
@@ -1654,6 +1657,7 @@ build_ld_cache() {
 }
 
 # install sysusers files
+# shellcheck disable=SC2317,SC2329
 inst_sysusers() {
     inst_multiple -o "$sysusers/$*" "$sysusers/acct-*-$*"
 
@@ -1674,6 +1678,7 @@ module_functions=(
 # module_check <dracut module> [<forced>] [<module path>]
 # execute the check() function of module-setup.sh of <dracut module>
 # "check $hostonly" is called
+# shellcheck disable=SC2317,SC2329
 module_check() {
     local _moddir=$3
     local _ret
@@ -1700,6 +1705,7 @@ module_check() {
 # module_check_mount <dracut module> [<module path>]
 # execute the check() function of module-setup.sh of <dracut module>
 # "mount_needs=1 check 0" is called
+# shellcheck disable=SC2317,SC2329
 module_check_mount() {
     local _moddir=$2
     local _ret
@@ -1719,6 +1725,7 @@ module_check_mount() {
 
 # module_depends <dracut module> [<module path>]
 # execute the depends() function of module-setup.sh of <dracut module>
+# shellcheck disable=SC2317,SC2329
 module_depends() {
     local _moddir=$2
     local _ret
@@ -1736,6 +1743,7 @@ module_depends() {
 
 # module_cmdline <dracut module> [<module path>]
 # execute the cmdline() function of module-setup.sh of <dracut module>
+# shellcheck disable=SC2317,SC2329
 module_cmdline() {
     local _moddir=$2
     local _ret
@@ -1753,6 +1761,7 @@ module_cmdline() {
 
 # module_config <dracut module> [<module path>]
 # execute the config() function of module-setup.sh of <dracut module>
+# shellcheck disable=SC2317,SC2329
 module_config() {
     local _moddir=$2
     local _ret
@@ -1770,6 +1779,7 @@ module_config() {
 
 # module_install <dracut module> [<module path>]
 # execute the install() function of module-setup.sh of <dracut module>
+# shellcheck disable=SC2317,SC2329
 module_install() {
     local _moddir=$2
     local _ret
@@ -1787,6 +1797,7 @@ module_install() {
 
 # module_installkernel <dracut module> [<module path>]
 # execute the installkernel() function of module-setup.sh of <dracut module>
+# shellcheck disable=SC2317,SC2329
 module_installkernel() {
     local _moddir=$2
     local _ret
@@ -1805,6 +1816,7 @@ module_installkernel() {
 # check_mount <dracut module> [<use_as_dep>] [<module path>]
 # check_mount checks, if a dracut module is needed for the given
 # device and filesystem types in "${host_fs_types[@]}"
+# shellcheck disable=SC2317,SC2329
 check_mount() {
     local _mod=$1
     local _moddir=$3
@@ -1872,6 +1884,7 @@ check_mount() {
 # check if a dracut module is to be used in the initramfs process
 # if <use_as_dep> is set, then the process also keeps track
 # that the modules were checked for the dependency tracking process
+# shellcheck disable=SC2317,SC2329
 check_module() {
     local _mod=$1
     local _moddir=$3
@@ -2077,6 +2090,7 @@ else
     }
 fi
 
+# shellcheck disable=SC2317,SC2329
 is_qemu_virtualized() {
     # 0 if a virt environment was detected
     # 1 if a virt environment could not be detected
