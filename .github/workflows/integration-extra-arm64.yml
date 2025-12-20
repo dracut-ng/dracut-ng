@@ -42,10 +42,6 @@ jobs:
                     - "80"
                     - "81"
                     - "82"
-                exclude:
-                    # run-qemu: Could not find a Linux kernel version to test with!
-                    - container: void:latest
-                      test: "82"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-arm
             options: '--device=/dev/kvm --privileged'
