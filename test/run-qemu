@@ -105,7 +105,9 @@ set_vmlinux_env() {
     fi
 
     ! [ -f "${VMLINUZ-}" ] && VMLINUZ=$(find /boot/vmlinuz-* -type f 2> /dev/null | tail -1)
+    ! [ -f "${VMLINUZ-}" ] && VMLINUZ=$(find /boot/vmlinux-* -type f 2> /dev/null | tail -1)
     ! [ -f "${VMLINUZ-}" ] && VMLINUZ=$(find /lib/modules/ -type f -name vmlinuz 2> /dev/null | tail -1)
+    ! [ -f "${VMLINUZ-}" ] && VMLINUZ=$(find /lib/modules/ -type f -name vmlinux 2> /dev/null | tail -1)
     ! [ -f "${VMLINUZ-}" ] && VMLINUZ=$(find /lib/modules/ -type f -name Image 2> /dev/null | tail -1)
 
     if ! [ -f "$VMLINUZ" ]; then
