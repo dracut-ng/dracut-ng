@@ -35,7 +35,7 @@ if [[ -f ${KERNEL_IMAGE%/*}/$IMAGE ]]; then
     # use this and don't generate a new one
     [[ $KERNEL_INSTALL_VERBOSE == 1 ]] && echo \
         "There is an $IMAGE image at the same place as the kernel, skipping generating a new one"
-    cp --reflink=auto "${KERNEL_IMAGE%/*}/$IMAGE" "$KERNEL_INSTALL_STAGING_AREA/$IMAGE" \
+    cp "${KERNEL_IMAGE%/*}/$IMAGE" "$KERNEL_INSTALL_STAGING_AREA/$IMAGE" \
         && chown root:root "$KERNEL_INSTALL_STAGING_AREA/$IMAGE" \
         && chmod 0600 "$KERNEL_INSTALL_STAGING_AREA/$IMAGE" \
         && exit 0

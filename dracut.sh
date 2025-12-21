@@ -1471,9 +1471,9 @@ fi
 export LC_MESSAGES=C kernel
 
 if [[ $EUID == "0" ]] && ! [[ ${DRACUT_NO_XATTR-} ]]; then
-    export DRACUT_CP="cp --reflink=auto --preserve=mode,timestamps,xattr,links -dfr"
+    export DRACUT_CP="cp --preserve=mode,timestamps,xattr,links -dfr"
 else
-    export DRACUT_CP="cp --reflink=auto --preserve=mode,timestamps,links -dfr"
+    export DRACUT_CP="cp --preserve=mode,timestamps,links -dfr"
 fi
 
 if ! [[ ${dracutbasedir-} ]]; then
