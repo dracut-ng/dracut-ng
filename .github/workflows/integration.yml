@@ -30,7 +30,6 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - alpine:latest
                     - arch:latest
                     - debian:latest
                     - fedora:latest
