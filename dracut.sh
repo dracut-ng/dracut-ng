@@ -2672,6 +2672,7 @@ if [[ $printconfig ]]; then
         ro_mnt \
         squash_compress \
         sshkey \
+        uefi \
         use_fstab; do
         if [[ -n ${!v} ]]; then
             echo "dracutconfig: $v=${!v}"
