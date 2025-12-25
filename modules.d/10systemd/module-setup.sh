@@ -14,6 +14,13 @@ check() {
     return 255
 }
 
+# called by dracut
+depends() {
+    # Include "drm" to be able to set the console font properly
+    [[ " $omit_dracutmodules " != *\ drm\ * ]] && echo "drm"
+    return 0
+}
+
 # Config adjustments before installing anything.
 config() {
     add_dlopen_features+=" libsystemd-shared-*.so:audit,kmod,mount,seccomp,selinux "
