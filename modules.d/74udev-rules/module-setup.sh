@@ -51,13 +51,9 @@ install() {
         70-uaccess.rules \
         71-seat.rules \
         73-seat-late.rules \
-        75-net-description.rules \
         75-probe_mtd.rules \
         78-sound-card.rules \
         80-drivers.rules \
-        80-net-name-slot.rules \
-        80-net-setup-link.rules \
-        81-net-dhcp.rules \
         95-udev-late.rules
 
     {
