@@ -61,6 +61,7 @@ test_setup() {
     #make sure --omit-drivers does not filter out drivers using regexp to test for an earlier regression (assuming there is no one letter linux kernel module needed to run the test)
 
     test_dracut \
+        --no-hostonly-cmdline \
         --omit "fido2 initqueue" \
         --omit-drivers 'a b c d e f g h i j k l m n o p q r s t u v w x y z' \
         -I systemd-analyze \
