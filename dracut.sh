@@ -1474,12 +1474,6 @@ fi
 
 export LC_MESSAGES=C kernel
 
-if [[ $EUID == "0" ]] && ! [[ ${DRACUT_NO_XATTR-} ]]; then
-    export DRACUT_CP="cp --reflink=auto --preserve=mode,timestamps,xattr,links -dfr"
-else
-    export DRACUT_CP="cp --reflink=auto --preserve=mode,timestamps,links -dfr"
-fi
-
 if ! [[ ${dracutbasedir-} ]]; then
     dracutbasedir=${BASH_SOURCE[0]%/*}
     [[ $dracutbasedir == dracut-functions* ]] && dracutbasedir="."
@@ -2783,6 +2777,17 @@ if [[ $kernel_only != yes ]]; then
 fi
 
 dracut_module_included "squash-lib" && mkdir -p "$squashdir"
+
+# disable xattr when creating cpio, but do not change the default for squashfs/erofs
+if ! dracut_module_included "squash-lib"; then
+    export DRACUT_NO_XATTR="${DRACUT_NO_XATTR:=1}"
+fi
+
+if [[ $EUID == "0" ]] && ! [[ ${DRACUT_NO_XATTR-} ]]; then
+    export DRACUT_CP="cp --reflink=auto --preserve=mode,timestamps,xattr,links -dfr"
+else
+    export DRACUT_CP="cp --reflink=auto --preserve=mode,timestamps,links -dfr"
+fi
 
 _isize=0 #initramfs size
 modules_loaded=" "
