@@ -1362,7 +1362,7 @@ fi
 if [[ ${hostonly-} ]]; then
     for i in /sys /proc /run /dev; do
         if ! findmnt --target "$i" &> /dev/null; then
-            dwarning "Turning off host-only mode: '$i' is not mounted!"
+            printf "%s\n" "dracut[W]: Turning off host-only mode: '$i' is not mounted!" >&2
             unset hostonly
         fi
     done
