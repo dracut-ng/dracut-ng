@@ -23,13 +23,10 @@ FROM docker.io/${DISTRIBUTION}
 # export ARG
 ARG DISTRIBUTION
 
-# Packages to pass the BASIC test
 # Use dracut-tests package to install dependencies for test suite
 RUN apk add --no-cache \
-    make \
-    dracut-tests
-
-# Packages for recent changes that are not yet released or packaged by dracut-tests
-RUN apk add --no-cache \
+    alpine-base \
+    build-base \
     cargo \
-    dnsmasq
+    dnsmasq \
+    dracut-tests
