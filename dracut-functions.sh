@@ -1422,22 +1422,6 @@ optional_hostonly() {
     fi
 }
 
-if ! is_func dinfo > /dev/null 2>&1; then
-    # shellcheck source=./dracut-logger.sh
-    . "${BASH_SOURCE[0]%/*}/dracut-logger.sh"
-    dlog_init
-fi
-
-if ! [[ "${DRACUT_INSTALL-}" ]]; then
-    DRACUT_INSTALL=$(find_binary dracut-install || true)
-fi
-
-if ! [[ $DRACUT_INSTALL ]] && [[ -x "${BASH_SOURCE[0]%/*}/dracut-install" ]]; then
-    DRACUT_INSTALL="${BASH_SOURCE[0]%/*}/dracut-install"
-elif ! [[ $DRACUT_INSTALL ]] && [[ -x "${BASH_SOURCE[0]%/*}/src/install/dracut-install" ]]; then
-    DRACUT_INSTALL="${BASH_SOURCE[0]%/*}/src/install/dracut-install"
-fi
-
 # helper function for check() in module-setup.sh
 # to check for required installed binaries
 # issues a standardized warning message
@@ -1491,6 +1475,22 @@ require_kernel_modules() {
     done
     return "$_ret"
 }
+
+if ! is_func dinfo > /dev/null 2>&1; then
+    # shellcheck source=./dracut-logger.sh
+    . "${BASH_SOURCE[0]%/*}/dracut-logger.sh"
+    dlog_init
+fi
+
+if ! [[ "${DRACUT_INSTALL-}" ]]; then
+    DRACUT_INSTALL=$(find_binary dracut-install || true)
+fi
+
+if ! [[ $DRACUT_INSTALL ]] && [[ -x "${BASH_SOURCE[0]%/*}/dracut-install" ]]; then
+    DRACUT_INSTALL="${BASH_SOURCE[0]%/*}/dracut-install"
+elif ! [[ $DRACUT_INSTALL ]] && [[ -x "${BASH_SOURCE[0]%/*}/src/install/dracut-install" ]]; then
+    DRACUT_INSTALL="${BASH_SOURCE[0]%/*}/src/install/dracut-install"
+fi
 
 # Test if the configured dracut-install command exists.
 # Catch DRACUT_INSTALL being unset/empty.
