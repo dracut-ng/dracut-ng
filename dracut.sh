@@ -1204,6 +1204,13 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $sbat_l ]] && sbat="$sbat_l"
 [[ $machine_id_l ]] && machine_id="$machine_id_l"
 
+# initialize logging if not yet initialized
+if ! command -v dinfo > /dev/null; then
+    # shellcheck source=./dracut-logger.sh
+    . "$dracutbasedir"/dracut-logger.sh
+    dlog_init
+fi
+
 if ! [[ $outfile ]]; then
     if [[ $machine_id != "no" ]]; then
         if [[ -d "${dracutsysrootdir-}"/efi/Default ]] \
