@@ -1204,6 +1204,9 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $sbat_l ]] && sbat="$sbat_l"
 [[ $machine_id_l ]] && machine_id="$machine_id_l"
 
+# shellcheck source=./dracut-functions.sh
+. "$dracutbasedir"/dracut-functions.sh
+
 if ! [[ $outfile ]]; then
     if [[ $machine_id != "no" ]]; then
         if [[ -d "${dracutsysrootdir-}"/efi/Default ]] \
@@ -1486,9 +1489,6 @@ if ! [[ ${dracutbasedir-} ]]; then
     [[ $dracutbasedir ]] || dracutbasedir="."
     dracutbasedir="$(readlink -f "$dracutbasedir")"
 fi
-
-# shellcheck source=./dracut-functions.sh
-. "$dracutbasedir"/dracut-functions.sh
 
 if ! [[ ${initdir-} ]]; then
     dfatal "initdir not set"
