@@ -50,8 +50,8 @@ cat NEWS_header.md NEWS_header_new.md NEWS_body_new.md NEWS_body_with_conttribut
 # message for https://github.com/dracut-ng/dracut-ng/releases/tag
 cat -s NEWS_body_new.md CONTRIBUTORS.md > release.md
 
-# dracut-version.sh
-printf "#!/bin/sh\n# shellcheck disable=SC2034\nDRACUT_VERSION=%s\n" "$NEW_VERSION" > dracut-version.sh
+# update DRACUT_VERSION
+sed -i "s;^\(DRACUT_VERSION\)=\".*\"$;\1=\"$(DRACUT_FULL_VERSION)\";" dracut.sh
 
 if [ -z "$(git config --get user.name)" ]; then
     git config user.name "dracutng[bot]"
@@ -62,7 +62,7 @@ if [ -z "$(git config --get user.email)" ]; then
 fi
 
 # Check in AUTHORS and NEWS.md
-git commit -m "docs: update NEWS.md and AUTHORS for release $NEW_VERSION" NEWS.md AUTHORS dracut-version.sh
+git commit -m "docs: update NEWS.md and AUTHORS for release $NEW_VERSION" NEWS.md AUTHORS dracut.sh
 
 # git push can fail due to insufficient permissions
 if ! git push --force -u origin release; then
@@ -72,5 +72,5 @@ fi
 # tagging and release genaration is no longer automated
 # Once the created release commit is merged, create a (signed) release tag:
 #
-# . ./dracut-version.sh
+# DRACUT_VERSION=$(sed -n 's/^DRACUT_VERSION="\(.*\)"$/\1/p' dracut.sh)
 # git tag -s -m "Dracut $DRACUT_VERSION release" "$DRACUT_VERSION"
