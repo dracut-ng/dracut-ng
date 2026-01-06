@@ -17,7 +17,7 @@ else
     # storage layers (if available)
     # mdadm (optional) --> crypt (optional) --> lvm --> TEST_FSTYPE (e.g. ext4)
     if ! grep -qF 'rd.md=0' /proc/cmdline && command -v mdadm > /dev/null; then
-        mdadm --create /dev/md0 --run --auto=yes --level=1 --metadata=0.90 --raid-devices=2 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
+        mdadm --create /dev/md0 --run --level=1 --metadata=0.90 --raid-devices=2 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
         # wait for the array to finish initializing, otherwise this sometimes fails randomly.
         mdadm -W /dev/md0 || :
     fi

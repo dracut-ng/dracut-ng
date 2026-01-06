@@ -8,7 +8,7 @@ mkdir -p /sysroot
 mount -t ext4 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_singleroot /sysroot
 cp -a -t /sysroot /source/*
 umount /sysroot
-mdadm --create /dev/md0 --run --auto=yes --level=stripe --raid-devices=2 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid0-1 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid0-2
+mdadm --create /dev/md0 --run --level=stripe --raid-devices=2 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid0-1 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_raid0-2
 mdadm -W /dev/md0 || :
 lvm pvcreate -ff -y /dev/md0
 lvm vgcreate dracut /dev/md0
