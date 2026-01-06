@@ -7,7 +7,7 @@ cryptsetup --pbkdf pbkdf2 -q luksFormat /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK
 cryptsetup --pbkdf pbkdf2 -q luksFormat /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk2 /keyfile
 cryptsetup luksOpen /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk1 dracut_disk1 < /keyfile
 cryptsetup luksOpen /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk2 dracut_disk2 < /keyfile
-mdadm --create /dev/md0 --run --auto=yes --level=1 --metadata=0.90 --raid-devices=2 /dev/mapper/dracut_disk1 /dev/mapper/dracut_disk2
+mdadm --create /dev/md0 --run --level=1 --metadata=0.90 --raid-devices=2 /dev/mapper/dracut_disk1 /dev/mapper/dracut_disk2
 # wait for the array to finish initializing, otherwise this sometimes fails
 # randomly.
 mdadm -W /dev/md0
