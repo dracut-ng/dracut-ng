@@ -19,7 +19,7 @@ test_run() {
         -device "virtio-net-pci,netdev=lan0" \
         -netdev "user,id=lan0,net=10.0.2.0/24,dhcpstart=10.0.2.15" \
         "${disk_args[@]}" \
-        -append "root=LABEL=dracut $TEST_KERNEL_CMDLINE rd.neednet=1 net.ifnames=0" \
+        -append "root=LABEL=dracut $TEST_KERNEL_CMDLINE rd.neednet=1" \
         -initrd "$TESTDIR"/initramfs.testing
 
     test_marker_check

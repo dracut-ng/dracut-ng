@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Get the output of 'ip addr show eth0'
-ip_output=$(ip addr show eth0)
+# Get the output of 'ip addr show' and filter out lo interface
+ip_output=$(ip -o -4 addr show | grep -v ': lo')
 
 # Extract the line containing "inet"
 inet_line="${ip_output##*inet }"
