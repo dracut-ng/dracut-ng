@@ -23,8 +23,6 @@
 # Please do not use functions from this file in your dracut module
 # Only use functions from dracut-functions.sh
 
-# store for logging
-
 unset BASH_ENV
 unset GZIP
 
@@ -34,6 +32,7 @@ if ((BASH_VERSINFO[0] < 4)); then
     exit 1
 fi
 
+# store for logging
 dracut_args=("$@")
 dracut_cmd=$(readlink -f "$0")
 readonly dracut_cmd
