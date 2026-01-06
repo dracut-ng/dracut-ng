@@ -1476,22 +1476,6 @@ fi
 
 export LC_MESSAGES=C kernel
 
-if ! [[ ${dracutbasedir-} ]]; then
-    dracutbasedir=${BASH_SOURCE[0]%/*}
-    [[ $dracutbasedir == dracut-functions* ]] && dracutbasedir="."
-    [[ $dracutbasedir ]] || dracutbasedir="."
-    dracutbasedir="$(readlink -f "$dracutbasedir")"
-fi
-
-if ! [[ ${initdir-} ]]; then
-    dfatal "initdir not set"
-    exit 1
-fi
-
-if ! [[ -d $initdir ]]; then
-    mkdir -p "$initdir"
-fi
-
 srcmods="$(realpath -e "${dracutsysrootdir-}/lib/modules/$kernel")"
 
 [[ ${drivers_dir-} ]] && {
