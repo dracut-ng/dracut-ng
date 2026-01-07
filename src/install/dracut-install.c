@@ -417,7 +417,7 @@ static int cp(const char *src, const char *dst)
                                                 log_info("Failed to chown %s: %m", dst);
                                 }
 
-                        if (geteuid() == 0 && no_xattr == false) {
+                        if (geteuid() == 0 && !no_xattr) {
                                 if (copy_xattr(dest_desc, source_desc) != 0)
                                         log_error("Failed to copy xattr %s: %m", dst);
                         }
@@ -437,7 +437,7 @@ static int cp(const char *src, const char *dst)
 
 normal_copy:
         pid = fork();
-        bool preservation = geteuid() == 0 && no_xattr == false;
+        bool preservation = geteuid() == 0 && !no_xattr;
 
         if (pid == 0) {
                 if (preservation)
