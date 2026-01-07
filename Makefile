@@ -217,7 +217,7 @@ install: all
 		install -m 0644 dracut.conf.d/$$i/* $(DESTDIR)$(pkglibdir)/dracut.conf.d/ ;\
 	done
 ifeq ($(enable_test),yes)
-	cp -arx test $(DESTDIR)$(pkglibdir)
+	cp -a test $(DESTDIR)$(pkglibdir)
 	for conf in $(test_configs); do \
 		install -D -m 0644 "dracut.conf.d/$$conf" "$(DESTDIR)$(pkglibdir)/dracut.conf.d/$$conf"; \
 	done
