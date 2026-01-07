@@ -32,7 +32,6 @@ configs = \
 	hostonly/10-hostonly.conf \
 	ima/10-ima.conf \
 	no-network/10-no-network.conf \
-	no-xattr/10-no-xattr.conf \
 	rescue/10-rescue.conf \
 	$(NULL)
 
