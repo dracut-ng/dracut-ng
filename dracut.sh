@@ -2135,15 +2135,6 @@ if [[ $no_kernel != yes ]] && ! [[ -d $srcmods ]]; then
     exit 1
 fi
 
-if ! [[ $print_cmdline ]] && ! [[ $printconfig ]]; then
-    inst "$DRACUT_TESTBIN"
-    if ! $DRACUT_INSTALL ${initdir:+-D "$initdir"} ${dracutsysrootdir:+-r "$dracutsysrootdir"} -R "$DRACUT_TESTBIN" &> /dev/null; then
-        unset DRACUT_RESOLVE_LAZY
-        export DRACUT_RESOLVE_DEPS=1
-    fi
-    rm -fr -- "${initdir:?}"/*
-fi
-
 if ! check_kernel_config CONFIG_BLK_DEV_INITRD; then
     echo "This kernel doesn't support initramfs, skipping generation"
     exit 0
@@ -2704,6 +2695,26 @@ create_directories() {
     done
 }
 
+# disable xattr when creating cpio, but do not change the default for squashfs/erofs
+if ! dracut_module_included "squash-lib"; then
+    export DRACUT_NO_XATTR="${DRACUT_NO_XATTR:=1}"
+fi
+
+if [[ $EUID == "0" ]] && ! [[ ${DRACUT_NO_XATTR-} ]]; then
+    export DRACUT_CP="cp --reflink=auto --preserve=mode,timestamps,xattr,links -dfr"
+else
+    export DRACUT_CP="cp --reflink=auto --preserve=mode,timestamps,links -dfr"
+fi
+
+if ! [[ $print_cmdline ]] && ! [[ $printconfig ]]; then
+    inst "$DRACUT_TESTBIN"
+    if ! $DRACUT_INSTALL ${initdir:+-D "$initdir"} ${dracutsysrootdir:+-r "$dracutsysrootdir"} -R "$DRACUT_TESTBIN" &> /dev/null; then
+        unset DRACUT_RESOLVE_LAZY
+        export DRACUT_RESOLVE_DEPS=1
+    fi
+    rm -fr -- "${initdir:?}"/*
+fi
+
 # Create some directory structure first
 # shellcheck disable=SC2174
 [[ $prefix ]] && mkdir -m 0755 -p "${initdir}${prefix}"
@@ -2760,17 +2771,6 @@ if [[ $kernel_only != yes ]]; then
 fi
 
 dracut_module_included "squash-lib" && mkdir -p "$squashdir"
-
-# disable xattr when creating cpio, but do not change the default for squashfs/erofs
-if ! dracut_module_included "squash-lib"; then
-    export DRACUT_NO_XATTR="${DRACUT_NO_XATTR:=1}"
-fi
-
-if [[ $EUID == "0" ]] && ! [[ ${DRACUT_NO_XATTR-} ]]; then
-    export DRACUT_CP="cp --reflink=auto --preserve=mode,timestamps,xattr,links -dfr"
-else
-    export DRACUT_CP="cp --reflink=auto --preserve=mode,timestamps,links -dfr"
-fi
 
 _isize=0 #initramfs size
 modules_loaded=" "
