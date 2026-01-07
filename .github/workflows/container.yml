@@ -41,7 +41,7 @@ jobs:
                     - {dockerfile: 'Dockerfile-arch', tag: 'arch:latest'}
                     - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:devel'}
                     - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:rolling'}
-                    - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:latest'}
+                    - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:edge'}
                     - {dockerfile: 'Dockerfile-void', tag: 'void:latest'}
                 exclude:
                     - config: {tag: 'arch:latest'}
