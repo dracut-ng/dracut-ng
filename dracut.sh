@@ -2701,9 +2701,9 @@ if ! dracut_module_included "squash-lib"; then
 fi
 
 if [[ $EUID == "0" ]] && ! [[ ${DRACUT_NO_XATTR-} ]]; then
-    export DRACUT_CP="cp --reflink=auto --preserve=mode,timestamps,xattr,links -dfr"
+    export DRACUT_CP="cp --reflink=auto --preserve=xattr -dfrp"
 else
-    export DRACUT_CP="cp --reflink=auto --preserve=mode,timestamps,links -dfr"
+    export DRACUT_CP="cp --reflink=auto -dfrp"
 fi
 
 if ! [[ $print_cmdline ]] && ! [[ $printconfig ]]; then
