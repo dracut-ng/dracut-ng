@@ -42,6 +42,7 @@ jobs:
                     - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:devel'}
                     - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:rolling'}
                     - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:edge'}
+                    - {dockerfile: 'Dockerfile-alpine-busybox', tag: 'alpine-busybox:edge'}
                     - {dockerfile: 'Dockerfile-void', tag: 'void:latest'}
                 exclude:
                     - config: {tag: 'arch:latest'}
