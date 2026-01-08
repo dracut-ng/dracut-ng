@@ -19,9 +19,16 @@ for f in /run/systemd/network/*.network; do
         echo "RequestOptions=59 60"
     } >> "$f"
 
-    # Remove the default network if at least one was generated
-    rm -f "$systemdnetworkconfdir"/zzzz-dracut-default.network
+    # at least one was generated
+    : > /run/systemd/network/generated
 done
+
+# Add the default network if none was generated
+if ! [ -e /run/systemd/network/generated ]; then
+    cp -a /usr/lib/99-default.network /run/systemd/network/zzzz-dracut-default.network
+else
+    rm /run/systemd/network/generated
+fi
 
 # Just in case networkd was already running
 systemctl try-reload-or-restart systemd-networkd.service
