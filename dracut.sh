@@ -1222,12 +1222,12 @@ if ! [[ $outfile ]]; then
 
     if [[ $uefi == "yes" ]]; then
         if [[ -n $uefi_secureboot_key && -z $uefi_secureboot_cert ]] || [[ -z $uefi_secureboot_key && -n $uefi_secureboot_cert ]]; then
-            printf "%s\n" "dracut[F]: Need 'uefi_secureboot_key' and 'uefi_secureboot_cert' both to be set." >&2
+            dfatal "Need 'uefi_secureboot_key' and 'uefi_secureboot_cert' both to be set."
             exit 1
         fi
 
         if [[ -n $uefi_secureboot_key && -n $uefi_secureboot_cert ]] && ! command -v sbsign &> /dev/null; then
-            printf "%s\n" "dracut[F]: Need 'sbsign' to create a signed UEFI executable." >&2
+            dfatal "Need 'sbsign' to create a signed UEFI executable."
             exit 1
         fi
 
@@ -1296,7 +1296,7 @@ fw_dir=${fw_dir//:/ }
 if [[ -n $logfile ]]; then
     if [[ ! -f $logfile ]]; then
         if touch "$logfile"; then
-            printf "%s\n" "dracut[W]: touch $logfile failed." >&2
+            dwarn "touch $logfile failed."
         fi
     fi
 fi
@@ -1380,7 +1380,7 @@ case $hostonly_mode in
         fi
         ;;
     *)
-        printf "%s\n" "dracut[F]: Invalid hostonly mode '$hostonly_mode'." >&2
+        dfatal "Invalid hostonly mode '$hostonly_mode'."
         exit 1
         ;;
 esac
@@ -1397,19 +1397,19 @@ fi
 if [[ -z $DRACUT_KMODDIR_OVERRIDE && -n $drivers_dir ]]; then
     drivers_basename="${drivers_dir##*/}"
     if [[ -n $drivers_basename && $drivers_basename != "$kernel" ]]; then
-        printf "%s\n" "dracut[F]: The provided directory where to look for kernel modules ($drivers_basename)" >&2
-        printf "%s\n" "dracut[F]: does not match the kernel version set for the initramfs ($kernel)." >&2
-        printf "%s\n" "dracut[F]: Set DRACUT_KMODDIR_OVERRIDE=1 to ignore this check." >&2
+        dfatal "The provided directory where to look for kernel modules ($drivers_basename)"
+        dfatal "does not match the kernel version set for the initramfs ($kernel)."
+        dfatal "Set DRACUT_KMODDIR_OVERRIDE=1 to ignore this check."
         exit 1
     fi
     drivers_dirname="${drivers_dir%/*}/"
     if [[ ! $drivers_dirname =~ .*/lib/modules/$ ]]; then
-        printf "%s\n" "dracut[F]: drivers_dir path ${drivers_dir_l:+"set via -k/--kmoddir "}must contain \"/lib/modules/\" as a parent of your kernel module directory," >&2
-        printf "%s\n" "dracut[F]: or modules may not be placed in the correct location inside the initramfs." >&2
-        printf "%s\n" "dracut[F]: was given: ${drivers_dir}" >&2
-        printf "%s\n" "dracut[F]: expected: ${drivers_dirname}lib/modules/${kernel}" >&2
-        printf "%s\n" "dracut[F]: Please move your modules into the correct directory structure and pass the new location," >&2
-        printf "%s\n" "dracut[F]: or set DRACUT_KMODDIR_OVERRIDE=1 to ignore this check." >&2
+        dfatal "drivers_dir path ${drivers_dir_l:+"set via -k/--kmoddir "}must contain \"/lib/modules/\" as a parent of your kernel module directory,"
+        dfatal "or modules may not be placed in the correct location inside the initramfs."
+        dfatal "was given: ${drivers_dir}"
+        dfatal "expected: ${drivers_dirname}lib/modules/${kernel}"
+        dfatal "Please move your modules into the correct directory structure and pass the new location,"
+        dfatal "or set DRACUT_KMODDIR_OVERRIDE=1 to ignore this check."
         exit 1
     fi
 fi
@@ -1417,19 +1417,19 @@ fi
 TMPDIR="$(realpath -e "$tmpdir")"
 readonly TMPDIR
 [ -d "$TMPDIR" ] || {
-    printf "%s\n" "dracut[F]: Invalid tmpdir '$tmpdir'." >&2
+    dfatal "Invalid tmpdir '$tmpdir'."
     exit 1
 }
 
 if findmnt --raw -n --target "$tmpdir" --output=options | grep -q noexec; then
-    [[ $debug == yes ]] && printf "%s\n" "dracut[D]: Tmpdir '$tmpdir' is mounted with 'noexec'." >&2
+    [[ $debug == yes ]] && ddebug "Tmpdir '$tmpdir' is mounted with 'noexec'."
     noexec=1
 fi
 
 DRACUT_TMPDIR="$(mktemp -p "$TMPDIR/" -d -t dracut.dXXXXXX)"
 readonly DRACUT_TMPDIR
 [ -d "$DRACUT_TMPDIR" ] || {
-    printf "%s\n" "dracut[F]: mktemp -p '$TMPDIR/' -d -t dracut.dXXXXXX failed." >&2
+    dfatal "mktemp -p '$TMPDIR/' -d -t dracut.dXXXXXX failed."
     exit 1
 }
 
