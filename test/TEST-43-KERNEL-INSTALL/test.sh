@@ -50,7 +50,7 @@ test_setup() {
     build_ext4_image "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img dracut
 
     mkdir -p /run/kernel /run/initramfs/dracut.conf.d
-    echo 'initrd_generator=dracut' >> /run/kernel/install.conf
+    printf "layout=bls\ninitrd_generator=dracut\nuki_generator=none\n" >> /run/kernel/install.conf
 
     # enable test dracut config
     cp "${basedir}"/dracut.conf.d/test/*.conf /run/initramfs/dracut.conf.d/
