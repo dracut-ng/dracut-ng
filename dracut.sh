@@ -1362,12 +1362,12 @@ else
 fi
 
 if [[ ${hostonly-} ]]; then
-    for i in /sys /proc /run /dev; do
-        if ! findmnt --target "$i" &> /dev/null; then
-            dwarning "Turning off host-only mode: '$i' is not mounted!"
-            unset hostonly
-        fi
-    done
+    if ! findmnt --target "/dev" &> /dev/null; then
+        dwarning "Turning off host-only mode: /dev is not mounted!"
+        unset hostonly
+    elif ! findmnt --target "/sys" &> /dev/null; then
+        dwarning "Hostonly mode with no /sys mounted!"
+    fi
 fi
 
 case $hostonly_mode in
