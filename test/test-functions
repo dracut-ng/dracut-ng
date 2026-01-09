@@ -265,7 +265,7 @@ test_marker_check() {
     local marker=${1:-dracut-root-block-success}
     local file=${2:-marker.img}
 
-    grep -U --binary-files=binary -F -m 1 -q "$marker" "$TESTDIR/$file"
+    grep -F -a -m 1 -q "$marker" "$TESTDIR/$file"
     return $?
 }
 

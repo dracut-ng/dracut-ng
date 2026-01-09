@@ -74,7 +74,7 @@ test_run() {
 
         # Verify that the string "dracut-autooverlay-success" occurs in the second partition in the image file.
         dd if="$TESTDIR"/root.img bs=1MiB status=none \
-            | grep -U --binary-files=binary -F -m 1 -q dracut-autooverlay-success
+            | grep -F -a -m 1 -q dracut-autooverlay-success
     )
 
     return 0
