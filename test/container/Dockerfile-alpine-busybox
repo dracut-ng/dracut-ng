@@ -1,5 +1,5 @@
 # Tiny container with busybox
-# GNU coreutils should not be installed
+# GNU coreutils and GNU grep should not be installed
 
 FROM docker.io/alpine:edge
 
@@ -9,7 +9,6 @@ RUN apk add --no-cache \
     eudev \
     findmnt \
     gcc \
-    grep \
     kmod-dev \
     linux-virt \
     make \
