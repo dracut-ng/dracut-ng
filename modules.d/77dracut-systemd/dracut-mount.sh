@@ -18,9 +18,9 @@ while :; do
         usable_root "$NEWROOT" && break
         umount "$NEWROOT"
     fi
-    for f in "$hookdir"/mount/*.sh; do
+    for f in $(list_hooks "mount"); do
         # shellcheck disable=SC1090
-        [ -f "$f" ] && . "$f"
+        . "$f"
         if ismounted "$NEWROOT"; then
             usable_root "$NEWROOT" && break
             warn "$NEWROOT has no proper rootfs layout, ignoring and removing offending mount hook"
