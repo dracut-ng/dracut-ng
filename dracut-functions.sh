@@ -1304,6 +1304,15 @@ inst_rules() {
     done
 }
 
+# install sysusers files
+inst_sysusers() {
+    inst_multiple -o "$sysusers/$*" "$sysusers/acct-*-$*"
+
+    if [[ ${hostonly-} ]]; then
+        inst_multiple -H -o "$sysusersconfdir/$*" "$sysusers/acct-*-$*"
+    fi
+}
+
 # inst_libdir_dir <dir> [<dir>...]
 # Install a <dir> located on a lib directory to the initramfs image
 inst_libdir_dir() {

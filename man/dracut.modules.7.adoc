@@ -317,6 +317,11 @@ installs an executable/script <src> in the dracut hook <hookdir> with priority
 installs one or more udev rules. Non-existent udev rules are reported, but do
 not let dracut fail.
 
+==== inst_sysusers <sysuserconf>
+
+installs one sysuser config files. Non-existent sysuser config file
+is reported, but does not let dracut fail.
+
 ==== inst_libdir_dir <dir> [<dir>...]
 
 installs multiple directories (but not their content) located on a library

@@ -1633,16 +1633,6 @@ build_ld_cache() {
     fi
 }
 
-# install sysusers files
-# shellcheck disable=SC2317,SC2329
-inst_sysusers() {
-    inst_multiple -o "$sysusers/$*" "$sysusers/acct-*-$*"
-
-    if [[ ${hostonly-} ]]; then
-        inst_multiple -H -o "$sysusersconfdir/$*" "$sysusers/acct-*-$*"
-    fi
-}
-
 module_functions=(
     check
     depends
