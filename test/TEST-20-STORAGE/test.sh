@@ -157,7 +157,7 @@ test_setup() {
     if [ -n "$HAVE_CRYPT" ] && [ -n "$HAVE_RAID" ]; then
         test_makeroot "raid-crypt" "raid-crypt" " "
 
-        eval "$(grep -F --binary-files=text -m 1 MD_UUID "$TESTDIR"/marker.img)"
+        eval "$(grep -F -a -m 1 MD_UUID "$TESTDIR"/marker.img)"
         echo "$MD_UUID" > "$TESTDIR"/mduuid
 
         eval "$(grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img)"
