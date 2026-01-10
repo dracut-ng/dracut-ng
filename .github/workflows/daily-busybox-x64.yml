@@ -31,6 +31,7 @@ jobs:
                     - {test: '13', deps: ''}
                     - {test: '20', deps: 'lvm2 device-mapper'}
                     - {test: '26', deps: 'cryptsetup mdadm device-mapper lvm2 partx sed'}
+                    - {test: '30', deps: 'squashfs-tools sfdisk device-mapper grep parted'}
                     - {test: '50', deps: 'networkmanager-initrd-generator networkmanager'}
                     - {test: '81', deps: ''}
         container:

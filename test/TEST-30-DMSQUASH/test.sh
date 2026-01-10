@@ -73,7 +73,7 @@ test_run() {
         set +o pipefail
 
         # Verify that the string "dracut-autooverlay-success" occurs in the second partition in the image file.
-        dd if="$TESTDIR"/root.img bs=1MiB status=none \
+        dd if="$TESTDIR"/root.img bs=1M status=none \
             | grep -F -a -m 1 -q dracut-autooverlay-success
     )
 
