@@ -15,7 +15,7 @@ on:  # yamllint disable-line rule:truthy
 jobs:
     systemd:
         name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }}
-        runs-on: ubuntu-24.04
+        runs-on: ${{ matrix.architecture.runner }}
         timeout-minutes: 20
         concurrency:
             group: daily-systemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.architecture.tag }}
@@ -46,15 +46,15 @@ jobs:
                     - "44"
                 exclude:
                     - container: arch:latest
-                      architecture: tag: 'arm'
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                     - container: azurelinux:3.0
-                      architecture: tag: 'arm'
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                     - container: fedora:latest
-                      architecture: tag: 'arm'
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                     - container: fedora:rawhide
-                      architecture: tag: 'arm'
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                     - container: centos:latest
-                      architecture: tag: 'arm'
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                     # https://github.com/dracut-ng/dracut-ng/issues/1677
                     - container: arch:latest
                       test: "41"
@@ -63,19 +63,19 @@ jobs:
                       test: "41"
                     # mkosi test step fails
                     - container: opensuse:latest
-                      architecture: tag: 'arm'
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                       test: "41"
                     # fails with key file '/run/credentials/@system/key' missing
                     - container: gentoo:latest
-                      architecture: tag: 'arm'
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                       test: "41"
                     # /boot/vmlinuz-... is missing .efi suffix: https://launchpad.net/bugs/2133402
                     - container: ubuntu:devel
-                      architecture: tag: 'arm'
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                       test: "43"
                     # /boot/vmlinuz-... is missing .efi suffix: https://launchpad.net/bugs/2133402
                     - container: ubuntu:rolling
-                      architecture: tag: 'arm'
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                       test: "43"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-${{ matrix.architecture.tag }}
