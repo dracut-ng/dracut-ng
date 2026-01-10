@@ -1,5 +1,5 @@
 ---
-name: Daily Tests - network-manager (x64)
+name: Daily Tests - network-manager
 
 on:  # yamllint disable-line rule:truthy
     schedule:
@@ -10,19 +10,22 @@ on:  # yamllint disable-line rule:truthy
 
     pull_request:
         paths:
-            - '.github/workflows/daily-network-manager-x64.yml'
+            - '.github/workflows/daily-network-manager.yml'
 
 jobs:
     network-manager:
-        name: ${{ matrix.test }} on ${{ matrix.container }} ${{ matrix.network }} networking
-        runs-on: ubuntu-24.04
+        name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }}
+        runs-on: ${{ matrix.architecture.runner }}
         timeout-minutes: 20
         concurrency:
-            group: daily-network-manager-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}-amd
+            group: daily-network-manager-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}-${{ matrix.architecture.tag }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
             matrix:
+                architecture:
+                    - {runner: 'ubuntu-24.04', tag: 'amd'}
+                    - {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                 network:
                     - network-manager
                 container:
@@ -38,6 +41,12 @@ jobs:
                     - "60"
                     - "72"
                 exclude:
+                    - container: arch:latest
+                      architecture: tag: 'arm'
+                    - container: fedora:latest
+                      architecture: tag: 'arm'
+                    - container: fedora:rawhide
+                      architecture: tag: 'arm'
                     # https://github.com/dracut-ng/dracut-ng/issues/1815
                     - container: ubuntu:devel
                       test: "72"
@@ -45,7 +54,7 @@ jobs:
                     - container: ubuntu:rolling
                       test: "72"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-${{ matrix.architecture.tag }}
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
