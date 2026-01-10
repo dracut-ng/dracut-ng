@@ -1,5 +1,5 @@
 ---
-name: Daily Tests - omitsystemd (x64)
+name: Daily Tests - omitsystemd
 
 on:  # yamllint disable-line rule:truthy
     schedule:
@@ -10,31 +10,32 @@ on:  # yamllint disable-line rule:truthy
 
     pull_request:
         paths:
-            - '.github/workflows/daily-omitsystemd-x64.yml'
+            - '.github/workflows/daily-omitsystemd.yml'
 
 jobs:
     omitsystemd:
-        # run this test on all containers
-        name: ${{ matrix.test }} on ${{ matrix.container }} with no systemd
-        runs-on: ubuntu-24.04
+        name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }} with no systemd
+        runs-on: ${{ matrix.architecture.runner }}
         timeout-minutes: 20
         concurrency:
-            group: daily-omitsystemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-amd
+            group: daily-omitsystemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.architecture.tag }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
             matrix:
+                architecture:
+                    - {runner: 'ubuntu-24.04', tag: 'amd'}
+                    - {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                 container:
-                    - arch:latest
+                    - ubuntu:devel
                 test:
                     - "10"
                     - "11"
-                    - "12"
                     - "20"
                     - "26"
                     - "30"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-${{ matrix.architecture.tag }}
             options: '--device=/dev/kvm --privileged'
         steps:
             - name: "Checkout Repository"
