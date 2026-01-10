@@ -1,0 +1,87 @@
+---
+name: Daily Tests - systemd
+
+on:  # yamllint disable-line rule:truthy
+    schedule:
+        - cron: '30 23 * * *'   # every day at 23:30 UTC
+
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+    pull_request:
+        paths:
+            - '.github/workflows/daily-systemd.yml'
+
+jobs:
+    systemd:
+        name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }}
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+        concurrency:
+            group: daily-systemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.architecture.tag }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                architecture:
+                    - {runner: 'ubuntu-24.04', tag: 'amd'}
+                    - {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                container:
+                    - arch:latest
+                    - azurelinux:3.0
+                    - debian:latest
+                    - debian:sid
+                    - fedora:latest
+                    - fedora:rawhide
+                    - centos:latest
+                    - gentoo:latest
+                    - opensuse:latest
+                    - ubuntu:devel
+                    - ubuntu:rolling
+                test:
+                    - "40"
+                    - "41"
+                    - "42"
+                    - "43"
+                    - "44"
+                exclude:
+                    - container: arch:latest
+                      architecture: tag: 'arm'
+                    - container: azurelinux:3.0
+                      architecture: tag: 'arm'
+                    - container: fedora:latest
+                      architecture: tag: 'arm'
+                    - container: fedora:rawhide
+                      architecture: tag: 'arm'
+                    - container: centos:latest
+                      architecture: tag: 'arm'
+                    # https://github.com/dracut-ng/dracut-ng/issues/1677
+                    - container: arch:latest
+                      test: "41"
+                    # intentionally skipped
+                    - container: centos:latest
+                      test: "41"
+                    # mkosi test step fails
+                    - container: opensuse:latest
+                      architecture: tag: 'arm'
+                      test: "41"
+                    # fails with key file '/run/credentials/@system/key' missing
+                    - container: gentoo:latest
+                      architecture: tag: 'arm'
+                      test: "41"
+                    # /boot/vmlinuz-... is missing .efi suffix: https://launchpad.net/bugs/2133402
+                    - container: ubuntu:devel
+                      architecture: tag: 'arm'
+                      test: "43"
+                    # /boot/vmlinuz-... is missing .efi suffix: https://launchpad.net/bugs/2133402
+                    - container: ubuntu:rolling
+                      architecture: tag: 'arm'
+                      test: "43"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-${{ matrix.architecture.tag }}
+            options: '--device=/dev/kvm --privileged'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v6
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
