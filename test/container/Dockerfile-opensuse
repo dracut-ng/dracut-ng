@@ -46,7 +46,7 @@ RUN zypper --non-interactive install --no-recommends \
     pciutils \
     python3-pefile \
     qemu \
-    ruby3.4-rubygem-asciidoctor \
+    ruby4.0-rubygem-asciidoctor \
     squashfs \
     swtpm \
     systemd-boot \
