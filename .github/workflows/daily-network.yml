@@ -1,5 +1,5 @@
 ---
-name: Daily Tests - network-manager
+name: Daily Tests - network
 
 on:  # yamllint disable-line rule:truthy
     schedule:
@@ -10,15 +10,15 @@ on:  # yamllint disable-line rule:truthy
 
     pull_request:
         paths:
-            - '.github/workflows/daily-network-manager.yml'
+            - '.github/workflows/daily-network.yml'
 
 jobs:
-    network-manager:
+    network:
         name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }}
         runs-on: ${{ matrix.architecture.runner }}
         timeout-minutes: 40
         concurrency:
-            group: daily-network-manager-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}-${{ matrix.architecture.tag }}
+            group: daily-network-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.architecture.tag }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
@@ -26,8 +26,6 @@ jobs:
                 architecture:
                     - {runner: 'ubuntu-24.04', tag: 'amd'}
                     - {runner: 'ubuntu-24.04-arm', tag: 'arm'}
-                network:
-                    - network-manager
                 container:
                     - arch:latest
                     - debian:latest
@@ -63,4 +61,4 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
