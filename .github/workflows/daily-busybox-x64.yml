@@ -33,6 +33,7 @@ jobs:
                     - {test: '26', deps: 'cryptsetup mdadm device-mapper lvm2 partx sed'}
                     - {test: '30', deps: 'squashfs-tools sfdisk device-mapper grep parted'}
                     - {test: '50', deps: 'networkmanager-initrd-generator networkmanager'}
+                    - {test: '80', deps: ''}
                     - {test: '81', deps: ''}
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd

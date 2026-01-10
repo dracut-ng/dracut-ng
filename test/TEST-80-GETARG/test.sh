@@ -15,10 +15,10 @@ test_check() {
 }
 
 test_setup() {
-    ln -sfnr "$PKGLIBDIR"/dracut-util "$TESTDIR"/dracut-getarg
-    ln -sfnr "$PKGLIBDIR"/dracut-util "$TESTDIR"/dracut-getargs
-    ln -sfnr "$PKGLIBDIR"/modules.d/[0-9][0-9]base/dracut-lib.sh "$TESTDIR"/dracut-lib.sh
-    ln -sfnr "$PKGLIBDIR"/modules.d/[0-9][0-9]base/dracut-dev-lib.sh "$TESTDIR"/dracut-dev-lib.sh
+    ln -sfn "$PKGLIBDIR"/dracut-util "$TESTDIR"/dracut-getarg
+    ln -sfn "$PKGLIBDIR"/dracut-util "$TESTDIR"/dracut-getargs
+    ln -sfn "$PKGLIBDIR"/modules.d/[0-9][0-9]base/dracut-lib.sh "$TESTDIR"/dracut-lib.sh
+    ln -sfn "$PKGLIBDIR"/modules.d/[0-9][0-9]base/dracut-dev-lib.sh "$TESTDIR"/dracut-dev-lib.sh
     return 0
 }
 
