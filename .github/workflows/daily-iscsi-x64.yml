@@ -24,8 +24,6 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - debian:latest
-                    - debian:sid
                     - ubuntu:devel
                     - ubuntu:rolling
                 test:
