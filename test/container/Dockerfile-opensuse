@@ -2,7 +2,6 @@
 # - arm64
 # - hostonly
 # - network-legacy
-# - mkosi-initrd
 # - hmaccalc (fido)
 # - rdma out of tree dracut module
 # - dbus-broker
@@ -37,7 +36,6 @@ RUN zypper --non-interactive install --no-recommends \
     lvm2 \
     make \
     mdadm \
-    mkosi-initrd \
     nbd \
     NetworkManager \
     nfs-kernel-server \
