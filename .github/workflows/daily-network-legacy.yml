@@ -1,5 +1,5 @@
 ---
-name: Daily Tests - network-legacy (x64)
+name: Daily Tests - network-legacy
 
 on:  # yamllint disable-line rule:truthy
     schedule:
@@ -10,19 +10,22 @@ on:  # yamllint disable-line rule:truthy
 
     pull_request:
         paths:
-            - '.github/workflows/daily-network-legacy-x64.yml'
+            - '.github/workflows/daily-network-legacy.yml'
 
 jobs:
     network-legacy:
-        name: ${{ matrix.test }} on ${{ matrix.container }} ${{ matrix.network }} networking
-        runs-on: ubuntu-24.04
-        timeout-minutes: 20
+        name: ${{ matrix.test }} on ${{ matrix.container }} ${{ matrix.network }} networking on ${{ matrix.architecture.tag }}
+        runs-on: ${{ matrix.architecture.runner }}
+        timeout-minutes: 40
         concurrency:
-            group: daily-network-legacy-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}-amd
+            group: daily-network-legacy-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}-${{ matrix.architecture.tag }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
             matrix:
+                architecture:
+                    - {runner: 'ubuntu-24.04', tag: 'amd'}
+                    - {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                 network:
                     - network-legacy
                 container:
@@ -32,8 +35,8 @@ jobs:
                     - "60"
                     - "72"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
-            options: '--device=/dev/kvm'
+            image: ghcr.io/dracut-ng/${{ matrix.container }}-${{ matrix.architecture.tag }}
+            options: '--device=/dev/kvm --privileged'
         steps:
             - name: "Checkout Repository"
               uses: actions/checkout@v6
