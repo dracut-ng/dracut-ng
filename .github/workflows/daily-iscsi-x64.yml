@@ -1,5 +1,5 @@
 ---
-name: Daily Tests - network-manager-iscsi (x64)
+name: Daily Tests - iscsi (x64)
 
 on:  # yamllint disable-line rule:truthy
     schedule:
@@ -10,21 +10,19 @@ on:  # yamllint disable-line rule:truthy
 
     pull_request:
         paths:
-            - '.github/workflows/daily-network-manager-iscsi-x64.yml'
+            - '.github/workflows/daily-iscsi-x64.yml'
 
 jobs:
-    network-manager-iscsi:
-        name: ${{ matrix.test }} on ${{ matrix.container }} ${{ matrix.network }} networking
+    iscsi:
+        name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
-            group: daily-network-manager-iscsi-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}-amd
+            group: daily-iscsi-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-amd
             cancel-in-progress: true
         strategy:
             fail-fast: false
             matrix:
-                network:
-                    - network-manager
                 container:
                     - debian:latest
                     - debian:sid
@@ -40,4 +38,4 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
