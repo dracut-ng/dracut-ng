@@ -25,6 +25,7 @@ usage() {
         echo "-h, --help                  print a help message and exit."
         echo "-s, --size                  sort the contents of the initramfs by size."
         echo "-m, --mod                   list modules."
+        echo "-r, --kernel-release        print the kernel release and exit."
         echo "-f, --file <filename>       print the contents of <filename>."
         echo "--unpack                    unpack the initramfs, instead of displaying the contents."
         echo "                            If optional filenames are given, will only unpack specified files,"
@@ -50,6 +51,7 @@ TEMP=$(getopt \
     --long kver: \
     --long file: \
     --long mod \
+    --long kernel-release \
     --long help \
     --long size \
     --long unpack \
@@ -81,6 +83,7 @@ while (($# > 0)); do
             exit 0
             ;;
         -m | --mod) modules=1 ;;
+        -r | --kernel-release) kernel=1 ;;
         -v | --verbose) verbose="--verbose" ;;
         --unpack) unpack=1 ;;
         --unpackearly) unpackearly=1 ;;
@@ -533,7 +536,10 @@ else
     ((ret += $?))
     echo "Version: $version"
     echo
-    if [ "$modules" -eq 1 ]; then
+    if [ "$kernel" -eq 1 ]; then
+      kernel=$($CAT "$image" | cpio --extract --quiet --list 'usr/lib/modules/*/modules.dep' | head -1 | sed 's;.*/\([^/]\+\)/modules.dep;\1;')
+      [[ -n $kernel ]] && echo "Kernel: $kernel"
+    elif [ "$modules" -eq 1 ]; then
         list_modules
         echo "========================================================================"
     else
