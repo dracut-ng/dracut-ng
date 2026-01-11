@@ -1109,6 +1109,44 @@ The **rd.overlayfs.readonly** option, which allows a persistent overlayfs to
 be mounted read-only through a higher level transient overlay directory, has
 been implemented through the multiple lower layers feature of OverlayFS.
 
+**overlayroot=**__{tmpfs|LABEL=<label>|UUID=<uuid>|PARTUUID=<uuid>|PARTLABEL=<label>|/dev/<device>|device:dev=<device>|disabled}__::
+Specifies the storage device for persistent OverlayFS overlay.  This parameter
+provides compatibility with cloud-initramfs-tools overlayroot syntax.  When a
+block device is specified, it will be mounted at `/run/overlayfs-backing`, and
+the overlay directories (`overlay` and `ovlwork`) will be created within it.
+The implementation uses symlinks (`/run/overlayfs` -> `/run/overlayfs-backing/overlay`)
+to make device-backed storage transparent to the overlay mount logic.  If
+device resolution or mounting fails, the system gracefully falls back to tmpfs
+mode with a warning message.  The default behavior without this parameter is
+tmpfs-based overlay when **rd.overlayfs=**1 is set.
++
+---
+* _tmpfs_ - Use RAM-based temporary storage (changes are lost on reboot).
+* _LABEL=<label>_ - Use the device with the specified filesystem label.
+* _UUID=<uuid>_ - Use the device with the specified UUID.
+* _PARTUUID=<uuid>_ - Use the device with the specified partition UUID.
+* _PARTLABEL=<label>_ - Use the device with the specified partition label.
+* _/dev/<device>_ - Use the specified device path directly.
+* _device:dev=<device>_ - cloud-initramfs-tools compatible syntax, where
+_<device>_ can be a device path, LABEL=, or UUID= specification.
+* _disabled_ - Explicitly disable overlay functionality.
+---
++
+[listing]
+.Examples
+---
+overlayroot=LABEL=OVERLAY
+overlayroot=UUID=12345678-1234-1234-1234-123456789abc
+overlayroot=/dev/sdb1
+overlayroot=device:dev=LABEL=persistent-overlay
+---
++
+NOTE:
+    For live boot (root=live:...), the overlayroot= parameter works equivalently
+    to rd.overlay=. Both parameters support the same syntax (LABEL=, UUID=,
+    etc.) and share auto-partitioning functionality when LABEL= is specified but
+    the partition does not yet exist.
+
 Booting live images
 ~~~~~~~~~~~~~~~~~~~
 Requires the dracut 'dmsquash-live' module.
