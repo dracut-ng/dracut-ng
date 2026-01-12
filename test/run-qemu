@@ -194,5 +194,11 @@ if [[ -n $initrd ]]; then
     add_to_append "console=${console:-ttyS0},115200"
 fi
 
+if ! [[ $* == *-daemonize* ]] && timeout --help 2> /dev/null | grep -q -- --foreground; then
+    # Run QEMU with a timeout (defaut: 10min) unless daemonized
+    ARGS=(--foreground "${QEMU_TIMEOUT-600}" "$BIN" "${ARGS[@]}")
+    BIN=timeout
+fi
+
 echo "${0##*/}: $BIN $(quote_args "${ARGS[@]}")"
 exec "$BIN" "${ARGS[@]}"
