@@ -48,6 +48,33 @@ test_run() {
         -initrd "$TESTDIR"/initramfs.testing
 
     test_marker_check
+    test_marker_reset
+
+    echo "TEST: overlayroot=LABEL (cloud-initramfs-tools compatibility)"
+    "$testdir"/run-qemu -nic none \
+        "${disk_args[@]}" \
+        -append "$TEST_KERNEL_CMDLINE root=LABEL=dracut overlayroot=LABEL=OVERLAY" \
+        -initrd "$TESTDIR"/initramfs.testing
+
+    test_marker_check
+    test_marker_reset
+
+    echo "TEST: overlayroot=device:dev=UUID (cloud-initramfs-tools syntax)"
+    "$testdir"/run-qemu -nic none \
+        "${disk_args[@]}" \
+        -append "$TEST_KERNEL_CMDLINE root=LABEL=dracut overlayroot=device:dev=UUID=$OVERLAY_UUID" \
+        -initrd "$TESTDIR"/initramfs.testing
+
+    test_marker_check
+    test_marker_reset
+
+    echo "TEST: overlayroot=tmpfs"
+    "$testdir"/run-qemu -nic none \
+        "${disk_args[@]}" \
+        -append "$TEST_KERNEL_CMDLINE root=LABEL=dracut overlayroot=tmpfs" \
+        -initrd "$TESTDIR"/initramfs.testing
+
+    test_marker_check
 }
 
 test_setup() {

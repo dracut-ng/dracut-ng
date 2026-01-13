@@ -95,6 +95,69 @@ test_run() {
             | grep -F -a -m 1 -q dracut-autooverlay-success
     )
 
+    # Test overlayroot= parameter equivalence with rd.overlay=
+    test_marker_reset
+    sfdisk --delete "$TESTDIR"/root.img 2
+    # Wipe the area where partition 2 will be recreated to avoid mkfs prompt
+    dd if=/dev/zero of="$TESTDIR"/root.img bs=1M seek=320 count=50 conv=notrunc status=none
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    [ "$rootPartitions" -eq 1 ]
+
+    client_run "persistent autooverlay" "init=/sbin/init-persist rd.live.image rd.overlay=LABEL=persist rd.live.dir=LiveOS overlayroot=LABEL=persist"
+
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    [ "$rootPartitions" -eq 2 ]
+
+    (
+        set +o pipefail
+        dd if="$TESTDIR"/root.img bs=1M status=none \
+            | grep -F -a -m 1 -q dracut-autooverlay-success
+    )
+
+    # Test overlayroot= alone for auto-partitioning
+    test_marker_reset
+    sfdisk --delete "$TESTDIR"/root.img 2
+    dd if=/dev/zero of="$TESTDIR"/root.img bs=1M seek=320 count=50 conv=notrunc status=none
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    [ "$rootPartitions" -eq 1 ]
+
+    client_run "overlayroot autooverlay" "init=/sbin/init-persist rd.live.image overlayroot=LABEL=persist rd.live.dir=LiveOS"
+
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    [ "$rootPartitions" -eq 2 ]
+
+    (
+        set +o pipefail
+        dd if="$TESTDIR"/root.img bs=1M status=none \
+            | grep -F -a -m 1 -q dracut-autooverlay-success
+    )
+
+    # Test pre-existing persistent volume
+    test_marker_reset
+
+    client_run "existing overlay" "init=/sbin/init-persist rd.live.image overlayroot=LABEL=persist rd.live.dir=LiveOS"
+
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    [ "$rootPartitions" -eq 2 ]
+
+    (
+        set +o pipefail
+        dd if="$TESTDIR"/root.img bs=1M status=none \
+            | grep -F -a -m 1 -q dracut-autooverlay-success
+    )
+
+    # Test fallback to tmpfs
+    test_marker_reset
+    sfdisk --delete "$TESTDIR"/root.img 2
+    dd if=/dev/zero of="$TESTDIR"/root.img bs=1M seek=320 count=50 conv=notrunc status=none
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    [ "$rootPartitions" -eq 1 ]
+
+    client_run "fallback tmpfs" "init=/sbin/init-persist rd.live.image overlayroot=UUID=00000000-0000-0000-0000-000000000000 rd.live.dir=LiveOS"
+
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    [ "$rootPartitions" -eq 1 ]
+
     return 0
 }
 

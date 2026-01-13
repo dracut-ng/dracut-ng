@@ -1134,6 +1134,30 @@ rd.overlay=UUID=12345678-1234-1234-1234-123456789abc
 rd.overlay=/dev/sdb1
 ---
 
+**overlayroot=**__{tmpfs|<device>|disabled}__::
+Cloud-initramfs-tools compatible alias for **rd.overlay=**. Supports additional
+syntax for compatibility:
++
+---
+* _tmpfs_ or _tmpfs:*_ - Use RAM-based temporary storage (changes are lost on
+reboot). Optional parameters after colon are ignored.
+* _LABEL=<label>_ | _UUID=<uuid>_ | _PARTUUID=<uuid>_ | _PARTLABEL=<label>_ |
+_/dev/<device>_ - Same device specifications as rd.overlay=
+* _device:dev=<device>_ - cloud-initramfs-tools syntax where _<device>_ can be
+a device path, LABEL=, UUID=, PARTUUID=, PARTLABEL=, or other device specification.
+* _disabled_ or _0_ - Explicitly disable overlay functionality.
+* _1_ or empty value - Enable overlay with tmpfs (same as tmpfs).
+---
++
+[listing]
+.Examples
+---
+overlayroot=tmpfs
+overlayroot=LABEL=OVERLAY
+overlayroot=device:dev=UUID=12345678-1234-1234-1234-123456789abc
+overlayroot=disabled
+---
+
 Booting live images
 ~~~~~~~~~~~~~~~~~~~
 Requires the dracut 'dmsquash-live' module.

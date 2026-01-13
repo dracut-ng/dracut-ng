@@ -6,11 +6,51 @@ getargbool 0 rd.overlayfs -d rd.live.overlay.overlayfs && overlayfs="yes"
 getargbool 0 rd.overlay.reset -d rd.live.overlay.reset && reset_overlay="yes"
 
 overlay=$(getarg rd.overlay -d rd.live.overlay)
+overlayroot=$(getarg overlayroot=)
 
 overlay_mode="tmpfs"
 overlay_device=""
 
-if [ -n "$overlay" ]; then
+# Handle overlayroot parameter (cloud-initramfs-tools compatibility)
+if getarg overlayroot= > /dev/null || getarg overlayroot > /dev/null; then
+    # If overlayroot is set but empty, treat as overlayroot=1 (tmpfs mode)
+    [ -z "$overlayroot" ] && overlayroot="1"
+
+    case "$overlayroot" in
+        1 | tmpfs | tmpfs*)
+            overlayfs="yes"
+            overlay_mode="tmpfs"
+            ;;
+        /dev/* | LABEL=* | UUID=* | PARTLABEL=* | PARTUUID=*)
+            overlayfs="yes"
+            overlay_mode="device"
+            overlay_device=$(label_uuid_to_dev "$overlayroot")
+            if [ ! -b "$overlay_device" ]; then
+                warn "Failed to resolve device from '$overlayroot', falling back to tmpfs"
+                overlay_mode="tmpfs"
+            fi
+            ;;
+        device:*)
+            overlayfs="yes"
+            overlay_mode="device"
+            overlay_device="${overlayroot#device:}"
+            overlay_device="${overlay_device#dev=}"
+            overlay_device=$(label_uuid_to_dev "$overlay_device")
+            if [ ! -b "$overlay_device" ]; then
+                warn "Failed to resolve device from '$overlayroot', falling back to tmpfs"
+                overlay_mode="tmpfs"
+            fi
+            ;;
+        0 | disabled)
+            overlayfs=""
+            ;;
+        *)
+            warn "Unknown overlayroot format '$overlayroot', using tmpfs"
+            overlayfs="yes"
+            overlay_mode="tmpfs"
+            ;;
+    esac
+elif [ -n "$overlay" ]; then
     overlayfs="yes"
 
     case "$overlay" in
