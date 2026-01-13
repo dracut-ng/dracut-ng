@@ -2106,11 +2106,11 @@ if [[ $enhanced_cpio == "yes" ]]; then
     enhanced_cpio="$dracutbasedir/dracut-cpio"
     if 3cpio --help 2> /dev/null | grep -q -- --data-align; then
         # align based on statfs optimal transfer size
-        cpio_align=$(stat --file-system -c "%s" -- "$initdir")
+        cpio_align=$(stat -f -c "%s" -- "$initdir")
         unset enhanced_cpio
     elif [[ -x $enhanced_cpio ]]; then
         # align based on statfs optimal transfer size
-        cpio_align=$(stat --file-system -c "%s" -- "$initdir")
+        cpio_align=$(stat -f -c "%s" -- "$initdir")
     else
         dinfo "--enhanced-cpio ignored due to lack of 3cpio >= 0.10 or dracut-cpio"
         unset enhanced_cpio

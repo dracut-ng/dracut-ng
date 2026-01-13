@@ -8,7 +8,7 @@ TEST_DESCRIPTION="kernel cpio extraction tests for dracut-cpio"
 # see dracut-cpio source for unit tests
 
 test_check() {
-    if ! [[ -x "$PKGLIBDIR/dracut-cpio" ]]; then
+    if command -v dracut-cpio &> /dev/null; then
         echo "Test needs dracut-cpio... Skipping"
         return 1
     fi
