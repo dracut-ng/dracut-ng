@@ -35,6 +35,7 @@ jobs:
                     - {test: '50', deps: 'networkmanager-initrd-generator networkmanager'}
                     - {test: '80', deps: ''}
                     - {test: '81', deps: ''}
+                    - {test: '82', deps: 'cargo procps-ng'}
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
             options: '--device=/dev/kvm --privileged'
