@@ -61,6 +61,10 @@ test_setup() {
     # using kernell-install to invoke dracut
     mkdir -p "$BOOT_ROOT/$TOKEN/$KVERSION" "$BOOT_ROOT/loader/entries" "$BOOT_ROOT/$TOKEN/0-rescue/loader/entries"
     kernel-install add "$KVERSION" "$KIMAGE"
+    if [[ ! -e "$BOOT_ROOT/$TOKEN/$KVERSION"/initrd ]]; then
+        echo "Error: kernel-install failed to create $BOOT_ROOT/$TOKEN/$KVERSION/initrd" >&2
+        return 1
+    fi
 }
 
 # shellcheck disable=SC1090
