@@ -2059,16 +2059,15 @@ fi
 
 # shellcheck disable=SC2317,SC2329
 is_qemu_virtualized() {
-    # 0 if a virt environment was detected
-    # 1 if a virt environment could not be detected
-    # 255 if any error was encountered
+    # 0 if a QEMU/KVM like VM virtualization environment was detected
+    # 1 if a QEMU/KVM like VM virtualization environment could not be detected (including if an error was encountered)
 
     # do not consult /sys and do not detect virt environment in non-hostonly mode
     ! [[ ${hostonly-} ]] && return 1
 
     if type -P systemd-detect-virt > /dev/null 2>&1; then
         if ! vm=$(systemd-detect-virt --vm 2> /dev/null); then
-            return 255
+            return 1
         fi
         [[ $vm == "qemu" ]] && return 0
         [[ $vm == "kvm" ]] && return 0
