@@ -3438,6 +3438,7 @@ get_sbat_string() {
     local inp=$1
     local out=$uefi_outdir/$2
     "${OBJCOPY:-objcopy}" -O binary --only-section=.sbat "$inp" "$out"
+    sed -i 's/\x00*$//' "$out"
     clean_sbat_string "$out"
 }
 
