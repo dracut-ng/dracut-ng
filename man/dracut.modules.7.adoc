@@ -394,8 +394,9 @@ Issues a standardized warning message.
 
 === Initramfs Functions
 
-FIXME
+==== determine_kernel_image <kversion>
 
+Helper function for determining the path for the kernel image file.
 
 === Network Modules
 
