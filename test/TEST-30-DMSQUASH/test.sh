@@ -63,12 +63,30 @@ test_run() {
     rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
     [ "$rootPartitions" -eq 1 ]
 
-    client_run "autooverlay" "init=/sbin/init-persist rd.live.image rd.live.overlay=LABEL=persist rd.live.dir=LiveOS"
+    client_run "autooverlay" "init=/sbin/init-persist rd.live.image rd.overlay=LABEL=persist rd.live.dir=LiveOS"
 
     rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
     [ "$rootPartitions" -eq 2 ]
     # Verify that the string "dracut-autooverlay-success" occurs in the second partition in the image file.
     test_marker_check dracut-autooverlay-success root.img
+
+    # Test backward compatibility with rd.live.overlay (deprecated parameter)
+    test_marker_reset
+    sfdisk --delete "$TESTDIR"/root.img 2
+    dd if=/dev/zero of="$TESTDIR"/root.img bs=1M seek=320 count=50 conv=notrunc status=none
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    [ "$rootPartitions" -eq 1 ]
+
+    client_run "autooverlay (deprecated rd.live.overlay)" "init=/sbin/init-persist rd.live.image rd.live.overlay=LABEL=persist rd.live.dir=LiveOS"
+
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    [ "$rootPartitions" -eq 2 ]
+
+    (
+        set +o pipefail
+        dd if="$TESTDIR"/root.img bs=1M status=none \
+            | grep -F -a -m 1 -q dracut-autooverlay-success
+    )
 
     return 0
 }
