@@ -67,15 +67,8 @@ test_run() {
 
     rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
     [ "$rootPartitions" -eq 2 ]
-
-    (
-        # Ensure that this test works when run with the `V=1` parameter, which runs the script with `set -o pipefail`.
-        set +o pipefail
-
-        # Verify that the string "dracut-autooverlay-success" occurs in the second partition in the image file.
-        dd if="$TESTDIR"/root.img bs=1M status=none \
-            | grep -F -a -m 1 -q dracut-autooverlay-success
-    )
+    # Verify that the string "dracut-autooverlay-success" occurs in the second partition in the image file.
+    test_marker_check dracut-autooverlay-success root.img
 
     return 0
 }
