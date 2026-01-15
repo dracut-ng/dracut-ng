@@ -1485,6 +1485,27 @@ require_kernel_modules() {
     return "$_ret"
 }
 
+determine_kernel_image() {
+    local kversion="$1"
+    local paths=(
+        "/lib/modules/${kversion}/vmlinuz"
+        "/lib/modules/${kversion}/vmlinux"
+        "/lib/modules/${kversion}/Image"
+        "/boot/vmlinuz-${kversion}"
+        "/boot/vmlinux-${kversion}"
+    )
+
+    for path in "${paths[@]}"; do
+        if [ -f "$path" ]; then
+            echo "$path"
+            return 0
+        fi
+    done
+
+    echo "Could not find a Linux kernel image for version '$kversion'!" >&2
+    return 1
+}
+
 if ! is_func dinfo > /dev/null 2>&1; then
     # shellcheck source=./dracut-logger.sh
     . "${BASH_SOURCE[0]%/*}/dracut-logger.sh"

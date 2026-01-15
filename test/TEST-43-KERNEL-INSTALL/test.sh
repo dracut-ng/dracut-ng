@@ -38,6 +38,9 @@ test_run() {
 }
 
 test_setup() {
+    # shellcheck source=./dracut-functions.sh
+    . "$PKGLIBDIR"/dracut-functions.sh
+
     # create root filesystem
     # shellcheck disable=SC2153
     call_dracut --tmpdir "$TESTDIR" \

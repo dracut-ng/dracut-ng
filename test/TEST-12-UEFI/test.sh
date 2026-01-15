@@ -44,6 +44,9 @@ test_run() {
 }
 
 test_setup() {
+    # shellcheck source=./dracut-functions.sh
+    . "$PKGLIBDIR"/dracut-functions.sh
+
     # Create what will eventually be our root filesystem
     call_dracut --tmpdir "$TESTDIR" \
         --add-confdir test-root \

@@ -141,27 +141,6 @@ determine_kernel_version() {
     lsinitrd "$1" | grep modules.dep | head -1 | sed 's;.*/\([^/]\+\)/modules.dep;\1;'
 }
 
-determine_kernel_image() {
-    local kversion="$1"
-    local paths=(
-        "/lib/modules/${kversion}/vmlinuz"
-        "/lib/modules/${kversion}/vmlinux"
-        "/lib/modules/${kversion}/Image"
-        "/boot/vmlinuz-${kversion}"
-        "/boot/vmlinux-${kversion}"
-    )
-
-    for path in "${paths[@]}"; do
-        if [ -f "$path" ]; then
-            echo "$path"
-            return 0
-        fi
-    done
-
-    echo "Could not find a Linux kernel image for version '$kversion'!" >&2
-    exit 1
-}
-
 # terminal sequence to set color to a 'success' color (currently: green)
 function SETCOLOR_SUCCESS() { echo -en '\033[0;32m'; }
 # terminal sequence to set color to a 'failure' color (currently: red)
