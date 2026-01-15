@@ -1,9 +1,10 @@
 FROM mcr.microsoft.com/azurelinux/base/core:3.0
 
-ARG PLATFORM=linux/amd64
+# export
+ARG TARGETARCH
 
 RUN \
-if [[ "${PLATFORM}" =~ "amd64" ]]; then \
+if [ "${TARGETARCH}" == "amd64" ]; then \
     tdnf -y install --setopt=install_weak_deps=False \
         systemd-boot \
         systemd-ukify \

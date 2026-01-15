@@ -70,4 +70,3 @@ jobs:
                   platforms: ${{ matrix.architecture.platform }}
                   build-args: |
                       DISTRIBUTION=${{ matrix.config.tag }}
-                      PLATFORM=${{ matrix.config.platform }}
