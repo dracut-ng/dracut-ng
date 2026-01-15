@@ -2,6 +2,11 @@
 
 # called by dracut
 check() {
+    if dracut_module_included "network" \
+        && dracut_module_included "qemu"; then
+        return 0
+    fi
+
     is_qemu_virtualized && return 0
 
     if [[ $hostonly ]] || [[ $mount_needs ]]; then
