@@ -36,6 +36,9 @@ case " $ID $ID_LIKE " in
     *" fedora "*)
         configprofile=fedora
         ;;
+    *" gentoo "*)
+        configprofile=gentoo
+        ;;
     *" suse "*)
         configprofile=opensuse
         ;;
