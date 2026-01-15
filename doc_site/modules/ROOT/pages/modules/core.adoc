@@ -264,4 +264,8 @@ code, there are no specific types or categories for dracut modules.
 | watchdog-modules
 | kernel modules for watchdog loaded early in booting
 | kernel
+
+| xen
+| kernel modules for xen
+| kernel
 |===

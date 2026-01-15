@@ -599,6 +599,10 @@ shell-interpreter:
   - changed-files:
       - any-glob-to-any-file: 'modules.d/[0-9][0-9]shell-interpreter/*'
 
+xen:
+  - changed-files:
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]xen/*'
+
 test:
   - changed-files:
       - any-glob-to-any-file: ['test/*', 'test/**/*']
