@@ -28,6 +28,7 @@ jobs:
                 config:
                     - {test: '10', deps: ''}
                     - {test: '11', deps: 'btrfs-progs'}
+                    - {test: '12', deps: 'efistub efistub ovmf squashfs-tools'}
                     - {test: '13', deps: ''}
                     - {test: '20', deps: 'lvm2 device-mapper'}
                     - {test: '26', deps: 'cryptsetup mdadm device-mapper lvm2 partx sed'}
