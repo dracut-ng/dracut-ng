@@ -75,4 +75,3 @@ jobs:
                       DISTRIBUTION=${{ matrix.config.tag }}
                       REGISTRY=${{ matrix.config.registry }}
                       OPTION=${{ matrix.config.option }}
-                      PLATFORM=${{ matrix.config.platform }}
