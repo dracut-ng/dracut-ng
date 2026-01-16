@@ -1109,6 +1109,55 @@ The **rd.overlayfs.readonly** option, which allows a persistent overlayfs to
 be mounted read-only through a higher level transient overlay directory, has
 been implemented through the multiple lower layers feature of OverlayFS.
 
+**rd.overlay=**__{LABEL=<label>|UUID=<uuid>|PARTUUID=<uuid>|PARTLABEL=<label>|/dev/<device>}__::
+Specifies the storage device for persistent overlay (for both live images and
+regular OverlayFS).  When a block device is specified, it will be mounted and
+used for persistent overlay storage.  For live images with LABEL= specification,
+if the labeled partition does not exist, it will be automatically created using
+available free space on the device.
++
+Supported device specifications:
++
+---
+* _LABEL=<label>_ - Use the device with the specified filesystem label.
+* _UUID=<uuid>_ - Use the device with the specified UUID.
+* _PARTUUID=<uuid>_ - Use the device with the specified partition UUID.
+* _PARTLABEL=<label>_ - Use the device with the specified partition label.
+* _/dev/<device>_ - Use the specified device path directly.
+---
++
+[listing]
+.Examples
+---
+rd.overlay=LABEL=persist
+rd.overlay=UUID=12345678-1234-1234-1234-123456789abc
+rd.overlay=/dev/sdb1
+---
+
+**overlayroot=**__{tmpfs|<device>|disabled}__::
+Cloud-initramfs-tools compatible alias for **rd.overlay=**. Supports additional
+syntax for compatibility:
++
+---
+* _tmpfs_ or _tmpfs:*_ - Use RAM-based temporary storage (changes are lost on
+reboot). Optional parameters after colon are ignored.
+* _LABEL=<label>_ | _UUID=<uuid>_ | _PARTUUID=<uuid>_ | _PARTLABEL=<label>_ |
+_/dev/<device>_ - Same device specifications as rd.overlay=
+* _device:dev=<device>_ - cloud-initramfs-tools syntax where _<device>_ can be
+a device path, LABEL=, UUID=, PARTUUID=, PARTLABEL=, or other device specification.
+* _disabled_ or _0_ - Explicitly disable overlay functionality.
+* _1_ or empty value - Enable overlay with tmpfs (same as tmpfs).
+---
++
+[listing]
+.Examples
+---
+overlayroot=tmpfs
+overlayroot=LABEL=OVERLAY
+overlayroot=device:dev=UUID=12345678-1234-1234-1234-123456789abc
+overlayroot=disabled
+---
+
 Booting live images
 ~~~~~~~~~~~~~~~~~~~
 Requires the dracut 'dmsquash-live' module.
@@ -1135,7 +1184,7 @@ leading to application failures.  The snapshot overlay device is marked
 'Overflow', and a difficult recovery is required to repair and enlarge the
 overlay offline.
 
-When _rd.live.overlay=_ is not specified for persistent overlay storage, or
+When _rd.overlay=_ is not specified for persistent overlay storage, or
 the specified file is not found or writable, a Device-mapper snapshot based
 non-persistent or temporary overlay is automatically created as a sparse file
 in RAM of the initramfs.  This file will only consume content space as required
@@ -1153,7 +1202,7 @@ This shortage could be remedied by building the root filesystem with more
 allocated free space, or the OverlayFS based overlay mount method can be used.
 
 When the _rd.overlayfs_ option is specified or when
-_rd.live.overlay=_ points to an appropriate directory with a sister at
+_rd.overlay=_ points to an appropriate directory with a sister at
 `/../ovlwork`, then an OverlayFS based overlay mount is employed.  Such a
 persistent OverlayFS overlay can extend the available root filesystem storage
 up to the capacity of the LiveOS disk device.
@@ -1216,7 +1265,7 @@ is involved during boot.
 root filesystem is copied during boot to `/run/initramfs/rootfs.img` in the
 `/run` tmpfs.
 +
-- If **rd.live.overlay=none** is provided as a kernel command line option,
+- If **rd.overlay=none** is provided as a kernel command line option,
 a writable, linear Device-mapper target is created on boot with no overlay.
 
 Writable filesystem image:::
@@ -1293,8 +1342,8 @@ By default, this is __squashfs.img__.
 Copy the complete image to RAM and use this for booting. This is useful
 when the image resides on, e.g., a DVD which needs to be ejected later on.
 
-**rd.live.overlay={**__<devspec>__[:__{<pathspec>|auto}__]|__none__}::
-Manage the usage of a persistent overlay.
+**rd.overlay={**__<devspec>__[:__{<pathspec>|auto}__]|__none__}::
+Manage the usage of a persistent overlay for live images.
 +
 --
 * _<devspec>_ specifies the path to a device with a mountable filesystem.
@@ -1323,8 +1372,8 @@ Device-mapper or OverlayFS) will be detected and it will be used.
 [listing]
 .Examples
 --
-rd.live.overlay=/dev/sdb1:/persistent-overlay.img
-rd.live.overlay=UUID=99440c1f-8daa-41bf-b965-b7240a8996f4
+rd.overlay=/dev/sdb1:/persistent-overlay.img
+rd.overlay=UUID=99440c1f-8daa-41bf-b965-b7240a8996f4
 --
 
 **rd.live.overlay.cowfs=**__[btrfs|ext4|xfs]__::
@@ -1352,7 +1401,7 @@ Suppresses the 'Using temporary overlay' blocking prompt that asks for a
 user confirmation before proceeding to boot. This allows the boot process
 to continue to completion without user interation.
 
-**rd.live.overlay.reset=**1::
+**rd.overlay.reset=**1::
 Specifies that a persistent overlay should be reset on boot.  All previous root
 filesystem changes are vacated by this action.
 
@@ -1512,6 +1561,10 @@ EXT_KEYMAP:: vconsole.keymap.ext
 rd.live.overlay.overlayfs:: rd.overlayfs
 
 rd.live.overlay.readonly:: rd.overlayfs.readonly
+
+rd.live.overlay:: rd.overlay
+
+rd.live.overlay.reset:: rd.overlay.reset
 
 Configuration in the Initramfs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
