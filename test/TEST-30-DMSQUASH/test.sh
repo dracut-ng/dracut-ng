@@ -63,7 +63,7 @@ test_run() {
     rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
     [ "$rootPartitions" -eq 1 ]
 
-    client_run "autooverlay" "init=/sbin/init-persist rd.live.image rd.live.overlay=LABEL=persist rd.live.dir=LiveOS"
+    client_run "autooverlay" "rd.live.image rd.live.overlay=LABEL=persist rd.live.dir=LiveOS"
 
     rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
     [ "$rootPartitions" -eq 2 ]
@@ -77,7 +77,7 @@ test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
     call_dracut --tmpdir "$TESTDIR" \
         --add-confdir test-root \
-        -i ./test-init.sh /sbin/init-persist \
+        -i ./assertion.sh /assertion.sh \
         -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/rootfs
     mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/rootfs
