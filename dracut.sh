@@ -2346,13 +2346,9 @@ if ! [[ $print_cmdline ]] && ! [[ $printconfig ]]; then
         fi
 
         if ! [[ $kernel_image ]]; then
-            for kernel_image in "${dracutsysrootdir-}/lib/modules/$kernel/vmlinuz" "${dracutsysrootdir-}/boot/vmlinuz-$kernel" \
-                "${dracutsysrootdir-}/lib/modules/$kernel/vmlinux" "${dracutsysrootdir-}/boot/vmlinux-$kernel" \
-                "${dracutsysrootdir-}/lib/modules/$kernel/Image"; do
-                [[ -s $kernel_image ]] || continue
-                break
-            done
+            kernel_image=$(determine_kernel_image "$kernel")
         fi
+
         if ! [[ -s $kernel_image ]]; then
             dfatal "Can't find a kernel image '$kernel_image' to create a UEFI executable"
             exit 1

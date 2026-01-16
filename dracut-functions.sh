@@ -1488,15 +1488,15 @@ require_kernel_modules() {
 determine_kernel_image() {
     local kversion="$1"
     local paths=(
-        "/lib/modules/${kversion}/vmlinuz"
-        "/lib/modules/${kversion}/vmlinux"
-        "/lib/modules/${kversion}/Image"
-        "/boot/vmlinuz-${kversion}"
-        "/boot/vmlinux-${kversion}"
+        "${dracutsysrootdir-}/lib/modules/${kversion}/vmlinuz"
+        "${dracutsysrootdir-}/lib/modules/${kversion}/vmlinux"
+        "${dracutsysrootdir-}/lib/modules/${kversion}/Image"
+        "${dracutsysrootdir-}/boot/vmlinuz-${kversion}"
+        "${dracutsysrootdir-}/boot/vmlinux-${kversion}"
     )
 
     for path in "${paths[@]}"; do
-        if [ -f "$path" ]; then
+        if [ -s "$path" ]; then
             echo "$path"
             return 0
         fi
