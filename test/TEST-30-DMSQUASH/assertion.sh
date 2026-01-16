@@ -5,6 +5,3 @@ if grep -qF ' rd.live.overlay=LABEL=persist ' /proc/cmdline; then
     # and formatted the overlay partition and that the dmsquash-live module used it when setting up the rootfs overlay.
     echo "dracut-autooverlay-success" > /overlay-marker
 fi
-
-# call the rest of the init
-. /sbin/init
