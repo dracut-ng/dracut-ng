@@ -145,6 +145,10 @@ code, there are no specific types or categories for dracut modules.
 | masterkey that can be used to decrypt other keys and https://repology.org/project/keyutils/[keyutils]
 |
 
+| memdisk
+| memdisk ISO emulation with the memdiskfind utility of the https://repology.org/project/syslinux/[syslinux] project
+| device
+
 | mdraid
 | kernel module for https://docs.kernel.org/driver-api/md/md-cluster.html[md raid cluster], https://repology.org/project/mdadm[mdadm]
 | device

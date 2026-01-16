@@ -559,6 +559,10 @@ img-lib:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]img-lib/*'
 
+memdisk:
+  - changed-files:
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]memdisk/*'
+
 memstrack:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]memstrack/*'
