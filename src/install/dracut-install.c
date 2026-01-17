@@ -2701,7 +2701,7 @@ static int install_modules(int argc, char **argv)
                                 modinst = 1;
                         }
                 } else if (argv[i][0] == '=') {
-                        _cleanup_free_ char *path1 = NULL, *path2 = NULL, *path3 = NULL;
+                        _cleanup_free_ char *path1 = NULL, *path2 = NULL, *path3 = NULL, *path4 = NULL;
                         _cleanup_fts_close_ FTS *fts = NULL;
 
                         log_debug("Handling =%s", &argv[i][1]);
@@ -2709,9 +2709,10 @@ static int install_modules(int argc, char **argv)
                         _asprintf(&path2, "%s/kernel/%s", kerneldir, &argv[i][1]);
                         _asprintf(&path1, "%s/extra/%s", kerneldir, &argv[i][1]);
                         _asprintf(&path3, "%s/updates/%s", kerneldir, &argv[i][1]);
+                        _asprintf(&path4, "%s/updates/dkms", kerneldir);
 
                         {
-                                char *paths[] = { path1, path2, path3, NULL };
+                                char *paths[] = { path1, path2, path3, path4, NULL };
                                 fts = fts_open(paths, FTS_COMFOLLOW | FTS_NOCHDIR | FTS_NOSTAT | FTS_LOGICAL, NULL);
                         }
 
