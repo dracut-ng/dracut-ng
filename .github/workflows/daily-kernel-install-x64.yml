@@ -24,6 +24,7 @@ jobs:
             fail-fast: false
             matrix:
                 container:
+                    - alpine:edge
                     - arch:latest
                     - debian:latest
                     - debian:sid
