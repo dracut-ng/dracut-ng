@@ -1493,6 +1493,8 @@ determine_kernel_image() {
         "${dracutsysrootdir-}/lib/modules/${kversion}/Image"
         "${dracutsysrootdir-}/boot/vmlinuz-${kversion}"
         "${dracutsysrootdir-}/boot/vmlinux-${kversion}"
+        "${dracutsysrootdir-}/boot/vmlinuz-"*
+        "${dracutsysrootdir-}/boot/vmlinux-"*
     )
 
     for path in "${paths[@]}"; do
