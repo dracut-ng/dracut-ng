@@ -31,7 +31,7 @@ The following steps are executed during a shutdown:
 * systemd checks if there is a ``/run/initramfs/shutdown`` executable
 * if yes, it does a pivot_root to ``/run/initramfs`` and executes ``./shutdown``.
   The old root is then mounted on ``/oldroot``.
-  ``/usr/lib/dracut/modules.d/99shutdown/shutdown.sh`` is the shutdown executable.
+  ``/usr/lib/dracut/modules.d/[0-9][0-9]shutdown/shutdown.sh`` is the shutdown executable.
 * shutdown will try to unmount every ``/oldroot`` mount and calls the various
   shutdown hooks from the dracut modules
 

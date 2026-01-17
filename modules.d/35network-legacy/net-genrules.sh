@@ -113,7 +113,7 @@ command -v fix_bootif > /dev/null || . /lib/net-lib.sh
     # Fixme: waiting for the interface as well.
     else
         cond='ACTION=="add", SUBSYSTEM=="net", ENV{DEVTYPE}!="wlan|wwan"'
-        # if you change the name of "91-default-net.rules", also change modules.d/80cms/cmssetup.sh
+        # if you change the name of "91-default-net.rules", also change modules.d/[0-9][0-9]cms/cmssetup.sh
         echo "$cond, $runcmd" > /etc/udev/rules.d/91-default-net.rules
         if [ "$NEEDNET" = "1" ]; then
             # shellcheck disable=SC2016
@@ -121,5 +121,5 @@ command -v fix_bootif > /dev/null || . /lib/net-lib.sh
         fi
     fi
 
-    # if you change the name of "90-net.rules", also change modules.d/80cms/cmssetup.sh
+    # if you change the name of "90-net.rules", also change modules.d/[0-9][0-9]cms/cmssetup.sh
 } > /etc/udev/rules.d/90-net.rules
