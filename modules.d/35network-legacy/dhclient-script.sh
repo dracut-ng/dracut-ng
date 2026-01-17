@@ -109,50 +109,80 @@ setup_interface6() {
 }
 
 parse_option_121() {
-    while [ $# -ne 0 ]; do
+    # RFC 3442 classless static routes format:
+    # Each route is: <mask_width> <dest_octets...> <gateway_4_octets>
+    # mask_width determines how many destination octets follow (0-4)
+    #
+    # This version validates arguments before operations to prevent
+    # "integer expression expected" and "shift count out of range" errors.
+
+    while [ $# -ge 5 ]; do
         mask="$1"
+
+        # Validate mask is a number between 0-32
+        case "$mask" in
+            '' | *[!0-9]*) return 0 ;;
+        esac
+        if [ "$mask" -lt 0 ] 2> /dev/null || [ "$mask" -gt 32 ] 2> /dev/null; then
+            return 0
+        fi
         shift
 
-        # Is the destination a multicast group?
-        if [ "$1" -ge 224 ] && [ "$1" -lt 240 ]; then
-            multicast=1
+        # Calculate how many destination address bytes we need based on mask
+        if [ "$mask" -gt 24 ]; then
+            need_dest=4
+        elif [ "$mask" -gt 16 ]; then
+            need_dest=3
+        elif [ "$mask" -gt 8 ]; then
+            need_dest=2
+        elif [ "$mask" -gt 0 ]; then
+            need_dest=1
         else
-            multicast=0
+            need_dest=0
         fi
 
-        # Parse the arguments into a CIDR net/mask string
+        # We need: destination bytes + 4 gateway bytes
+        need_total=$((need_dest + 4))
+        if [ $# -lt $need_total ]; then
+            return 0
+        fi
+
+        # Check if destination is multicast (224.0.0.0 - 239.255.255.255)
+        multicast=0
+        if [ $need_dest -ge 1 ]; then
+            case "$1" in
+                '' | *[!0-9]*) return 0 ;;
+            esac
+            if [ "$1" -ge 224 ] 2> /dev/null && [ "$1" -lt 240 ] 2> /dev/null; then
+                multicast=1
+            fi
+        fi
+
+        # Build destination address based on mask width
         if [ "$mask" -gt 24 ]; then
             destination="$1.$2.$3.$4/$mask"
-            shift
-            shift
-            shift
-            shift
+            shift 4
         elif [ "$mask" -gt 16 ]; then
             destination="$1.$2.$3.0/$mask"
-            shift
-            shift
-            shift
+            shift 3
         elif [ "$mask" -gt 8 ]; then
             destination="$1.$2.0.0/$mask"
-            shift
-            shift
+            shift 2
         elif [ "$mask" -gt 0 ]; then
             destination="$1.0.0.0/$mask"
-            shift
+            shift 1
         else
             destination="0.0.0.0/$mask"
         fi
 
-        # Read the gateway
+        # Read gateway (always 4 bytes)
+        if [ $# -lt 4 ]; then
+            return 0
+        fi
         gateway="$1.$2.$3.$4"
-        shift
-        shift
-        shift
-        shift
+        shift 4
 
-        # Multicast routing on Linux
-        #  - If you set a next-hop address for a multicast group, this breaks with Cisco switches
-        #  - If you simply leave it link-local and attach it to an interface, it works fine.
+        # Build and emit the route command
         if [ $multicast -eq 1 ] || [ "$gateway" = "0.0.0.0" ]; then
             temp_result="$destination dev $interface"
         else
