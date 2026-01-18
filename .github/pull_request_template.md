@@ -1,7 +1,5 @@
 This pull request changes...
 
-## Changes
-
 ## Checklist
 - [ ] I have tested it locally
 - [ ] I have reviewed and updated any documentation if relevant
