@@ -1,12 +1,11 @@
--include dracut-version.sh
 
 DRACUT_MAIN_VERSION ?= $(shell env GIT_CEILING_DIRECTORIES=$(CURDIR)/.. git describe --abbrev=0 --tags --always 2>/dev/null || :)
 ifeq ($(DRACUT_MAIN_VERSION),)
-DRACUT_MAIN_VERSION = $(DRACUT_VERSION)
+DRACUT_MAIN_VERSION := $(shell sed -n 's/^DRACUT_VERSION="\(.*\)"$$/\1/p' dracut.sh)
 endif
 DRACUT_FULL_VERSION ?= $(shell env GIT_CEILING_DIRECTORIES=$(CURDIR)/.. git describe --tags --always 2>/dev/null || :)
 ifeq ($(DRACUT_FULL_VERSION),)
-DRACUT_FULL_VERSION = $(DRACUT_VERSION)
+DRACUT_FULL_VERSION := $(shell sed -n 's/^DRACUT_VERSION="\(.*\)"$$/\1/p' dracut.sh)
 endif
 
 HAVE_SHELLCHECK ?= $(shell command -v shellcheck >/dev/null 2>&1 && echo yes)
@@ -190,14 +189,13 @@ install: all
 	mkdir -p $(DESTDIR)$(pkglibdir)/modules.d
 	mkdir -p $(DESTDIR)$(mandir)/man1 $(DESTDIR)$(mandir)/man5 $(DESTDIR)$(mandir)/man7 $(DESTDIR)$(mandir)/man8
 	install -m 0755 dracut.sh $(DESTDIR)$(bindir)/dracut
+	sed -i 's;^\(DRACUT_VERSION\)=".*"$$;\1="$(DRACUT_FULL_VERSION)";' $(DESTDIR)$(bindir)/dracut
 	install -m 0755 dracut-catimages.sh $(DESTDIR)$(bindir)/dracut-catimages
 	install -m 0755 lsinitrd.sh $(DESTDIR)$(bindir)/lsinitrd
 	install -m 0644 dracut.conf $(DESTDIR)$(sysconfdir)/dracut.conf
 	mkdir -p $(DESTDIR)$(sysconfdir)/dracut.conf.d
 	mkdir -p $(DESTDIR)$(pkglibdir)/dracut.conf.d
 	install -m 0755 dracut-functions.sh $(DESTDIR)$(pkglibdir)/dracut-functions.sh
-	install -m 0755 dracut-version.sh $(DESTDIR)$(pkglibdir)/dracut-version.sh
-	sed -i 's;^\(DRACUT_VERSION=\).*;\1$(DRACUT_FULL_VERSION);' $(DESTDIR)$(pkglibdir)/dracut-version.sh
 	ln -fs dracut-functions.sh $(DESTDIR)$(pkglibdir)/dracut-functions
 	install -m 0755 dracut-logger.sh $(DESTDIR)$(pkglibdir)/dracut-logger.sh
 	install -m 0755 dracut-initramfs-restore.sh $(DESTDIR)$(pkglibdir)/dracut-initramfs-restore

@@ -23,6 +23,8 @@
 # Please do not use functions from this file in your dracut module
 # Only use functions from dracut-functions.sh
 
+DRACUT_VERSION="109"
+
 unset BASH_ENV
 unset GZIP
 
@@ -53,13 +55,6 @@ path_rel_to_abs() {
 }
 
 usage() {
-    [[ $sysroot_l ]] && dracutsysrootdir="$sysroot_l"
-    [[ $dracutbasedir ]] || dracutbasedir="${dracutsysrootdir-}"/usr/lib/dracut
-    if [[ -f $dracutbasedir/dracut-version.sh ]]; then
-        # shellcheck source=./dracut-version.sh
-        . "$dracutbasedir"/dracut-version.sh
-    fi
-
     #                                                   80x25 linebreak here ^
     cat << EOF
 Usage: $dracut_cmd [OPTION]... [<initramfs> [<kernel-version>]]
@@ -80,12 +75,6 @@ EOF
 }
 
 long_usage() {
-    [[ $dracutbasedir ]] || dracutbasedir="${dracutsysrootdir-}"/usr/lib/dracut
-    if [[ -f $dracutbasedir/dracut-version.sh ]]; then
-        # shellcheck source=./dracut-version.sh
-        . "$dracutbasedir"/dracut-version.sh
-    fi
-
     #                                                   80x25 linebreak here ^
     cat << EOF
 Usage: $dracut_cmd [OPTION]... [<initramfs> [<kernel-version>]]
@@ -321,11 +310,6 @@ EOF
 }
 
 long_version() {
-    [[ $dracutbasedir ]] || dracutbasedir="${dracutsysrootdir-}"/usr/lib/dracut
-    if [[ -f $dracutbasedir/dracut-version.sh ]]; then
-        # shellcheck source=./dracut-version.sh
-        . "$dracutbasedir"/dracut-version.sh
-    fi
     echo "dracut $DRACUT_VERSION"
 }
 
@@ -1467,11 +1451,6 @@ if [[ $print_cmdline ]]; then
     sysloglvl=0
     fileloglvl=0
     kmsgloglvl=0
-fi
-
-if [[ -f $dracutbasedir/dracut-version.sh ]]; then
-    # shellcheck source=./dracut-version.sh
-    . "$dracutbasedir"/dracut-version.sh
 fi
 
 export LC_MESSAGES=C kernel
