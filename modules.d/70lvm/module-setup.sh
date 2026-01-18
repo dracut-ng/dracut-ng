@@ -50,6 +50,52 @@ installkernel() {
 install() {
     inst_multiple lvm grep
 
+    # lvm links for recovery inside the initramfs
+    inst_multiple -o \
+        lvchange \
+        lvconvert \
+        lvcreate \
+        lvdisplay \
+        lvextend \
+        lvmconfig \
+        lvmdiskscan \
+        lvmsadc \
+        lvmsar \
+        lvreduce \
+        lvremove \
+        lvrename \
+        lvresize \
+        lvs \
+        lvscan \
+        pvchange \
+        pvck \
+        pvcreate \
+        pvdisplay \
+        pvmove \
+        pvremove \
+        pvresize \
+        pvs \
+        pvscan \
+        vgcfgbackup \
+        vgcfgrestore \
+        vgchange \
+        vgck \
+        vgconvert \
+        vgcreate \
+        vgdisplay \
+        vgexport \
+        vgextend \
+        vgimport \
+        vgimportclone \
+        vgmerge \
+        vgmknodes \
+        vgreduce \
+        vgremove \
+        vgrename \
+        vgs \
+        vgscan \
+        vgsplit
+
     if [[ $hostonly_cmdline == "yes" ]]; then
         local _lvmconf
         _lvmconf=$(cmdline)
