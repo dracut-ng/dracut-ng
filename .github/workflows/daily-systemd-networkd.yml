@@ -1,5 +1,5 @@
 ---
-name: Daily Tests - network-systemd
+name: Daily Tests - systemd-networkd
 
 on:  # yamllint disable-line rule:truthy
     schedule:
@@ -10,15 +10,15 @@ on:  # yamllint disable-line rule:truthy
 
     pull_request:
         paths:
-            - '.github/workflows/daily-network-systemd.yml'
+            - '.github/workflows/daily-systemd-networkd.yml'
 
 jobs:
-    network-systemd:
+    systemd-networkd:
         name: ${{ matrix.test }} on ${{ matrix.container }} ${{ matrix.network }} networking on ${{ matrix.architecture.tag }}
         runs-on: ${{ matrix.architecture.runner }}
         timeout-minutes: 40
         concurrency:
-            group: daily-network-systemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}-${{ matrix.architecture.tag }}
+            group: daily-systemd-networkd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.network }}-${{ matrix.architecture.tag }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
