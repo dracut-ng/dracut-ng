@@ -54,6 +54,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     parted \
     pkg-config \
     plymouth \
+    python3 \
     qemu \
     ruby-asciidoctor \
     squashfs-tools \

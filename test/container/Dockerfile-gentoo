@@ -49,6 +49,7 @@ emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     app-misc/jq \
     app-portage/gentoolkit \
     dev-lang/perl \
+    dev-lang/python \
     dev-lang/rust-bin \
     dev-libs/libfido2 \
     dev-libs/libxslt \
