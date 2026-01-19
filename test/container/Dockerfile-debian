@@ -79,6 +79,7 @@ RUN \
     pkg-config \
     plymouth-themes \
     procps \
+    python3 \
     qemu-efi-aarch64 \
     qemu-kvm \
     qemu-system \

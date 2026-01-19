@@ -52,6 +52,7 @@ RUN pacman --noconfirm -Syu \
     pciutils \
     pkgconf \
     plymouth \
+    python \
     qemu \
     qrencode \
     sbsigntools \
