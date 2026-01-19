@@ -67,8 +67,13 @@ test_run() {
 
     rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
     [ "$rootPartitions" -eq 2 ]
-    # Verify that the string "dracut-autooverlay-success" occurs in the second partition in the image file.
-    test_marker_check dracut-autooverlay-success root.img
+    # Verify that the string "dracut-autooverlay-success" occurs in the second partition (overlay).
+    # Extract only the second partition to avoid false positives from the test script in the first partition.
+    part2_info=$(sfdisk -d "$TESTDIR"/root.img | grep 'root\.img2')
+    part2_start=$(echo "$part2_info" | sed -n 's/.*start= *\([0-9]*\).*/\1/p')
+    part2_size=$(echo "$part2_info" | sed -n 's/.*size= *\([0-9]*\).*/\1/p')
+    dd if="$TESTDIR"/root.img of="$TESTDIR"/overlay-part.img bs=512 skip="$part2_start" count="$part2_size" status=none
+    test_marker_check dracut-autooverlay-success overlay-part.img
 
     return 0
 }
