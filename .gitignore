@@ -15,6 +15,6 @@
 /src/install/dracut-install
 /src/skipcpio/skipcpio
 /src/util/util
-/test/*/.testdir*
 /test/*/*.log
+/test/*/.testdir*
 build/
