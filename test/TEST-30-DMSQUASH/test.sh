@@ -101,7 +101,8 @@ EOF
 
     rm -f "$TESTDIR/ext4.img"
     truncate -s "$((512 * 652688))" "$TESTDIR/ext4.img"
-    mkfs.ext4 -q -L dracut -d "$TESTDIR"/rootfs/ "$TESTDIR"/ext4.img
+    # Use the live structure (with LiveOS/rootfs.img squashfs) instead of raw rootfs
+    mkfs.ext4 -q -L dracut -d "$TESTDIR"/live/ "$TESTDIR"/ext4.img
     dd if="$TESTDIR"/ext4.img of="$TESTDIR"/root.img bs=512 seek=2048 conv=noerror,notrunc
 
     # erofs drive
