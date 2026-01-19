@@ -36,6 +36,7 @@ jobs:
                     - ubuntu:devel
                     - ubuntu:rolling
                 test:
+                    - "31"
                     - "60"
                     - "72"
                 exclude:

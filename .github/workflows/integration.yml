@@ -178,6 +178,7 @@ jobs:
                     - opensuse:latest
                     - ubuntu:devel
                 test:
+                    - "31"
                     - "60"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
