@@ -9,13 +9,13 @@ if getargbool 0 rd.live.debug; then
 fi
 
 gatherData() {
-    overlay=$(getarg rd.live.overlay)
+    overlay=$(getarg rd.overlay -d rd.live.overlay)
     if [ -z "$overlay" ]; then
-        info "Skipping overlay creation: kernel command line parameter 'rd.live.overlay' is not set"
+        info "Skipping overlay creation: kernel command line parameter 'rd.overlay' is not set"
         exit 0
     fi
     if ! str_starts "${overlay}" LABEL=; then
-        die "Overlay creation failed: the partition must be set by LABEL in the 'rd.live.overlay' kernel parameter"
+        die "Overlay creation failed: the partition must be set by LABEL in the 'rd.overlay' kernel parameter"
     fi
 
     overlayLabel=${overlay#LABEL=}

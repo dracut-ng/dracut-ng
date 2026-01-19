@@ -84,7 +84,12 @@ test_run() {
     fi
 
     reset_overlay_partition
-    client_run "autooverlay" "rd.live.image rd.live.overlay=LABEL=persist rd.live.dir=LiveOS"
+    client_run "autooverlay" "rd.live.image rd.overlay=LABEL=persist rd.live.dir=LiveOS"
+    check_autooverlay_marker
+
+    # Test backward compatibility with rd.live.overlay (deprecated parameter)
+    reset_overlay_partition
+    client_run "autooverlay (deprecated rd.live.overlay)" "rd.live.image rd.live.overlay=LABEL=persist rd.live.dir=LiveOS"
     check_autooverlay_marker
 
     return 0
