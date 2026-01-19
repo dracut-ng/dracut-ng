@@ -14,8 +14,8 @@ while read -r dev _ fstype opts rest || [ -n "$dev" ]; do
     break
 done < /proc/mounts
 
-# fail the test of rd.live.overlay did not worked as expected
-if grep -qF 'rd.live.overlay' /proc/cmdline; then
+# fail the test if rd.overlay did not work as expected
+if grep -qF 'rd.overlay' /proc/cmdline; then
     if ! strstr "$(cat /proc/mounts)" LiveOS_rootfs; then
         echo "nfs-FAIL" | dd oflag=direct of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
     fi
