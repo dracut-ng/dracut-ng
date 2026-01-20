@@ -65,6 +65,7 @@ test_run() {
     port=$(start_webserver)
 
     client_run "root=live:http://server/root.squashfs" "root=live:http://10.0.2.2:$port/root.squashfs"
+    client_run "root=http://server/root.squashfs" "root=http://10.0.2.2:$port/root.squashfs"
 }
 
 test_setup() {

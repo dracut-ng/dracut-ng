@@ -1278,6 +1278,19 @@ root=live:ftp://ftp.example.com/liveboot.img
 root=live:torrent://example.com/liveboot.img.torrent
 --
 
+**root=**__<http-url>__::
+This is an alias for **root=**live:__<url>__.
+Boots a live image retrieved from __<http-url>__.
+Requires the dracut 'livenet' module.
+Valid handlers: __http, https__.
++
+[listing]
+.Examples
+--
+root=http://example.com/root.squashfs
+root=https://example.com/live.sqfs
+--
+
 **rd.live.debug=**1::
 Enables debug output from the live boot process.
 
