@@ -5,7 +5,7 @@ command -v getarg > /dev/null || . /lib/dracut-lib.sh
 [ -z "$root" ] && root=$(getarg root=)
 
 # support legacy syntax of passing liveimg and then just the base root
-if getargbool 0 rd.live.image; then
+if getargbool 0 rd.live.image || str_starts "$root" "http:" || str_starts "$root" "https:"; then
     liveroot="live:$root"
 fi
 

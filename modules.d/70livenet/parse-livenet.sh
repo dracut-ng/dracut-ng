@@ -17,9 +17,17 @@ if [ -n "$updates" ]; then
     echo '[ -e /tmp/liveupdates.done ]' > "$hookdir"/initqueue/finished/liveupdates.sh
 fi
 
-str_starts "$root" "live:" && liveurl="$root"
-str_starts "$liveurl" "live:" || return
-liveurl="${liveurl#live:}"
+case "$root" in
+    http://* | https://*)
+        liveurl="${root}"
+        ;;
+    live:*)
+        liveurl="${root#live:}"
+        ;;
+    *)
+        return
+        ;;
+esac
 
 # setting netroot to "livenet:..." makes "livenetroot" get run after ifup
 if get_url_handler "$liveurl" > /dev/null; then
