@@ -73,3 +73,34 @@ jobs:
                       DISTRIBUTION=${{ matrix.config.tag }}
                       REGISTRY=${{ matrix.config.registry }}
                       OPTION=${{ matrix.config.option }}
+    manifest:
+        needs: container-extra
+        if: github.event_name == 'push' || github.event_name == 'schedule'
+        name: ${{ matrix.config.tag }}
+        concurrency:
+            group: manifest-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.tag }}
+            cancel-in-progress: true
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                config:
+                    - {tag: 'azurelinux:3.0', platforms: ['amd', 'arm']}
+                    - {tag: 'centos:latest', platforms: ['amd', 'arm']}
+                    - {tag: 'debian:sid', platforms: ['amd', 'arm']}
+                    - {tag: 'fedora:rawhide', platforms: ['amd', 'arm']}
+                    - {tag: 'gentoo:latest', platforms: ['amd', 'arm']}
+                    - {tag: 'gentoo:amd64-openrc', platforms: ['amd']}
+        steps:
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v3
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.repository_owner }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+            - name: Set up env
+              run: echo "repository_owner=${GITHUB_REPOSITORY_OWNER,,}" >>${GITHUB_ENV}
+            - name: Create and Push Multi-Arch Manifest
+              run: |
+                  tag="ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}"
+                  images="$(printf "${tag}-%s " ${{ join(matrix.config.platforms, ' ') }})"
+                  docker buildx imagetools create -t ${tag} ${images}
