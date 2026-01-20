@@ -39,8 +39,6 @@ jobs:
                     - {platform: 'linux/arm64', runner: 'ubuntu-24.04-arm', tag: 'arm'}
                 config:
                     - {dockerfile: 'Dockerfile-debian', tag: 'debian:sid'}
-                    - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:devel'}
-                    - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:rolling'}
                     - {dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:latest', option: 'systemd'}
                     - {dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:amd64-openrc', option: 'amd64-openrc'}
                     - {dockerfile: 'Dockerfile-fedora', tag: 'fedora:rawhide', registry: 'registry.fedoraproject.org'}
