@@ -35,14 +35,14 @@ jobs:
                     - {platform: 'linux/amd64', runner: 'ubuntu-24.04', tag: 'amd'}
                     - {platform: 'linux/arm64', runner: 'ubuntu-24.04-arm', tag: 'arm'}
                 config:
+                    - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:edge'}
+                    - {dockerfile: 'Dockerfile-alpine-busybox', tag: 'alpine-busybox:edge'}
+                    - {dockerfile: 'Dockerfile-arch', tag: 'arch:latest'}
                     - {dockerfile: 'Dockerfile-debian', tag: 'debian:latest'}
                     - {dockerfile: 'Dockerfile-fedora', tag: 'fedora:latest'}
                     - {dockerfile: 'Dockerfile-opensuse', tag: 'opensuse:latest'}
-                    - {dockerfile: 'Dockerfile-arch', tag: 'arch:latest'}
                     - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:devel'}
                     - {dockerfile: 'Dockerfile-debian', tag: 'ubuntu:rolling'}
-                    - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:edge'}
-                    - {dockerfile: 'Dockerfile-alpine-busybox', tag: 'alpine-busybox:edge'}
                     - {dockerfile: 'Dockerfile-void', tag: 'void:latest'}
                 exclude:
                     - config: {tag: 'arch:latest'}
