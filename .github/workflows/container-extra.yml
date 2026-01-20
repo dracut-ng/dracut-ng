@@ -69,7 +69,7 @@ jobs:
               with:
                   file: test/container/${{ matrix.config.dockerfile }}
                   tags: ghcr.io/${{env.repository_owner}}/${{ matrix.config.tag }}-${{ matrix.architecture.tag }}
-                  push: ${{ github.event_name == 'push' ||  github.event_name == 'schedule' }}
+                  push: ${{ github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
                   platforms: ${{ matrix.architecture.platform }}
                   build-args: |
                       DISTRIBUTION=${{ matrix.config.tag }}
