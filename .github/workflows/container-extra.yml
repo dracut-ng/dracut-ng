@@ -24,12 +24,12 @@ permissions:
     contents: read
 
 jobs:
-    amd64:
+    container-extra:
         if: github.repository == 'dracut-ng/dracut-ng' || vars.CONTAINER == 'enabled'
         name: ${{ matrix.config.tag }} on ${{ matrix.architecture.platform }}
         runs-on: ${{ matrix.architecture.runner }}
         concurrency:
-            group: extra-amd64-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.tag }}-${{ matrix.architecture.platform }}
+            group: container-extra-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.tag }}-${{ matrix.architecture.platform }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
