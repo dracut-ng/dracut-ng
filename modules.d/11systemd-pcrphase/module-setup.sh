@@ -5,7 +5,7 @@
 # Prerequisite check(s) for module.
 check() {
     # If the binary(s) requirements are not fulfilled the module can't be installed.
-    # systemd-255 renamed the binary, check for old and new location.
+    # systemd-255 renamed systemd-pcrphase to systemd-pcrextend, check for old and new location.
     if ! require_any_binary \
         "$systemdutildir"/systemd-pcrextend \
         "$systemdutildir"/systemd-pcrphase; then
