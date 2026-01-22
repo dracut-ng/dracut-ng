@@ -78,6 +78,7 @@ gatherData() {
 
 createPartition() {
     parted --script --align optimal "${blockDevice}" mkpart primary ${partitionStart}% 100%
+    blockdev --rereadpt "${blockDevice}"
 }
 
 createFilesystem() {
