@@ -2,38 +2,38 @@
 name: Doc Test
 
 on:  # yamllint disable-line rule:truthy
-    pull_request:
-        branches: [main]
-        paths:
-            - 'man/**'
-            - '.github/workflows/doc.yml'
-    # Allows you to run this workflow manually from the Actions tab
-    workflow_dispatch:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'man/**'
+      - '.github/workflows/doc.yml'
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
-    doc:
-        name: doc on ${{ matrix.container }}
-        runs-on: ubuntu-latest
-        timeout-minutes: 10
-        concurrency:
-            group: doc-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}
-            cancel-in-progress: true
-        strategy:
-            fail-fast: false
-            matrix:
-                container:
-                    - alpine:edge
-                    - arch:latest
-                    - debian:latest
-                    - fedora:latest
-                    - gentoo:latest
-                    - opensuse:latest
-                    - ubuntu:devel
-                    - void:latest
+  doc:
+    name: doc on ${{ matrix.container }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: doc-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
-        steps:
-            - name: "Checkout Repository"
-              uses: actions/checkout@v6
-            - name: doc on "${{ matrix.container }}"
-              run: TARGETS=all enable_documentation=yes ./test/test-container.sh
+          - alpine:edge
+          - arch:latest
+          - debian:latest
+          - fedora:latest
+          - gentoo:latest
+          - opensuse:latest
+          - ubuntu:devel
+          - void:latest
+    container:
+      image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v6
+      - name: doc on "${{ matrix.container }}"
+        run: TARGETS=all enable_documentation=yes ./test/test-container.sh

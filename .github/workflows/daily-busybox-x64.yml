@@ -2,44 +2,44 @@
 name: Daily Tests - busybox (x64)
 
 on:  # yamllint disable-line rule:truthy
-    schedule:
-        - cron: '30 23 * * *'   # every day at 23:30 UTC
+  schedule:
+    - cron: '30 23 * * *'   # every day at 23:30 UTC
 
-    # Allows you to run this workflow manually from the Actions tab
-    workflow_dispatch:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
-    pull_request:
-        paths:
-            - '.github/workflows/daily-busybox-x64.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/daily-busybox-x64.yml'
 
 jobs:
-    busybox:
-        name: ${{ matrix.config.test }}
-        runs-on: ubuntu-24.04
-        timeout-minutes: 20
-        concurrency:
-            group: daily-busybox-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.config.test }}
-            cancel-in-progress: true
-        strategy:
-            fail-fast: false
-            matrix:
-                container:
-                    - alpine-busybox:edge
-                config:
-                    - {test: '10', deps: ''}
-                    - {test: '11', deps: 'btrfs-progs'}
-                    - {test: '13', deps: ''}
-                    - {test: '20', deps: 'lvm2 device-mapper'}
-                    - {test: '26', deps: 'cryptsetup mdadm device-mapper lvm2 partx sed'}
-                    - {test: '50', deps: 'networkmanager-initrd-generator networkmanager'}
-                    - {test: '80', deps: ''}
-                    - {test: '81', deps: ''}
-                    - {test: '82', deps: 'cargo procps-ng'}
+  busybox:
+    name: ${{ matrix.config.test }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    concurrency:
+      group: daily-busybox-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.config.test }}
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
-            options: '--device=/dev/kvm --privileged'
-        steps:
-            - name: "Checkout Repository"
-              uses: actions/checkout@v6
-            - name: "TEST-${{ matrix.config.test }}"
-              run: TEST_CONTAINER_COMMAND="apk add ${{ matrix.config.deps }}" ./test/test-container.sh "TEST-${{ matrix.config.test }}" ${{ matrix.config.test }}
+          - alpine-busybox:edge
+        config:
+          - {test: '10', deps: ''}
+          - {test: '11', deps: 'btrfs-progs'}
+          - {test: '13', deps: ''}
+          - {test: '20', deps: 'lvm2 device-mapper'}
+          - {test: '26', deps: 'cryptsetup mdadm device-mapper lvm2 partx sed'}
+          - {test: '50', deps: 'networkmanager-initrd-generator networkmanager'}
+          - {test: '80', deps: ''}
+          - {test: '81', deps: ''}
+          - {test: '82', deps: 'cargo procps-ng'}
+    container:
+      image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+      options: '--device=/dev/kvm --privileged'
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v6
+      - name: "TEST-${{ matrix.config.test }}"
+        run: TEST_CONTAINER_COMMAND="apk add ${{ matrix.config.deps }}" ./test/test-container.sh "TEST-${{ matrix.config.test }}" ${{ matrix.config.test }}

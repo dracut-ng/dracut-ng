@@ -2,44 +2,44 @@
 name: Daily Tests - omitsystemd
 
 on:  # yamllint disable-line rule:truthy
-    schedule:
-        - cron: '30 23 * * *'   # every day at 23:30 UTC
+  schedule:
+    - cron: '30 23 * * *'   # every day at 23:30 UTC
 
-    # Allows you to run this workflow manually from the Actions tab
-    workflow_dispatch:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
-    pull_request:
-        paths:
-            - '.github/workflows/daily-omitsystemd.yml'
+  pull_request:
+    paths:
+      - '.github/workflows/daily-omitsystemd.yml'
 
 jobs:
-    omitsystemd:
-        name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }} with no systemd
-        runs-on: ${{ matrix.architecture.runner }}
-        timeout-minutes: 20
-        concurrency:
-            group: daily-omitsystemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.architecture.tag }}
-            cancel-in-progress: true
-        strategy:
-            fail-fast: false
-            matrix:
-                architecture:
-                    - {runner: 'ubuntu-24.04', tag: 'amd'}
-                    - {runner: 'ubuntu-24.04-arm', tag: 'arm'}
-                container:
-                    - ubuntu:devel
-                test:
-                    - "10"
-                    - "11"
-                    - "20"
-                    - "26"
-                    - "30"
-                    - "31"
+  omitsystemd:
+    name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }} with no systemd
+    runs-on: ${{ matrix.architecture.runner }}
+    timeout-minutes: 20
+    concurrency:
+      group: daily-omitsystemd-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.architecture.tag }}
+      cancel-in-progress: true
+    strategy:
+      fail-fast: false
+      matrix:
+        architecture:
+          - {runner: 'ubuntu-24.04', tag: 'amd'}
+          - {runner: 'ubuntu-24.04-arm', tag: 'arm'}
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-${{ matrix.architecture.tag }}
-            options: '--device=/dev/kvm --privileged'
-        steps:
-            - name: "Checkout Repository"
-              uses: actions/checkout@v6
-            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: TEST_DRACUT_ARGS="--omit systemd" ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+          - ubuntu:devel
+        test:
+          - "10"
+          - "11"
+          - "20"
+          - "26"
+          - "30"
+          - "31"
+    container:
+      image: ghcr.io/dracut-ng/${{ matrix.container }}-${{ matrix.architecture.tag }}
+      options: '--device=/dev/kvm --privileged'
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v6
+      - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+        run: TEST_DRACUT_ARGS="--omit systemd" ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
