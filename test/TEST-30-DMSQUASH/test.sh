@@ -43,6 +43,28 @@ client_run() {
     client_test_end
 }
 
+# Verify autooverlay created a second partition and wrote the marker to it.
+# Extract only the second partition to avoid false positives from the test
+# script in the first partition.
+check_autooverlay_marker() {
+    local rootPartitions part2_info part2_start part2_size
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    [ "$rootPartitions" -eq 2 ]
+    part2_info=$(sfdisk -d "$TESTDIR"/root.img | grep 'root\.img2')
+    part2_start=$(echo "$part2_info" | sed -n 's/.*start= *\([0-9]*\).*/\1/p')
+    part2_size=$(echo "$part2_info" | sed -n 's/.*size= *\([0-9]*\).*/\1/p')
+    dd if="$TESTDIR"/root.img of="$TESTDIR"/overlay-part.img bs=512 skip="$part2_start" count="$part2_size" status=none
+    test_marker_check dracut-autooverlay-success overlay-part.img
+}
+
+# Reset root.img to single partition state for autooverlay test
+reset_overlay_partition() {
+    test_marker_reset
+    local rootPartitions
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    [ "$rootPartitions" -eq 1 ]
+}
+
 test_run() {
     client_run "overlayfs" ""
 
@@ -59,21 +81,9 @@ test_run() {
         client_run "iso" "iso-scan/filename=linux.iso root=live:/dev/disk/by-label/ISO rd.driver.pre=squashfs rd.driver.pre=ext4"
     fi
 
-    test_marker_reset
-    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
-    [ "$rootPartitions" -eq 1 ]
-
+    reset_overlay_partition
     client_run "autooverlay" "rd.live.image rd.live.overlay=LABEL=persist rd.live.dir=LiveOS"
-
-    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
-    [ "$rootPartitions" -eq 2 ]
-    # Verify that the string "dracut-autooverlay-success" occurs in the second partition (overlay).
-    # Extract only the second partition to avoid false positives from the test script in the first partition.
-    part2_info=$(sfdisk -d "$TESTDIR"/root.img | grep 'root\.img2')
-    part2_start=$(echo "$part2_info" | sed -n 's/.*start= *\([0-9]*\).*/\1/p')
-    part2_size=$(echo "$part2_info" | sed -n 's/.*size= *\([0-9]*\).*/\1/p')
-    dd if="$TESTDIR"/root.img of="$TESTDIR"/overlay-part.img bs=512 skip="$part2_start" count="$part2_size" status=none
-    test_marker_check dracut-autooverlay-success overlay-part.img
+    check_autooverlay_marker
 
     return 0
 }
