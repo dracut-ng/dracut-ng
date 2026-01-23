@@ -18,7 +18,9 @@ jobs:
         runs-on: ${{ matrix.architecture.runner }}
         timeout-minutes: 40
         concurrency:
-            group: daily-network-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-${{ matrix.architecture.tag }}
+            group: >
+                daily-network-${{ github.workflow }}-${{ github.ref }}
+                -${{ matrix.container }}-${{ matrix.test }}-${{ matrix.architecture.tag }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
