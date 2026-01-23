@@ -10,6 +10,7 @@ fi
 echo "TESTDIR=\"$TESTDIR\"" > .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
 export TESTDIR
 export BOOT_ROOT="$TESTDIR"
+export QEMU_LOGFILE="$TESTDIR/qemu.log"
 
 if [[ -z ${basedir-} ]]; then basedir="$(realpath ../..)"; fi
 
@@ -86,7 +87,7 @@ call_dracut() {
 
 # Check QEMU logs for success marker
 check_qemu_log() {
-    local logfile="$1"
+    local logfile="${1-$QEMU_LOGFILE}"
 
     if ! grep -q "^All OK" "${logfile}"; then
         echo >&2 "E: Message 'All OK' not found in QEMU log output '${logfile}'."
