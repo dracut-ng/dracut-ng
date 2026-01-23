@@ -395,6 +395,9 @@ exists in the directory where initramfs is loaded from.
 +
 Defaults to _initramfs-$\{kernel\}.img_.
 
+*dracut_rescue_image=*"__{yes|no}__"::
+If set to _yes_, it prevents fallback images from being created.
+
 == Files
 _/etc/dracut.conf_::
 Old configuration file. It is recommended to use individual files in
