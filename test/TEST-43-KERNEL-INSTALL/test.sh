@@ -14,27 +14,20 @@ test_run() {
     declare -a disk_args=()
     # shellcheck disable=SC2034  # disk_index used in qemu_add_drive
     declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
     qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root
-
-    test_marker_reset
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "root=LABEL=dracut $TEST_KERNEL_CMDLINE" \
         -initrd "$BOOT_ROOT/$TOKEN/$KVERSION"/initrd
-
-    test_marker_check
-
-    test_marker_reset
+    check_qemu_log
 
     # rescue (non-hostonly) boot
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "root=LABEL=dracut $TEST_KERNEL_CMDLINE" \
         -initrd "$BOOT_ROOT/$TOKEN"/0-rescue/initrd
-
-    test_marker_check
+    check_qemu_log
 }
 
 test_setup() {

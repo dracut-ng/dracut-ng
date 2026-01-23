@@ -35,8 +35,6 @@ client_run() {
 
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
-
     qemu_add_drive disk_index disk_args "$TESTDIR/${disk}-1.img" disk1
 
     if ! grep -qF 'degraded' "$test_name"; then
@@ -50,12 +48,11 @@ client_run() {
         TEST_KERNEL_CMDLINE+=" root=LABEL=dracut "
     fi
 
-    test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "$TEST_KERNEL_CMDLINE ro $client_opts " \
         -initrd "$TESTDIR"/initramfs.testing
-    test_marker_check
+    check_qemu_log
 
     client_test_end
 }

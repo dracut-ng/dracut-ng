@@ -10,10 +10,7 @@ test_run() {
     declare -a disk_args=()
     # shellcheck disable=SC2034  # disk_index used in qemu_add_drive
     declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
     qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root
-
-    test_marker_reset
 
     "$testdir"/run-qemu \
         -device "virtio-net-pci,netdev=lan0" \
@@ -21,8 +18,7 @@ test_run() {
         "${disk_args[@]}" \
         -append "root=LABEL=dracut $TEST_KERNEL_CMDLINE rd.neednet=1" \
         -initrd "$TESTDIR"/initramfs.testing
-
-    test_marker_check
+    check_qemu_log
 }
 
 test_setup() {

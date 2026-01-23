@@ -23,19 +23,14 @@ client_run() {
 
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
     qemu_add_drive disk_index disk_args "$TESTDIR"/root.btrfs root
 
-    test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "root=LABEL=dracut $TEST_KERNEL_CMDLINE $client_opts" \
         -initrd "$TESTDIR"/initramfs.testing
+    check_qemu_log
 
-    if ! test_marker_check; then
-        client_test_end "FAILED"
-        return 1
-    fi
     client_test_end
 }
 
