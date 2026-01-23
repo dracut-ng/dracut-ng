@@ -84,6 +84,16 @@ call_dracut() {
     "$DRACUT" "$@"
 }
 
+# Check QEMU logs for success marker
+check_qemu_log() {
+    local logfile="$1"
+
+    if ! grep -q "^All OK" "${logfile}"; then
+        echo >&2 "E: Message 'All OK' not found in QEMU log output '${logfile}'."
+        return 1
+    fi
+}
+
 # Log the start of a client test.
 client_test_start() {
     local test_name="$1"
