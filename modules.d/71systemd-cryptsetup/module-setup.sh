@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# this dracut module needs to be ordered after the crypt dracut module
+# to ensure that "$initdir"/etc/crypttab is computed
+
 # called by dracut
 check() {
     local fs
