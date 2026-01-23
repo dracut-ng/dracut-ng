@@ -29,7 +29,9 @@ jobs:
         name: ${{ matrix.config.tag }}-${{ matrix.architecture.tag }}
         runs-on: ${{ matrix.architecture.runner }}
         concurrency:
-            group: container-extra-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.tag }}-${{ matrix.architecture.tag }}
+            group: >
+                container-extra-${{ github.workflow }}-${{ github.ref }}
+                -${{ matrix.config.tag }}-${{ matrix.architecture.tag }}
             cancel-in-progress: true
         strategy:
             fail-fast: false

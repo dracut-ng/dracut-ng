@@ -26,7 +26,9 @@ jobs:
         if: github.repository == 'dracut-ng/dracut-ng' || vars.CONTAINER == 'enabled'
         name: ${{ matrix.config.tag }}-${{ matrix.architecture.tag }}
         concurrency:
-            group: container-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.tag }}-${{ matrix.architecture.tag }}
+            group: >
+                container-${{ github.workflow }}-${{ github.ref }}
+                -${{ matrix.config.tag }}-${{ matrix.architecture.tag }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
