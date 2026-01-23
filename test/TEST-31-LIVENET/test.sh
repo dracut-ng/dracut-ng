@@ -37,16 +37,6 @@ start_webserver() {
     echo "$port"
 }
 
-check_log() {
-    local msg="$1"
-    local logfile="$2"
-
-    if ! grep -q "${msg}" "${logfile}"; then
-        echo >&2 "E: Message '${msg}' not found in QEMU log output '${logfile}'."
-        return 1
-    fi
-}
-
 client_run() {
     local test_name="$1"
     local append="$2"
@@ -57,7 +47,7 @@ client_run() {
         -netdev "user,id=lan0,net=10.0.2.0/24,dhcpstart=10.0.2.15" \
         -append "$append $TEST_KERNEL_CMDLINE" \
         -initrd "$TESTDIR/initramfs.testing" | tee "$TESTDIR/qemu.log"
-    check_log '^All OK' "$TESTDIR/qemu.log"
+    check_qemu_log "$TESTDIR/qemu.log"
     client_test_end
 }
 
