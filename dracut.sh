@@ -2076,8 +2076,19 @@ elif [[ -n $persistent_policy && ! -d "/dev/disk/${persistent_policy}" ]]; then
 fi
 
 CPIO=cpio
-if 3cpio --help 2> /dev/null | grep -q -- --create; then
-    CPIO=3cpio
+if command -v 3cpio > /dev/null; then
+    if help_output=$(3cpio --help); then
+        if echo "$help_output" | grep -q -- --create; then
+            CPIO=3cpio
+        else
+            dinfo "3cpio does not support --create. Falling back to cpio."
+        fi
+    elif command -v cpio > /dev/null; then
+        dwarning "Calling '3cpio --help' failed. Cannot check if 3cpio supports --create. Falling back to cpio."
+    else
+        dwarning "Calling '3cpio --help' failed. Cannot check if 3cpio supports --create."
+        CPIO=3cpio
+    fi
 fi
 
 if [[ $enhanced_cpio == "yes" ]]; then
