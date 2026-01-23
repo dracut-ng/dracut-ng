@@ -14,7 +14,9 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
     network-legacy:
-        name: ${{ matrix.test }} on ${{ matrix.container }} ${{ matrix.network }} networking on ${{ matrix.architecture.tag }}
+        name: >
+            ${{ matrix.test }} on ${{ matrix.container }}
+            ${{ matrix.network }} networking on ${{ matrix.architecture.tag }}
         runs-on: ${{ matrix.architecture.runner }}
         timeout-minutes: 40
         concurrency:
