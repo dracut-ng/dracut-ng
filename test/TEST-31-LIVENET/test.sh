@@ -46,8 +46,8 @@ client_run() {
         -device "virtio-net-pci,netdev=lan0" \
         -netdev "user,id=lan0,net=10.0.2.0/24,dhcpstart=10.0.2.15" \
         -append "$append $TEST_KERNEL_CMDLINE" \
-        -initrd "$TESTDIR/initramfs.testing" | tee "$TESTDIR/qemu.log"
-    check_qemu_log "$TESTDIR/qemu.log"
+        -initrd "$TESTDIR/initramfs.testing"
+    check_qemu_log
     client_test_end
 }
 
