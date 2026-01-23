@@ -2,61 +2,61 @@
 name: Lint
 
 on:  # yamllint disable-line rule:truthy
-  pull_request:
-    branches: [main]
-    paths-ignore:
-      - antora-playbook.yaml
-      - 'doc_site/**'
-      - 'man/**'
+    pull_request:
+        branches: [main]
+        paths-ignore:
+            - antora-playbook.yaml
+            - 'doc_site/**'
+            - 'man/**'
 
 jobs:
-  lint-shell:
-    runs-on: ubuntu-latest
+    lint-shell:
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v6
+        steps:
+            - uses: actions/checkout@v6
 
-      - name: shfmt
-        uses: luizm/action-sh-checker@v0.10.0
-        with:
-          # disable shellcheck in favor of differential-shellcheck
-          sh_checker_shellcheck_disable: true
+            - name: shfmt
+              uses: luizm/action-sh-checker@v0.10.0
+              with:
+                  # disable shellcheck in favor of differential-shellcheck
+                  sh_checker_shellcheck_disable: true
 
-  differential-shellcheck:
-    runs-on: ubuntu-latest
+    differential-shellcheck:
+        runs-on: ubuntu-latest
 
-    permissions:
-      security-events: write
+        permissions:
+            security-events: write
 
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
+        steps:
+            - uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
 
-      - id: ShellCheck
-        name: Differential ShellCheck
-        uses: redhat-plumbers-in-action/differential-shellcheck@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+            - id: ShellCheck
+              name: Differential ShellCheck
+              uses: redhat-plumbers-in-action/differential-shellcheck@v5
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
 
-      - if: ${{ always() }}
-        name: Upload artifact with ShellCheck defects in SARIF format
-        uses: actions/upload-artifact@v6
-        with:
-          name: Differential ShellCheck SARIF
-          path: ${{ steps.ShellCheck.outputs.sarif }}
+            - if: ${{ always() }}
+              name: Upload artifact with ShellCheck defects in SARIF format
+              uses: actions/upload-artifact@v6
+              with:
+                  name: Differential ShellCheck SARIF
+                  path: ${{ steps.ShellCheck.outputs.sarif }}
 
-  lint-c:
-    runs-on: ubuntu-latest
+    lint-c:
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v6
+        steps:
+            - uses: actions/checkout@v6
 
-      - name: install tools
-        run: sudo apt-get install astyle
+            - name: install tools
+              run: sudo apt-get install astyle
 
-      - name: indent
-        run: make indent-c
+            - name: indent
+              run: make indent-c
 
-      - name: check formatting
-        run: git diff --exit-code
+            - name: check formatting
+              run: git diff --exit-code
