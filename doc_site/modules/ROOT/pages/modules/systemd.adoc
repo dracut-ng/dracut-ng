@@ -95,8 +95,8 @@ These modules would require including a version of systemd into initramfs.
 | systemd-modules-load
 | https://www.freedesktop.org/software/systemd/man/systemd-modules-load.html[systemd-modules-load]
 
-| systemd-pcrphase
-| https://www.freedesktop.org/software/systemd/man/systemd-pcrphase.html[systemd-pcrphase]
+| systemd-pcrextend
+| https://www.freedesktop.org/software/systemd/man/systemd-pcrextend.html[systemd-pcrextend]
 
 | systemd-portabled
 | https://www.freedesktop.org/software/systemd/man/systemd-portabled.html[systemd-portabled]
