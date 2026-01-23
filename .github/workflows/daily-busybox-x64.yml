@@ -45,4 +45,6 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v6
             - name: "TEST-${{ matrix.config.test }}"
-              run: TEST_CONTAINER_COMMAND="apk add ${{ matrix.config.deps }}" ./test/test-container.sh "TEST-${{ matrix.config.test }}" ${{ matrix.config.test }}
+              run: >
+                TEST_CONTAINER_COMMAND="apk add ${{ matrix.config.deps }}"
+                ./test/test-container.sh "TEST-${{ matrix.config.test }}" ${{ matrix.config.test }}
