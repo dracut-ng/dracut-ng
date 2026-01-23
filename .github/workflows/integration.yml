@@ -197,7 +197,9 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: >
+                USE_NETWORK=${{ matrix.network }}
+                ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     network-iscsi:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
@@ -226,7 +228,9 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: >
+                USE_NETWORK=${{ matrix.network }}
+                ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     network-nbd:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
@@ -253,7 +257,9 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: USE_NETWORK=${{ matrix.network }} ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: >
+                USE_NETWORK=${{ matrix.network }}
+                ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
     arm64:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }} on arm64

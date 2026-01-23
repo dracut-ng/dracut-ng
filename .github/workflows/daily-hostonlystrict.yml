@@ -51,4 +51,6 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: TEST_DRACUT_ARGS="--hostonly-mode strict" ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: >
+                TEST_DRACUT_ARGS="--hostonly-mode strict"
+                ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}

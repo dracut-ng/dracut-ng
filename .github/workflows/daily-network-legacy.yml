@@ -44,4 +44,6 @@ jobs:
             - name: "Checkout Repository"
               uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
-              run: USE_NETWORK=${{ matrix.network }} CONFIGURE_ARG='--enable-network-legacy' ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: >
+                USE_NETWORK=${{ matrix.network }} CONFIGURE_ARG='--enable-network-legacy'
+                ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
