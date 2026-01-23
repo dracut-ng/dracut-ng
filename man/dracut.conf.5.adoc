@@ -396,6 +396,10 @@ exists in the directory where initramfs is loaded from.
 +
 Defaults to _initramfs-$\{kernel\}.img_.
 
+*dracut_rescue_image=*"__{yes|no}__"::
+Let kernel-install create a rescue image (default=no).
+This configuration option applies only to kernel-install.
+
 == Files
 _/etc/dracut.conf_::
 Old configuration file. It is recommended to use individual files in
