@@ -42,7 +42,7 @@ jobs:
                 test:
                     - "10"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
@@ -93,7 +93,7 @@ jobs:
                     - "80"
                     - "81"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
@@ -129,7 +129,7 @@ jobs:
                     - container: arch:latest
                       test: "41"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm --privileged'
         steps:
             - name: "Checkout Repository"
@@ -153,7 +153,7 @@ jobs:
                 test:
                     - "82"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
@@ -181,7 +181,7 @@ jobs:
                     - "31"
                     - "60"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
@@ -208,7 +208,7 @@ jobs:
                     - "70"
                     - "71"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
@@ -233,7 +233,7 @@ jobs:
                 test:
                     - "72"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
@@ -259,7 +259,7 @@ jobs:
                 test:
                     - "10"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-arm
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm --privileged'
         steps:
             - name: "Checkout Repository"

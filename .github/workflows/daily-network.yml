@@ -56,7 +56,7 @@ jobs:
                     - container: debian:sid
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-${{ matrix.architecture.tag }}
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm --privileged'
         steps:
             - name: "Checkout Repository"

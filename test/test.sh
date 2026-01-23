@@ -20,17 +20,6 @@ if [[ $CONTAINER != *":"* ]]; then
     CONTAINER="$CONTAINER:latest"
 fi
 
-# add architecture tag, see commit d8ff139
-ARCH="${ARCH-$(uname -m)}"
-case "$ARCH" in
-    aarch64 | arm64)
-        CONTAINER="$CONTAINER-arm"
-        ;;
-    amd64 | i?86 | x86_64)
-        CONTAINER="$CONTAINER-amd"
-        ;;
-esac
-
 echo "Running in a container from $CONTAINER"
 
 if command -v podman &> /dev/null; then
