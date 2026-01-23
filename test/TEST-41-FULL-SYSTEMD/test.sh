@@ -70,7 +70,7 @@ test_setup() {
         dracut_modules="$dracut_modules systemd-bsod"
     fi
     if [ -f /usr/lib/systemd/systemd-pcrextend ]; then
-        dracut_modules="$dracut_modules systemd-pcrphase"
+        dracut_modules="$dracut_modules systemd-pcrextend"
     fi
     if [ -f /usr/lib/systemd/systemd-portabled ]; then
         dracut_modules="$dracut_modules systemd-portabled"
