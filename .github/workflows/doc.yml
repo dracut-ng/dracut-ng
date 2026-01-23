@@ -31,7 +31,7 @@ jobs:
                     - ubuntu:devel
                     - void:latest
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
         steps:
             - name: "Checkout Repository"
               uses: actions/checkout@v6

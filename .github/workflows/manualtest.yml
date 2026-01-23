@@ -69,7 +69,7 @@ jobs:
                 test: ${{ fromJSON(needs.matrix.outputs.tests) }}
             fail-fast: false
         container:
-            image: ${{ fromJSON(needs.matrix.outputs.registry) }}/${{ matrix.container }}-amd
+            image: ${{ fromJSON(needs.matrix.outputs.registry) }}/${{ matrix.container }}
             options: "--privileged -v /dev:/dev"
         steps:
             - name: "Checkout Repository"

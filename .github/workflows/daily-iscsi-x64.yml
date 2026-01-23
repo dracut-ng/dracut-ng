@@ -18,7 +18,7 @@ jobs:
         runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
-            group: daily-iscsi-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}-amd
+            group: daily-iscsi-${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
@@ -30,7 +30,7 @@ jobs:
                     - "70"
                     - "71"
         container:
-            image: ghcr.io/dracut-ng/${{ matrix.container }}-amd
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm'
         steps:
             - name: "Checkout Repository"
