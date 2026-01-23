@@ -15,3 +15,7 @@ RUN apk add --no-cache \
     musl-dev  \
     musl-fts-dev \
     qemu-system-$(uname -m)
+
+# workaround for https://gitlab.alpinelinux.org/alpine/aports/-/issues/17907
+RUN \
+  ln -sf /boot/vmlinuz-virt /boot/vmlinuz-$(cd /lib/modules; ls -1 | tail -1)
