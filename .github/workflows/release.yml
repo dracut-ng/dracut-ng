@@ -2,26 +2,26 @@
 name: Release
 
 on:  # yamllint disable-line rule:truthy
-  schedule:
-    ## Schedule the job quarterly to run on Feb-1, May-1, Aug-1, and Nov-1
-    - cron: '0 0 1 FEB,MAY,AUG,NOV *'
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: "release version number (3 digits)"
-        required: true
+    schedule:
+        ## Schedule the job quarterly to run on Feb-1, May-1, Aug-1, and Nov-1
+        - cron: '0 0 1 FEB,MAY,AUG,NOV *'
+    workflow_dispatch:
+        inputs:
+            tag:
+                description: "release version number (3 digits)"
+                required: true
 
 permissions:
-  contents: write
+    contents: write
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
+    release:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
 
-      - name: Build
-        run: bash ${GITHUB_WORKSPACE}/tools/release.sh ${{ inputs.tag }}
+            - name: Build
+              run: bash ${GITHUB_WORKSPACE}/tools/release.sh ${{ inputs.tag }}
