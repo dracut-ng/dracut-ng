@@ -19,10 +19,9 @@ ARG DISTRIBUTION
 RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --install-recommends dracut dracut-network dracut-squash dracut-live dracut-test
 
 # Install 3cpio where available
-RUN if [ "$DISTRIBUTION" != "debian:latest" ] ; then \
+RUN if [ "$DISTRIBUTION" != "debian:latest" ] ; then cpio=3cpio; else cpio=cpio; fi; \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
-    3cpio \
-    ; fi
+    $cpio
 
 # use GNU coreutils instead of uutil's coreutils until https://github.com/uutils/coreutils/issues/9057 and https://launchpad.net/bugs/2129037 are fixed
 RUN if [ "$DISTRIBUTION" = "ubuntu:devel" ] || [ "$DISTRIBUTION" = "ubuntu:rolling" ]; then \
@@ -38,7 +37,6 @@ RUN \
     ca-certificates \
     cargo \
     console-data \
-    cpio \
     cryptsetup \
     curl \
     dnsmasq \
