@@ -27,26 +27,22 @@ test_run() {
 
     declare -a disk_args=()
     declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
     qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1
     qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2
 
-    test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root ro rd.auto rootwait $LUKSARGS" \
         -initrd "$TESTDIR"/initramfs.testing
-    test_marker_check
+    check_qemu_log
     client_test_end
-
-    test_marker_reset
 
     client_test_start "Any LUKS"
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rd.auto" \
         -initrd "$TESTDIR"/initramfs.testing
-    test_marker_check
+    check_qemu_log
     client_test_end
 
     return 0
