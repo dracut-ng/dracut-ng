@@ -1,6 +1,6 @@
 <!-- This pull request changes... -->
 
-<!-- Fixes # -->
+<!-- Fixes: https://github.com/dracut-ng/dracut-ng/issues/<number> -->
 
 ### Checklist
 - [ ] I have tested it locally
