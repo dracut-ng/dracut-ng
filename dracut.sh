@@ -2107,6 +2107,7 @@ if [[ $enhanced_cpio == "yes" ]]; then
 else
     unset enhanced_cpio
 fi
+unset threecpio_help_output
 
 if [[ $no_kernel != yes ]] && ! [[ -d $srcmods ]]; then
     dfatal "Cannot find module directory $srcmods"

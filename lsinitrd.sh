@@ -108,6 +108,7 @@ if command -v 3cpio > /dev/null; then
         echo "Warning: Calling '3cpio --help' failed. Cannot check if 3cpio supports --make-directories."
         CPIO=3cpio
     fi
+    unset threecpio_help_output
 fi
 
 if ! [[ $KERNEL_VERSION ]]; then
