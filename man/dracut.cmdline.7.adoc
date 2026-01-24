@@ -1105,7 +1105,7 @@ d_type in readdir responses, such as with btrfs, ext4, f2fs, & xfs.  On
 non-vfat-formatted devices, a persistent OverlayFS overlay can extend the
 available root filesystem storage up to the capacity of the LiveOS disk device.
 +
-The **rd.overlayfs.readonly** option, which allows a persistent overlayfs to
+The **rd.overlay.readonly** option, which allows a persistent overlayfs to
 be mounted read-only through a higher level transient overlay directory, has
 been implemented through the multiple lower layers feature of OverlayFS.
 
@@ -1524,7 +1524,7 @@ EXT_KEYMAP:: vconsole.keymap.ext
 
 rd.live.overlay.overlayfs:: rd.overlayfs
 
-rd.live.overlay.readonly:: rd.overlayfs.readonly
+rd.live.overlay.readonly:: rd.overlay.readonly
 
 rd.live.overlay:: rd.overlay
 
