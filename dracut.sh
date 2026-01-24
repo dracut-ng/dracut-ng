@@ -2077,8 +2077,8 @@ fi
 
 CPIO=cpio
 if command -v 3cpio > /dev/null; then
-    if help_output=$(3cpio --help); then
-        if echo "$help_output" | grep -q -- --create; then
+    if threecpio_help_output=$(3cpio --help); then
+        if echo "$threecpio_help_output" | grep -q -- --create; then
             CPIO=3cpio
         else
             dinfo "3cpio does not support --create. Falling back to cpio."
