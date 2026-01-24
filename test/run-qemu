@@ -198,7 +198,9 @@ if ! [[ $* == *-daemonize* ]] && timeout --help 2> /dev/null | grep -q -- --fore
     # Run QEMU with a timeout (defaut: 10min) unless daemonized
     ARGS=(--foreground "${QEMU_TIMEOUT-600}" "$BIN" "${ARGS[@]}")
     BIN=timeout
+fi
 
+if ! [[ $* == *-daemonize* ]]; then
     if [[ ${QEMU_LOGFILE-} ]]; then
         exec > >(tee "$QEMU_LOGFILE")
     fi
