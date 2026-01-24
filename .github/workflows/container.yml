@@ -38,7 +38,7 @@ jobs:
                     - {platform: 'linux/arm64', runner: 'ubuntu-24.04-arm', tag: 'arm'}
                 config:
                     - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:edge'}
-                    - {dockerfile: 'Dockerfile-alpine-busybox', tag: 'alpine-busybox:edge'}
+                    - {dockerfile: 'Dockerfile-alpine-busybox', tag: 'alpine:busybox-edge'}
                     - {dockerfile: 'Dockerfile-arch', tag: 'arch:latest'}
                     - {dockerfile: 'Dockerfile-debian', tag: 'debian:latest'}
                     - {dockerfile: 'Dockerfile-fedora', tag: 'fedora:latest'}
@@ -84,7 +84,7 @@ jobs:
             matrix:
                 config:
                     - {tag: 'alpine:edge', platforms: ['amd', 'arm']}
-                    - {tag: 'alpine-busybox:edge', platforms: ['amd', 'arm']}
+                    - {tag: 'alpine:busybox-edge', platforms: ['amd', 'arm']}
                     - {tag: 'arch:latest', platforms: ['amd']}
                     - {tag: 'debian:latest', platforms: ['amd', 'arm']}
                     - {tag: 'fedora:latest', platforms: ['amd', 'arm']}
