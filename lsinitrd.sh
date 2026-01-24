@@ -99,7 +99,7 @@ done
 CPIO=cpio
 if command -v 3cpio > /dev/null; then
     if threecpio_help_output=$(3cpio --help); then
-        if echo "$threecpio_help_output" | grep -q -- --make-directories; then
+        if [[ $threecpio_help_output == *--make-directories* ]]; then
             CPIO=3cpio
         fi
     elif command -v cpio > /dev/null; then
