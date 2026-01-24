@@ -3,7 +3,7 @@
 command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
 getargbool 0 rd.overlayfs -d rd.live.overlay.overlayfs && overlayfs="yes"
-getargbool 0 rd.overlayfs.readonly -d rd.live.overlayfs.readonly && readonly_overlay="--readonly" || readonly_overlay=""
+getargbool 0 rd.overlay.readonly -d rd.live.overlayfs.readonly && readonly_overlay="--readonly" || readonly_overlay=""
 
 if [ -n "$overlayfs" ]; then
     if [ -n "$readonly_overlay" ] && [ -h /run/overlayfs-r ]; then

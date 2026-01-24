@@ -24,7 +24,7 @@ squash_image=$(getarg rd.live.squashimg)
 
 getargbool 0 rd.live.ram && live_ram="yes"
 getargbool 0 rd.overlay.reset -d rd.live.overlay.reset && reset_overlay="yes"
-getargbool 0 rd.overlayfs.readonly -d rd.live.overlay.readonly && readonly_overlay="--readonly" || readonly_overlay=""
+getargbool 0 rd.overlay.readonly -d rd.live.overlay.readonly && readonly_overlay="--readonly" || readonly_overlay=""
 getargbool 0 rd.live.overlay.nouserconfirmprompt && overlay_no_user_confirm_prompt="--noprompt" || overlay_no_user_confirm_prompt=""
 overlay=$(getarg rd.overlay -d rd.live.overlay)
 getargbool 0 rd.writable.fsimg && writable_fsimg="yes"
