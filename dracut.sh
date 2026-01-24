@@ -2093,7 +2093,7 @@ fi
 
 if [[ $enhanced_cpio == "yes" ]]; then
     enhanced_cpio="$dracutbasedir/dracut-cpio"
-    if 3cpio --help 2> /dev/null | grep -q -- --data-align; then
+    if [[ $threecpio_help_output == *--data-align* ]]; then
         # align based on statfs optimal transfer size
         cpio_align=$(stat -f -c "%s" -- "$initdir")
         unset enhanced_cpio
