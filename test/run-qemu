@@ -174,10 +174,6 @@ fi
 # Provide rng device sourcing the hosts /dev/urandom and other standard parameters
 ARGS+=(-smp 2 -m "${MEMORY-1024}" -nodefaults -vga none -display none -no-reboot -watchdog-action poweroff -device "${rng_device:-virtio-rng-pci}")
 
-if ! [[ $* == *-daemonize* ]]; then
-    ARGS+=(-serial stdio)
-fi
-
 # virtual hardware watchdog not available on s390x
 if [[ $ARCH != "s390x" ]]; then
     ARGS+=(-device i6300esb)
@@ -201,6 +197,7 @@ if ! [[ $* == *-daemonize* ]] && timeout --help 2> /dev/null | grep -q -- --fore
 fi
 
 if ! [[ $* == *-daemonize* ]]; then
+    ARGS+=(-serial stdio)
     if [[ ${QEMU_LOGFILE-} ]]; then
         exec > >(tee "$QEMU_LOGFILE")
     fi
