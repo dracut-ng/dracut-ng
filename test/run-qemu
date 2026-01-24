@@ -198,11 +198,20 @@ if ! [[ $* == *-daemonize* ]] && timeout --help 2> /dev/null | grep -q -- --fore
     # Run QEMU with a timeout (defaut: 10min) unless daemonized
     ARGS=(--foreground "${QEMU_TIMEOUT-600}" "$BIN" "${ARGS[@]}")
     BIN=timeout
-
-    if [[ ${QEMU_LOGFILE-} ]]; then
-        exec > >(tee "$QEMU_LOGFILE")
-    fi
 fi
 
 echo "${0##*/}: $BIN $(quote_args "${ARGS[@]}")"
-exec "$BIN" "${ARGS[@]}"
+
+if [[ ${QEMU_LOGFILE-} ]]; then
+    # Create a named pipe (FIFO)
+    PIPE=$(mktemp -u)
+    mkfifo "$PIPE"
+
+    # Start tee in the background, reading from the pipe
+    tee "$QEMU_LOGFILE" < "$PIPE" &
+
+    # Redirect stdout to the pipe
+    exec "$BIN" "${ARGS[@]}" > "$PIPE"
+else
+    exec "$BIN" "${ARGS[@]}"
+fi
