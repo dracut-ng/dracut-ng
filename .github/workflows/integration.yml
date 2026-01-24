@@ -33,7 +33,7 @@ jobs:
             matrix:
                 container:
                     - alpine:edge
-                    - alpine-busybox:edge
+                    - alpine:busybox-edge
                     - arch:latest
                     - debian:latest
                     - fedora:latest

@@ -26,7 +26,7 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - alpine-busybox:edge
+                    - alpine:busybox-edge
                 config:
                     - {test: '10', deps: ''}
                     - {test: '11', deps: 'btrfs-progs'}
