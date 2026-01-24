@@ -15,12 +15,11 @@
 # - multipath-tools (does not work well)
 # - kernel-install is not available
 
-ARG DISTRIBUTION=alpine
-FROM docker.io/${DISTRIBUTION}
+FROM docker.io/alpine:edge
 
 # export
-ARG DISTRIBUTION
 ARG TARGETARCH
+ARG OPTION
 
 # Use dracut-tests package to install dependencies for test suite
 RUN apk add --no-cache \
@@ -41,3 +40,14 @@ if [ "${TARGETARCH}" == "amd64" ]; then \
 # workaround for https://gitlab.alpinelinux.org/alpine/aports/-/issues/17907
 RUN \
   ln -sf /boot/vmlinuz-virt /boot/vmlinuz-$(cd /lib/modules; ls -1 | tail -1)
+
+# busybox container
+# replace all GNU coreutils and GNU util-linux binaries with busybox binaries
+RUN \
+if [ "$OPTION" == "busybox" ] ; then \
+  mkdir /busybox && cd /busybox && /bin/busybox --install -s /busybox ;\
+  cp -a /busybox/* /bin/ ;\
+  cp -a /busybox/* /sbin/ ;\
+  cp -a /busybox/* /usr/bin/ ;\
+  cp -a /busybox/* /usr/sbin/ ;\
+fi

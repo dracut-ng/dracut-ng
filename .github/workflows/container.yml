@@ -38,7 +38,7 @@ jobs:
                     - {platform: 'linux/arm64', runner: 'ubuntu-24.04-arm', tag: 'arm'}
                 config:
                     - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:edge'}
-                    - {dockerfile: 'Dockerfile-alpine-busybox', tag: 'alpine:busybox-edge'}
+                    - {dockerfile: 'Dockerfile-alpine', tag: 'alpine:busybox-edge', option: 'busybox'}
                     - {dockerfile: 'Dockerfile-arch', tag: 'arch:latest'}
                     - {dockerfile: 'Dockerfile-debian', tag: 'debian:latest'}
                     - {dockerfile: 'Dockerfile-fedora', tag: 'fedora:latest'}
@@ -72,6 +72,7 @@ jobs:
                   platforms: ${{ matrix.architecture.platform }}
                   build-args: |
                       DISTRIBUTION=${{ matrix.config.tag }}
+                      OPTION=${{ matrix.config.option }}
     manifest:
         needs: container
         if: github.event_name == 'push' || github.event_name == 'schedule'
