@@ -774,7 +774,9 @@ check_kernel_config() {
 # 0 if the kernel module is either built-in or available
 # 1 if the kernel module is not enabled
 check_kernel_module() {
-    modprobe -d "$drivers_dir/../../../" -S "$kernel" --dry-run "$1" &> /dev/null || return 1
+    if command -v kmod > /dev/null 2> /dev/null; then
+        modprobe -d "$drivers_dir/../../../" -S "$kernel" --dry-run "$1" &> /dev/null || return 1
+    fi
 }
 
 # get_cpu_vendor
