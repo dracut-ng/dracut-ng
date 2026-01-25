@@ -24,7 +24,7 @@ RUN if [ "$DISTRIBUTION" != "debian:latest" ] ; then cpio=3cpio; else cpio=cpio;
     $cpio
 
 # use GNU coreutils instead of uutil's coreutils until https://github.com/uutils/coreutils/issues/9057 and https://launchpad.net/bugs/2129037 are fixed
-RUN if [ "$DISTRIBUTION" = "ubuntu:devel" ] || [ "$DISTRIBUTION" = "ubuntu:rolling" ]; then \
+RUN if [ "$DISTRIBUTION" = "ubuntu:rolling" ]; then \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
     coreutils-from-gnu coreutils-from-uutils- --allow-remove-essential; \
     fi
