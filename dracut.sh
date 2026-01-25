@@ -1458,10 +1458,6 @@ export LC_MESSAGES=C kernel
 srcmods="$(realpath -e "${dracutsysrootdir-}/lib/modules/$kernel")"
 
 [[ ${drivers_dir-} ]] && {
-    if ! command -v kmod &> /dev/null && vercmp "$(modprobe --version | cut -d' ' -f3)" lt 3.7; then
-        dfatal 'To use --kmoddir option module-init-tools >= 3.7 is required.'
-        exit 1
-    fi
     srcmods="$drivers_dir"
 }
 export srcmods
