@@ -14,37 +14,35 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
     busybox:
-        name: ${{ matrix.config.test }} on ${{ matrix.container }} with busybox
+        name: ${{ matrix.test }} on ${{ matrix.container }} with busybox
         runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
             group: >
                 daily-busybox-${{ github.workflow }}-${{ github.ref }}
-                -${{ matrix.container }}-${{ matrix.config.test }}
+                -${{ matrix.container }}-${{ matrix.test }}
             cancel-in-progress: true
         strategy:
             fail-fast: false
             matrix:
                 container:
                     - alpine:busybox-edge
-                config:
-                    - {test: '10', deps: ''}
-                    - {test: '11', deps: 'btrfs-progs'}
-                    - {test: '12', deps: 'efistub ovmf squashfs-tools'}
-                    - {test: '13', deps: ''}
-                    - {test: '20', deps: 'lvm2 device-mapper'}
-                    - {test: '26', deps: 'cryptsetup mdadm device-mapper lvm2 partx sed'}
-                    - {test: '50', deps: 'networkmanager-initrd-generator networkmanager'}
-                    - {test: '80', deps: ''}
-                    - {test: '81', deps: ''}
-                    - {test: '82', deps: 'cargo procps-ng'}
+                test:
+                    - '10'
+                    - '11'
+                    - '12'
+                    - '13'
+                    - '20'
+                    - '26'
+                    - '50'
+                    - '80'
+                    - '81'
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm --privileged'
         steps:
             - name: "Checkout Repository"
               uses: actions/checkout@v6
-            - name: "TEST-${{ matrix.config.test }}"
+            - name: "TEST-${{ matrix.test }}"
               run: >
-                TEST_CONTAINER_COMMAND="apk add ${{ matrix.config.deps }}"
-                ./test/test-container.sh "TEST-${{ matrix.config.test }}" ${{ matrix.config.test }}
+                ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
