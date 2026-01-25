@@ -43,7 +43,7 @@ RUN \
   ln -sf /boot/vmlinuz-virt /boot/vmlinuz-$(cd /lib/modules; ls -1 | tail -1)
 
 # busybox container
-# replace all GNU coreutils and GNU util-linux binaries with busybox binaries
+# replace GNU coreutils, util-linux, kmod binaries with busybox binaries
 RUN \
 if [ "$OPTION" == "busybox" ] ; then \
   mkdir /busybox && cd /busybox && /bin/busybox --install -s /busybox ;\
@@ -51,4 +51,5 @@ if [ "$OPTION" == "busybox" ] ; then \
   cp -a /busybox/* /sbin/ ;\
   cp -a /busybox/* /usr/bin/ ;\
   cp -a /busybox/* /usr/sbin/ ;\
+  rm -f /bin/kmod ;\
 fi
