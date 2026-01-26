@@ -139,9 +139,9 @@ systemd-network-management:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-network-management/*'
 
-systemd-pcrphase:
+systemd-pcrextend:
     - changed-files:
-          - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-pcrphase/*'
+          - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-pcrextend/*'
 
 systemd-portabled:
     - changed-files:
