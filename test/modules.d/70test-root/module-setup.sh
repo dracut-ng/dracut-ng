@@ -13,6 +13,11 @@ depends() {
         deps+=" debug"
     fi
 
+    # Use systemd if available
+    if [[ -e "$systemdutildir"/systemd ]]; then
+        deps+=" systemd"
+    fi
+
     echo "$deps"
     return 0
 }
@@ -28,6 +33,7 @@ install() {
         $SYSTEMCTL -q --root "$initdir" add-wants testsuite.target "testsuite.service"
         ln_r "${systemdsystemunitdir}/testsuite.target" "${systemdsystemunitdir}/default.target"
         inst_script "$moddir/test-init.sh" "/sbin/test-init"
+        ln -sfn ../lib/systemd/systemd "$initdir/sbin/init"
     else
         inst_script "$moddir/test-init.sh" "/sbin/init"
     fi
