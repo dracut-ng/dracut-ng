@@ -4,6 +4,9 @@ export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
 # shellcheck disable=SC2317,SC2329  # called via EXIT trap
 _poweroff() {
+    local exit_code="$?"
+
+    [ "$exit_code" -eq 0 ] || echo "Error: $0 failed with exit code $exit_code."
     echo "Powering down."
 
     if [ -d /usr/lib/systemd/system ]; then
