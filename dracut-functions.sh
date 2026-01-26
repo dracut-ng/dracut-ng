@@ -1514,6 +1514,8 @@ if ! is_func dinfo > /dev/null 2>&1; then
     dlog_init
 fi
 
+DRACUT_LDCONFIG=${DRACUT_LDCONFIG:-ldconfig}
+
 if ! [[ "${DRACUT_INSTALL-}" ]]; then
     DRACUT_INSTALL=$(find_binary dracut-install || true)
 fi
