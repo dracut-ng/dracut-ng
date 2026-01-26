@@ -16,7 +16,7 @@ echo "Powering down."
 
 if [ -d /usr/lib/systemd/system ]; then
     # graceful poweroff
-    systemctl poweroff
+    systemctl start poweroff.target --job-mode=replace-irreversibly --no-block
 else
     # force immediate poweroff
     poweroff -f
