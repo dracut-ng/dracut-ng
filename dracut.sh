@@ -1472,7 +1472,6 @@ export srcmods
 }
 
 DRACUT_TESTBIN=${DRACUT_TESTBIN:-/bin/sh}
-DRACUT_LDCONFIG=${DRACUT_LDCONFIG:-ldconfig}
 PKG_CONFIG=${PKG_CONFIG:-pkg-config}
 
 # Detect lib paths
