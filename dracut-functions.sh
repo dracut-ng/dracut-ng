@@ -1508,6 +1508,26 @@ determine_kernel_image() {
     return 1
 }
 
+_detect_library_directories() {
+    local libdirs=""
+
+    if [[ $($DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} --dry-run -R "$DRACUT_TESTBIN") == */lib64/* ]] &> /dev/null \
+        && [[ -d "${dracutsysrootdir-}/lib64" ]]; then
+        libdirs+=" /lib64"
+        [[ -d "${dracutsysrootdir-}/usr/lib64" ]] && libdirs+=" /usr/lib64"
+    fi
+
+    if [[ -d "${dracutsysrootdir-}/lib" ]]; then
+        libdirs+=" /lib"
+        [[ -d "${dracutsysrootdir-}/usr/lib" ]] && libdirs+=" /usr/lib"
+    fi
+
+    # shellcheck disable=SC2046  # word splitting is wanted, libraries must not contain spaces
+    libdirs+="$(printf ' %s' $(ldconfig_paths))"
+
+    echo "${libdirs# }"
+}
+
 if ! is_func dinfo > /dev/null 2>&1; then
     # shellcheck source=./dracut-logger.sh
     . "${BASH_SOURCE[0]%/*}/dracut-logger.sh"
@@ -1515,6 +1535,7 @@ if ! is_func dinfo > /dev/null 2>&1; then
 fi
 
 DRACUT_LDCONFIG=${DRACUT_LDCONFIG:-ldconfig}
+DRACUT_TESTBIN=${DRACUT_TESTBIN:-/bin/sh}
 
 if ! [[ "${DRACUT_INSTALL-}" ]]; then
     DRACUT_INSTALL=$(find_binary dracut-install || true)
@@ -1536,4 +1557,8 @@ fi
 if ! command -v "${DRACUT_INSTALL%% *}" > /dev/null 2>&1; then
     dfatal "${DRACUT_INSTALL:-dracut-install} not found!"
     exit 10
+fi
+
+if ! [[ ${libdirs-} ]]; then
+    libdirs=$(_detect_library_directories)
 fi

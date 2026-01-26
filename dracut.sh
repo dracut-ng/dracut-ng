@@ -1471,34 +1471,7 @@ export srcmods
     export hookdirs
 }
 
-DRACUT_TESTBIN=${DRACUT_TESTBIN:-/bin/sh}
 PKG_CONFIG=${PKG_CONFIG:-pkg-config}
-
-_detect_library_directories() {
-    local libdirs=""
-
-    if [[ $($DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} --dry-run -R "$DRACUT_TESTBIN") == */lib64/* ]] &> /dev/null \
-        && [[ -d "${dracutsysrootdir-}/lib64" ]]; then
-        libdirs+=" /lib64"
-        [[ -d "${dracutsysrootdir-}/usr/lib64" ]] && libdirs+=" /usr/lib64"
-
-    fi
-
-    if [[ -d "${dracutsysrootdir-}/lib" ]]; then
-        libdirs+=" /lib"
-        [[ -d "${dracutsysrootdir-}/usr/lib" ]] && libdirs+=" /usr/lib"
-    fi
-
-    # shellcheck disable=SC2046  # word splitting is wanted, libraries must not contain spaces
-    libdirs+="$(printf ' %s' $(ldconfig_paths))"
-
-    echo "${libdirs# }"
-}
-
-# Detect lib paths
-if ! [[ ${libdirs-} ]]; then
-    libdirs=$(_detect_library_directories)
-fi
 
 dracut_module_included() {
     [[ " $mods_to_load $modules_loaded " == *\ $*\ * ]]
