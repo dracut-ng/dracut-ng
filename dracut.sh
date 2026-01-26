@@ -1498,7 +1498,6 @@ _detect_library_directories() {
 # Detect lib paths
 if ! [[ ${libdirs-} ]]; then
     libdirs=$(_detect_library_directories)
-    export libdirs
 fi
 
 dracut_module_included() {
