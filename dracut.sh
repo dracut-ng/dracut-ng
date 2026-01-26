@@ -1474,8 +1474,9 @@ export srcmods
 DRACUT_TESTBIN=${DRACUT_TESTBIN:-/bin/sh}
 PKG_CONFIG=${PKG_CONFIG:-pkg-config}
 
-# Detect lib paths
-if ! [[ ${libdirs-} ]]; then
+_detect_library_directories() {
+    local libdirs=""
+
     if [[ $($DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} --dry-run -R "$DRACUT_TESTBIN") == */lib64/* ]] &> /dev/null \
         && [[ -d "${dracutsysrootdir-}/lib64" ]]; then
         libdirs+=" /lib64"
@@ -1491,7 +1492,12 @@ if ! [[ ${libdirs-} ]]; then
     # shellcheck disable=SC2046  # word splitting is wanted, libraries must not contain spaces
     libdirs+="$(printf ' %s' $(ldconfig_paths))"
 
-    libdirs="${libdirs# }"
+    echo "${libdirs# }"
+}
+
+# Detect lib paths
+if ! [[ ${libdirs-} ]]; then
+    libdirs=$(_detect_library_directories)
     export libdirs
 fi
 
