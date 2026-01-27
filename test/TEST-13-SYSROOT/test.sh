@@ -5,9 +5,7 @@ TEST_DESCRIPTION="initramfs created from sysroot"
 
 test_run() {
     declare -a disk_args=()
-    # shellcheck disable=SC2034  # disk_index used in qemu_add_drive
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root
+    qemu_add_drive disk_args "$TESTDIR"/root.img root
 
     "$testdir"/run-qemu -nic none \
         "${disk_args[@]}" \

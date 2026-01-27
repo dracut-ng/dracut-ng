@@ -15,11 +15,10 @@ run_server() {
     echo "iSCSI TEST SETUP: Starting DHCP/iSCSI server"
 
     declare -a disk_args=()
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/server.img serverroot 0 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/singleroot.img singleroot
-    qemu_add_drive disk_index disk_args "$TESTDIR"/raid0-1.img raid0-1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/raid0-2.img raid0-2
+    qemu_add_drive disk_args "$TESTDIR"/server.img serverroot 0 1
+    qemu_add_drive disk_args "$TESTDIR"/singleroot.img singleroot
+    qemu_add_drive disk_args "$TESTDIR"/raid0-1.img raid0-1
+    qemu_add_drive disk_args "$TESTDIR"/raid0-2.img raid0-2
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
@@ -46,8 +45,7 @@ run_client() {
     client_test_start "$test_name"
 
     declare -a disk_args=()
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
+    qemu_add_drive disk_args "$TESTDIR"/marker.img marker
 
     test_marker_reset
     "$testdir"/run-qemu \
@@ -157,11 +155,10 @@ test_setup() {
     rm -rf -- "$TESTDIR"/overlay
 
     declare -a disk_args=()
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/singleroot.img singleroot 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/raid0-1.img raid0-1 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/raid0-2.img raid0-2 1
+    qemu_add_drive disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_args "$TESTDIR"/singleroot.img singleroot 1
+    qemu_add_drive disk_args "$TESTDIR"/raid0-1.img raid0-1 1
+    qemu_add_drive disk_args "$TESTDIR"/raid0-2.img raid0-2 1
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
@@ -198,10 +195,8 @@ test_setup() {
     rm -rf -- "$TESTDIR"/overlay
 
     declare -a disk_args=()
-    # shellcheck disable=SC2034  # disk_index used in qemu_add_drive
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/server.img root 1
+    qemu_add_drive disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_args "$TESTDIR"/server.img root 1
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
