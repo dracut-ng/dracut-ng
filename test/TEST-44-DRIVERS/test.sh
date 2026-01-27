@@ -31,7 +31,7 @@ test_run() {
 }
 
 test_setup() {
-    # Create what will eventually be our root filesystem onto an overlay
+    # Create client root filesystem
     call_dracut --tmpdir "$TESTDIR" \
         --no-kernel \
         --add "systemd-udevd systemd-journald systemd-tmpfiles systemd-ldconfig systemd-ask-password shutdown" \
@@ -48,27 +48,11 @@ test_setup() {
     # make sure /lib/modules directory exists inside the rootfs
     mkdir -p "$TESTDIR"/overlay/source/lib/modules "$TESTDIR"/overlay/source/mnt
 
-    # create an initramfs that will create the target root filesystem.
-    # We do it this way so that we do not risk trashing the host mdraid
-    # devices, volume groups, encrypted partitions, etc.
-    call_dracut -i "$TESTDIR"/overlay / \
-        --add-confdir "test-makeroot" \
-        -I "mkfs.xfs" \
-        -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot
+    build_ext4_image "$TESTDIR/overlay/source" "$TESTDIR"/root.img dracut
 
-    declare -a disk_args=()
-    qemu_add_drive disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_args "$TESTDIR"/root.img root 1
-    qemu_add_drive disk_args "$TESTDIR"/mnt.img mnt 1
-
-    # Invoke KVM and/or QEMU to actually create the target filesystem.
-    "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -append "root=/dev/fakeroot quiet" \
-        -initrd "$TESTDIR"/initramfs.makeroot
-    test_marker_check dracut-root-block-created
-    rm -- "$TESTDIR"/marker.img
+    rm -f "$TESTDIR/mnt.img"
+    truncate -s 512M "$TESTDIR/mnt.img"
+    mkfs.xfs -q "$TESTDIR/mnt.img"
 
     test_dracut \
         --add-drivers xfs \

@@ -220,24 +220,7 @@ make_client_root() {
     rm -rf "$TESTDIR"/dracut.*
     inst_init ./client-init.sh "$TESTDIR"/overlay/source
 
-    # create an initramfs that will create the target root filesystem.
-    # We do it this way so that we do not risk trashing the host mdraid
-    # devices, volume groups, encrypted partitions, etc.
-    call_dracut -i "$TESTDIR"/overlay / \
-        --add-confdir test-makeroot \
-        -i ./create-client-root.sh /lib/dracut/hooks/initqueue/01-create-client-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot
-
-    declare -a disk_args=()
-    qemu_add_drive disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_args "$TESTDIR"/unencrypted.img root 1
-
-    # Invoke KVM and/or QEMU to actually create the target filesystem.
-    "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -append "root=/dev/dracut/root rw quiet" \
-        -initrd "$TESTDIR"/initramfs.makeroot
-    test_marker_check dracut-root-block-created
+    build_ext4_image "$TESTDIR/overlay/source" "$TESTDIR"/unencrypted.img dracut
     rm -fr "$TESTDIR"/overlay
 }
 
@@ -272,24 +255,7 @@ EOF
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/dhcpd "$TESTDIR"/overlay/source/etc/nbd-server
     inst_init ./server-init.sh "$TESTDIR"/overlay/source
 
-    # create an initramfs that will create the target root filesystem.
-    # We do it this way so that we do not risk trashing the host mdraid
-    # devices, volume groups, encrypted partitions, etc.
-    call_dracut -i "$TESTDIR"/overlay / \
-        --add-confdir test-makeroot \
-        -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot
-
-    declare -a disk_args=()
-    qemu_add_drive disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_args "$TESTDIR"/server.img root 1
-
-    # Invoke KVM and/or QEMU to actually create the target filesystem.
-    "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -append "root=/dev/dracut/root rw rootfstype=ext4 quiet" \
-        -initrd "$TESTDIR"/initramfs.makeroot
-    test_marker_check dracut-root-block-created
+    build_ext4_image "$TESTDIR/overlay/source" "$TESTDIR"/server.img dracut
     rm -fr "$TESTDIR"/overlay
 }
 

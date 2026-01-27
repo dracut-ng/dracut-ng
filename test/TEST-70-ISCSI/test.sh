@@ -122,7 +122,7 @@ test_check() {
 }
 
 test_setup() {
-    # Create what will eventually be the client root filesystem onto an overlay
+    # Create client root filesystem
     call_dracut --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -I "ip grep setsid" \
@@ -133,6 +133,8 @@ test_setup() {
 
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/nfs/rpc_pipefs
     inst_init ./client-init.sh "$TESTDIR"/overlay/source
+
+    build_ext4_image "$TESTDIR/overlay/source" "$TESTDIR"/singleroot.img singleroot
 
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
@@ -147,7 +149,6 @@ test_setup() {
 
     declare -a disk_args=()
     qemu_add_drive disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_args "$TESTDIR"/singleroot.img singleroot 1
     qemu_add_drive disk_args "$TESTDIR"/raid0-1.img raid0-1 1
     qemu_add_drive disk_args "$TESTDIR"/raid0-2.img raid0-2 1
 
@@ -159,7 +160,7 @@ test_setup() {
     test_marker_check dracut-root-block-created
     rm -- "$TESTDIR"/marker.img
 
-    # Create what will eventually be the server root filesystem onto an overlay
+    # Create server root filesystem
     call_dracut --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "$USE_NETWORK" \
@@ -175,26 +176,7 @@ test_setup() {
     mkdir -p "$TESTDIR"/overlay/source/var/lib/dhcpd
     inst_init ./server-init.sh "$TESTDIR"/overlay/source
 
-    # create an initramfs that will create the target root filesystem.
-    # We do it this way so that we do not risk trashing the host mdraid
-    # devices, volume groups, encrypted partitions, etc.
-    call_dracut -i "$TESTDIR"/overlay / \
-        --add-confdir test-makeroot \
-        -i ./create-server-root.sh /lib/dracut/hooks/initqueue/01-create-server-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot
-    rm -rf -- "$TESTDIR"/overlay
-
-    declare -a disk_args=()
-    qemu_add_drive disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_args "$TESTDIR"/server.img root 1
-
-    # Invoke KVM and/or QEMU to actually create the target filesystem.
-    "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -append "root=/dev/dracut/root rw quiet" \
-        -initrd "$TESTDIR"/initramfs.makeroot
-    test_marker_check dracut-root-block-created
-    rm -- "$TESTDIR"/marker.img
+    build_ext4_image "$TESTDIR/overlay/source" "$TESTDIR"/server.img dracut
 
     # Make server's dracut image
     call_dracut \
