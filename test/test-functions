@@ -174,8 +174,8 @@ build_ext4_image() {
 
     local size
     size="$(du -s -b "${source_dir}" | cut -f 1)"
-    # Add 10 MB for ext4 journal
-    size="$((size + 10000000))"
+    # Add 5% extra + 5% for reserved blocks + 10% for metadata + 8 MB for ext4 journal
+    size="$((size * 120 / 100 + 8000000))"
 
     rm -f "$image"
     truncate -s "$size" "$image"
