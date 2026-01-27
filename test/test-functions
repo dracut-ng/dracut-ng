@@ -221,6 +221,8 @@ inst_init() {
 # ```
 qemu_add_drive() {
     local index=${!1}
+    # shellcheck disable=SC2178  # args is a nameref to an array
+    local -n args=$2
     local file=$3
     local name=$4
     local size=${5:-0}
@@ -237,11 +239,11 @@ qemu_add_drive() {
         truncate -s "${size}M" "$file"
     fi
 
-    eval "${2}"'+=(' \
-        -device "virtio-scsi-pci,id=scsi${index}" \
-        -drive "if=none,format=raw,file=${file},id=drive-data${index}" \
-        -device "scsi-hd,bus=scsi${index}.0,drive=drive-data${index},id=data${index},${bootindex:+bootindex=$bootindex,}serial=${name}" \
-        ')'
+    args+=(
+        -device "virtio-scsi-pci,id=scsi${index}"
+        -drive "if=none,format=raw,file=${file},id=drive-data${index}"
+        -device "scsi-hd,bus=scsi${index}.0,drive=drive-data${index},id=data${index},${bootindex:+bootindex=$bootindex,}serial=${name}"
+    )
 
     : $(("${1}++"))
 }
