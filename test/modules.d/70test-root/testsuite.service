@@ -1,6 +1,6 @@
 [Unit]
 Description=Testsuite service
-After=basic.target multi-user.target
+After=basic.target multi-user.target plymouth-quit-wait.service
 
 [Service]
 ExecStart=/sbin/test-init
