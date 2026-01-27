@@ -222,7 +222,7 @@ inst_init() {
 qemu_add_drive() {
     local index=${!1}
     local file=$3
-    local name=${4:-$index}
+    local name=$4
     local size=${5:-0}
     local bootindex=${6-}
 
