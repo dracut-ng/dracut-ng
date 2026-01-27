@@ -82,8 +82,6 @@ test_setup() {
         -a "$dracut_modules" \
         -f "$TESTDIR"/initramfs.root
 
-    KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)
-
     mkdir -p "$TESTDIR"/overlay/source
     cp -a "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
     rm -rf "$TESTDIR"/dracut.*
@@ -96,7 +94,9 @@ test_setup() {
         -a "btrfs crypt" \
         -I "mkfs.btrfs cryptsetup" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
+        -f "$TESTDIR"/initramfs.makeroot
+
+    KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.makeroot)
 
     # Create the blank file to use as a root filesystem
     declare -a disk_args=()
