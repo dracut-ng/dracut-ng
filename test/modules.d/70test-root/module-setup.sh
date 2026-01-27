@@ -15,7 +15,7 @@ depends() {
 
     # Use systemd if available
     if [[ -e "$systemdutildir"/systemd ]]; then
-        deps+=" systemd"
+        deps+=" systemd systemd-journald"
     fi
 
     echo "$deps"
