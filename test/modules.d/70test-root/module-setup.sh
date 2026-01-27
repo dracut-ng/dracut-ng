@@ -14,7 +14,7 @@ depends() {
     fi
 
     # Use systemd if available
-    if [[ -e "$systemdutildir"/systemd ]]; then
+    if [[ -e "$systemdutildir"/systemd ]] && ! [[ " $omit_dracutmodules " == *\ systemd\ * ]]; then
         deps+=" systemd systemd-journald"
     fi
 
