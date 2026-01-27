@@ -195,9 +195,8 @@ inst_init() {
 
 # generate qemu arguments for named raw disks
 #
-# qemu_add_drive <index> <args> <filename> <id-name> [<bootindex>]
+# qemu_add_drive <args> <filename> <id-name> [<bootindex>]
 #
-# index: name of the index variable (set to 0 at start)
 # args: name of the argument array variable (set to () at start)
 # filename: filename of the raw disk image
 # id-name: name of the disk in /dev/disk/by-id -> /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_$name
@@ -212,21 +211,24 @@ inst_init() {
 # # EXAMPLES
 # ```
 #   declare -a disk_args=()
-#   declare -i disk_index=0
-#   qemu_add_drive disk_index disk_args "$TESTDIR"/root.ext3 root 0 1
-#   qemu_add_drive disk_index disk_args "$TESTDIR"/client.img client
-#   qemu_add_drive disk_index disk_args "$TESTDIR"/iscsidisk2.img iscsidisk2
-#   qemu_add_drive disk_index disk_args "$TESTDIR"/iscsidisk3.img iscsidisk3
+#   qemu_add_drive disk_args "$TESTDIR"/root.ext3 root 0 1
+#   qemu_add_drive disk_args "$TESTDIR"/client.img client
+#   qemu_add_drive disk_args "$TESTDIR"/iscsidisk2.img iscsidisk2
+#   qemu_add_drive disk_args "$TESTDIR"/iscsidisk3.img iscsidisk3
 #   qemu "${disk_args[@]}"
 # ```
 qemu_add_drive() {
-    local index=${!1}
     # shellcheck disable=SC2178  # args is a nameref to an array
-    local -n args=$2
-    local file=$3
-    local name=$4
-    local size=${5:-0}
-    local bootindex=${6-}
+    local -n args=$1
+    local file=$2
+    local name=$3
+    local size=${4:-0}
+    local bootindex=${5-}
+
+    local index=0
+    while [[ ${args[*]} == *id=scsi${index}* ]]; do
+        index=$((index + 1))
+    done
 
     if [ "${size}" -ne 0 ]; then
         if [[ ${name} =~ "marker" ]]; then
@@ -244,8 +246,6 @@ qemu_add_drive() {
         -drive "if=none,format=raw,file=${file},id=drive-data${index}"
         -device "scsi-hd,bus=scsi${index}.0,drive=drive-data${index},id=data${index},${bootindex:+bootindex=$bootindex,}serial=${name}"
     )
-
-    : $(("${1}++"))
 }
 
 test_marker_reset() {

@@ -8,9 +8,7 @@ TEST_DESCRIPTION="bring up network without netroot set with $USE_NETWORK"
 
 test_run() {
     declare -a disk_args=()
-    # shellcheck disable=SC2034  # disk_index used in qemu_add_drive
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root
+    qemu_add_drive disk_args "$TESTDIR"/root.img root
 
     "$testdir"/run-qemu \
         -device "virtio-net-pci,netdev=lan0" \

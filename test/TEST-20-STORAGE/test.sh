@@ -34,12 +34,11 @@ client_run() {
     client_test_start "$test_name"
 
     declare -a disk_args=()
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR/${disk}-1.img" disk1
+    qemu_add_drive disk_args "$TESTDIR/${disk}-1.img" disk1
 
     if ! grep -qF 'degraded' "$test_name"; then
         # only add disk2 if RAID is NOT degraded
-        qemu_add_drive disk_index disk_args "$TESTDIR/${disk}-2.img" disk2
+        qemu_add_drive disk_args "$TESTDIR/${disk}-2.img" disk2
     fi
 
     if [ "$TEST_FSTYPE" = "zfs" ]; then
@@ -96,11 +95,9 @@ test_makeroot() {
 
     # Create the blank files to use as a root filesystem
     declare -a disk_args=()
-    # shellcheck disable=SC2034
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR/${disk}-1.img" disk1 1
-    qemu_add_drive disk_index disk_args "$TESTDIR/${disk}-2.img" disk2 1
+    qemu_add_drive disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_args "$TESTDIR/${disk}-1.img" disk1 1
+    qemu_add_drive disk_args "$TESTDIR/${disk}-2.img" disk2 1
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \

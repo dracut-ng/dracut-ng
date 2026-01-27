@@ -24,10 +24,9 @@ client_run() {
     client_test_start "$test_name"
 
     declare -a disk_args=()
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.btrfs root
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_crypt.btrfs root_crypt
-    qemu_add_drive disk_index disk_args "$TESTDIR"/usr.btrfs usr
+    qemu_add_drive disk_args "$TESTDIR"/root.btrfs root
+    qemu_add_drive disk_args "$TESTDIR"/root_crypt.btrfs root_crypt
+    qemu_add_drive disk_args "$TESTDIR"/usr.btrfs usr
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
@@ -101,12 +100,10 @@ test_setup() {
 
     # Create the blank file to use as a root filesystem
     declare -a disk_args=()
-    # shellcheck disable=SC2034
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.btrfs root 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_crypt.btrfs root_crypt 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/usr.btrfs usr 1
+    qemu_add_drive disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_args "$TESTDIR"/root.btrfs root 1
+    qemu_add_drive disk_args "$TESTDIR"/root_crypt.btrfs root_crypt 1
+    qemu_add_drive disk_args "$TESTDIR"/usr.btrfs usr 1
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \

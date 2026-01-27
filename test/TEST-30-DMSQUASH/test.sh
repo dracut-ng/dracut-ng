@@ -24,10 +24,9 @@ client_run() {
     client_test_start "$test_name"
 
     declare -a disk_args=()
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_iso.img root_iso
+    qemu_add_drive disk_args "$TESTDIR"/root.img root
+    qemu_add_drive disk_args "$TESTDIR"/root_erofs.img root_erofs
+    qemu_add_drive disk_args "$TESTDIR"/root_iso.img root_iso
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
@@ -108,9 +107,7 @@ test_setup() {
 
     # Create the blank file to use as a root filesystem
     declare -a disk_args=()
-    # shellcheck disable=SC2034  # disk_index used in qemu_add_drive
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 1
+    qemu_add_drive disk_args "$TESTDIR"/root.img root 1
 
     sfdisk "$TESTDIR"/root.img << EOF
 2048,652688
@@ -123,7 +120,7 @@ EOF
     dd if="$TESTDIR"/ext4.img of="$TESTDIR"/root.img bs=512 seek=2048 conv=noerror,notrunc
 
     # erofs drive
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs 1
+    qemu_add_drive disk_args "$TESTDIR"/root_erofs.img root_erofs 1
 
     # Write the erofs compressed filesystem to the partition
     if command -v mkfs.erofs &> /dev/null; then
@@ -131,7 +128,7 @@ EOF
     fi
 
     # iso drive
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_iso.img root_iso 1
+    qemu_add_drive disk_args "$TESTDIR"/root_iso.img root_iso 1
 
     # Write the iso to the partition
     if command -v xorriso &> /dev/null; then

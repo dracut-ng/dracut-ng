@@ -24,9 +24,7 @@ run_server() {
     # Start server first
     echo "NFS TEST SETUP: Starting DHCP/NFS server"
     declare -a disk_args=()
-    # shellcheck disable=SC2034
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/server.img root 0 1
+    qemu_add_drive disk_args "$TESTDIR"/server.img root 0 1
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
@@ -58,10 +56,8 @@ client_test() {
 
     # Need this so kvm-qemu will boot (needs non-/dev/zero local disk)
     declare -a disk_args=()
-    # shellcheck disable=SC2034
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker2.img marker2 1
+    qemu_add_drive disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_args "$TESTDIR"/marker2.img marker2 1
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \

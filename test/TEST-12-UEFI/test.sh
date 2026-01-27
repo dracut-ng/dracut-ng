@@ -28,10 +28,8 @@ client_run() {
     client_test_start "$test_name"
 
     declare -a disk_args=()
-    # shellcheck disable=SC2034  # disk_index used in qemu_add_drive
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
-    qemu_add_drive disk_index disk_args "$TESTDIR"/squashfs.img root
+    qemu_add_drive disk_args "$TESTDIR"/marker.img marker
+    qemu_add_drive disk_args "$TESTDIR"/squashfs.img root
 
     test_marker_reset
     "$testdir"/run-qemu "${disk_args[@]}" -net none \
