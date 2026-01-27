@@ -221,7 +221,7 @@ test_run() {
 
 test_setup() {
     call_dracut --tmpdir "$TESTDIR" \
-        --add-confdir test-root --omit systemd \
+        --add-confdir test-root \
         -a "$USE_NETWORK url-lib nfs" \
         -I "ip grep setsid" \
         -f "$TESTDIR"/initramfs.root || return 1
@@ -230,7 +230,7 @@ test_setup() {
 
     # Create what will eventually be the server root filesystem onto an overlay
     call_dracut --tmpdir "$TESTDIR"/server/overlay \
-        --add-confdir test-root --omit systemd \
+        --add-confdir test-root \
         -a "bash $USE_NETWORK nfs" \
         --add-drivers "nfsd sunrpc lockd" \
         -I "exportfs pidof rpc.nfsd rpc.mountd dhcpd" \
