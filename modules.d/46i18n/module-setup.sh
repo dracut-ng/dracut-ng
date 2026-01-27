@@ -9,7 +9,9 @@ check() {
     return 0
 }
 
-# called by dracut
+
+# due to the dependencies below, this dracut module needs to be ordered later than the plymouth dracut module
+
 depends() {
     # Include "drm" / "simpledrm" to be able to set the console font properly
     local _module _drm
