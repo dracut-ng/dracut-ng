@@ -356,35 +356,60 @@ setdebug() {
 
 setdebug
 
-source_all() {
-    local f
+hookdir=/var/lib/dracut/hooks
+export hookdir
+
+list_hooks() {
     local _dir
+    local _pattern
+    local _hook
     _dir=$1
-    shift
-    [ "$_dir" ] && [ -d "/$_dir" ] || return
-    for f in "/$_dir"/*.sh; do
-        if [ -e "$f" ]; then
-            # shellcheck disable=SC1090
-            # shellcheck disable=SC2240
-            . "$f" "$@"
+    _pattern=$2
+    [ -z "$_pattern" ] && _pattern="*.sh"
+    for _f in "/var/lib/dracut/hooks/$_dir/"$_pattern "/etc/dracut/hooks/$_dir/"$_pattern "/lib/dracut/hooks/$_dir/"$_pattern; do
+        [ ! -f "$_f" ] && continue
+        echo "${_f##*/}"
+    done | sort -u | while read -r _hook; do
+        # Hooks are executed in the alphabetical order. It is also allowed to
+        # override hooks by creating a file with the same name in a directory
+        # which has higher priority. '/var/lib/dracut/hooks' gets top priority,
+        # '/etc/dracut/hooks' comes after and /lib/dracut/hooks is the least
+        # priviliged location.
+        if [ -f "/var/lib/dracut/hooks/$_dir/$_hook" ]; then
+            echo "/var/lib/dracut/hooks/$_dir/$_hook"
+        elif [ -f "/etc/dracut/hooks/$_dir/$_hook" ]; then
+            echo "/etc/dracut/hooks/$_dir/$_hook"
+        else
+            echo "/lib/dracut/hooks/$_dir/$_hook"
         fi
     done
 }
-
-hookdir=/lib/dracut/hooks
-export hookdir
 
 source_hook() {
     local _dir
     _dir=$1
     shift
-    source_all "/lib/dracut/hooks/$_dir" "$@"
+    for f in $(list_hooks "$_dir"); do
+        # shellcheck disable=SC1090
+        # shellcheck disable=SC2240
+        . "$f" "$@"
+    done
+}
+
+rm_hooks() {
+    local _dir
+    local _pattern
+    _dir=$1
+    [ -z "$_dir" ] && exit 1
+    _pattern=$2
+    [ -z "$_pattern" ] && exit 1
+    # shellcheck disable=SC2086
+    rm -f -- "$hookdir/$_dir/"$_pattern
 }
 
 check_finished() {
     local f rc=0
-    for f in "$hookdir"/initqueue/finished/*.sh; do
-        [ "$f" = "$hookdir/initqueue/finished/*.sh" ] && return 0
+    for f in $(list_hooks "initqueue/finished"); do
         # shellcheck disable=SC1090
         if [ -e "$f" ] && (. "$f"); then
             rm -f "$f"
@@ -1063,7 +1088,8 @@ check_meminfo() {
 }
 
 remove_hostonly_files() {
-    rm -fr /etc/cmdline /etc/cmdline.d/*.conf "$hookdir"/initqueue/finished/*.sh
+    rm -fr /etc/cmdline /etc/cmdline.d/*.conf
+    rm_hooks "initqueue/finished" "*.sh"
     if [ -f /lib/dracut/hostonly-files ]; then
         while read -r line || [ -n "$line" ]; do
             [ -e "$line" ] || [ -h "$line" ] || continue
