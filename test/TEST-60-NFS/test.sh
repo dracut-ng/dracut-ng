@@ -258,28 +258,7 @@ test_setup() {
     echo "TEST FETCH FILE" > "$initdir"/root/fetchfile
     inst_init ./client-init.sh "$initdir"
 
-    # create an initramfs that will create the target root filesystem.
-    # We do it this way so that we do not risk trashing the host mdraid
-    # devices, volume groups, encrypted partitions, etc.
-    call_dracut -i "$TESTDIR"/server/overlay / \
-        --add-confdir test-makeroot \
-        -a "bash" \
-        -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot
-    rm -rf -- "$TESTDIR"/server
-
-    declare -a disk_args=()
-    # shellcheck disable=SC2034
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/server.img root 1
-
-    # Invoke KVM and/or QEMU to actually create the target filesystem.
-    "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -append "root=/dev/dracut/root rw rootfstype=ext4 quiet" \
-        -initrd "$TESTDIR"/initramfs.makeroot
-    test_marker_check dracut-root-block-created
+    build_ext4_image "$TESTDIR/server/overlay/source" "$TESTDIR"/server.img dracut
 
     # Make client's dracut image
     test_dracut \
