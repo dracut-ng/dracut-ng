@@ -173,7 +173,7 @@ test_setup() {
 
     rm -rf -- "$TESTDIR"/overlay
     call_dracut --tmpdir "$TESTDIR" \
-        --add-confdir test-root --omit systemd \
+        --add-confdir test-root \
         -a "$USE_NETWORK iscsi" \
         -d "iscsi_tcp crc32c ipv6 af_packet" \
         -I "ip grep sleep setsid chmod modprobe pidof tgtd tgtadm" \
