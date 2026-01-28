@@ -1109,6 +1109,31 @@ The **rd.overlay.readonly** option, which allows a persistent overlayfs to
 be mounted read-only through a higher level transient overlay directory, has
 been implemented through the multiple lower layers feature of OverlayFS.
 
+**rd.overlay=**__{LABEL=<label>|UUID=<uuid>|PARTUUID=<uuid>|PARTLABEL=<label>|/dev/<device>}__::
+Specifies the storage device for persistent overlay (for both live images and
+regular OverlayFS).  When a block device is specified, it will be mounted and
+used for persistent overlay storage.  For live images with LABEL= specification,
+if the labeled partition does not exist, it will be automatically created using
+available free space on the device.
++
+Supported device specifications:
++
+--
+* _LABEL=<label>_ - Use the device with the specified filesystem label.
+* _UUID=<uuid>_ - Use the device with the specified UUID.
+* _PARTUUID=<uuid>_ - Use the device with the specified partition UUID.
+* _PARTLABEL=<label>_ - Use the device with the specified partition label.
+* _/dev/<device>_ - Use the specified device path directly.
+--
++
+[listing]
+.Examples
+----
+rd.overlay=LABEL=persist
+rd.overlay=UUID=12345678-1234-1234-1234-123456789abc
+rd.overlay=/dev/sdb1
+----
+
 Booting live images
 ~~~~~~~~~~~~~~~~~~~
 Requires the dracut 'dmsquash-live' module.
