@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # Get the output of 'ip addr show' and filter out lo interface
 ip_output=$(ip -o -4 addr show | grep -v ': lo')
