@@ -227,7 +227,7 @@ Creates initial ramdisk images for preloading modules
   -I, --install [LIST]  Install the space separated list of files into the
                          initramfs.
   --remove      [LIST]  Remove a space-separated list of files and directories
-                        from the initramfs.
+                        from the initramfs (supports globbing).
   --install-optional [LIST]
                         Install the space separated list of files into the
                          initramfs, if they exist.

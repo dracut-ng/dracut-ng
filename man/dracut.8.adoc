@@ -476,6 +476,7 @@ example:
 
 **--remove** _<file/dir list>_::
     Remove a space-separated list of files and directories from the initramfs.
+    These __file/dir__ are shell wildcard patterns (see *glob*(7)).
 
 **--install-optional** _<file list>_::
     Install the space separated list of files into the initramfs, if they exist.
