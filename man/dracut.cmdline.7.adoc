@@ -1470,65 +1470,65 @@ Deprecated, renamed Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Here is a list of options and their new replacement.
 
-rd_NO_DM:: rd.dm=0
+rd_NO_DM:: rd.dm=0 (since version 008)
 
-rd_NO_MDADMCONF:: rd.md.conf=0
+rd_NO_MDADMCONF:: rd.md.conf=0 (since version 008)
 
-rd_NO_MDIMSM:: rd.md.imsm=0
+rd_NO_MDIMSM:: rd.md.imsm=0 (since version 008)
 
-rd_NO_MD:: rd.md=0
+rd_NO_MD:: rd.md=0 (since version 008)
 
-rd_MD_UUID:: rd.md.uuid
+rd_MD_UUID:: rd.md.uuid (since version 008)
 
-iscsi_initiator:: rd.iscsi.initiator
+iscsi_initiator:: rd.iscsi.initiator (since version 008)
 
-iscsi_target_name:: rd.iscsi.target.name
+iscsi_target_name:: rd.iscsi.target.name (since version 008)
 
-iscsi_target_ip:: rd.iscsi.target.ip
+iscsi_target_ip:: rd.iscsi.target.ip (since version 008)
 
-iscsi_target_port:: rd.iscsi.target.port
+iscsi_target_port:: rd.iscsi.target.port (since version 008)
 
-iscsi_target_group:: rd.iscsi.target.group
+iscsi_target_group:: rd.iscsi.target.group (since version 008)
 
-iscsi_username:: rd.iscsi.username
+iscsi_username:: rd.iscsi.username (since version 008)
 
-iscsi_password:: rd.iscsi.password
+iscsi_password:: rd.iscsi.password (since version 008)
 
-iscsi_in_username:: rd.iscsi.in.username
+iscsi_in_username:: rd.iscsi.in.username (since version 008)
 
-iscsi_in_password:: rd.iscsi.in.password
+iscsi_in_password:: rd.iscsi.in.password (since version 008)
 
-iscsi_firmware:: rd.iscsi.firmware=0
+iscsi_firmware:: rd.iscsi.firmware=0 (since version 008)
 
-rdudevdebug:: rd.udev.udev_log=debug
+rdudevdebug:: rd.udev.udev_log=debug (since version 102)
 
-rdudevinfo:: rd.udev.udev_log=info
+rdudevinfo:: rd.udev.udev_log=info (since version 102)
 
-rd.udev.debug:: rd.udev.udev_log=debug
+rd.udev.debug:: rd.udev.udev_log=debug (since version 102)
 
-rd.udev.info:: rd.udev.udev_log=info
+rd.udev.info:: rd.udev.udev_log=info (since version 102)
 
-KEYMAP:: vconsole.keymap
+KEYMAP:: vconsole.keymap (since version 008)
 
-KEYTABLE:: vconsole.keymap
+KEYTABLE:: vconsole.keymap (since version 008)
 
-SYSFONT:: vconsole.font
+SYSFONT:: vconsole.font (since version 008)
 
-CONTRANS:: vconsole.font.map
+CONTRANS:: vconsole.font.map (since version 008)
 
-UNIMAP:: vconsole.font.unimap
+UNIMAP:: vconsole.font.unimap (since version 008)
 
-UNICODE:: vconsole.unicode
+UNICODE:: vconsole.unicode (since version 008)
 
-EXT_KEYMAP:: vconsole.keymap.ext
+EXT_KEYMAP:: vconsole.keymap.ext (since version 008)
 
-rd.live.overlay.overlayfs:: rd.overlayfs
+rd.live.overlay.overlayfs:: rd.overlayfs (since version 110)
 
-rd.live.overlay.readonly:: rd.overlay.readonly
+rd.live.overlay.readonly:: rd.overlay.readonly (since version 110)
 
-rd.live.overlay:: rd.overlay
+rd.live.overlay:: rd.overlay (since version 110)
 
-rd.live.overlay.reset:: rd.overlay.reset
+rd.live.overlay.reset:: rd.overlay.reset (since version 110)
 
 Configuration in the Initramfs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
