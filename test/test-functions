@@ -112,6 +112,35 @@ client_test_end() {
     rm "$TESTDIR/client_test_name.txt"
 }
 
+# Start a HTTP server that serves the content of TESTDIR
+start_webserver() {
+    local pid port
+
+    echo "Starting HTTP server..." >&2
+    python3 -u -m http.server -d "$TESTDIR" 0 > "$TESTDIR/webserver.log" 2>&1 &
+    pid=$!
+    echo "$pid" > "$TESTDIR/webserver.pid"
+
+    while ! grep -q 'Serving HTTP on' "$TESTDIR/webserver.log"; do
+        echo "sleeping..." >&2
+        sleep 0.05
+    done
+
+    port=$(sed -n 's/.*port \([0-9]\+\).*/\1/p' "$TESTDIR/webserver.log")
+    echo "HTTP server running on port $port (pid $pid)" >&2
+    echo "$port"
+}
+
+# Stop HTTP server that was started by start_webserver
+stop_webserver() {
+    if [[ -s "$TESTDIR/webserver.pid" ]]; then
+        pid=$(cat "$TESTDIR/webserver.pid")
+        echo "Stopping HTTP server (pid $pid)..." >&2
+        kill "$pid"
+        rm "$TESTDIR/webserver.pid"
+    fi
+}
+
 # Wait for the server QEMU has been started up.
 # It should print "Serving" in the server.log in that case.
 wait_for_server_startup() {

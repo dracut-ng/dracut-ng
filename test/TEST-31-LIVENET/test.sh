@@ -19,24 +19,6 @@ test_check() {
     fi
 }
 
-start_webserver() {
-    local pid port
-
-    echo "Starting HTTP server..." >&2
-    python3 -u -m http.server -d "$TESTDIR" 0 > "$TESTDIR/webserver.log" 2>&1 &
-    pid=$!
-    echo "$pid" > "$TESTDIR/webserver.pid"
-
-    while ! grep -q 'Serving HTTP on' "$TESTDIR/webserver.log"; do
-        echo "sleeping..." >&2
-        sleep 0.05
-    done
-
-    port=$(sed -n 's/.*port \([0-9]\+\).*/\1/p' "$TESTDIR/webserver.log")
-    echo "HTTP server running on port $port (pid $pid)" >&2
-    echo "$port"
-}
-
 client_run() {
     local test_name="$1"
     local append="$2"
@@ -70,12 +52,7 @@ test_setup() {
 }
 
 test_cleanup() {
-    if [[ -s "$TESTDIR/webserver.pid" ]]; then
-        pid=$(cat "$TESTDIR/webserver.pid")
-        echo "Stopping HTTP server (pid $pid)..." >&2
-        kill "$pid"
-        rm "$TESTDIR/webserver.pid"
-    fi
+    stop_webserver
 }
 
 # shellcheck disable=SC1090
