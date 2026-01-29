@@ -43,7 +43,7 @@ fi
 
 # run the test case specific test assertion if exists
 if [ -x "/assertion.sh" ]; then
-    . /assertion.sh
+    /assertion.sh
 fi
 
 if [ -s /run/failed ]; then
