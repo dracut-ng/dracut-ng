@@ -7,3 +7,4 @@ ExecStart=/sbin/test-init
 Type=oneshot
 StandardInput=tty
 StandardOutput=tty
+SuccessExitStatus=SIGTERM
