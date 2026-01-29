@@ -4,8 +4,14 @@ command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
 getargbool 0 rd.overlayfs -d rd.live.overlay.overlayfs && overlayfs="yes"
 getargbool 0 rd.overlay.readonly -d rd.live.overlayfs.readonly && readonly_overlay="--readonly" || readonly_overlay=""
+overlay=$(getarg rd.overlay -d rd.live.overlay)
 
-[ -n "$overlayfs" ] || return 0
+[ -n "$overlayfs" ] || [ -n "$overlay" ] || return 0
+
+# Only proceed if prepare-overlayfs.sh has run and set up rootfsbase.
+# This handles the case where root isn't available yet (e.g., network root like NFS).
+# The script will be called again at pre-pivot when the root is mounted.
+[ -e /run/rootfsbase ] || return 0
 
 if [ -n "$readonly_overlay" ] && [ -h /run/overlayfs-r ]; then
     ovlfs=lowerdir=/run/overlayfs-r:/run/rootfsbase
