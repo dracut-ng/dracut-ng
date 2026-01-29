@@ -174,14 +174,8 @@ client_run() {
 make_encrypted_root() {
     rm -fr "$TESTDIR"/overlay
     # Create what will eventually be our root filesystem onto an overlay
-    call_dracut --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -I "ip grep" \
-        --no-hostonly \
-        -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source
-    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
-    rm -rf "$TESTDIR"/dracut.*
+    build_client_rootfs "$TESTDIR/overlay/source"
+    inst_multiple ip grep
     inst_init ./client-init.sh "$TESTDIR"/overlay/source
 
     # create an initramfs that will create the target root filesystem.
@@ -210,14 +204,8 @@ make_encrypted_root() {
 
 make_client_root() {
     rm -fr "$TESTDIR"/overlay
-    call_dracut --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -I "ip" \
-        --no-hostonly \
-        -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source
-    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
-    rm -rf "$TESTDIR"/dracut.*
+    build_client_rootfs "$TESTDIR/overlay/source"
+    inst_multiple ip
     inst_init ./client-init.sh "$TESTDIR"/overlay/source
 
     build_ext4_image "$TESTDIR/overlay/source" "$TESTDIR"/unencrypted.img dracut

@@ -77,16 +77,7 @@ test_setup() {
     fi
 
     # Create what will eventually be our root filesystem onto an overlay
-    call_dracut --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -a "$dracut_modules" \
-        -f "$TESTDIR"/initramfs.root
-
-    KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.root)
-
-    mkdir -p "$TESTDIR"/overlay/source
-    cp -a "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
-    rm -rf "$TESTDIR"/dracut.*
+    build_client_rootfs "$TESTDIR/overlay/source"
 
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
@@ -96,7 +87,9 @@ test_setup() {
         -a "btrfs crypt" \
         -I "mkfs.btrfs cryptsetup" \
         -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION"
+        -f "$TESTDIR"/initramfs.makeroot
+
+    KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.makeroot)
 
     # Create the blank file to use as a root filesystem
     declare -a disk_args=()

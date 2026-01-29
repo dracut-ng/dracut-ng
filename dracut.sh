@@ -1500,21 +1500,20 @@ if [[ ${hostonly-} == "-h" ]] && [[ $no_kernel != yes ]]; then
     fi
 fi
 
-[[ ${DRACUT_RESOLVE_LAZY-} ]] || export DRACUT_RESOLVE_DEPS=1
-
 inst_symlink() {
-    local _ret _hostonly_install
+    local _ret _hostonly_install _resolve_deps
     if [[ $1 == "-H" ]] && [[ $hostonly ]]; then
         _hostonly_install="-H"
         shift
     fi
     [[ -e ${initdir}/"${2:-$1}" ]] && return 0 # already there
     [[ -L $1 ]] || return 1
-    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} ${_hostonly_install:+-H} "$@"; then
+    [[ ${DRACUT_RESOLVE_LAZY-} ]] || _resolve_deps=1
+    if $DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${_resolve_deps:+-l} ${DRACUT_FIPS_MODE:+-f} ${_hostonly_install:+-H} "$@"; then
         return 0
     else
         _ret=$?
-        derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${DRACUT_RESOLVE_DEPS:+-l} ${DRACUT_FIPS_MODE:+-f} ${_hostonly_install:+-H} "$@"
+        derror FAILED: "$DRACUT_INSTALL" ${dracutsysrootdir:+-r "$dracutsysrootdir"} ${initdir:+-D "$initdir"} ${loginstall:+-L "$loginstall"} ${_resolve_deps:+-l} ${DRACUT_FIPS_MODE:+-f} ${_hostonly_install:+-H} "$@"
         return $_ret
     fi
 }
@@ -2659,7 +2658,6 @@ if ! [[ $print_cmdline ]] && ! [[ $printconfig ]]; then
     inst "$DRACUT_TESTBIN"
     if ! $DRACUT_INSTALL ${initdir:+-D "$initdir"} ${dracutsysrootdir:+-r "$dracutsysrootdir"} -R "$DRACUT_TESTBIN" &> /dev/null; then
         unset DRACUT_RESOLVE_LAZY
-        export DRACUT_RESOLVE_DEPS=1
     fi
     rm -fr -- "${initdir:?}"/*
 fi
@@ -2878,7 +2876,6 @@ if [[ $kernel_only != yes ]]; then
 
     # Now we are done with lazy resolving, always install dependencies
     unset DRACUT_RESOLVE_LAZY
-    export DRACUT_RESOLVE_DEPS=1
 fi
 
 for ((i = 0; i < ${#include_src[@]}; i++)); do
