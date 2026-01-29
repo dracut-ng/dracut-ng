@@ -50,7 +50,7 @@ squash_install() {
     if [[ $_busybox ]]; then
         module_install "busybox"
     else
-        DRACUT_RESOLVE_DEPS=1 inst_multiple sh mount modprobe mkdir switch_root grep umount
+        DRACUT_RESOLVE_LAZY="" inst_multiple sh mount modprobe mkdir switch_root grep umount
 
         # libpthread workaround: pthread_cancel wants to dlopen libgcc_s.so
         inst_libdir_file -o "libgcc_s.so*"
@@ -88,7 +88,7 @@ squash_installpost() {
     # Rescue the dracut spec files so dracut rebuild and lsinitrd can work
     for _file in "$initdir"/usr/lib/dracut/*; do
         [[ -f $_file ]] || continue
-        DRACUT_RESOLVE_DEPS=1 dstdir=$squashdir inst "$_file" "${_file#"$initdir"}"
+        DRACUT_RESOLVE_LAZY="" dstdir=$squashdir inst "$_file" "${_file#"$initdir"}"
     done
 
     # Remove everything that got squashed into the image
