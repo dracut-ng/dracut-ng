@@ -20,6 +20,10 @@ test_check() {
         return 1
     fi
 
+    if ! command -v xorriso &> /dev/null; then
+        echo "Test needs xorriso... Skipping"
+        return 1
+    fi
 }
 
 client_run() {
@@ -78,10 +82,7 @@ test_run() {
 
     client_run "erofs" "root=live:/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_erofs"
 
-    # Run the iso test only if xorriso is available
-    if command -v xorriso &> /dev/null; then
-        client_run "iso" "iso-scan/filename=linux.iso root=live:/dev/disk/by-label/ISO rd.driver.pre=squashfs rd.driver.pre=ext4"
-    fi
+    client_run "iso" "iso-scan/filename=linux.iso root=live:/dev/disk/by-label/ISO rd.driver.pre=squashfs rd.driver.pre=ext4"
 
     reset_overlay_partition
     client_run "autooverlay" "rd.live.image rd.overlay=LABEL=persist rd.live.dir=LiveOS"
@@ -128,11 +129,9 @@ EOF
     qemu_add_drive disk_args "$TESTDIR"/root_iso.img root_iso 1
 
     # Write the iso to the partition
-    if command -v xorriso &> /dev/null; then
-        mkdir "$TESTDIR"/iso
-        xorriso -as mkisofs -output "$TESTDIR"/iso/linux.iso "$TESTDIR"/live/ -volid "ISO" -iso-level 3
-        mkfs.ext4 -q -L dracut_iso -d "$TESTDIR"/iso/ "$TESTDIR"/root_iso.img
-    fi
+    mkdir "$TESTDIR"/iso
+    xorriso -as mkisofs -output "$TESTDIR"/iso/linux.iso "$TESTDIR"/live/ -volid "ISO" -iso-level 3
+    mkfs.ext4 -q -L dracut_iso -d "$TESTDIR"/iso/ "$TESTDIR"/root_iso.img
 
     local dracut_modules="dmsquash-live-autooverlay convertfs pollcdrom kernel-modules kernel-modules-extra qemu"
 
