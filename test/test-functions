@@ -75,6 +75,97 @@ quote_args() {
     echo "${args[*]}"
 }
 
+# Create the base for a trivial root file system
+build_rootfs_base() {
+    local rootdir="$1"
+
+    # Create basic directory structure (with merged /usr)
+    test ! -e "${rootdir}"
+    mkdir -p "${rootdir}"
+    for subdir in etc dev proc run sys tmp usr usr/bin usr/lib usr/sbin var; do
+        mkdir "${rootdir}/${subdir}"
+    done
+    for subdir in bin lib sbin; do
+        ln -s "usr/$subdir" "${rootdir}/${subdir}"
+    done
+
+    # Include os-release to make systemd's initrd-switch-root.service happy
+    cp /usr/lib/os-release "$rootdir/usr/lib/os-release"
+}
+
+# Expects dracut-functions.sh being sourced and configured
+install_minimal_systemd() {
+    local systemdutildir=/usr/lib/systemd
+    inst_multiple \
+        "$systemdutildir"/system/basic.target \
+        "$systemdutildir"/system/ctrl-alt-del.target \
+        "$systemdutildir"/system/final.target \
+        "$systemdutildir"/system/multi-user.target \
+        "$systemdutildir"/system/poweroff.target \
+        "$systemdutildir"/system/rescue.target \
+        "$systemdutildir"/system/shutdown.target \
+        "$systemdutildir"/system/sysinit.target \
+        "$systemdutildir"/system/systemd-poweroff.service \
+        "$systemdutildir"/system/umount.target \
+        "$systemdutildir"/systemd \
+        "$systemdutildir"/systemd-executor \
+        "$systemdutildir"/systemd-shutdown \
+        systemctl umount
+
+    # Install required libraries.
+    _arch=${DRACUT_ARCH:-$(uname -m)}
+    inst_libdir_file {"tls/$_arch/",tls/,"$_arch/",}"libkmod.so*"
+
+    : > "$rootdir/etc/machine-id"
+    chmod 444 "$rootdir/etc/machine-id"
+}
+
+# Create a minimal root file system to simulate a client
+build_client_rootfs() {
+    local rootdir="$1"
+    local binaries
+
+    build_rootfs_base "$rootdir"
+
+    if [[ "$(type -t inst_multiple 2> /dev/null)" != "function" ]]; then
+        # shellcheck source=./dracut-functions.sh
+        . "$PKGLIBDIR/dracut-functions.sh"
+    fi
+    # variables for inst* functions
+    export DRACUT_NO_XATTR=1
+    initdir="$rootdir"
+
+    binaries=$(sed -n "s/^# required binaries: \(.*\)/\1/p" "$PKGLIBDIR/modules.d/70test-root/test-init.sh")
+    # shellcheck disable=SC2086
+    inst_multiple $binaries
+
+    local systemdutildir=/usr/lib/systemd
+    if [[ -x "$systemdutildir/systemd" ]]; then
+        install_minimal_systemd
+        inst_script "$PKGLIBDIR/modules.d/70test-root/test-init.sh" "/sbin/test-init"
+        inst_simple "$PKGLIBDIR/modules.d/70test-root/testsuite.service" "$systemdutildir/system/testsuite.service"
+        inst_simple "$PKGLIBDIR/modules.d/70test-root/testsuite.target" "$systemdutildir/system/testsuite.target"
+        mkdir "${rootdir}${systemdutildir}/system/testsuite.target.wants"
+        ln -sfn ../testsuite.service "${rootdir}${systemdutildir}/system/testsuite.target.wants/testsuite.service"
+        ln -sfn "testsuite.target" "${rootdir}${systemdutildir}/system/default.target"
+        ln -sfn ../lib/systemd/systemd "${rootdir}/sbin/init"
+    else
+        inst_script "$PKGLIBDIR/modules.d/70test-root/test-init.sh" /sbin/init
+        inst poweroff
+    fi
+
+    if [[ -x assertion.sh ]]; then
+        inst_script ./assertion.sh /assertion.sh
+        binaries=$(sed -n "s/^# required binaries: \(.*\)/\1/p" ./assertion.sh)
+        # shellcheck disable=SC2086
+        inst_multiple $binaries
+    fi
+
+    if command -v hardlink > /dev/null; then
+        hardlink -q "$rootdir"
+    fi
+}
+
 # Call dracut and log its call in verbose mode
 call_dracut() {
     # Uncomment this to debug failures

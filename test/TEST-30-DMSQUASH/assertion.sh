@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# required binaries: grep sync
+
 # Check for both new (rd.overlay) and deprecated (rd.live.overlay) parameter names
 if grep -qE ' rd\.(live\.)?overlay=LABEL=persist ' /proc/cmdline; then
     # Writing to a file in the root filesystem lets test_run() verify that the autooverlay module successfully created

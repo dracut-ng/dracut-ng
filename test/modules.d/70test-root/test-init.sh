@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# required binaries: cat dd grep mkdir mount sync
+
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
 # shellcheck disable=SC2317,SC2329  # called via EXIT trap

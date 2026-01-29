@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# required binaries: cat grep
+
 if ! grep -q " overlay " /proc/mounts; then
     echo "overlay filesystem not found in /proc/mounts" >> /run/failed
 fi

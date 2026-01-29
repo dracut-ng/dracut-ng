@@ -77,14 +77,7 @@ test_setup() {
     fi
 
     # Create what will eventually be our root filesystem onto an overlay
-    call_dracut --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -a "$dracut_modules" \
-        -f "$TESTDIR"/initramfs.root
-
-    mkdir -p "$TESTDIR"/overlay/source
-    cp -a "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
-    rm -rf "$TESTDIR"/dracut.*
+    build_client_rootfs "$TESTDIR/overlay/source"
 
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid

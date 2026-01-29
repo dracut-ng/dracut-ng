@@ -110,12 +110,7 @@ test_makeroot() {
 
 test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
-    call_dracut --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source
-    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
-    rm -rf "$TESTDIR"/dracut.*
+    build_client_rootfs "$TESTDIR/overlay/source"
 
     # pass enviroment variables to make the root filesystem
     echo "TEST_FSTYPE=${TEST_FSTYPE}" > "$TESTDIR"/overlay/env
