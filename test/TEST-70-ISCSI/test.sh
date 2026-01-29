@@ -123,14 +123,8 @@ test_check() {
 
 test_setup() {
     # Create client root filesystem
-    call_dracut --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -I "ip grep setsid" \
-        -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source
-    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
-    rm -rf "$TESTDIR"/dracut.*
-
+    build_client_rootfs "$TESTDIR/overlay/source"
+    inst_multiple ip grep setsid
     mkdir -p -- "$TESTDIR"/overlay/source/var/lib/nfs/rpc_pipefs
     inst_init ./client-init.sh "$TESTDIR"/overlay/source
 

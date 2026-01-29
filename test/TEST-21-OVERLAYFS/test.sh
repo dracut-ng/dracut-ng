@@ -36,12 +36,8 @@ test_run() {
 }
 
 test_setup() {
-    call_dracut --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -i ./assertion.sh /assertion.sh \
-        -f "$TESTDIR"/initramfs.root
-
-    build_ext4_image "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img dracut
+    build_client_rootfs "$TESTDIR/rootfs"
+    build_ext4_image "$TESTDIR/rootfs" "$TESTDIR"/root.img dracut
 
     rm -f "$TESTDIR"/overlay.img
     truncate -s 32M "$TESTDIR"/overlay.img

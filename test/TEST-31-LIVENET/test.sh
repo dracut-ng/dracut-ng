@@ -41,12 +41,8 @@ test_run() {
 }
 
 test_setup() {
-    # create root filesystem
-    call_dracut --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -f "$TESTDIR"/initramfs.root
-
-    mksquashfs "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR/root.squashfs" -quiet
+    build_client_rootfs "$TESTDIR/rootfs"
+    mksquashfs "$TESTDIR/rootfs" "$TESTDIR/root.squashfs" -quiet
 
     test_dracut -a "livenet" --no-hostonly
 }
