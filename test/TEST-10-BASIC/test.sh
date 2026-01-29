@@ -15,12 +15,8 @@ test_run() {
 }
 
 test_setup() {
-    # create root filesystem
-    call_dracut --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -f "$TESTDIR"/initramfs.root
-
-    build_ext4_image "$TESTDIR"/dracut.*/initramfs/ "$TESTDIR"/root.img dracut
+    build_client_rootfs "$TESTDIR/rootfs"
+    build_ext4_image "$TESTDIR/rootfs" "$TESTDIR"/root.img dracut
 
     test_dracut
 }
