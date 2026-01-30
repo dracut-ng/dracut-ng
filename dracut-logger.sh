@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export __DRACUT_LOGGER__=1
-
 ## @brief Logging facility module for dracut both at build- and boot-time.
 #
 # @section intro Introduction
