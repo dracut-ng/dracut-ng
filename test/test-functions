@@ -164,6 +164,8 @@ build_client_rootfs() {
     if command -v hardlink > /dev/null; then
         hardlink -q "$rootdir"
     fi
+
+    unset DRACUT_NO_XATTR
 }
 
 # Call dracut and log its call in verbose mode
