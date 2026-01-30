@@ -1,4 +1,5 @@
 #!/bin/sh
+set -eu
 
 # required binaries: cat dd grep mkdir mount sync
 
