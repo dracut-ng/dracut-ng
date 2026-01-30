@@ -1533,9 +1533,21 @@ _detect_library_directories() {
 }
 
 if ! is_func dinfo > /dev/null 2>&1; then
-    # shellcheck source=./dracut-logger.sh
-    . "${BASH_SOURCE[0]%/*}/dracut-logger.sh"
-    dlog_init
+    # If dracut-functions.sh is sourced from tests, the logger initialization is
+    # borked, with some readonly variables wrongly set and others unset.
+    if ! [[ "${dracut_cmd-}" ]]; then
+        dtrace() { :; }
+        ddebug() { :; }
+        dinfo() { :; }
+        dwarn() { :; }
+        dwarning() { :; }
+        derror() { :; }
+        dfatal() { :; }
+    else
+        # shellcheck source=./dracut-logger.sh
+        . "${BASH_SOURCE[0]%/*}/dracut-logger.sh"
+        dlog_init
+    fi
 fi
 
 DRACUT_LDCONFIG=${DRACUT_LDCONFIG:-ldconfig}
