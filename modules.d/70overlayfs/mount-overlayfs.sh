@@ -5,8 +5,9 @@ command -v getarg > /dev/null || . /lib/dracut-lib.sh
 getargbool 0 rd.overlayfs -d rd.live.overlay.overlayfs && overlayfs="yes"
 getargbool 0 rd.overlay.readonly -d rd.live.overlayfs.readonly && readonly_overlay="--readonly" || readonly_overlay=""
 overlay=$(getarg rd.overlay -d rd.live.overlay)
+overlay_crypt=$(getarg rd.overlay.crypt)
 
-[ -n "$overlayfs" ] || [ -n "$overlay" ] || return 0
+[ -n "$overlayfs" ] || [ -n "$overlay" ] || [ -n "$overlay_crypt" ] || return 0
 
 # Only proceed if prepare-overlayfs.sh has run and set up rootfsbase.
 # This handles the case where root isn't available yet (e.g., network root like NFS).

@@ -5,26 +5,32 @@ command -v getarg > /dev/null || . /lib/dracut-lib.sh
 getargbool 0 rd.overlayfs -d rd.live.overlay.overlayfs && overlayfs="yes"
 getargbool 0 rd.overlay.reset -d rd.live.overlay.reset && reset_overlay="yes"
 overlay=$(getarg rd.overlay -d rd.live.overlay)
+overlay_crypt=$(getarg rd.overlay.crypt)
 
-[ -n "$overlayfs" ] || [ -n "$overlay" ] || return 0
+[ -n "$overlayfs" ] || [ -n "$overlay" ] || [ -n "$overlay_crypt" ] || return 0
 
 overlay_mode="tmpfs"
 overlay_device=""
 
-case "$overlay" in
-    LABEL=* | UUID=* | PARTLABEL=* | PARTUUID=* | /dev/*)
-        overlay_mode="device"
-        overlay_device=$(label_uuid_to_dev "$overlay")
-        if [ ! -b "$overlay_device" ]; then
-            warn "Failed to resolve device from '$overlay', falling back to tmpfs"
+# Determine overlay mode
+if [ -n "$overlay_crypt" ]; then
+    overlay_mode="crypt"
+else
+    case "$overlay" in
+        LABEL=* | UUID=* | PARTLABEL=* | PARTUUID=* | /dev/*)
+            overlay_mode="device"
+            overlay_device=$(label_uuid_to_dev "$overlay")
+            if [ ! -b "$overlay_device" ]; then
+                warn "Failed to resolve device from '$overlay', falling back to tmpfs"
+                overlay_mode="tmpfs"
+            fi
+            ;;
+        *)
+            # For dmsquash-live compatibility, any other format uses tmpfs
             overlay_mode="tmpfs"
-        fi
-        ;;
-    *)
-        # For dmsquash-live compatibility, any other format uses tmpfs
-        overlay_mode="tmpfs"
-        ;;
-esac
+            ;;
+    esac
+fi
 
 # Skip if root not mounted and rootfsbase not set up by another module (e.g. dmsquash-live)
 if ! ismounted "$NEWROOT" && ! [ -e /run/rootfsbase ]; then
@@ -36,7 +42,34 @@ if ! [ -e /run/rootfsbase ]; then
     mount --bind "$NEWROOT" /run/rootfsbase
 fi
 
-if [ "$overlay_mode" = "device" ] && [ -n "$overlay_device" ]; then
+if [ "$overlay_mode" = "crypt" ]; then
+    info "Attempting to set up encrypted overlay"
+
+    # shellcheck disable=SC1091
+    . /lib/overlayfs-crypt-lib.sh
+
+    if overlayfs_crypt_setup "$overlay_crypt"; then
+        overlay_device="$_RET_DEVICE"
+
+        mkdir -m 0755 -p /run/overlayfs-backing
+
+        if mount "$overlay_device" /run/overlayfs-backing; then
+            info "Successfully mounted encrypted overlay on $overlay_device"
+
+            mkdir -m 0755 -p /run/overlayfs-backing/overlay
+            mkdir -m 0755 -p /run/overlayfs-backing/ovlwork
+
+            ln -sf /run/overlayfs-backing/overlay /run/overlayfs
+            ln -sf /run/overlayfs-backing/ovlwork /run/ovlwork
+        else
+            warn "Failed to mount encrypted overlay $overlay_device, falling back to tmpfs"
+            overlay_mode="tmpfs"
+        fi
+    else
+        warn "Failed to set up encrypted overlay, falling back to tmpfs"
+        overlay_mode="tmpfs"
+    fi
+elif [ "$overlay_mode" = "device" ] && [ -n "$overlay_device" ]; then
     info "Attempting to use persistent overlay on $overlay_device"
 
     wait_for_dev -n "$overlay_device"

@@ -18,6 +18,11 @@ if grep -qE 'rd\.overlay=(LABEL|UUID|PARTUUID|PARTLABEL|/dev/)' /proc/cmdline; t
             echo "persistent overlay device not mounted at /run/overlayfs-backing" >> /run/failed
         fi
     fi
+elif grep -q "rd.overlay.crypt=" /proc/cmdline; then
+    # encrypted overlay mode - backing should be mounted
+    if ! grep -q "/run/overlayfs-backing" /proc/mounts; then
+        echo "encrypted overlay not mounted at /run/overlayfs-backing" >> /run/failed
+    fi
 else
     # tmpfs mode - verify persistent backing is NOT mounted
     if grep -q "/run/overlayfs-backing" /proc/mounts; then
@@ -32,4 +37,23 @@ if [ -s /run/failed ]; then
         cat /proc/mounts
         echo "<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< /proc/mounts <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
     } >> /run/failed
+fi
+
+if grep -q "rd.overlay.crypt=" /proc/cmdline; then
+    if [ ! -e /dev/mapper/overlay-crypt ]; then
+        echo "encrypted overlay device /dev/mapper/overlay-crypt not found" >> /run/failed
+    fi
+
+    if ! grep -q "/run/overlayfs-backing" /proc/mounts; then
+        echo "encrypted overlay not mounted at /run/overlayfs-backing" >> /run/failed
+        cat /proc/mounts >> /run/failed
+    fi
+
+    if ! grep -q "/dev/mapper/overlay-crypt.*/run/overlayfs-backing" /proc/mounts 2> /dev/null; then
+        if ! grep -q "/dev/mapper/.*/run/overlayfs-backing" /proc/mounts 2> /dev/null; then
+            if ! grep -q "/run/overlayfs-backing" /proc/mounts; then
+                echo "encrypted overlay backing device not properly mounted" >> /run/failed
+            fi
+        fi
+    fi
 fi
