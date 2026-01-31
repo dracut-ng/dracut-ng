@@ -103,7 +103,7 @@ export __DRACUT_LOGGER__=1
 dlog_init() {
     local __oldumask
     local ret=0
-    local errmsg=
+    local errmsgs=()
     [ -z "${stdloglvl-}" ] && stdloglvl=4
     [ -z "${sysloglvl-}" ] && sysloglvl=0
     [ -z "${kmsgloglvl-}" ] && kmsgloglvl=0
@@ -131,7 +131,7 @@ dlog_init() {
                 # We cannot log to file, so turn this facility off.
                 fileloglvl=0
                 ret=1
-                errmsg="'$logfile' is not a writable file"
+                errmsgs+=("'$logfile' is not a writable file")
             fi
         fi
     fi
@@ -156,7 +156,7 @@ dlog_init() {
             kmsgloglvl=$sysloglvl
             sysloglvl=0
             ret=1
-            errmsg="No '/dev/log' or 'logger' included for syslog logging"
+            errmsgs+=("No '/dev/log' or 'logger' included for syslog logging")
         fi
     fi
 
@@ -216,7 +216,9 @@ dlog_init() {
         dfatal() { :; }
     fi
 
-    [ -n "$errmsg" ] && derror "$errmsg"
+    for errmsg in "${errmsgs[@]}"; do
+        derror "$errmsg"
+    done
 
     return $ret
 }
