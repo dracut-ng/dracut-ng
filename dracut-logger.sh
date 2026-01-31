@@ -153,11 +153,19 @@ dlog_init() {
             exec 15> "$_systemdcatfile"
         elif ! ([[ -S /dev/log ]] && [[ -w /dev/log ]] && command -v logger > /dev/null); then
             # We cannot log to syslog, so turn this facility off.
-            kmsgloglvl=$sysloglvl
+            if [[ -w /dev/kmsg ]]; then
+                kmsgloglvl=$sysloglvl
+            fi
             sysloglvl=0
             ret=1
             errmsgs+=("No '/dev/log' or 'logger' included for syslog logging")
         fi
+    fi
+
+    if ((kmsgloglvl > 0)) && [[ ! -w /dev/kmsg ]]; then
+        kmsgloglvl=0
+        ret=1
+        errmsgs+=("'/dev/kmsg' not writable. Disabling logging to kernel ring buffer.")
     fi
 
     if ((sysloglvl > 0)) || ((kmsgloglvl > 0)); then
