@@ -166,7 +166,6 @@ dlog_init() {
         else
             readonly syslogfacility=daemon
         fi
-        export syslogfacility
     fi
 
     local lvl
@@ -175,7 +174,6 @@ dlog_init() {
         ((lvl > maxloglvl_l)) && maxloglvl_l=$lvl
     done
     readonly maxloglvl=$maxloglvl_l
-    export maxloglvl
 
     if ((stdloglvl < 6)) && ((kmsgloglvl < 6)) && ((fileloglvl < 6)) && ((sysloglvl < 6)); then
         unset dtrace
