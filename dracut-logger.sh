@@ -481,7 +481,7 @@ dlog() {
 dtrace() {
     set +x
     dlog 6 "$@"
-    if [ -n "$debug" ]; then
+    if [ -n "${debug-}" ]; then
         set -x
     fi
 }
@@ -493,7 +493,7 @@ dtrace() {
 ddebug() {
     set +x
     dlog 5 "$@"
-    if [ -n "$debug" ]; then
+    if [ -n "${debug-}" ]; then
         set -x
     fi
 }
@@ -505,7 +505,7 @@ ddebug() {
 dinfo() {
     set +x
     dlog 4 "$@"
-    if [ -n "$debug" ]; then
+    if [ -n "${debug-}" ]; then
         set -x
     fi
 }
@@ -517,7 +517,7 @@ dinfo() {
 dwarn() {
     set +x
     dlog 3 "$@"
-    if [ -n "$debug" ]; then
+    if [ -n "${debug-}" ]; then
         set -x
     fi
 }
@@ -529,7 +529,7 @@ dwarn() {
 dwarning() {
     set +x
     dwarn "$@"
-    if [ -n "$debug" ]; then
+    if [ -n "${debug-}" ]; then
         set -x
     fi
 }
@@ -541,7 +541,7 @@ dwarning() {
 derror() {
     set +x
     dlog 2 "$@"
-    if [ -n "$debug" ]; then
+    if [ -n "${debug-}" ]; then
         set -x
     fi
 }
@@ -553,7 +553,7 @@ derror() {
 dfatal() {
     set +x
     dlog 1 "$@"
-    if [ -n "$debug" ]; then
+    if [ -n "${debug-}" ]; then
         set -x
     fi
 }
