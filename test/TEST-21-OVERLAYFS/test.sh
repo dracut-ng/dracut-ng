@@ -27,12 +27,12 @@ test_run() {
     local overlay_uuid
     overlay_uuid=$(blkid -s UUID -o value "$TESTDIR"/overlay.img)
 
-    client_run "tmpfs overlay" "rd.overlayfs=1"
-    client_run "persistent device overlay (LABEL)" "rd.overlay=LABEL=OVERLAY"
-    client_run "persistent device overlay (UUID)" "rd.overlay=UUID=$overlay_uuid"
+    client_run "tmpfs overlay" "rd.overlayfs=1 test.expect=tmpfs"
+    client_run "persistent device overlay (LABEL)" "rd.overlay=LABEL=OVERLAY test.expect=device"
+    client_run "persistent device overlay (UUID)" "rd.overlay=UUID=$overlay_uuid test.expect=device"
     client_run "persistent device overlay (device path)" \
-        "rd.overlay=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_overlay"
-    client_run "fallback to tmpfs (non-existent LABEL)" "rd.overlay=LABEL=NONEXISTENT"
+        "rd.overlay=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_overlay test.expect=device"
+    client_run "fallback to tmpfs (non-existent LABEL)" "rd.overlay=LABEL=NONEXISTENT test.expect=tmpfs"
 }
 
 test_setup() {
