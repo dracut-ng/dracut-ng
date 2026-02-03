@@ -10,6 +10,7 @@ fi
 
 if [ -z "${PREFIX-}" ]; then
     if ! [ -d /run/initramfs ]; then
+        mkdir -p -m 0755 /run/initramfs/cmdline.d
         mkdir -p -m 0755 /run/initramfs/log
         ln -sfn /run/initramfs/log /var/log
     fi
@@ -128,6 +129,7 @@ getcmdline() {
     local CMDLINE_ETC_D=''
     local CMDLINE_ETC=''
     local CMDLINE_PROC=''
+    local CMDLINE_RUN=''
     unset _line
 
     if [ -e /etc/cmdline ]; then
@@ -146,7 +148,13 @@ getcmdline() {
             CMDLINE_PROC="$CMDLINE_PROC $_line"
         done < /proc/cmdline
     fi
-    CMDLINE="$CMDLINE_ETC_D $CMDLINE_ETC $CMDLINE_PROC"
+    for _i in /run/initramfs/cmdline.d/*.conf; do
+        [ -e "$_i" ] || continue
+        while read -r _line || [ -n "$_line" ]; do
+            CMDLINE_RUN="$CMDLINE_RUN $_line"
+        done < "$_i"
+    done
+    CMDLINE="$CMDLINE_ETC_D $CMDLINE_ETC $CMDLINE_PROC $CMDLINE_RUN"
     printf "%s" "$CMDLINE"
 }
 
