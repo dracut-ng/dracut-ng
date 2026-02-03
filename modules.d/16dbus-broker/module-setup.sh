@@ -55,9 +55,7 @@ install() {
 
     # Adjusting dependencies for initramfs in the dbus socket unit.
     sed -i -e \
-        '/^\[Unit\]/aDefaultDependencies=no\
-        Conflicts=shutdown.target\
-        Before=shutdown.target
+        '/^\[Unit\]/aDefaultDependencies=no\nConflicts=shutdown.target\nBefore=shutdown.target
         /^\[Socket\]/aRemoveOnStop=yes' \
         "$initdir$systemdsystemunitdir/dbus.socket"
 
