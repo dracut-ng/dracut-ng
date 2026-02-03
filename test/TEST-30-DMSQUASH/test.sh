@@ -43,7 +43,10 @@ client_run() {
 check_autooverlay_marker() {
     local rootPartitions part2_info part2_start part2_size
     rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
-    [ "$rootPartitions" -eq 2 ]
+    if [ "$rootPartitions" -ne 2 ]; then
+        echo >&2 "E: Expected two partitions on root.img, but got $rootPartitions."
+        return 1
+    fi
     part2_info=$(sfdisk -d "$TESTDIR"/root.img | grep 'root\.img2')
     part2_start=$(echo "$part2_info" | sed -n 's/.*start= *\([0-9]*\).*/\1/p')
     part2_size=$(echo "$part2_info" | sed -n 's/.*size= *\([0-9]*\).*/\1/p')
