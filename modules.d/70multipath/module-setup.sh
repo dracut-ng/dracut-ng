@@ -165,4 +165,6 @@ EOF
         66-kpartx.rules 67-kpartx-compat.rules \
         11-dm-mpath.rules 11-dm-parts.rules \
         99-z-dm-mpath-late.rules
+    # Debian udev rules
+    inst_rules 56-dm-mpath.rules 56-dm-parts.rules 60-kpartx.rules 60-multipath.rules
 }

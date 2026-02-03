@@ -78,6 +78,8 @@ install() {
     inst "$moddir/dmraid.sh" /sbin/dmraid_scan
 
     inst_rules 66-kpartx.rules 67-kpartx-compat.rules
+    # Debian udev rules
+    inst_rules 60-kpartx.rules
 
     inst_libdir_file "libdmraid-events*.so*"
 
