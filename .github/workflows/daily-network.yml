@@ -48,12 +48,6 @@ jobs:
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                     - container: fedora:rawhide
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
-                    # https://github.com/dracut-ng/dracut-ng/issues/1815
-                    - container: ubuntu:devel
-                      test: "72"
-                    # https://github.com/dracut-ng/dracut-ng/issues/1815
-                    - container: ubuntu:rolling
-                      test: "72"
                     # https://github.com/dracut-ng/dracut-ng/issues/1988
                     - container: debian:sid
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}

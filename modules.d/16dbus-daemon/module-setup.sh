@@ -51,11 +51,13 @@ install() {
         busctl dbus-send dbus-daemon
 
     # Adjusting dependencies for initramfs in the dbus service unit.
+    sed -i -e "/^\(After\|DefaultDependencies\|Wants\)=/d" "$initdir$systemdsystemunitdir/dbus.service"
     sed -i -e \
         '/^\[Unit\]/aDefaultDependencies=no\nConflicts=shutdown.target\nBefore=shutdown.target' \
         "$initdir$systemdsystemunitdir/dbus.service"
 
     # Adjusting dependencies for initramfs in the dbus socket unit.
+    sed -i -e "/^\(After\|DefaultDependencies\|Wants\)=/d" "$initdir$systemdsystemunitdir/dbus.socket"
     sed -i -e \
         '/^\[Unit\]/aDefaultDependencies=no\nConflicts=shutdown.target\nBefore=shutdown.target
         /^\[Socket\]/aRemoveOnStop=yes' \
