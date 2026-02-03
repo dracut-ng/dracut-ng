@@ -82,10 +82,7 @@ install() {
     inst_rules 69-btattach-bcm.rules 60-persistent-input.rules
 
     sed -i -e \
-        '/^\[Unit\]/aDefaultDependencies=no\
-        Conflicts=shutdown.target\
-        Before=shutdown.target\
-        After=dbus.service' \
+        '/^\[Unit\]/aDefaultDependencies=no\nConflicts=shutdown.target\nBefore=shutdown.target\nAfter=dbus.service' \
         "${initdir}/${systemdsystemunitdir}/bluetooth.service"
 
     $SYSTEMCTL -q --root "$initdir" enable bluetooth.service
