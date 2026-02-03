@@ -9,7 +9,7 @@ if getargbool 0 rd.live.debug; then
 fi
 
 gatherData() {
-    overlay=$(getarg rd.overlay -d rd.live.overlay)
+    overlay=$(getarg rd.overlay)
     if [ -z "$overlay" ]; then
         info "Skipping overlay creation: kernel command line parameter 'rd.overlay' is not set"
         exit 0
