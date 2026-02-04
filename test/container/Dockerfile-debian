@@ -29,6 +29,7 @@ RUN if [ "$DISTRIBUTION" = "ubuntu:rolling" ]; then \
     coreutils-from-gnu coreutils-from-uutils- --allow-remove-essential; \
     fi
 
+# libarchive is required by systemd-import for systemd >= v259: https://launchpad.net/bugs/2139822
 RUN \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
     asciidoctor \
@@ -49,6 +50,7 @@ RUN \
     file \
     gcc \
     gpg \
+    gpg-agent \
     iputils-arping \
     iputils-ping \
     iproute2 \
@@ -57,6 +59,7 @@ RUN \
     jq \
     kbd \
     kmod \
+    libarchive13t64 \
     libfido2-1 \
     libkmod-dev \
     libsystemd-dev \
