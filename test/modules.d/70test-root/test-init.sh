@@ -45,6 +45,7 @@ fi
 
 # run the test case specific test assertion if exists
 if [ -x "/assertion.sh" ]; then
+    echo "executing /assertion.sh"
     /assertion.sh
 fi
 
