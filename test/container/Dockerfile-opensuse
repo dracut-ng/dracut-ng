@@ -7,6 +7,7 @@
 # - dbus-broker
 # - network: network-legacy, network-manager
 # - zstd compression
+# - erofs is blacklisted by default and not supported in openSUSE
 
 FROM registry.opensuse.org/opensuse/tumbleweed:latest
 
@@ -22,7 +23,6 @@ RUN zypper --non-interactive install --no-recommends \
     dnsmasq \
     distribution-gpg-keys \
     e2fsprogs \
-    erofs-utils \
     gcc \
     git \
     hmaccalc \
