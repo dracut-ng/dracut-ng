@@ -2,9 +2,9 @@
 
 command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
-getargbool 0 rd.overlayfs && overlayfs="yes"
-getargbool 0 rd.overlay.reset && reset_overlay="yes"
-overlay=$(getarg rd.overlay)
+getargbool 0 rd.overlayfs -d rd.live.overlay.overlayfs && overlayfs="yes"
+getargbool 0 rd.overlay.reset -d rd.live.overlay.reset && reset_overlay="yes"
+overlay=$(getarg rd.overlay -d rd.live.overlay)
 
 [ -n "$overlayfs" ] || [ -n "$overlay" ] || return 0
 

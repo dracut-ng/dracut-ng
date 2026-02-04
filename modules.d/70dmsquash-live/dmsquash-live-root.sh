@@ -23,16 +23,16 @@ squash_image=$(getarg rd.live.squashimg)
 [ -z "$squash_image" ] && squash_image="squashfs.img"
 
 getargbool 0 rd.live.ram && live_ram="yes"
-getargbool 0 rd.overlay.reset && reset_overlay="yes"
-getargbool 0 rd.overlay.readonly && readonly_overlay="--readonly" || readonly_overlay=""
+getargbool 0 rd.overlay.reset -d rd.live.overlay.reset && reset_overlay="yes"
+getargbool 0 rd.overlay.readonly -d rd.live.overlay.readonly && readonly_overlay="--readonly" || readonly_overlay=""
 getargbool 0 rd.live.overlay.nouserconfirmprompt && overlay_no_user_confirm_prompt="--noprompt" || overlay_no_user_confirm_prompt=""
-overlay=$(getarg rd.overlay)
+overlay=$(getarg rd.overlay -d rd.live.overlay)
 getargbool 0 rd.writable.fsimg && writable_fsimg="yes"
 overlay_size=$(getarg rd.live.overlay.size=)
 [ -z "$overlay_size" ] && overlay_size=32768
 
 getargbool 0 rd.live.overlay.thin && thin_snapshot="yes"
-getargbool 0 rd.overlayfs && overlayfs="yes"
+getargbool 0 rd.overlayfs -d rd.live.overlay.overlayfs && overlayfs="yes"
 
 # Take a path to a disk label and return the parent disk if it is a partition
 # Otherwise returns the original path
