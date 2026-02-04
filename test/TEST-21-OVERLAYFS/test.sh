@@ -27,7 +27,9 @@ test_run() {
     local overlay_uuid
     overlay_uuid=$(blkid -s UUID -o value "$TESTDIR"/overlay.img)
 
-    client_run "tmpfs overlay" "rd.overlayfs=1 test.expect=tmpfs"
+    client_run "overlay disabled (rd.overlay=0)" "rd.overlay=0 test.expect=none"
+    client_run "tmpfs overlay (rd.overlay)" "rd.overlay test.expect=tmpfs"
+    client_run "tmpfs overlay (rd.overlay=1)" "rd.overlay=1 test.expect=tmpfs"
     client_run "persistent device overlay (LABEL)" "rd.overlay=LABEL=OVERLAY test.expect=device"
     client_run "persistent device overlay (UUID)" "rd.overlay=UUID=$overlay_uuid test.expect=device"
     client_run "persistent device overlay (device path)" \

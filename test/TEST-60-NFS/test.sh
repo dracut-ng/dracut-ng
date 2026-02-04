@@ -187,10 +187,10 @@ test_nfsv4() {
         "root=dhcp" 192.168.50.3 wsize=4096
 
     client_test "NFSv4 Overlayfs root=nfs4:..." 52:54:00:12:34:84 \
-        "root=nfs4:192.168.50.1:/client rd.overlayfs=1 " 192.168.50.1 -wsize=4096
+        "root=nfs4:192.168.50.1:/client rd.overlay " 192.168.50.1 -wsize=4096
 
     client_test "NFSv4 Live Overlayfs root=nfs4:..." 52:54:00:12:34:84 \
-        "root=nfs4:192.168.50.1:/client rd.live.image rd.overlayfs=1" 192.168.50.1 -wsize=4096
+        "root=nfs4:192.168.50.1:/client rd.live.image rd.overlay" 192.168.50.1 -wsize=4096
 
     return 0
 }

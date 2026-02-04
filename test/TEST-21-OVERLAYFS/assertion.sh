@@ -2,12 +2,18 @@
 
 # required binaries: cat grep
 
-if ! grep -q " overlay " /proc/mounts; then
-    echo "overlay filesystem not found in /proc/mounts" >> /run/failed
-fi
+if grep -q 'test.expect=none' /proc/cmdline; then
+    if grep -q " overlay " /proc/mounts; then
+        echo "overlay filesystem found in /proc/mounts" >> /run/failed
+    fi
+else
+    if ! grep -q " overlay " /proc/mounts; then
+        echo "overlay filesystem not found in /proc/mounts" >> /run/failed
+    fi
 
-if ! echo > /test-overlay-write; then
-    echo "overlay is not writable" >> /run/failed
+    if ! echo > /test-overlay-write; then
+        echo "overlay is not writable" >> /run/failed
+    fi
 fi
 
 if grep -q 'test.expect=device' /proc/cmdline; then
