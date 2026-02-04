@@ -1,6 +1,7 @@
 #!/bin/sh
 
 command -v getarg > /dev/null || . /lib/dracut-lib.sh
+command -v get_rd_overlay > /dev/null || . /lib/overlayfs-lib.sh
 
 if getargbool 0 rd.live.debug; then
     exec > /tmp/create-overlay.$$.out
@@ -9,7 +10,7 @@ if getargbool 0 rd.live.debug; then
 fi
 
 gatherData() {
-    overlay=$(getarg rd.overlay -d rd.live.overlay)
+    overlay=$(get_rd_overlay)
     if [ -z "$overlay" ]; then
         info "Skipping overlay creation: kernel command line parameter 'rd.overlay' is not set"
         exit 0

@@ -1,12 +1,12 @@
 #!/bin/sh
 
 command -v getarg > /dev/null || . /lib/dracut-lib.sh
+command -v get_rd_overlay > /dev/null || . /lib/overlayfs-lib.sh
 
-getargbool 0 rd.overlayfs -d rd.live.overlay.overlayfs && overlayfs="yes"
+getargbool 0 rd.overlay -d rd.live.overlay.overlayfs || return 0
+
 getargbool 0 rd.overlay.reset -d rd.live.overlay.reset && reset_overlay="yes"
-overlay=$(getarg rd.overlay -d rd.live.overlay)
-
-[ -n "$overlayfs" ] || [ -n "$overlay" ] || return 0
+overlay=$(get_rd_overlay)
 
 overlay_mode="tmpfs"
 overlay_device=""
