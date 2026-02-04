@@ -25,6 +25,7 @@ RUN zypper --non-interactive install --no-recommends \
     e2fsprogs \
     gcc \
     git \
+    gpg2 \
     hmaccalc \
     iproute2 \
     iputils \
@@ -49,6 +50,7 @@ RUN zypper --non-interactive install --no-recommends \
     squashfs \
     swtpm \
     systemd-boot \
+    systemd-container \
     systemd-devel \
     systemd-experimental \
     systemd-portable \

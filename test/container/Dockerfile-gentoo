@@ -30,7 +30,7 @@ RUN \
     # Use debian's installkernel \
     echo 'sys-kernel/installkernel -systemd' >> /etc/portage/package.use/kernel ;\
     # Enable fido2, ukify, qrcode and cryptsetup (includes unit generator for crypttab) \
-    echo 'sys-apps/systemd fido2 ukify qrcode cryptsetup' >> /etc/portage/package.use/systemd ;\
+    echo 'sys-apps/systemd fido2 ukify qrcode cryptsetup importd curl lzma' >> /etc/portage/package.use/systemd ;\
     # Support thin volumes and build all of LVM2 including daemons and tools like lvchange \
     echo 'sys-fs/lvm2 thin lvm' >> /etc/portage/package.use/lvm2 ;\
     # Ensure everything is up to date before we start \

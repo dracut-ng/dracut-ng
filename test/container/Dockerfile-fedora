@@ -36,6 +36,8 @@ else \
     dnf -y install --setopt=install_weak_deps=False \
     btrfs-progs \
     dhcp-server \
+    gnupg2 \
+    gnupg2-gpg-agent \
     nbd \
     qemu \
     scsi-target-utils \
@@ -93,6 +95,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     systemd-devel \
     systemd-resolved \
     systemd-ukify \
+    tar \
     tpm2-tools \
     xfsprogs \
     xorriso \
