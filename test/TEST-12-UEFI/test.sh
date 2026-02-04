@@ -4,6 +4,9 @@ set -eu
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="UEFI boot (ukify, kernel-install)"
 
+# Uncomment this to debug failures
+#DEBUGFAIL="rd.debug rd.shell"
+
 test_check() {
     if ! type -p mksquashfs &> /dev/null; then
         echo "Test needs mksquashfs... Skipping"
