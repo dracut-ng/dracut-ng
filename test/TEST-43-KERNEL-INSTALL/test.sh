@@ -3,6 +3,9 @@ set -eu
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="kernel-install with root filesystem on ext4 filesystem"
 
+# Uncomment this to debug failures
+#DEBUGFAIL="rd.debug rd.shell"
+
 test_check() {
     if ! command -v kernel-install > /dev/null; then
         echo "This test needs kernel-install to run."

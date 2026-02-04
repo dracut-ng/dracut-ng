@@ -3,6 +3,9 @@ set -eu
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="initramfs created from sysroot"
 
+# Uncomment this to debug failures
+#DEBUGFAIL="rd.debug rd.shell"
+
 test_run() {
     declare -a disk_args=()
     qemu_add_drive disk_args "$TESTDIR"/root.img root

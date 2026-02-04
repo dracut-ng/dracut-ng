@@ -3,6 +3,9 @@ set -eu
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="Test overlayfs module with persistent device overlay"
 
+# Uncomment this to debug failures
+#DEBUGFAIL="rd.debug rd.shell"
+
 client_run() {
     local test_name="$1"
     shift
