@@ -38,6 +38,7 @@ install() {
 }
 
 sc_public_key() {
+    [ -d /etc/dracut.conf.d ] || return 0
     find /etc/dracut.conf.d -maxdepth 1 -type f -iname 'crypt-public-key*.gpg' -print0
 }
 
