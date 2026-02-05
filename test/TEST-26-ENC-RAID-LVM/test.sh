@@ -58,7 +58,7 @@ test_setup() {
         --add-confdir test-makeroot \
         -a "bash crypt lvm mdraid" \
         -I "grep cryptsetup" \
-        -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
+        -i ./create-root.sh /usr/lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot
 
     # Create the blank files to use as a root filesystem

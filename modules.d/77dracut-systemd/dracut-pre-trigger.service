@@ -10,7 +10,7 @@ Wants=dracut-pre-udev.service systemd-udevd.service
 ConditionPathExists=/usr/lib/initrd-release
 ConditionDirectoryNotEmpty=|/var/lib/dracut/hooks/pre-trigger
 ConditionDirectoryNotEmpty=|/etc/dracut/hooks/pre-trigger
-ConditionDirectoryNotEmpty=|/lib/dracut/hooks/pre-trigger
+ConditionDirectoryNotEmpty=|/usr/lib/dracut/hooks/pre-trigger
 ConditionKernelCommandLine=|rd.break=pre-trigger
 Conflicts=shutdown.target emergency.target
 

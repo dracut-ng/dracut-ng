@@ -127,7 +127,7 @@ test_setup() {
         $(if command -v mdadm > /dev/null; then echo "-a mdraid"; fi) \
         $(if command -v cryptsetup > /dev/null; then echo "-a crypt -I cryptsetup"; fi) \
         $(if [ "$TEST_FSTYPE" = "zfs" ]; then echo "-a zfs"; else echo "-I mkfs.${TEST_FSTYPE} --add-drivers ${TEST_FSTYPE}"; fi) \
-        -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
+        -i ./create-root.sh /usr/lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot
 
     # LVM

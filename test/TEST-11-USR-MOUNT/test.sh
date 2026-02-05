@@ -53,7 +53,7 @@ test_setup() {
     call_dracut -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -I "mkfs.btrfs" \
-        -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
+        -i ./create-root.sh /usr/lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot
 
     # Create the blank file to use as a root filesystem

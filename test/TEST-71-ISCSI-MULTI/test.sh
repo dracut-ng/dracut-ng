@@ -146,7 +146,7 @@ test_setup() {
         --add-confdir test-makeroot \
         -a "crypt lvm mdraid" \
         -I "setsid blockdev" \
-        -i ./create-client-root.sh /lib/dracut/hooks/initqueue/01-create-client-root.sh \
+        -i ./create-client-root.sh /usr/lib/dracut/hooks/initqueue/01-create-client-root.sh \
         -f "$TESTDIR"/initramfs.makeroot
     rm -rf -- "$TESTDIR"/overlay
 
@@ -195,7 +195,7 @@ test_setup() {
         --add-confdir test \
         -a "qemu-net $USE_NETWORK ${SERVER_DEBUG:+debug}" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
-        -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
+        -i "./wait-if-server.sh" "/usr/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
         -N \
         -f "$TESTDIR"/initramfs.server
 }

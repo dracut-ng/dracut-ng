@@ -125,8 +125,8 @@ You are encouraged to provide a `README` that describes what the module is for.
 
 Dracut init looks for custom hook scripts in the following locations
 (`HOOKDIR` below): `/var/lib/dracut/hooks`, `/etc/dracut/hooks`, and
-`/lib/dracut/hooks`. The intended use of these locations is: standard,
-distribution shipped scripts are put to `/lib/dracut/hooks`;
+`/usr/lib/dracut/hooks`. The intended use of these locations is: standard,
+distribution shipped scripts are put to `/usr/lib/dracut/hooks`;
 `/etc/dracut/hooks` is used as a local override; dracut modules create
 (and remove) scripts in runtime in `/var/lib/dracut/hooks` (and `$hookdir`
 variable is provided). The following hook points to inject scripts are

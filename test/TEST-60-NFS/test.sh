@@ -266,7 +266,7 @@ test_setup() {
     call_dracut \
         -a "bash qemu-net $USE_NETWORK ${SERVER_DEBUG:+debug}" \
         --include ./server.link /etc/systemd/network/01-server.link \
-        --include ./wait-if-server.sh /lib/dracut/hooks/pre-mount/99-wait-if-server.sh \
+        --include ./wait-if-server.sh /usr/lib/dracut/hooks/pre-mount/99-wait-if-server.sh \
         -N \
         -f "$TESTDIR"/initramfs.server
 }
