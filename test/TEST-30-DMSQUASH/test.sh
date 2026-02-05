@@ -134,7 +134,7 @@ EOF
         mkfs.ext4 -q -L dracut_iso -d "$TESTDIR"/iso/ "$TESTDIR"/root_iso.img
     fi
 
-    local dracut_modules="dmsquash-live-autooverlay convertfs pollcdrom kernel-modules kernel-modules-extra qemu qemu-net"
+    local dracut_modules="dmsquash-live-autooverlay convertfs pollcdrom kernel-modules kernel-modules-extra qemu"
 
     if type -p ntfs-3g &> /dev/null; then
         dracut_modules="$dracut_modules dmsquash-live-ntfs"
