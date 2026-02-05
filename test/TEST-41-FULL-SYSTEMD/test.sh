@@ -86,7 +86,7 @@ test_setup() {
         --add-confdir test-makeroot \
         -a "btrfs crypt" \
         -I "mkfs.btrfs cryptsetup" \
-        -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
+        -i ./create-root.sh /usr/lib/dracut/hooks/initqueue/01-create-root.sh \
         -f "$TESTDIR"/initramfs.makeroot
 
     KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.makeroot)

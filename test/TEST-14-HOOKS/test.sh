@@ -33,32 +33,32 @@ test_setup() {
         # Create hooks with different names. All of them must execute.
         add_hook "/var/lib/dracut/hooks/$hookdir/testhook-difname-var.sh"
         add_hook "/etc/dracut/hooks/$hookdir/testhook-difname-etc.sh"
-        add_hook "/lib/dracut/hooks/$hookdir/testhook-difname-lib.sh"
+        add_hook "/usr/lib/dracut/hooks/$hookdir/testhook-difname-lib.sh"
         expected_hooks_run+=(
             "/var/lib/dracut/hooks/$hookdir/testhook-difname-var.sh"
             "/etc/dracut/hooks/$hookdir/testhook-difname-etc.sh"
-            "/lib/dracut/hooks/$hookdir/testhook-difname-lib.sh"
+            "/usr/lib/dracut/hooks/$hookdir/testhook-difname-lib.sh"
         )
 
         # Create hooks with the same name. Only the highest priority ones must execute.
         add_hook "/var/lib/dracut/hooks/$hookdir/testhook-samename3.sh"
         add_hook "/etc/dracut/hooks/$hookdir/testhook-samename3.sh"
-        add_hook "/lib/dracut/hooks/$hookdir/testhook-samename3.sh"
+        add_hook "/usr/lib/dracut/hooks/$hookdir/testhook-samename3.sh"
         expected_hooks_run+=(
             "/var/lib/dracut/hooks/$hookdir/testhook-samename3.sh"
         )
         expected_hooks_not_run+=(
             "/etc/dracut/hooks/$hookdir/testhook-samename3.sh"
-            "/lib/dracut/hooks/$hookdir/testhook-samename3.sh"
+            "/usr/lib/dracut/hooks/$hookdir/testhook-samename3.sh"
         )
 
         add_hook "/etc/dracut/hooks/$hookdir/testhook-samename2.sh"
-        add_hook "/lib/dracut/hooks/$hookdir/testhook-samename2.sh"
+        add_hook "/usr/lib/dracut/hooks/$hookdir/testhook-samename2.sh"
         expected_hooks_run+=(
             "/etc/dracut/hooks/$hookdir/testhook-samename2.sh"
         )
         expected_hooks_not_run+=(
-            "/lib/dracut/hooks/$hookdir/testhook-samename2.sh"
+            "/usr/lib/dracut/hooks/$hookdir/testhook-samename2.sh"
         )
     done
 

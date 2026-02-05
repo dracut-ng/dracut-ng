@@ -34,7 +34,7 @@ test_setup() {
         --omit "fido2 initqueue" \
         --omit-drivers 'a b c d e f g h i j k l m n o p q r s t u v w x y z' \
         -I systemd-analyze \
-        -i ./systemd-analyze.sh /lib/dracut/hooks/pre-pivot/00-systemd-analyze.sh \
+        -i ./systemd-analyze.sh /usr/lib/dracut/hooks/pre-pivot/00-systemd-analyze.sh \
         -i "/bin/true" "/usr/bin/man"
 
     # shellcheck disable=SC2144 # We're not installing multilib libfido2, so

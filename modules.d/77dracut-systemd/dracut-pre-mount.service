@@ -9,7 +9,7 @@ After=dracut-initqueue.service cryptsetup.target
 ConditionPathExists=/usr/lib/initrd-release
 ConditionDirectoryNotEmpty=|/var/lib/dracut/hooks/pre-mount
 ConditionDirectoryNotEmpty=|/etc/dracut/hooks/pre-mount
-ConditionDirectoryNotEmpty=|/lib/dracut/hooks/pre-mount
+ConditionDirectoryNotEmpty=|/usr/lib/dracut/hooks/pre-mount
 ConditionKernelCommandLine=|rd.break=pre-mount
 Conflicts=shutdown.target emergency.target
 

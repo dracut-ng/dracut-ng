@@ -185,7 +185,7 @@ make_encrypted_root() {
         --add-confdir test-makeroot \
         -a "crypt lvm mdraid" \
         -I "cryptsetup" \
-        -i ./create-encrypted-root.sh /lib/dracut/hooks/initqueue/01-create-encrypted-root.sh \
+        -i ./create-encrypted-root.sh /usr/lib/dracut/hooks/initqueue/01-create-encrypted-root.sh \
         -f "$TESTDIR"/initramfs.makeroot
     rm -rf -- "$TESTDIR"/overlay
 
@@ -272,7 +272,7 @@ test_setup() {
         --add-confdir test \
         -a "qemu-net $USE_NETWORK ${SERVER_DEBUG:+debug}" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
-        -i "./wait-if-server.sh" "/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
+        -i "./wait-if-server.sh" "/usr/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
         -f "$TESTDIR"/initramfs.server
 }
 

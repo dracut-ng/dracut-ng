@@ -375,7 +375,7 @@ list_hooks() {
 
     # It is allowed to override hooks by creating a file with the same name
     # in a directory which has higher priority. '/var/lib/dracut/hooks' gets top
-    # priority, '/etc/dracut/hooks' comes after and '/lib/dracut/hooks' is the
+    # priority, '/etc/dracut/hooks' comes after and '/usr/lib/dracut/hooks' is the
     # least priviliged location.
     for hook in "/var/lib/dracut/hooks/$dir/"$pattern; do
         [ -f "$hook" ] && echo "$hook"
@@ -383,7 +383,7 @@ list_hooks() {
     for hook in "/etc/dracut/hooks/$dir/"$pattern; do
         [ -f "$hook" ] && [ ! -f "/var/lib/dracut/hooks/$dir/${hook##*/}" ] && echo "$hook"
     done
-    for hook in "/lib/dracut/hooks/$dir/"$pattern; do
+    for hook in "/usr/lib/dracut/hooks/$dir/"$pattern; do
         [ -f "$hook" ] && [ ! -f "/var/lib/dracut/hooks/$dir/${hook##*/}" ] \
             && [ ! -f "/etc/dracut/hooks/$dir/${hook##*/}" ] && echo "$hook"
     done

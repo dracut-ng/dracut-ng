@@ -31,7 +31,7 @@ EOF
         --no-kernel --drivers "" \
         --add-confdir "test" \
         "${dracut_cpio_params[@]}" \
-        --include "$tdir/init.sh" /lib/dracut/hooks/emergency/00-init.sh \
+        --include "$tdir/init.sh" /usr/lib/dracut/hooks/emergency/00-init.sh \
         --install "poweroff" \
         "$tdir/initramfs"
 
