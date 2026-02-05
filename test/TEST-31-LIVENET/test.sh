@@ -42,7 +42,7 @@ test_run() {
 
 test_setup() {
     build_client_rootfs "$TESTDIR/rootfs"
-    mksquashfs "$TESTDIR/rootfs" "$TESTDIR/root.squashfs" -quiet
+    mksquashfs "$TESTDIR/rootfs" "$TESTDIR/root.squashfs" -quiet -no-progress
 
     test_dracut -a "livenet" --no-hostonly
 }

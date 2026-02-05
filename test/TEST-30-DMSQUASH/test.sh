@@ -100,7 +100,7 @@ test_setup() {
     rm -rf "$TESTDIR"/rootfs/proc "$TESTDIR"/rootfs/sys "$TESTDIR"/rootfs/dev
 
     mkdir -p "$TESTDIR"/live/LiveOS
-    mksquashfs "$TESTDIR"/rootfs/ "$TESTDIR"/live/LiveOS/rootfs.img -quiet
+    mksquashfs "$TESTDIR"/rootfs/ "$TESTDIR"/live/LiveOS/rootfs.img -quiet -no-progress
 
     # Create the blank file to use as a root filesystem
     declare -a disk_args=()
