@@ -263,14 +263,14 @@ test_setup() {
 
     test_dracut \
         --no-hostonly \
-        -a "watchdog qemu-net ${USE_NETWORK}" \
+        -a "watchdog ${USE_NETWORK}" \
         -i "./client.link" "/etc/systemd/network/01-client.link" \
         -i "/tmp/crypttab" "/etc/crypttab" \
         -i "/tmp/key" "/etc/key"
 
     call_dracut -N \
         --add-confdir test \
-        -a "qemu-net $USE_NETWORK ${SERVER_DEBUG:+debug}" \
+        -a "$USE_NETWORK ${SERVER_DEBUG:+debug}" \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i "./wait-if-server.sh" "/usr/lib/dracut/hooks/pre-mount/99-wait-if-server.sh" \
         -f "$TESTDIR"/initramfs.server

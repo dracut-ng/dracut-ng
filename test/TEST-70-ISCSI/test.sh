@@ -174,7 +174,7 @@ test_setup() {
 
     # Make server's dracut image
     call_dracut \
-        -a "qemu-net $USE_NETWORK" \
+        -a "$USE_NETWORK" \
         --add-confdir test \
         -i "./server.link" "/etc/systemd/network/01-server.link" \
         -i ./wait-if-server.sh /usr/lib/dracut/hooks/pre-mount/99-wait-if-server.sh \
@@ -184,7 +184,7 @@ test_setup() {
     # Make client's dracut image
     test_dracut \
         --no-hostonly \
-        --add "watchdog qemu-net $USE_NETWORK" \
+        --add "watchdog $USE_NETWORK" \
         --include "./client-persistent-lan0.link" "/etc/systemd/network/01-persistent-lan0.link" \
         --include "./client-persistent-lan1.link" "/etc/systemd/network/01-persistent-lan1.link" \
         --kernel-cmdline "rw rd.auto"
