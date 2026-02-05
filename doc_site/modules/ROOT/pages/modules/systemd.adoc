@@ -80,6 +80,9 @@ These modules would require including a version of systemd into initramfs.
 | systemd-hostnamed
 | https://www.freedesktop.org/software/systemd/man/systemd-hostnamed.html[systemd-hostnamed]
 
+| systemd-import
+| https://www.freedesktop.org/software/systemd/man/devel/systemd-import-generator.html[systemd-import]
+
 | systemd-initrd
 | https://systemd.io/INITRD_INTERFACE/[INITRD_INTERFACE]
 

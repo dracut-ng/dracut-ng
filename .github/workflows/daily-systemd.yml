@@ -46,6 +46,7 @@ jobs:
                     - "42"
                     - "43"
                     - "44"
+                    - "45"
                 exclude:
                     - container: arch:latest
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
@@ -74,6 +75,21 @@ jobs:
                     # https://github.com/dracut-ng/dracut-ng/issues/1988
                     - container: debian:sid
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                    # TEST-45-SYSTEMD-IMPORT requires systemd >= v258
+                    - container: azurelinux:3.0
+                      test: "45"
+                    # TEST-45-SYSTEMD-IMPORT requires systemd >= v258
+                    - container: centos:latest
+                      test: "45"
+                    # TEST-45-SYSTEMD-IMPORT requires systemd >= v258
+                    - container: debian:latest
+                      test: "45"
+                    # TEST-45-SYSTEMD-IMPORT requires systemd >= v258
+                    - container: opensuse:latest
+                      test: "45"
+                    # TEST-45-SYSTEMD-IMPORT requires systemd >= v258
+                    - container: ubuntu:rolling
+                      test: "45"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm --privileged'

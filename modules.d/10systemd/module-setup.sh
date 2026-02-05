@@ -92,7 +92,7 @@ install() {
         "$systemdsystemunitdir"/slices.target \
         "$systemdsystemunitdir"/system.slice \
         "$systemdsystemunitdir"/-.slice \
-        systemctl \
+        systemctl varlinkctl \
         echo swapoff \
         chmod \
         mount umount reboot poweroff \

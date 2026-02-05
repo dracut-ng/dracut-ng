@@ -111,6 +111,10 @@ systemd-hostnamed:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-hostnamed/*'
 
+systemd-import:
+    - changed-files:
+          - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-import/*'
+
 systemd-initrd:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-initrd/*'
