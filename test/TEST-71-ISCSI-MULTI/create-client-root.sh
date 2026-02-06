@@ -14,6 +14,8 @@ mount -t ext4 /dev/dracut/root /sysroot
 cp -a -t /sysroot /source/*
 umount /sysroot
 lvm lvchange -a n /dev/dracut/root
+mdadm -W /dev/md0 || :
+mdadm --stop /dev/md0
 echo "dracut-root-block-created" | dd oflag=direct of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
 sync /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
 poweroff -f
