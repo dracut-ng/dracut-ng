@@ -1383,6 +1383,28 @@ static int dracut_mkdir(const char *src)
         return 0;
 }
 
+// Heuristically check if a file is a library: path contains ".so"
+// Do not call this function on directories.
+static bool is_library(const char *path)
+{
+        const char *filename;
+
+        if (path == NULL) {
+                return false;
+        }
+
+        log_debug("is_library('%s')", path);
+
+        filename = strrchr(path, '/');
+        if (filename == NULL) {
+                filename = path;
+        } else {
+                filename = filename + 1;
+        }
+
+        return strstr(filename, ".so") != NULL;
+}
+
 static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir, bool resolvedeps, bool hashdst)
 {
         struct stat sb;
@@ -1461,7 +1483,7 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                         return 1;
                 }
 
-                if (resolvedeps && S_ISREG(sb.st_mode) && (sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
+                if (resolvedeps && ((S_ISREG(sb.st_mode) && (sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) || is_library(fullsrcpath))) {
                         log_debug("'%s' already exists, but checking for any deps", fulldstpath);
                         if (sysrootdirlen && (strncmp(fulldstpath, sysrootdir, sysrootdirlen) == 0))
                                 ret = resolve_deps(fulldstpath + sysrootdirlen, NULL);
@@ -1547,7 +1569,7 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                         return 0;
                 }
 
-                if (src_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) {
+                if (src_mode & (S_IXUSR | S_IXGRP | S_IXOTH) || is_library(fullsrcpath)) {
                         if (resolvedeps) {
                                 /* ensure fullsrcpath contains sysrootdir */
                                 if (sysrootdirlen && (strncmp(fullsrcpath, sysrootdir, sysrootdirlen) == 0))
