@@ -26,6 +26,9 @@ jobs:
             fail-fast: false
             matrix:
                 container:
+                    - debian:latest
+                    # https://github.com/dracut-ng/dracut-ng/issues/2199
+                    # - debian:sid
                     - ubuntu:devel
                     - ubuntu:rolling
                 test:
