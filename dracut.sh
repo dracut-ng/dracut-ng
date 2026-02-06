@@ -2860,15 +2860,15 @@ if [[ $kernel_only != yes ]]; then
     fi
 
     if [[ ${DRACUT_RESOLVE_LAZY-} ]] && [[ $DRACUT_INSTALL ]]; then
-        dinfo "*** Resolving executable dependencies ***"
+        dinfo "*** Resolving dependencies for executables and libraries ***"
         # shellcheck disable=SC2086
-        find "$initdir" -type f -perm /0111 -not -name '*.ko*' -print0 \
+        find "$initdir" -type f \( -perm /0111 -or -name '*.so*' \) -not -name '*.ko*' -print0 \
             | xargs -r -0 $DRACUT_INSTALL ${initdir:+-D "$initdir"} ${dracutsysrootdir:+-r "$dracutsysrootdir"} -R ${DRACUT_FIPS_MODE:+-f} --
         # shellcheck disable=SC2181
         if (($? == 0)); then
-            dinfo "*** Resolving executable dependencies done ***"
+            dinfo "*** Resolving dependencies for executables and libraries done ***"
         else
-            dfatal "Resolving executable dependencies failed"
+            dfatal "Resolving dependencies for executables and libraries failed"
             exit 1
         fi
     fi
