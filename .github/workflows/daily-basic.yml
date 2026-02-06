@@ -53,11 +53,6 @@ jobs:
                     # https://github.com/dracut-ng/dracut-ng/issues/1988
                     - container: debian:sid
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
-                    # https://github.com/dracut-ng/dracut-ng/issues/2021
-                    - container: debian:sid
-                      test: "20"
-                    - container: debian:sid
-                      test: "26"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm --privileged'
