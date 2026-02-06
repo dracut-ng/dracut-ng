@@ -1392,7 +1392,6 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
         int ret;
         bool src_islink = false;
         bool src_isdir = false;
-        mode_t src_mode = 0;
         char *hash_path = NULL;
         const char *src, *dst;
 
@@ -1438,7 +1437,6 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
         } else {
                 src_islink = S_ISLNK(sb.st_mode);
                 src_isdir = S_ISDIR(sb.st_mode);
-                src_mode = sb.st_mode;
         }
 
         /* The install hasn't succeeded yet, but mark this item as successful
@@ -1461,7 +1459,7 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                         return 1;
                 }
 
-                if (resolvedeps && S_ISREG(sb.st_mode) && (sb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH))) {
+                if (resolvedeps && S_ISREG(sb.st_mode)) {
                         log_debug("'%s' already exists, but checking for any deps", fulldstpath);
                         if (sysrootdirlen && (strncmp(fulldstpath, sysrootdir, sysrootdirlen) == 0))
                                 ret = resolve_deps(fulldstpath + sysrootdirlen, NULL);
@@ -1547,18 +1545,16 @@ static int dracut_install(const char *orig_src, const char *orig_dst, bool isdir
                         return 0;
                 }
 
-                if (src_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) {
-                        if (resolvedeps) {
-                                /* ensure fullsrcpath contains sysrootdir */
-                                if (sysrootdirlen && (strncmp(fullsrcpath, sysrootdir, sysrootdirlen) == 0))
-                                        ret += resolve_deps(fullsrcpath + sysrootdirlen, NULL);
-                                else
-                                        ret += resolve_deps(fullsrcpath, NULL);
-                        }
-                        if (arg_hmac) {
-                                /* copy .hmac files also */
-                                hmac_install(src, dst, NULL);
-                        }
+                if (resolvedeps) {
+                        /* ensure fullsrcpath contains sysrootdir */
+                        if (sysrootdirlen && (strncmp(fullsrcpath, sysrootdir, sysrootdirlen) == 0))
+                                ret += resolve_deps(fullsrcpath + sysrootdirlen, NULL);
+                        else
+                                ret += resolve_deps(fullsrcpath, NULL);
+                }
+                if (arg_hmac) {
+                        /* copy .hmac files also */
+                        hmac_install(src, dst, NULL);
                 }
 
                 log_debug("dracut_install ret = %d", ret);
