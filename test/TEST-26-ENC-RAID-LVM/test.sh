@@ -72,6 +72,7 @@ test_setup() {
         -append "root=/dev/fakeroot quiet" \
         -initrd "$TESTDIR"/initramfs.makeroot
     test_marker_check dracut-root-block-created
+    rm -rf "$TESTDIR"/overlay
     cryptoUUIDS=$(grep -F -a -m 3 ID_FS_UUID "$TESTDIR"/marker.img)
     for uuid in $cryptoUUIDS; do
         eval "$uuid"

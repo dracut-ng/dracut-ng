@@ -49,6 +49,7 @@ test_setup() {
     mkdir -p "$TESTDIR"/overlay/source/lib/modules "$TESTDIR"/overlay/source/mnt
 
     build_ext4_image "$TESTDIR/overlay/source" "$TESTDIR"/root.img dracut
+    rm -rf "$TESTDIR"/overlay
 
     rm -f "$TESTDIR/mnt.img"
     truncate -s 512M "$TESTDIR/mnt.img"
