@@ -156,6 +156,8 @@ test_setup() {
         chmod 0600 /tmp/key
     fi
 
+    rm -rf "$TESTDIR"/overlay
+
     # shellcheck disable=SC2046
     test_dracut \
         -a "lvm" \

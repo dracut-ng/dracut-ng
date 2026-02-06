@@ -66,6 +66,7 @@ test_setup() {
         "${disk_args[@]}" \
         -append "root=/dev/dracut/root quiet" \
         -initrd "$TESTDIR"/initramfs.makeroot
+    rm -rf "$TESTDIR"/overlay
 
     if ! test_marker_check dracut-root-block-created; then
         echo "Could not create root filesystem"

@@ -171,6 +171,7 @@ test_setup() {
     inst_init ./server-init.sh "$TESTDIR"/overlay/source
 
     build_ext4_image "$TESTDIR/overlay/source" "$TESTDIR"/server.img dracut
+    rm -rf "$TESTDIR"/overlay
 
     # Make server's dracut image
     call_dracut \
