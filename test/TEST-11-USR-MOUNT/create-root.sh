@@ -16,5 +16,5 @@ btrfs filesystem sync /root
 btrfs subvolume snapshot -r /root /root/snapshot-root
 umount /root
 echo "dracut-root-block-created" | dd oflag=direct of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
-sync /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
+sync
 poweroff -f
