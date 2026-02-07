@@ -129,8 +129,7 @@ test_check() {
     fi
 }
 
-test_setup() {
-    # Create client root filesystem
+make_client_rootfs() {
     rm -rf -- "$TESTDIR"/overlay
     build_client_rootfs "$TESTDIR/overlay/source"
     inst_multiple ip grep setsid
@@ -162,8 +161,9 @@ test_setup() {
         -initrd "$TESTDIR"/initramfs.makeroot
     test_marker_check dracut-root-block-created
     rm -- "$TESTDIR"/marker.img
+}
 
-    # Create server root filesystem
+make_server_rootfs() {
     call_dracut --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "$USE_NETWORK iscsi" \
@@ -182,6 +182,11 @@ test_setup() {
 
     build_ext4_image "$TESTDIR/server-rootfs" "$TESTDIR"/server.img dracut
     rm -rf "$TESTDIR"/server-rootfs
+}
+
+test_setup() {
+    make_client_rootfs
+    make_server_rootfs
 
     # Make client's dracut image
     test_dracut \
