@@ -65,10 +65,7 @@ jobs:
                     - container: centos:latest
                       test: "41"
                     # /boot/vmlinuz-... is missing .efi suffix: https://launchpad.net/bugs/2133402
-                    - container: ubuntu:devel
-                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
-                      test: "43"
-                    # /boot/vmlinuz-... is missing .efi suffix: https://launchpad.net/bugs/2133402
+                    # Ubuntu 25.10 is affected, will work with Ubuntu 26.04
                     - container: ubuntu:rolling
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                       test: "43"
