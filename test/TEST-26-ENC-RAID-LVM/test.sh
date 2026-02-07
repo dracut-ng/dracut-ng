@@ -47,7 +47,7 @@ test_run() {
     return 0
 }
 
-test_setup() {
+make_test_rootfs() {
     # Create what will eventually be our root filesystem onto an overlay
     build_client_rootfs "$TESTDIR/overlay/source"
 
@@ -73,6 +73,11 @@ test_setup() {
         -initrd "$TESTDIR"/initramfs.makeroot
     test_marker_check dracut-root-block-created
     rm -rf "$TESTDIR"/overlay
+}
+
+test_setup() {
+    make_test_rootfs
+
     cryptoUUIDS=$(grep -F -a -m 3 ID_FS_UUID "$TESTDIR"/marker.img)
     for uuid in $cryptoUUIDS; do
         eval "$uuid"

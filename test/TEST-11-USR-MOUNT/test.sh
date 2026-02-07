@@ -41,7 +41,7 @@ test_run() {
     client_run "readonly root snapshot" "rd.fstab=0 subvol=snapshot-root"
 }
 
-test_setup() {
+make_test_rootfs() {
     # Create what will eventually be our root filesystem onto an overlay
     build_client_rootfs "$TESTDIR/overlay/source"
     echo "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root /usr btrfs subvol=usr,rw 0 2" \
@@ -72,7 +72,10 @@ test_setup() {
         echo "Could not create root filesystem"
         return 1
     fi
+}
 
+test_setup() {
+    make_test_rootfs
     test_dracut \
         --add-drivers "btrfs"
 }
