@@ -164,7 +164,6 @@ test_setup() {
     rm -- "$TESTDIR"/marker.img
 
     # Create server root filesystem
-    rm -rf -- "$TESTDIR"/overlay
     call_dracut --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "$USE_NETWORK iscsi" \
