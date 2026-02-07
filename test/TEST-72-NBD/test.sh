@@ -203,7 +203,6 @@ make_encrypted_root() {
 }
 
 make_client_root() {
-    rm -fr "$TESTDIR"/overlay
     build_client_rootfs "$TESTDIR/overlay/source"
     inst_multiple ip
     inst_init ./client-init.sh "$TESTDIR"/overlay/source
@@ -251,9 +250,6 @@ test_setup() {
     make_encrypted_root
     make_client_root
     make_server_root
-
-    rm -fr "$TESTDIR"/overlay
-    # Make the test image
 
     # shellcheck source=$TESTDIR/luks.uuid
     . "$TESTDIR"/luks.uuid
