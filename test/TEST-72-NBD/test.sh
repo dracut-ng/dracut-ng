@@ -171,7 +171,7 @@ client_run() {
 
 }
 
-make_encrypted_root() {
+make_encrypted_rootfs() {
     rm -fr "$TESTDIR"/overlay
     # Create what will eventually be our root filesystem onto an overlay
     build_client_rootfs "$TESTDIR/overlay/source"
@@ -202,7 +202,7 @@ make_encrypted_root() {
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
 }
 
-make_client_root() {
+make_client_rootfs() {
     build_client_rootfs "$TESTDIR/client-rootfs"
     inst_multiple ip
     inst_init ./client-init.sh "$TESTDIR"/client-rootfs
@@ -211,7 +211,7 @@ make_client_root() {
     rm -fr "$TESTDIR"/client-rootfs
 }
 
-make_server_root() {
+make_server_rootfs() {
     rm -fr "$TESTDIR"/server-rootfs
 
     cat > /tmp/config << EOF
@@ -247,9 +247,9 @@ EOF
 }
 
 test_setup() {
-    make_encrypted_root
-    make_client_root
-    make_server_root
+    make_encrypted_rootfs
+    make_client_rootfs
+    make_server_rootfs
 
     # shellcheck source=$TESTDIR/luks.uuid
     . "$TESTDIR"/luks.uuid
