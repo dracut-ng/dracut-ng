@@ -215,7 +215,7 @@ test_run() {
     fi
 }
 
-test_setup() {
+make_server_rootfs() {
     call_dracut --tmpdir "$TESTDIR" \
         --add-confdir test-root \
         -a "$USE_NETWORK url-lib nfs" \
@@ -255,6 +255,10 @@ test_setup() {
     inst_init ./client-init.sh "$initdir"
 
     build_ext4_image "$TESTDIR/server-rootfs" "$TESTDIR"/server.img dracut
+}
+
+test_setup() {
+    make_server_rootfs
 
     # Make client's dracut image
     test_dracut \
