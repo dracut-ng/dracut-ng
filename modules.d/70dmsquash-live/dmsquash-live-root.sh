@@ -95,7 +95,11 @@ ln -s "$livedev" /run/initramfs/livedev
 # determine filesystem type for a filesystem image
 det_img_fs() {
     udevadm settle >&2
-    blkid -s TYPE -u noraid -o value "$1"
+
+    # avoid blkid options to maintain compatibility with busybox
+    devicetype=$(blkid "$1")
+    fstype="${devicetype#*TYPE=\"}"
+    echo "${fstype=%%\"*}"
 }
 
 CMDLINE=$(getcmdline)
