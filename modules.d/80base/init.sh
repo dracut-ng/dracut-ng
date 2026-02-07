@@ -365,6 +365,8 @@ if ! [ -d "$NEWROOT"/run ]; then
     NEWRUN=/dev/.initramfs
     mkdir -m 0755 -p "$NEWRUN"
     mount --rbind /run/initramfs "$NEWRUN"
+else
+    mount --move /run "$NEWROOT"/run
 fi
 
 wait_for_loginit
