@@ -203,16 +203,16 @@ make_encrypted_root() {
 }
 
 make_client_root() {
-    build_client_rootfs "$TESTDIR/overlay/source"
+    build_client_rootfs "$TESTDIR/client-rootfs"
     inst_multiple ip
-    inst_init ./client-init.sh "$TESTDIR"/overlay/source
+    inst_init ./client-init.sh "$TESTDIR"/client-rootfs
 
-    build_ext4_image "$TESTDIR/overlay/source" "$TESTDIR"/unencrypted.img dracut
-    rm -fr "$TESTDIR"/overlay
+    build_ext4_image "$TESTDIR/client-rootfs" "$TESTDIR"/unencrypted.img dracut
+    rm -fr "$TESTDIR"/client-rootfs
 }
 
 make_server_root() {
-    rm -fr "$TESTDIR"/overlay
+    rm -fr "$TESTDIR"/server-rootfs
 
     cat > /tmp/config << EOF
 [generic]
@@ -235,15 +235,15 @@ EOF
         -i "./dhcpd.conf" "/etc/dhcpd.conf" \
         --no-hostonly \
         -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source
-    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
+    mkdir -p "$TESTDIR"/server-rootfs
+    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/server-rootfs
     rm -rf "$TESTDIR"/dracut.*
 
-    mkdir -p -- "$TESTDIR"/overlay/source/var/lib/dhcpd "$TESTDIR"/overlay/source/etc/nbd-server
-    inst_init ./server-init.sh "$TESTDIR"/overlay/source
+    mkdir -p -- "$TESTDIR"/server-rootfs/var/lib/dhcpd "$TESTDIR"/server-rootfs/etc/nbd-server
+    inst_init ./server-init.sh "$TESTDIR"/server-rootfs
 
-    build_ext4_image "$TESTDIR/overlay/source" "$TESTDIR"/server.img dracut
-    rm -fr "$TESTDIR"/overlay
+    build_ext4_image "$TESTDIR/server-rootfs" "$TESTDIR"/server.img dracut
+    rm -fr "$TESTDIR"/server-rootfs
 }
 
 test_setup() {
