@@ -20,6 +20,7 @@ RUN zypper --non-interactive install --no-recommends \
     cryptsetup \
     dhcp-client \
     dhcp-server \
+    diffutils \
     dnsmasq \
     distribution-gpg-keys \
     e2fsprogs \
