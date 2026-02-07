@@ -234,11 +234,11 @@ test_setup() {
         -i "./dhcpd.conf" "/etc/dhcpd.conf" \
         -f "$TESTDIR"/initramfs.root
 
-    mkdir -p "$TESTDIR"/server/overlay/source
-    mv "$TESTDIR"/server/overlay/dracut.*/initramfs/* "$TESTDIR"/server/overlay/source
+    mkdir -p "$TESTDIR"/server-rootfs
+    mv "$TESTDIR"/server/overlay/dracut.*/initramfs/* "$TESTDIR"/server-rootfs
     rm -rf "$TESTDIR"/server/overlay/dracut.*
 
-    export initdir=$TESTDIR/server/overlay/source
+    export initdir=$TESTDIR/server-rootfs
     mkdir -p "$initdir"/var/lib/{dhcpd,rpcbind} "$initdir"/var/lib/nfs/{v4recovery,rpc_pipefs}
     chmod 777 "$initdir"/var/lib/{dhcpd,rpcbind}
     inst_init ./server-init.sh "$initdir"
@@ -247,14 +247,14 @@ test_setup() {
 
     # Make client root inside server root
     # shellcheck disable=SC2031
-    export initdir=$TESTDIR/server/overlay/source/nfs/client
+    export initdir=$TESTDIR/server-rootfs/nfs/client
     mkdir -p "$initdir"
     mv "$TESTDIR"/dracut.*/initramfs/* "$initdir"
     rm -rf "$TESTDIR"/dracut.*
     echo "TEST FETCH FILE" > "$initdir"/root/fetchfile
     inst_init ./client-init.sh "$initdir"
 
-    build_ext4_image "$TESTDIR/server/overlay/source" "$TESTDIR"/server.img dracut
+    build_ext4_image "$TESTDIR/server-rootfs" "$TESTDIR"/server.img dracut
 
     # Make client's dracut image
     test_dracut \

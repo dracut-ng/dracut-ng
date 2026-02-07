@@ -38,18 +38,18 @@ test_setup() {
         --mount "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_mnt /mnt xfs rw" \
         --add-confdir test-root \
         -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source
-    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
+    mkdir -p "$TESTDIR"/rootfs
+    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/rootfs
     rm -rf "$TESTDIR"/dracut.*
 
     # make sure no linux kernel driver is included in the rootfs
-    rm -rf "$TESTDIR"/overlay/source/lib/modules/*
+    rm -rf "$TESTDIR"/rootfs/lib/modules/*
 
     # make sure /lib/modules directory exists inside the rootfs
-    mkdir -p "$TESTDIR"/overlay/source/lib/modules "$TESTDIR"/overlay/source/mnt
+    mkdir -p "$TESTDIR"/rootfs/lib/modules "$TESTDIR"/rootfs/mnt
 
-    build_ext4_image "$TESTDIR/overlay/source" "$TESTDIR"/root.img dracut
-    rm -rf "$TESTDIR"/overlay
+    build_ext4_image "$TESTDIR/rootfs" "$TESTDIR"/root.img dracut
+    rm -rf "$TESTDIR"/rootfs
 
     rm -f "$TESTDIR/mnt.img"
     truncate -s 512M "$TESTDIR/mnt.img"

@@ -173,15 +173,15 @@ test_setup() {
         -i /tmp/config /etc/nbd-server/config \
         -i "./dhcpd.conf" "/etc/dhcpd.conf" \
         -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/overlay/source
-    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source
+    mkdir -p "$TESTDIR"/server-rootfs
+    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/server-rootfs
     rm -rf "$TESTDIR"/dracut.*
 
-    mkdir -p -- "$TESTDIR"/overlay/source/var/lib/dhcpd "$TESTDIR"/overlay/source/etc/iscsi
-    inst_init ./server-init.sh "$TESTDIR"/overlay/source
+    mkdir -p -- "$TESTDIR"/server-rootfs/var/lib/dhcpd "$TESTDIR"/server-rootfs/etc/iscsi
+    inst_init ./server-init.sh "$TESTDIR"/server-rootfs
 
-    build_ext4_image "$TESTDIR/overlay/source" "$TESTDIR"/server.img dracut
-    rm -rf "$TESTDIR"/overlay
+    build_ext4_image "$TESTDIR/server-rootfs" "$TESTDIR"/server.img dracut
+    rm -rf "$TESTDIR"/server-rootfs
 
     # Make client's dracut image
     test_dracut \
