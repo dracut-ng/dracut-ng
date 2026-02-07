@@ -1477,11 +1477,6 @@ dracut_module_included() {
     [[ " $mods_to_load $modules_loaded " == *\ $*\ * ]]
 }
 
-# shellcheck disable=SC2317,SC2329
-dracut_no_switch_root() {
-    : > "$initdir/lib/dracut/no-switch-root"
-}
-
 dracut_module_path() {
     local _dir
 
