@@ -2,6 +2,10 @@
 
 # called by dracut
 check() {
+    if [[ $hostonly_mode != "strict" ]] && dracut_module_included "qemu"; then
+        return 0
+    fi
+
     [[ $hostonly ]] || [[ $mount_needs ]] && {
         is_qemu_virtualized && return 0
 
