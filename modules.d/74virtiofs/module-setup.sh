@@ -7,8 +7,6 @@ check() {
     fi
 
     [[ $hostonly ]] || [[ $mount_needs ]] && {
-        is_qemu_virtualized && return 0
-
         for fs in "${host_fs_types[@]}"; do
             [[ $fs == "virtiofs" ]] && return 0
         done

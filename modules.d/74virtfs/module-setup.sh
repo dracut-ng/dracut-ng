@@ -13,8 +13,6 @@ check() {
         return 255
     }
 
-    is_qemu_virtualized && return 0
-
     return 255
 }
 
