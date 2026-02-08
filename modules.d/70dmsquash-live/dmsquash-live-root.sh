@@ -342,8 +342,6 @@ if [ -e "$SQUASHED" ]; then
     if [ -d /run/initramfs/squashfs/LiveOS ]; then
         if [ -f /run/initramfs/squashfs/LiveOS/rootfs.img ]; then
             FSIMG="/run/initramfs/squashfs/LiveOS/rootfs.img"
-        elif [ -f /run/initramfs/squashfs/LiveOS/ext3fs.img ]; then
-            FSIMG="/run/initramfs/squashfs/LiveOS/ext3fs.img"
         fi
     elif [ -d /run/initramfs/squashfs/usr ] || [ -d /run/initramfs/squashfs/ostree ]; then
         FSIMG=$SQUASHED
@@ -359,8 +357,6 @@ else
     # we might have an embedded fs image to use as rootfs (uncompressed live)
     if [ -e "/run/initramfs/live/${live_dir}/rootfs.img" ]; then
         FSIMG="/run/initramfs/live/${live_dir}/rootfs.img"
-    elif [ -e "/run/initramfs/live/${live_dir}/ext3fs.img" ]; then
-        FSIMG="/run/initramfs/live/${live_dir}/ext3fs.img"
     fi
     if [ -n "$live_ram" ]; then
         echo 'Copying live image to RAM...' > /dev/kmsg
