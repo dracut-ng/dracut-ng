@@ -77,7 +77,7 @@ jobs:
                       OPTION=${{ matrix.config.option }}
     manifest:
         needs: container-extra
-        if: github.event_name == 'push' || github.event_name == 'schedule'
+        if: github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         name: ${{ matrix.config.tag }}
         concurrency:
             group: manifest-${{ github.workflow }}-${{ github.ref }}-${{ matrix.config.tag }}
