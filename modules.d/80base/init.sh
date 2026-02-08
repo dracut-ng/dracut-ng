@@ -361,11 +361,7 @@ else
 fi
 debug_on
 
-if ! [ -d "$NEWROOT"/run ]; then
-    NEWRUN=/dev/.initramfs
-    mkdir -m 0755 -p "$NEWRUN"
-    mount --rbind /run/initramfs "$NEWRUN"
-else
+if [ -d "$NEWROOT"/run ]; then
     mount --move /run "$NEWROOT"/run
 fi
 
