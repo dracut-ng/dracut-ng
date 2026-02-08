@@ -34,7 +34,7 @@ make AUTHORS
 if ! type -p clog &> /dev/null; then
     cargo install clog-cli --version 0.9.3
 fi
-head --lines=-2 NEWS.md > NEWS_header.md
+head --lines=2 NEWS.md > NEWS_header.md
 tail --lines=+2 NEWS.md > NEWS_body.md
 printf "dracut-ng-%s\n=============\n" "$NEW_VERSION" > NEWS_header_new.md
 
