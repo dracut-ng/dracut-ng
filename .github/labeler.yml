@@ -563,6 +563,10 @@ memdisk:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]memdisk/*'
 
+isoscan:
+  - changed-files:
+      - any-glob-to-any-file: 'modules.d/[0-9][0-9]isoscan/*'
+
 memstrack:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]memstrack/*'
