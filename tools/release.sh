@@ -53,7 +53,7 @@ cat NEWS_header.md NEWS_header_new.md NEWS_body_new.md NEWS_body_with_conttribut
 cat -s NEWS_body_new.md CONTRIBUTORS.md > release.md
 
 # update DRACUT_VERSION
-sed -i "s;^\(DRACUT_VERSION\)=\".*\"$;\1=\"$(DRACUT_FULL_VERSION)\";" dracut.sh
+sed -i "s;^\(DRACUT_VERSION\)=\".*\"$;\1=\"${NEW_VERSION}\";" dracut.sh
 
 if [ -z "$(git config --get user.name)" ]; then
     git config user.name "dracutng[bot]"
