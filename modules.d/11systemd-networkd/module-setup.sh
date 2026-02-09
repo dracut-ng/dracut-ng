@@ -75,7 +75,9 @@ install() {
         systemd-networkd-resolve-hook.socket \
         systemd-network-generator.service \
         systemd-networkd-wait-online.service; do
-        $SYSTEMCTL -q --root "$initdir" enable "$i"
+        if [[ -e "$initdir$systemdsystemunitdir"/"$i" ]]; then
+            $SYSTEMCTL -q --root "$initdir" enable "$i"
+        fi
     done
 
     # Install the hosts local user configurations if enabled.
