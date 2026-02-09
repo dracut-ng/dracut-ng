@@ -1,5 +1,185 @@
 [Rendered view](https://github.com/dracut-ng/dracut-ng/blob/master/NEWS.md)
 
+dracut-ng-110
+=============
+
+#### User notes
+
+The `systemd-pcrphase` module has been renamed to `systemd-pcrextend` to align with upstream systemd changes.
+
+The following modules are new for this release:
+
+- `memdisk`
+- `systemd-import`
+
+
+#### Distributor notes
+
+The separate `dracut-version.sh` has been removed.
+In order to set the distributor version (e.g. when packaging dracut), set `DRACUT_FULL_VERSION` when calling `make`.
+When packaging an unreleased snapshot version, please also set `DRACUT_MAIN_VERSION` to a version string identifying the base version + commit.
+
+As an example, when packaging a release of dracut as an RPM, use an invocation like so:
+
+```specfile
+%build
+%make_build DRACUT_FULL_VERSION="%{version}-%{release}"
+
+%install
+%make_install DRACUT_FULL_VERSION="%{version}-%{release}"
+```
+
+
+#### Bug Fixes
+
+*   avoid leading spaces in systemd units ([68cd066c](https://github.com/dracut-ng/dracut-ng/commit/68cd066c674b35cd0db854ce32c17156623c6506))
+*   grammatical errors ([2b992cae](https://github.com/dracut-ng/dracut-ng/commit/2b992cae1bd3193fb214a862be7b5a1ccabf1d39))
+* **Makefile:**
+  *  broken symlink in dracut config examples ([c30fdf0f](https://github.com/dracut-ng/dracut-ng/commit/c30fdf0f27398fdd3bf625028b3bcb50b802aac0))
+  *  improve support for shfmt v3.8.0+ ([96d95db4](https://github.com/dracut-ng/dracut-ng/commit/96d95db4ffce45303a7eed831d807ece02a530dd))
+  *  correct path for man pages for service files ([a18fc183](https://github.com/dracut-ng/dracut-ng/commit/a18fc1834a2bb5ae8ebc02f9faae6fb666b207a6))
+* **base:**  ensure that /run survives switch_root ([b9ecf13f](https://github.com/dracut-ng/dracut-ng/commit/b9ecf13f7f9c66ce58bc410da5e00da0ed982cc9))
+* **cpio:**  archive correct minor numbers ([dca4a403](https://github.com/dracut-ng/dracut-ng/commit/dca4a4031d9f9736f7a3389a7ac5c01ce84dc7d8))
+* **crypt-gpg:**  support missing /etc/dracut.conf.d ([786e8f27](https://github.com/dracut-ng/dracut-ng/commit/786e8f276b4ad6394cafdbe7339d9a2a04e53784))
+* **dm:**  add explicit rootfs-block dependency ([5e7e4cd3](https://github.com/dracut-ng/dracut-ng/commit/5e7e4cd330da3e99fc2142e5f79297725729cd72))
+* **dmsquash-live-autooverlay:**
+  *  check that parted is present ([3290d186](https://github.com/dracut-ng/dracut-ng/commit/3290d18615f3124d2da530f3937857b7e4d0b215))
+  *  re-read partition table after creation ([99d25ea0](https://github.com/dracut-ng/dracut-ng/commit/99d25ea0f81881c5a5eeada00d2ee7e08c28c69c))
+* **dracut:**
+  *  also check libraries when resolving lazy ([9becd78c](https://github.com/dracut-ng/dracut-ng/commit/9becd78c0882f55cf1158993bd68be472b8a8793))
+  *  move libdirs to dracut-functions.sh ([6fe23c38](https://github.com/dracut-ng/dracut-ng/commit/6fe23c38b49b6468a109284398e54fd592df3758))
+  *  move defining DRACUT_LDCONFIG to dracut-functions.sh ([294b3583](https://github.com/dracut-ng/dracut-ng/commit/294b35834974b85c54281b145fa8ae006b276783))
+  *  remove trailing null characters from SBATs when building UKIs ([785fbf8b](https://github.com/dracut-ng/dracut-ng/commit/785fbf8b6ce6553823b454ec47d2e7276017e3f7))
+  *  use proper dracut logging when possible ([2298980b](https://github.com/dracut-ng/dracut-ng/commit/2298980b5c771621dc8e27bf11146c4c069b743e))
+  *  ensure that inst is called after DRACUT_NO_XATTR is computed ([1e504843](https://github.com/dracut-ng/dracut-ng/commit/1e5048433776abb90ba349c07c1a9624426c03df))
+  *  move comment back to related dracut_args variable ([01efc845](https://github.com/dracut-ng/dracut-ng/commit/01efc8452d410993dbbce84d3c644483fbf60c02))
+  *  source dracut-functions.sh before calling dwarning ([8552a0f4](https://github.com/dracut-ng/dracut-ng/commit/8552a0f443ffeacd6529f0c86896f64d1b646fbe))
+  *  ignore shellcheck SC2329 in addition to SC2317 ([d82bff14](https://github.com/dracut-ng/dracut-ng/commit/d82bff144ef58a90ce02b68db790b52796f864c9))
+  *  ignore failing find_binary dracut-install ([26c55932](https://github.com/dracut-ng/dracut-ng/commit/26c5593222ff8521104bed08d9f3a4264ff0bf40))
+  *  remove newlines from libdirs variable ([62d71056](https://github.com/dracut-ng/dracut-ng/commit/62d710568f1c6129a97487b5ef2666b70c61c9fc))
+  *  --printconfig does not work without --force ([00bc4fc2](https://github.com/dracut-ng/dracut-ng/commit/00bc4fc27d689a954ceec521490e6a2507524c06))
+  *  shellcheck SC2086 ([c47e8910](https://github.com/dracut-ng/dracut-ng/commit/c47e8910877b245e18f4da62b9abf606ba51e111))
+* **dracut-functions:**  check for kmod ([4458505e](https://github.com/dracut-ng/dracut-ng/commit/4458505ee98248a183c63b219e98906713644dea))
+* **dracut-init:**  do not set DRACUT_KERNEL_MODALIASES for --no-kernel ([902bd6ce](https://github.com/dracut-ng/dracut-ng/commit/902bd6ce6279de63f4dbcab5f8059b193339645e))
+* **dracut-install:**
+  *  resolve dependencies even if not executable ([fff546a2](https://github.com/dracut-ng/dracut-ng/commit/fff546a27ea45f051adb64ce665f1a171dbfca6d))
+  *  build with -Werror=discarded-qualifiers ([f2d0e638](https://github.com/dracut-ng/dracut-ng/commit/f2d0e6386102428cede35d51922b4b275d9a2e64), closes [#1877](https://github.com/dracut-ng/dracut-ng/issues/1877))
+* **dracut-logger:**
+  *  do not require debug to be defined ([aa94df95](https://github.com/dracut-ng/dracut-ng/commit/aa94df953537ca5c883e51f244f5e878b24f6b2d))
+  *  disable kernel logging if /dev/kmsg is not writable ([49c32f9f](https://github.com/dracut-ng/dracut-ng/commit/49c32f9f05643ca41a6b1685e03a28db8c9a92e3))
+  *  allow dlog_init to print multiple errors ([6aa1abf3](https://github.com/dracut-ng/dracut-ng/commit/6aa1abf360c8bbe00cdd0aa9204103b55f552ffc))
+  *  do not export maxloglvl and syslogfacility ([f7fd8d3f](https://github.com/dracut-ng/dracut-ng/commit/f7fd8d3f083b75a7a373cb335320009e69fdaaae))
+* **dracut-systemd:**
+  *  do not error out with new root= options handled by systemd ([529bf27d](https://github.com/dracut-ng/dracut-ng/commit/529bf27d48fa7170cc5384b8b8fb3753ae4da99e))
+  *  use expected PS1 in the emergency shell ([ccd096a1](https://github.com/dracut-ng/dracut-ng/commit/ccd096a15d6a4f64cfdc14f890b518239efc18bf))
+* **dracut.conf.d:**  demote uki-virt to CI only ([39e7cf1f](https://github.com/dracut-ng/dracut-ng/commit/39e7cf1f63b0213e18a4c12f688620fc8f11e515))
+* **functions:**  do not use path escapes for non-paths ([c04ee829](https://github.com/dracut-ng/dracut-ng/commit/c04ee82917c21b9cf1a2fd23c40339df1da475f1))
+* **i18n:**  remove Gentoo workaround that is no longer needed ([53ed2794](https://github.com/dracut-ng/dracut-ng/commit/53ed2794084bfee92d58477f81fb796fb20e896c))
+* **livenet:**  correct check for deprecated rd.live.overlay.overlayfs ([3f3c377b](https://github.com/dracut-ng/dracut-ng/commit/3f3c377bbe58f4e05358492537f777ed2b25546d))
+* **man:**
+  *  avoid bold italic text ([fd090e10](https://github.com/dracut-ng/dracut-ng/commit/fd090e103700f099f77ccb2208d6a31db2f05f39))
+  *  avoid nesting italic in bold text ([cdd3daac](https://github.com/dracut-ng/dracut-ng/commit/cdd3daaccb40235e1bf1b44903047068a21362db))
+* **multipath:**  always forcefully load multipath modules ([5ace3b01](https://github.com/dracut-ng/dracut-ng/commit/5ace3b018a7b662873cad38d6bc95a41cd3979fe))
+* **nfs:**
+  *  simplify DRACUT_CP arguments to increase portability ([703c8c19](https://github.com/dracut-ng/dracut-ng/commit/703c8c191d75060e3f97e050e63f3fb2b6ae059c))
+  *  do not execute logic in nfs hooks if netroot is not nfs ([bf29f4b7](https://github.com/dracut-ng/dracut-ng/commit/bf29f4b79aee9771800dffe78857014970be117e))
+  *  set the default group of the rpcbind user to the state dir ([90dc4436](https://github.com/dracut-ng/dracut-ng/commit/90dc443626ca9f61277159686e558502ebbc0845))
+* **overlayfs:**  make overlayfs-lib.sh executable ([186d15df](https://github.com/dracut-ng/dracut-ng/commit/186d15df636ce69e8cd630b3108077abc97065fe))
+* **plymouth:**  avoid warning if /etc/plymouth/plymouthd.conf is not present ([45d560bb](https://github.com/dracut-ng/dracut-ng/commit/45d560bbb39c165781d3e42989212574982ddd6d))
+* **release:**
+  *  use correct argument for head(1) to split header out ([5f3c23aa](https://github.com/dracut-ng/dracut-ng/commit/5f3c23aa8683a7db810c31aad8189995b6ad10f1))
+  *  use the correct variable to set the new project version ([a9114d49](https://github.com/dracut-ng/dracut-ng/commit/a9114d4921920438c95ef17805b2edc300a14985))
+  *  use correct arguments for head(1) and tail(1) calls ([77c0d577](https://github.com/dracut-ng/dracut-ng/commit/77c0d5774b02ee3b5972899766fa1fe74d645fd3))
+  *  only install clog-cli if it isn't already installed ([d04db3be](https://github.com/dracut-ng/dracut-ng/commit/d04db3be727eed6be4c11226696036d518908494))
+* **systemd:**  only install systemd-coredump with systemd-coredump dracut module ([a8268a4d](https://github.com/dracut-ng/dracut-ng/commit/a8268a4df142517674244cd208e067df06b978e8))
+* **systemd-cryptsetup:**  increase ordering to resolve regression ([d7bdbbb7](https://github.com/dracut-ng/dracut-ng/commit/d7bdbbb702abcd9c141decd0160284ad22a8b253))
+* **systemd-networkd:**
+  *  ensure zzzz-dracut-default.network cleanup ([da3353f0](https://github.com/dracut-ng/dracut-ng/commit/da3353f022cc7b930dd532e2f1e06af4e86999d3))
+  *  install and enable systemd-networkd-resolve-hook.socket ([84c05fc6](https://github.com/dracut-ng/dracut-ng/commit/84c05fc661fa2ec01cfb341e73569542d46938d7))
+* **systemd-pcrphase:**  do not print an error if an optional binary is not found ([7f45703d](https://github.com/dracut-ng/dracut-ng/commit/7f45703de9b2d67ffebb3b9d0847b51b32d6479c), closes [#2094](https://github.com/dracut-ng/dracut-ng/issues/2094))
+* **systemd-portabled:**  do not call portablectl ([2a0b1f4e](https://github.com/dracut-ng/dracut-ng/commit/2a0b1f4ebbfc5233f190df00640d790ebdb5b44d))
+* **test/DMSQUASH:**  zero overlay partition on reset ([ca2335fb](https://github.com/dracut-ng/dracut-ng/commit/ca2335fbd610d5918bb178da6b70d8617d3e44d5))
+* **tpm2-tss:**  add tss user/group in addition to sysusers config ([28adf6f9](https://github.com/dracut-ng/dracut-ng/commit/28adf6f91cf7e294799e5a8b73b5937644c8cde9))
+
+#### Performance
+
+* **dracut:**
+  *  remove duplicate export libdirs ([329344bc](https://github.com/dracut-ng/dracut-ng/commit/329344bcc2774222345d854d62b034646322bfbd))
+  *  unset threecpio_help_output after usage ([724da6ef](https://github.com/dracut-ng/dracut-ng/commit/724da6ef940e18d61da5a50fc7d1d7a0af4a2b0a))
+  *  re-use cached 3cpio --help output ([e9c3e0bf](https://github.com/dracut-ng/dracut-ng/commit/e9c3e0bf4a3822132106423ea59d9c1d04a807c1))
+  *  replace grep by bash pattern matching ([ddd6a7d3](https://github.com/dracut-ng/dracut-ng/commit/ddd6a7d3df1c4c5b69d177649279fb82532c2e8a))
+* **nfs:**
+  *  do not source /lib/nfs-lib.sh twice ([0b086e9f](https://github.com/dracut-ng/dracut-ng/commit/0b086e9fc82d7957ada7a60e327d41c8ff5ea5a7))
+  *  remove references to old rpcbind state dir ([2f49cbbe](https://github.com/dracut-ng/dracut-ng/commit/2f49cbbe1503926913d7547d713aad158aaa86a8))
+* **resume:**
+  *  remove unreachable code ([f1ccdaa3](https://github.com/dracut-ng/dracut-ng/commit/f1ccdaa34b640f4872facc2f2830b7d05dfbd5f3))
+  *  do not search cmdline options in /etc/cmdline{,.d} ([67e8c3d5](https://github.com/dracut-ng/dracut-ng/commit/67e8c3d51ef8f5ac0b3a4c8148e01059b01bc863))
+  *  do not attempt to install systemd-hibernate-resume@.service ([ddb46200](https://github.com/dracut-ng/dracut-ng/commit/ddb46200216932ec59eff170396afc5a704177ce))
+
+#### Features
+
+*   memdisk dracut module ([f1d6a0bc](https://github.com/dracut-ng/dracut-ng/commit/f1d6a0bc8df8e4f701768a788faac7fbcb94ebe9))
+*   merge rd.overlayfs into rd.overlay ([d90c59bb](https://github.com/dracut-ng/dracut-ng/commit/d90c59bb28e80a8a3d6e14ecf499aeba00896a15))
+*   replace DRACUT_RESOLVE_DEPS by !DRACUT_RESOLVE_LAZY ([1d302268](https://github.com/dracut-ng/dracut-ng/commit/1d302268ae1a60fccefd81a9f6cd71d2c95d8d2c))
+*   rename rd.overlayfs.readonly to rd.overlay.readonly ([bcefa9d0](https://github.com/dracut-ng/dracut-ng/commit/bcefa9d0a4acd34723bcb5438d7c5ff30932a10e))
+*   warn in case 3cpio is present but not suitable ([dbd9f0ee](https://github.com/dracut-ng/dracut-ng/commit/dbd9f0ee2c624e592a74b60080977b01307655c5))
+*   rename rd.live.overlay to rd.overlay ([d6872bbd](https://github.com/dracut-ng/dracut-ng/commit/d6872bbdf344170afa7bf4568f4a7366a8277fb9))
+*   move DRACUT_VERSION from dracut-version.sh into dracut.sh ([d5e985d4](https://github.com/dracut-ng/dracut-ng/commit/d5e985d40e7f8e3235b5cc0d7f068d336908a208))
+*   add yamllint config ([55ed61f2](https://github.com/dracut-ng/dracut-ng/commit/55ed61f2920c4aa029b542455e0350d15219ccaa))
+*   always preserve file ownership ([24838e08](https://github.com/dracut-ng/dracut-ng/commit/24838e0861826b842626a403e8cebadbc20d3dbd))
+*   remove rev_lib_symlinks ([9d668b20](https://github.com/dracut-ng/dracut-ng/commit/9d668b2006eb21cf41e24fc4c987095cc1c6059c))
+*   remove inst_any ([d5571c91](https://github.com/dracut-ng/dracut-ng/commit/d5571c919ad3a5bee024119e5efa88bb23c90e46))
+*   source dracut-logger.sh from dracut-functions.sh ([ffc10b06](https://github.com/dracut-ng/dracut-ng/commit/ffc10b06225f2a1fcf96fe20f410081411c54581))
+*   remove unused and undocumented argument ([b8651e7b](https://github.com/dracut-ng/dracut-ng/commit/b8651e7b1a73792458bc4c15c293337f5d856393))
+*   add header comment to units created by systemd generators ([c80025d6](https://github.com/dracut-ng/dracut-ng/commit/c80025d6e1a73eb0f881e349b2f47edaa27a3a9a))
+*   rename rd.live.overlay.overlayfs to rd.overlayfs ([b77ae7eb](https://github.com/dracut-ng/dracut-ng/commit/b77ae7eb8523da696fcb0f48a747ac22bdc9eb31))
+* **Makefile:**  do not install network-legacy by default ([30d121b1](https://github.com/dracut-ng/dracut-ng/commit/30d121b1bd4ad2fb26ea72e1b0d5581663179882))
+* **base:**  support cmdline options in /run/initramfs/cmdline.d ([bac8b3da](https://github.com/dracut-ng/dracut-ng/commit/bac8b3da6d8094d51b1cb4c6bb183e22cb001f12))
+* **cpio:**  zero device major/minor numbers ([0bdecd92](https://github.com/dracut-ng/dracut-ng/commit/0bdecd925fbaebebfea96af97a74257fdbf13af4))
+* **dmsquash-live:**  allow booting from compressed ostree filesystems ([69a43970](https://github.com/dracut-ng/dracut-ng/commit/69a43970015e5b8c5336b13b4f0355d3cb95e7fb))
+* **dracut:**
+  *  introduce additional hooks locations ([04d5e294](https://github.com/dracut-ng/dracut-ng/commit/04d5e2944e1b1a85a945910995cb8df00d983a7c))
+  *  allow hostonly mode if /sys /proc or /run is missing ([399e555f](https://github.com/dracut-ng/dracut-ng/commit/399e555f9e870f4301c42d38cab244513caf7c5f))
+  *  expose determine_kernel_image as a public function ([dd45cbff](https://github.com/dracut-ng/dracut-ng/commit/dd45cbff0f588587cf845746b8d707dda7e2566f))
+  *  add busybox support for 3cpio and enhanced_cpio ([b6877562](https://github.com/dracut-ng/dracut-ng/commit/b6877562faeebd58ac503635edfad371b0c72264))
+  *  drop unreachable code for dracutbasedir/initdir ([71d51e72](https://github.com/dracut-ng/dracut-ng/commit/71d51e7221bc53ec90fb3ebf2cfe1240cda38763))
+  *  disable xattr when creating cpios ([941b18d0](https://github.com/dracut-ng/dracut-ng/commit/941b18d0f2536be860142e4a260aefa7aa5b4a06))
+  *  print $uefi with --printconfig ([f235dcb7](https://github.com/dracut-ng/dracut-ng/commit/f235dcb7e21a0a234bb70fab7705df417dd7a0ab))
+  *  add support for --ukify, --no-ukify ([7ec5fbbe](https://github.com/dracut-ng/dracut-ng/commit/7ec5fbbed4e39793859136c34cbbf9779fae536e))
+  *  always check DRACUT_INSTALL being executable ([886725eb](https://github.com/dracut-ng/dracut-ng/commit/886725ebc029a7275d7aefdb0f0add8cc81386b2))
+  *  print $initrdname with --printconfig ([71a713bb](https://github.com/dracut-ng/dracut-ng/commit/71a713bb2834f1994b226c7877dd8a0ef858928d))
+* **dracut-systemd:**  preserve the content of /var/lib/systemd ([fd370b39](https://github.com/dracut-ng/dracut-ng/commit/fd370b393e319e59b44b611e5fe28de52615d516))
+* **gentoo:**  introduce a distro config file to default out of ukify ([918d54c1](https://github.com/dracut-ng/dracut-ng/commit/918d54c174876fa2347ffa5be22d663df85b933e))
+* **livenet:**  support root=http:* as alias for root=live:http:* ([7555aca3](https://github.com/dracut-ng/dracut-ng/commit/7555aca320cb1266bcd2195ff07c860131d6df5e))
+* **lvm:**  match host lvm recovery installation ([4fd5d2f3](https://github.com/dracut-ng/dracut-ng/commit/4fd5d2f3a83f44085dece28a836a94f71edbafc2))
+* **network-manager:**  add systemd generator if available ([b6329a08](https://github.com/dracut-ng/dracut-ng/commit/b6329a088e2c49ee749361a1401e98380478da26))
+* **no-xattr:**  no longer support no-xattr config ([8a915c95](https://github.com/dracut-ng/dracut-ng/commit/8a915c95f4e003449a8d69d62c2f5200d619db49))
+* **overlayfs:**  add persistent device overlay support ([716fd4ff](https://github.com/dracut-ng/dracut-ng/commit/716fd4ffc969c3418fb6c8ba224b6d879e6f76b7))
+* **pcsc:**  add openSUSE support ([254185a6](https://github.com/dracut-ng/dracut-ng/commit/254185a69080d7e6568e995de5d3a5648e0c078e))
+* **qemu-net:**  auto-add qemu-net if net-lib and qemu included ([94b21ab3](https://github.com/dracut-ng/dracut-ng/commit/94b21ab38fa50fc0e789f0bd2b76cead5da3fd10))
+* **systemd:**  install new dlopened libraries ([1ae49bf5](https://github.com/dracut-ng/dracut-ng/commit/1ae49bf5d91669b27907953c1975754a9aada8aa))
+* **systemd-import:**  introducing the systemd-import module ([9297137f](https://github.com/dracut-ng/dracut-ng/commit/9297137f8d6c1eabe75cac79d7c3e81a15e4e990))
+* **systemd-pcrphase:**  rename to systemd-pcrextend ([a4a34611](https://github.com/dracut-ng/dracut-ng/commit/a4a34611a54f185b2f8269b7b5da2442c34e448f))
+* **tpm2-tss:**  add openSUSE support ([66279611](https://github.com/dracut-ng/dracut-ng/commit/66279611ec46e50e44298698ecc905e4548a8b2e))
+* **virtfs, virtiofs:**  auto-add dracut module if qemu included ([f77b1c08](https://github.com/dracut-ng/dracut-ng/commit/f77b1c08be5eff3869b38b02d1c06f583afb1d64))
+
+#### Contributors
+
+- Benjamin Drung <benjamin.drung@canonical.com>
+- Jo Zzsi <jozzsicsataban@gmail.com>
+- Antonio Alvarez Feijoo <antonio.feijoo@suse.com>
+- Nadzeya Hutsko <nadzeya.hutsko@canonical.com>
+- Vitaly Kuznetsov <vkuznets@redhat.com>
+- dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+- Neal Gompa <neal@gompa.dev>
+- David Disseldorp <ddiss@suse.de>
+- Brian C. Lane <bcl@redhat.com>
+- Hongxu Jia <hongxu.jia@windriver.com>
+- Jens Schmidt <farblos@vodafonemail.de>
+- Li Tian <litian@redhat.com>
+- Louis Narvaez <lnarvaez@redhat.com>
+- Luca Boccassi <luca.boccassi@gmail.com>
+
 dracut-ng-109
 =============
 
