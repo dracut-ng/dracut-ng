@@ -14,6 +14,16 @@ test_check() {
         echo "Test needs mksquashfs... Skipping"
         return 1
     fi
+
+    if ! command -v mkfs.erofs &> /dev/null; then
+        echo "Test needs mkfs.erofs... Skipping"
+        return 1
+    fi
+
+    if ! command -v xorriso &> /dev/null; then
+        echo "Test needs xorriso... Skipping"
+        return 1
+    fi
 }
 
 client_run() {
@@ -70,15 +80,9 @@ test_run() {
     client_run "live" "rd.live.image"
     client_run "livedir" "rd.live.image rd.live.dir=LiveOS"
 
-    # Run the erofs test only if mkfs.erofs is available
-    if command -v mkfs.erofs &> /dev/null; then
-        client_run "erofs" "root=live:/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_erofs"
-    fi
+    client_run "erofs" "root=live:/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_erofs"
 
-    # Run the iso test only if xorriso is available
-    if command -v xorriso &> /dev/null; then
-        client_run "iso" "iso-scan/filename=linux.iso root=live:/dev/disk/by-label/ISO rd.driver.pre=squashfs rd.driver.pre=ext4"
-    fi
+    client_run "iso" "iso-scan/filename=linux.iso root=live:/dev/disk/by-label/ISO rd.driver.pre=squashfs rd.driver.pre=ext4"
 
     reset_overlay_partition
     client_run "autooverlay" "rd.live.image rd.overlay=LABEL=persist rd.live.dir=LiveOS"
@@ -119,20 +123,15 @@ EOF
     # erofs drive
     qemu_add_drive disk_args "$TESTDIR"/root_erofs.img root_erofs 1
 
-    # Write the erofs compressed filesystem to the partition
-    if command -v mkfs.erofs &> /dev/null; then
-        mkfs.erofs "$TESTDIR"/root_erofs.img "$TESTDIR"/rootfs/
-    fi
+    mkfs.erofs "$TESTDIR"/root_erofs.img "$TESTDIR"/rootfs/
 
     # iso drive
     qemu_add_drive disk_args "$TESTDIR"/root_iso.img root_iso 1
 
     # Write the iso to the partition
-    if command -v xorriso &> /dev/null; then
-        mkdir "$TESTDIR"/iso
-        xorriso -as mkisofs -output "$TESTDIR"/iso/linux.iso "$TESTDIR"/live/ -volid "ISO" -iso-level 3
-        mkfs.ext4 -q -L dracut_iso -d "$TESTDIR"/iso/ "$TESTDIR"/root_iso.img
-    fi
+    mkdir "$TESTDIR"/iso
+    xorriso -as mkisofs -output "$TESTDIR"/iso/linux.iso "$TESTDIR"/live/ -volid "ISO" -iso-level 3
+    mkfs.ext4 -q -L dracut_iso -d "$TESTDIR"/iso/ "$TESTDIR"/root_iso.img
 
     local dracut_modules="dmsquash-live-autooverlay convertfs pollcdrom kernel-modules kernel-modules-extra qemu"
 
