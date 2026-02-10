@@ -82,9 +82,6 @@ jobs:
                     - container: debian:latest
                       test: "45"
                     # TEST-45-SYSTEMD-IMPORT requires systemd >= v258
-                    - container: opensuse:latest
-                      test: "45"
-                    # TEST-45-SYSTEMD-IMPORT requires systemd >= v258
                     - container: ubuntu:rolling
                       test: "45"
         container:
