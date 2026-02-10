@@ -137,9 +137,6 @@ jobs:
                     # https://github.com/dracut-ng/dracut-ng/issues/1677
                     - container: arch:latest
                       test: "41"
-                    # TEST-45-SYSTEMD-IMPORT requires systemd >= v258
-                    - container: opensuse:latest
-                      test: "45"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm --privileged'
