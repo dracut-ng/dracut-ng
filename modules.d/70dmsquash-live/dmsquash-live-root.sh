@@ -337,6 +337,8 @@ if [ -e "$SQUASHED" ]; then
     SQUASHED_LOOPDEV=$(losetup -f)
     losetup -r "$SQUASHED_LOOPDEV" "$SQUASHED"
     mkdir -m 0755 -p /run/initramfs/squashfs
+    fstype=$(det_img_fs "$SQUASHED_LOOPDEV")
+    load_fstype "$fstype"
     mount -n -o ro "$SQUASHED_LOOPDEV" /run/initramfs/squashfs
 
     if [ -d /run/initramfs/squashfs/LiveOS ]; then
@@ -422,6 +424,8 @@ if [ -n "$overlayfs" ]; then
         if [ "$FSIMG" = "$SQUASHED" ]; then
             mount --bind /run/initramfs/squashfs /run/rootfsbase
         else
+            fstype=$(det_img_fs "$FSIMG")
+            load_fstype "$fstype"
             mount -r "$FSIMG" /run/rootfsbase
         fi
     else
