@@ -1,0 +1,21 @@
+[Unit]
+Description=Device-Mapper Multipath Default Configuration
+Before=lvm2-activation-early.service
+Wants=local-fs-pre.target
+After=systemd-journald.socket
+Before=local-fs-pre.target multipathd.service
+DefaultDependencies=no
+Conflicts=shutdown.target
+
+ConditionKernelCommandLine=rd.multipath=default
+ConditionPathExists=!/etc/multipath.conf
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# mpathconf requires /etc/multipath to already exist
+ExecStartPre=-/usr/bin/mkdir -p /etc/multipath
+ExecStart=/usr/sbin/mpathconf --enable --user_friendly_names n
+
+[Install]
+WantedBy=sysinit.target

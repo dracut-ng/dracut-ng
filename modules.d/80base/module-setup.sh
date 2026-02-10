@@ -2,38 +2,85 @@
 
 # called by dracut
 depends() {
-    echo udev-rules shell-interpreter
+    local deps
+    deps="udev-rules"
+
+    if [[ $hostonly_cmdline == "yes" ]]; then
+        if [[ -n ${host_devs[*]} ]] || [[ -n ${user_devs[*]} ]]; then
+            deps+=" initqueue"
+        fi
+    fi
+
+    echo "$deps"
     return 0
 }
 
+# we prefer the non-busybox implementation of switch_root
+# due to the dependency, this dracut module needs to be ordered before the busybox dracut module
+# as this dracut module would install the non-busybox implementation of switch_root, if available
+
+# this dracut module needs to be ordered after the systemd-sysusers dracut module, so make sure
+# that the root password set in for the emergency console in host-only mode
+
 # called by dracut
 install() {
-    inst_multiple mount mknod mkdir sleep chown \
-        sed ls flock cp mv dmesg rm ln rmmod mkfifo umount readlink setsid \
-        modprobe chmod tr
+    inst_multiple \
+        cp \
+        dmesg \
+        flock \
+        ln \
+        ls \
+        mkdir \
+        mkfifo \
+        mknod \
+        modprobe \
+        mount \
+        mv \
+        readlink \
+        rm \
+        rmmod \
+        sed \
+        setsid \
+        sleep \
+        tr \
+        umount
 
-    inst_multiple -o findmnt less kmod
+    inst_multiple -o \
+        chown \
+        findmnt \
+        kmod \
+        less \
+        halt \
+        poweroff \
+        reboot \
+        sysctl
 
     inst_binary "${dracutbasedir}/dracut-util" "/usr/bin/dracut-util"
 
     ln -s dracut-util "${initdir}/usr/bin/dracut-getarg"
     ln -s dracut-util "${initdir}/usr/bin/dracut-getargs"
 
-    if [ ! -e "${initdir}/bin/sh" ]; then
-        inst_multiple bash
-        (ln -s bash "${initdir}/bin/sh" || :)
-    fi
+    # fallback when shell-interpreter is not included
+    [ ! -e "${initdir}/bin/sh" ] && inst_simple "${initdir}/bin/sh" "/bin/sh"
 
     # add common users in /etc/passwd, it will be used by nfs/ssh currently
     # use password for hostonly images to facilitate secure sulogin in emergency console
     [[ $hostonly ]] && pwshadow='x'
-    grep '^root:' "$initdir/etc/passwd" > /dev/null 2>&1 || echo "root:$pwshadow:0:0::/root:/bin/sh" >> "$initdir/etc/passwd"
-    grep '^nobody:' "$dracutsysrootdir"/etc/passwd >> "$initdir/etc/passwd"
+    grep -qs '^root:' "$initdir/etc/passwd" || echo "root:$pwshadow:0:0::/root:/bin/sh" >> "$initdir/etc/passwd"
 
-    [[ $hostonly ]] && grep '^root:' "$dracutsysrootdir"/etc/shadow >> "$initdir/etc/shadow"
+    if [[ $hostonly ]]; then
+        # check if other dracut modules already created an entry for root in /etc/shadow
+        if grep -qs '^root:' "$initdir/etc/shadow"; then
+            grep -v '^root:' "$initdir/etc/shadow" > "$initdir/etc/shadow-"
+            mv "$initdir/etc/shadow-" "$initdir/etc/shadow"
+        fi
+        # replace root password in the existing entry in etc/shadow
+        # root password from host takes precedence over root password set by systemd-sysuser in hostonly mode
+        # create a new entry for root in /etc/shadow
+        grep '^root:' "${dracutsysrootdir-}"/etc/shadow >> "$initdir/etc/shadow"
+    fi
 
     # install our scripts and hooks
-    inst_script "$moddir/initqueue.sh" "/sbin/initqueue"
     inst_script "$moddir/loginit.sh" "/sbin/loginit"
     inst_script "$moddir/rdsosreport.sh" "/sbin/rdsosreport"
 
@@ -41,32 +88,36 @@ install() {
     mkdir -m 0755 -p "${initdir}"/lib/dracut
     mkdir -m 0755 -p "${initdir}"/var/lib/dracut/hooks
 
-    # symlink to old hooks location for compatibility
-    ln_r /var/lib/dracut/hooks /lib/dracut/hooks
-
     mkdir -p "${initdir}"/tmp
 
     inst_simple "$moddir/dracut-lib.sh" "/lib/dracut-lib.sh"
     inst_simple "$moddir/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh"
     mkdir -p "${initdir}"/var
 
+    [[ -d /lib/modprobe.d ]] && inst_multiple -o "/lib/modprobe.d/*.conf"
+    [[ -d /usr/lib/modprobe.d ]] && inst_multiple -o "/usr/lib/modprobe.d/*.conf"
+    [[ $hostonly ]] && inst_multiple -H -o /etc/modprobe.d/*.conf /etc/modprobe.conf
+
+    inst_simple "$moddir/insmodpost.sh" /sbin/insmodpost.sh
+
     if ! dracut_module_included "systemd"; then
         inst_multiple switch_root || dfatal "Failed to install switch_root"
         inst_script "$moddir/init.sh" "/init"
+        inst_hook cmdline 01 "$moddir/parse-kernel.sh"
         inst_hook cmdline 10 "$moddir/parse-root-opts.sh"
+
+        {
+            echo "NAME=dracut"
+            echo "ID=dracut"
+            echo "VERSION_ID=\"$DRACUT_VERSION\""
+            echo 'ANSI_COLOR="0;34"'
+        } > "${initdir}"/usr/lib/initrd-release
     fi
 
     ln -fs /proc/self/mounts "$initdir/etc/mtab"
     if [[ $ro_mnt == yes ]]; then
-        echo ro >> "${initdir}/etc/cmdline.d/base.conf"
+        echo ro >> "${initdir}/etc/cmdline.d/20-base.conf"
     fi
-
-    {
-        echo "NAME=dracut"
-        echo "ID=dracut"
-        echo "VERSION_ID=\"$DRACUT_VERSION\""
-        echo 'ANSI_COLOR="0;34"'
-    } > "${initdir}"/usr/lib/initrd-release
 
     echo "dracut-$DRACUT_VERSION" > "$initdir/lib/dracut/dracut-$DRACUT_VERSION"
 
@@ -81,7 +132,7 @@ install() {
                     export DRACUT_SYSTEMD=1
                 fi
                 export PREFIX="$initdir"
-                export hookdir=/lib/dracut/hooks
+                export hookdir=/var/lib/dracut/hooks
 
                 # shellcheck source=dracut-dev-lib.sh
                 . "$moddir/dracut-dev-lib.sh"
@@ -101,7 +152,7 @@ install() {
                     _pdev=$(get_persistent_dev "$_dev")
 
                     case "$_pdev" in
-                        /dev/?*) wait_for_dev "$_pdev" 0 ;;
+                        /dev/?*) wait_for_dev "$_pdev" "infinity" ;;
                         *) ;;
                     esac
                 done
@@ -109,7 +160,7 @@ install() {
                 for _dev in "${user_devs[@]}"; do
 
                     case "$_dev" in
-                        /dev/?*) wait_for_dev "$_dev" 0 ;;
+                        /dev/?*) wait_for_dev "$_dev" "infinity" ;;
                         *) ;;
                     esac
 
@@ -117,7 +168,7 @@ install() {
                     [[ $_dev == "$_pdev" ]] && continue
 
                     case "$_pdev" in
-                        /dev/?*) wait_for_dev "$_pdev" 0 ;;
+                        /dev/?*) wait_for_dev "$_pdev" "infinity" ;;
                         *) ;;
                     esac
                 done

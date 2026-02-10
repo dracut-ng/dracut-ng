@@ -1,0 +1,48 @@
+---
+name: Daily Tests - busybox (x64)
+
+on:  # yamllint disable-line rule:truthy
+    schedule:
+        - cron: '30 23 * * *'   # every day at 23:30 UTC
+
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+    pull_request:
+        paths:
+            - '.github/workflows/daily-busybox-x64.yml'
+
+jobs:
+    busybox:
+        name: ${{ matrix.test }} on ${{ matrix.container }} with busybox
+        runs-on: ubuntu-24.04
+        timeout-minutes: 20
+        concurrency:
+            group: >
+                daily-busybox-${{ github.workflow }}-${{ github.ref }}
+                -${{ matrix.container }}-${{ matrix.test }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                container:
+                    - alpine:busybox-edge
+                test:
+                    - '10'
+                    - '11'
+                    - '12'
+                    - '13'
+                    - '14'
+                    - '20'
+                    - '26'
+                    - '50'
+                    - '80'
+                    - '81'
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            options: '--device=/dev/kvm --privileged'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v6
+            - name: "TEST-${{ matrix.test }}"
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}

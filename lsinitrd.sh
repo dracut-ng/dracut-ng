@@ -96,14 +96,28 @@ while (($# > 0)); do
     shift
 done
 
-if ! [[ $KERNEL_VERSION ]]; then
-    if type -P systemd-detect-virt &> /dev/null && systemd-detect-virt -c &> /dev/null; then
-        # shellcheck disable=SC2012
-        KERNEL_VERSION="$(cd /lib/modules && ls -1 | tail -1)"
-        # shellcheck disable=SC2012
-        [[ $KERNEL_VERSION ]] || KERNEL_VERSION="$(cd /usr/lib/modules && ls -1 | tail -1)"
+CPIO=cpio
+if command -v 3cpio > /dev/null; then
+    if threecpio_help_output=$(3cpio --help); then
+        if [[ $threecpio_help_output == *--make-directories* ]]; then
+            CPIO=3cpio
+        fi
+    elif command -v cpio > /dev/null; then
+        echo "Warning: Calling '3cpio --help' failed. Cannot check if 3cpio supports --make-directories. Falling back to cpio."
+    else
+        echo "Warning: Calling '3cpio --help' failed. Cannot check if 3cpio supports --make-directories."
+        CPIO=3cpio
     fi
-    [[ $KERNEL_VERSION ]] || KERNEL_VERSION="$(uname -r)"
+    unset threecpio_help_output
+fi
+
+if ! [[ $KERNEL_VERSION ]]; then
+    if type -P systemd-detect-virt &> /dev/null && ! systemd-detect-virt -c &> /dev/null && ! systemd-detect-virt -r &> /dev/null; then
+        KERNEL_VERSION="$(uname -r)"
+    else
+        # shellcheck disable=SC2012
+        KERNEL_VERSION="$(cd /lib/modules && ls -1v | tail -1)"
+    fi
 fi
 
 find_initrd_for_kernel_version() {
@@ -173,6 +187,7 @@ if ! [[ -f $image ]]; then
     usage
     exit 1
 fi
+image=$(realpath "$image")
 
 TMPDIR="$(mktemp -d -t lsinitrd.XXXXXX)"
 # shellcheck disable=SC2064
@@ -187,6 +202,33 @@ dracutlibdirs() {
 SQUASH_TMPFILE=""
 SQUASH_EXTRACT="$TMPDIR/squash-extract"
 
+# Takes optional pattern arguments
+cpio_extract() {
+    if [ "$CPIO" = 3cpio ]; then
+        3cpio --extract --make-directories --parts "$parts" $verbose "$image" -- "$@"
+    else
+        $CAT "$image" 2> /dev/null | cpio -id --quiet $verbose -- "$@"
+    fi
+}
+
+# Takes optional pattern arguments
+cpio_extract_to_stdout() {
+    if [ "$CPIO" = 3cpio ]; then
+        3cpio --extract --parts "$parts" --to-stdout "$image" -- "$@"
+    else
+        $CAT "$image" 2> /dev/null | cpio --extract --quiet --to-stdout -- "$@"
+    fi
+}
+
+# Takes optional pattern arguments
+cpio_list() {
+    if [ "$CPIO" = 3cpio ]; then
+        3cpio --list --parts "$parts" --verbose "$image" -- "$@"
+    else
+        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --list -- "$@"
+    fi
+}
+
 extract_squash_img() {
     local _img _tmp
 
@@ -198,8 +240,7 @@ extract_squash_img() {
     # versions.
     for _img in squash-root.img squashfs-root.img erofs-root.img; do
         _tmp="$TMPDIR/$_img"
-        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout -- \
-            $_img > "$_tmp" 2> /dev/null
+        cpio_extract_to_stdout "$_img" > "$_tmp"
         [[ -s $_tmp ]] || continue
 
         SQUASH_TMPFILE="$_tmp"
@@ -216,7 +257,7 @@ extract_squash_img() {
     done
 
     if [[ -z $SQUASH_TMPFILE ]]; then
-        SQUASH_TMPFILE=none
+        SQUASH_TMPDIR=none
         return 1
     fi
 
@@ -245,7 +286,7 @@ extract_files() {
                 cat "$SQUASH_EXTRACT/$f" 2> /dev/null
                 ;;
             *)
-                $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --to-stdout "$f" 2> /dev/null
+                cpio_extract_to_stdout "$f"
                 ((ret += $?))
                 ;;
         esac
@@ -258,17 +299,16 @@ extract_files() {
 list_modules() {
     echo "dracut modules:"
     # shellcheck disable=SC2046
-    $CAT "$image" | cpio --extract --verbose --quiet --to-stdout -- \
-        $(dracutlibdirs modules.txt) 2> /dev/null
+    cpio_extract_to_stdout $(dracutlibdirs modules.txt)
     ((ret += $?))
 }
 
 list_files() {
     echo "========================================================================"
     if [ "$sorted" -eq 1 ]; then
-        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --list | sort -n -k5
+        cpio_list | sort -n -k5
     else
-        $CAT "$image" 2> /dev/null | cpio --extract --verbose --quiet --list | sort -k9
+        cpio_list | sort -k9
     fi
     ((ret += $?))
     echo "========================================================================"
@@ -296,9 +336,7 @@ list_squash_content() {
 list_cmdline() {
 
     echo "dracut cmdline:"
-    # shellcheck disable=SC2046
-    $CAT "$image" | cpio --extract --verbose --quiet --to-stdout -- \
-        etc/cmdline.d/\*.conf 2> /dev/null
+    cpio_extract_to_stdout etc/cmdline.d/\*.conf
     ((ret += $?))
 
     extract_squash_img || return 0
@@ -332,13 +370,13 @@ unpack_files() {
                     cp -rf "$SQUASH_EXTRACT/$f" "$f"
                     ;;
                 *)
-                    $CAT "$image" 2> /dev/null | cpio -id --quiet $verbose "$f"
+                    cpio_extract "$f"
                     ((ret += $?))
                     ;;
             esac
         done
     else
-        $CAT "$image" 2> /dev/null | cpio -id --quiet $verbose
+        cpio_extract
         ((ret += $?))
 
         extract_squash_img || return 0
@@ -356,11 +394,11 @@ unpack_files() {
 
 read -r -N 2 bin < "$image"
 if [ "$bin" = "MZ" ]; then
-    command -v objcopy > /dev/null || {
+    command -v "${OBJCOPY:-objcopy}" > /dev/null || {
         echo "Need 'objcopy' to unpack an UEFI executable."
         exit 1
     }
-    objcopy \
+    "${OBJCOPY:-objcopy}" \
         --dump-section .linux="$TMPDIR/vmlinuz" \
         --dump-section .initrd="$TMPDIR/initrd.img" \
         --dump-section .cmdline="$TMPDIR/cmdline.txt" \
@@ -397,13 +435,15 @@ if ((${#filenames[@]} <= 0)) && [[ -z $unpack ]] && [[ -z $unpackearly ]]; then
     echo "========================================================================"
 fi
 
+unset skip
 read -r -N 6 bin < "$image"
 case $bin in
     $'\x71\xc7'* | 070701)
         CAT="cat --"
-        is_early=$(cpio --extract --verbose --quiet --to-stdout -- 'early_cpio' < "$image" 2> /dev/null)
+        parts=1
+        is_early=$(cpio_extract_to_stdout early_cpio 2> /dev/null)
         # Debian mkinitramfs does not create the file 'early_cpio', so let's check if firmware files exist
-        [[ "$is_early" ]] || is_early=$(cpio --list --verbose --quiet --to-stdout -- 'kernel/*/microcode/*.bin' < "$image" 2> /dev/null)
+        [[ "$is_early" ]] || is_early=$(cpio_list 'kernel/*/microcode/*.bin' 2> /dev/null)
         if [[ "$is_early" ]]; then
             if [[ -n $unpack ]]; then
                 # should use --unpackearly for early CPIO
@@ -417,13 +457,13 @@ case $bin in
                 list_files
             fi
             if [[ -f "$dracutbasedir/src/skipcpio/skipcpio" ]]; then
-                SKIP="$dracutbasedir/src/skipcpio/skipcpio"
+                skip="$dracutbasedir/src/skipcpio/skipcpio"
             else
-                SKIP="$dracutbasedir/skipcpio"
+                skip="$dracutbasedir/skipcpio"
             fi
-            if ! [[ -x $SKIP ]]; then
+            if ! [[ -x $skip ]]; then
                 echo
-                echo "'$SKIP' not found, cannot display remaining contents!" >&2
+                echo "'$skip' not found, cannot display remaining contents!" >&2
                 echo
                 exit 0
             fi
@@ -431,8 +471,8 @@ case $bin in
         ;;
 esac
 
-if [[ $SKIP ]]; then
-    bin="$($SKIP "$image" | { read -r -N 6 bin && echo "$bin"; })"
+if [[ $skip ]]; then
+    bin="$($skip "$image" | { read -r -N 6 bin && echo "$bin"; })"
 else
     read -r -N 6 bin < "$image"
 fi
@@ -469,20 +509,22 @@ type "${CAT%% *}" > /dev/null 2>&1 || {
     exit 1
 }
 
-# shellcheck disable=SC2317  # assigned to CAT and $CAT called later
+# shellcheck disable=SC2317,SC2329  # assigned to CAT and $CAT called later
 skipcpio() {
-    $SKIP "$@" | $ORIG_CAT
+    $skip "$@" | $ORIG_CAT
 }
 
-if [[ $SKIP ]]; then
+parts="1-"
+if [[ $skip ]]; then
     ORIG_CAT="$CAT"
     CAT=skipcpio
+    parts="2-"
 fi
 
 if ((${#filenames[@]} > 1)); then
     TMPFILE="$TMPDIR/initrd.cpio"
     $CAT "$image" 2> /dev/null > "$TMPFILE"
-    # shellcheck disable=SC2317  # assigned to CAT and $CAT called later
+    # shellcheck disable=SC2317,SC2329  # assigned to CAT and $CAT called later
     pre_decompress() {
         cat "$TMPFILE"
     }
@@ -497,8 +539,7 @@ elif ((${#filenames[@]} > 0)); then
     extract_files
 else
     # shellcheck disable=SC2046
-    version=$($CAT "$image" | cpio --extract --verbose --quiet --to-stdout -- \
-        $(dracutlibdirs 'dracut-*') 2> /dev/null)
+    version=$(cpio_extract_to_stdout $(dracutlibdirs 'dracut-*'))
     ((ret += $?))
     echo "Version: $version"
     echo
@@ -508,8 +549,7 @@ else
     else
         echo -n "Arguments: "
         # shellcheck disable=SC2046
-        $CAT "$image" | cpio --extract --verbose --quiet --to-stdout -- \
-            $(dracutlibdirs build-parameter.txt) 2> /dev/null
+        cpio_extract_to_stdout $(dracutlibdirs build-parameter.txt)
         echo
         list_modules
         list_files

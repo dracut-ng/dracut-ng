@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+set -eu
 # shellcheck disable=SC2034
-TEST_DESCRIPTION="root filesystem on a ext4 filesystem"
+TEST_DESCRIPTION="root filesystem on a ext4 filesystem with systemd but without initqueue"
 
 test_check() {
     command -v systemctl &> /dev/null
@@ -10,49 +11,26 @@ test_check() {
 #DEBUGFAIL="rd.shell=1 rd.break=pre-mount"
 test_run() {
     declare -a disk_args=()
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root
+    qemu_add_drive disk_args "$TESTDIR"/root.img root
 
-    test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "$TEST_KERNEL_CMDLINE \"root=LABEL=  rdinit=/bin/sh\" systemd.log_target=console init=/sbin/init" \
-        -initrd "$TESTDIR"/initramfs.testing || return 1
+        -initrd "$TESTDIR"/initramfs.testing
+    check_qemu_log
+}
 
-    test_marker_check || return 1
+is_systemd_version_greater_or_equal() {
+    local version="$1"
+
+    command -v systemctl &> /dev/null
+    systemd_version=$(systemctl --version | awk 'NR==1 { print $2 }')
+    ((systemd_version >= "$version"))
 }
 
 test_setup() {
-    # Create what will eventually be our root filesystem onto an overlay
-    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
-    mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
-
-    # second, install the files needed to make the root filesystem
-    # create an initramfs that will create the target root filesystem.
-    # We do it this way so that we do not risk trashing the host mdraid
-    # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -N -i "$TESTDIR"/overlay / \
-        --add-confdir "test-makeroot" \
-        -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        --nomdadmconf \
-        --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
-
-    declare -a disk_args=()
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 1
-
-    # Invoke KVM and/or QEMU to actually create the target filesystem.
-    "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -append "root=/dev/fakeroot quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-    test_marker_check dracut-root-block-created || return 1
-    rm -- "$TESTDIR"/marker.img
+    build_client_rootfs "$TESTDIR/rootfs"
+    build_ext4_image "$TESTDIR/rootfs" "$TESTDIR"/root.img '  rdinit=/bin/sh'
 
     # systemd-analyze.sh calls man indirectly
     # make the man command succeed always
@@ -60,10 +38,20 @@ test_setup() {
     #make sure --omit-drivers does not filter out drivers using regexp to test for an earlier regression (assuming there is no one letter linux kernel module needed to run the test)
 
     test_dracut \
+        --no-hostonly-cmdline \
+        --omit "fido2 initqueue" \
         --omit-drivers 'a b c d e f g h i j k l m n o p q r s t u v w x y z' \
-        -i ./systemd-analyze.sh /lib/dracut/hooks/pre-pivot/00-systemd-analyze.sh \
-        -i "/bin/true" "/usr/bin/man" \
-        "$TESTDIR"/initramfs.testing
+        -I systemd-analyze \
+        -i ./systemd-analyze.sh /usr/lib/dracut/hooks/pre-pivot/00-systemd-analyze.sh \
+        -i "/bin/true" "/usr/bin/man"
+
+    # shellcheck disable=SC2144 # We're not installing multilib libfido2, so
+    # glob will only match once. More matches would break the test anyway.
+    if is_systemd_version_greater_or_equal 257 && [ -e /usr/lib*/libfido2.so.1 ] \
+        && ! lsinitrd "$TESTDIR"/initramfs.testing | grep -E ' usr/lib[^/]*/libfido2\.so\.1\b' > /dev/null; then
+        echo "Error: libfido2.so.1 should have been included in the initramfs" >&2
+        return 1
+    fi
 }
 
 # shellcheck disable=SC1090

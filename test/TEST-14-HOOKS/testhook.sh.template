@@ -1,0 +1,3 @@
+#!/bin/sh -e
+
+echo "@REPLACEME@" >> /run/dracut_hooks_ran

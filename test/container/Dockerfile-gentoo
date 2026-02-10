@@ -2,20 +2,20 @@
 # - glibc/systemd or musl/openrc
 # - systemd-networkd
 # - bash
+# - dbus-daemon
+# - network (systemd): network-legacy, systemd-networkd
+# - network (OpenRC): networkmanager
 
 # Not installed
-# - NetworkManager (to increase coverage)
 # - busybox (to increase coverage)
 # - dash (to increase coverage)
 # - rng-tools (to increase coverage)
 # - ntfs3g (to keep container small)
+# - xorriso (to keep container small, no .iso generation)
 
 ARG OPTION=systemd
 
-FROM docker.io/gentoo/portage:latest AS portage
-
 FROM docker.io/gentoo/stage3:${OPTION}
-COPY --from=portage /var/db/repos/gentoo /var/db/repos/gentoo
 
 # export ARG
 ARG OPTION
@@ -29,44 +29,36 @@ RUN \
     echo "USE=\"boot kernel-install pkcs7 pkcs11 tpm -initramfs\"" >> /etc/portage/make.conf ;\
     # Use debian's installkernel \
     echo 'sys-kernel/installkernel -systemd' >> /etc/portage/package.use/kernel ;\
-    # Enable ukify, qrcode and cryptsetup (includes unit generator for crypttab) \
-    echo 'sys-apps/systemd ukify qrcode cryptsetup' >> /etc/portage/package.use/systemd ;\
+    # Enable fido2, ukify, qrcode and cryptsetup (includes unit generator for crypttab) \
+    echo 'sys-apps/systemd fido2 ukify qrcode cryptsetup importd curl lzma' >> /etc/portage/package.use/systemd ;\
     # Support thin volumes and build all of LVM2 including daemons and tools like lvchange \
     echo 'sys-fs/lvm2 thin lvm' >> /etc/portage/package.use/lvm2 ;\
     # Ensure everything is up to date before we start \
+    emerge-webrsync ;\
     emerge --quiet --update --deep --newuse --autounmask-continue=y --with-bdeps=y @world
 
 # Dependencies to pass basic test
-RUN emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
+RUN \
+emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
+    app-alternatives/bc \
     app-alternatives/cpio \
     app-arch/cpio \
-    app-emulation/qemu \
-    app-portage/gentoolkit \
-    app-text/asciidoc \
-    app-text/docbook-xml-dtd \
-    app-text/docbook-xsl-stylesheets \
-    sys-kernel/dracut \
-    sys-kernel/gentoo-kernel-bin \
-    sys-libs/libxcrypt \
-    virtual/libelf \
-    virtual/pkgconfig
-
-# Dependencies for full testsuite
-RUN \
-if [ "$OPTION" = "systemd" ] ; then \
-    emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
-    app-alternatives/bc \
     app-crypt/swtpm \
     app-crypt/tpm2-tools \
+    app-emulation/qemu \
     app-misc/jq \
+    app-portage/gentoolkit \
     dev-lang/perl \
+    dev-lang/python \
     dev-lang/rust-bin \
+    dev-libs/libfido2 \
     dev-libs/libxslt \
     dev-libs/openssl \
+    dev-ruby/asciidoctor \
+    net-dns/dnsmasq \
     net-fs/nfs-utils \
     net-misc/dhcp \
     net-wireless/bluez \
-    sys-apps/systemd \
     sys-apps/nvme-cli \
     sys-block/nbd \
     sys-block/open-iscsi \
@@ -77,18 +69,22 @@ if [ "$OPTION" = "systemd" ] ; then \
     sys-devel/flex \
     sys-fs/btrfs-progs \
     sys-fs/cryptsetup \
-    sys-fs/dmraid \
     sys-fs/mdadm \
     sys-fs/multipath-tools \
     sys-fs/squashfs-tools \
-    sys-libs/glibc \
-; fi
-
-# cleanup
-# force hostonly mode as this is the config recommended by Gentoo wiki
-# https://wiki.gentoo.org/wiki/Dracut
-RUN \
-    rm -rf /var/cache/* /usr/share/doc/* /usr/share/man/* ;\
-    emerge --depclean --with-bdeps=n ;\
-    mkdir -p /usr/lib/dracut/dracut.conf.d/ ;\
-    echo 'hostonly="yes"' > /usr/lib/dracut/dracut.conf.d/50-hostonly.conf
+    sys-fs/xfsprogs \
+    sys-kernel/dracut \
+    sys-kernel/gentoo-kernel-bin \
+    sys-libs/libxcrypt \
+    virtual/libelf \
+    virtual/pkgconfig ;\
+# Dependencies for systemd \
+if [ "$OPTION" = "systemd" ] ; then \
+    emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
+    sys-apps/systemd \
+    sys-libs/glibc ;\
+else \
+    emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace net-misc/networkmanager ;\
+fi ;\
+rm -rf /var/cache/* /usr/share/doc/* /usr/share/man/* ;\
+emerge --depclean --with-bdeps=n

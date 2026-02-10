@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -eu
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="Full systemd serialization/deserialization test with /usr mount"
@@ -20,44 +21,34 @@ client_run() {
     shift
     local client_opts="$*"
 
-    echo "CLIENT TEST START: $test_name"
+    client_test_start "$test_name"
 
     declare -a disk_args=()
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.btrfs root
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_crypt.btrfs root_crypt
-    qemu_add_drive disk_index disk_args "$TESTDIR"/usr.btrfs usr
+    qemu_add_drive disk_args "$TESTDIR"/root.btrfs root
+    qemu_add_drive disk_args "$TESTDIR"/root_crypt.btrfs root_crypt
+    qemu_add_drive disk_args "$TESTDIR"/usr.btrfs usr
 
-    test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -smbios type=11,value=io.systemd.credential:key=test \
-        -append "$TEST_KERNEL_CMDLINE systemd.unit=testsuite.target systemd.mask=systemd-firstboot systemd.mask=systemd-vconsole-setup root=LABEL=dracut mount.usr=LABEL=dracutusr mount.usrfstype=btrfs mount.usrflags=subvol=usr,ro $client_opts $DEBUGOUT" \
-        -initrd "$TESTDIR"/initramfs.testing || return 1
+        -append "root=LABEL=dracut $TEST_KERNEL_CMDLINE mount.usr=LABEL=dracutusr mount.usrflags=subvol=usr $client_opts ${DEBUGOUT-}" \
+        -initrd "$TESTDIR"/initramfs.testing
+    check_qemu_log
 
-    if ! test_marker_check; then
-        echo "CLIENT TEST END: $test_name [FAILED]"
-        return 1
-    fi
-    echo "CLIENT TEST END: $test_name [OK]"
+    client_test_end
 }
 
 test_run() {
-    client_run "no option specified" || return 1
-    client_run "readonly root" "ro" || return 1
-    client_run "writeable root" "rw" || return 1
+    # mask services that require rw
+    client_run "readonly root" "ro systemd.mask=systemd-sysusers systemd.mask=systemd-timesyncd systemd.mask=systemd-resolved"
 
-    # volatile mode
-    client_run "volatile=overlayfs root" "systemd.volatile=overlayfs" || return 1
-    client_run "volatile=state root" "systemd.volatile=state" || return 1
+    client_run "writeable root" "rw"
 
     # shellcheck source=$TESTDIR/luks.uuid
     . "$TESTDIR"/luks.uuid
 
     # luks
-    client_run "encrypted root with rd.luks.uuid" "root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID rd.luks.key=/run/credentials/@system/key" || return 1
-    client_run "encrypted root with rd.luks.name" "root=/dev/mapper/crypt rd.luks.name=$ID_FS_UUID=crypt rd.luks.key=/run/credentials/@system/key" || return 1
+    client_run "encrypted root with rd.luks.uuid" "rw root=LABEL=dracut_crypt rd.luks.uuid=$ID_FS_UUID rd.luks.key=/etc/key"
+    client_run "encrypted root with rd.luks.name" "rw root=/dev/mapper/crypt rd.luks.name=$ID_FS_UUID=crypt rd.luks.key=/etc/key"
     return 0
 }
 
@@ -66,91 +57,92 @@ test_setup() {
     trap "$(shopt -p globstar)" RETURN
     shopt -q -s globstar
 
+    local dracut_modules="resume systemd-udevd systemd-journald systemd-tmpfiles systemd-cryptsetup systemd-emergency systemd-ac-power systemd-coredump systemd-creds systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup systemd-hostnamed systemd-timedated"
+
+    if [ -f /usr/lib/systemd/systemd-networkd ]; then
+        dracut_modules="$dracut_modules systemd-network-management"
+    fi
+
+    if [ -f /usr/lib/systemd/systemd-battery-check ]; then
+        dracut_modules="$dracut_modules systemd-battery-check"
+    fi
+    if [ -f /usr/lib/systemd/systemd-bsod ]; then
+        dracut_modules="$dracut_modules systemd-bsod"
+    fi
+    if [ -f /usr/lib/systemd/systemd-pcrextend ]; then
+        dracut_modules="$dracut_modules systemd-pcrextend"
+    fi
+    if [ -f /usr/lib/systemd/systemd-portabled ]; then
+        dracut_modules="$dracut_modules systemd-portabled"
+    fi
+
     # Create what will eventually be our root filesystem onto an overlay
-    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -a systemd \
-        -i "${PKGLIBDIR}/modules.d/80test-root/test-init.sh" "/sbin/test-init.sh" \
-        -i ./test-init.sh /sbin/test-init \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
+    build_client_rootfs "$TESTDIR/overlay/source"
 
-    mkdir -p "$TESTDIR"/overlay/source && cp -a "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.* && export initdir=$TESTDIR/overlay/source
-
-    # setup the testsuite target
-    mkdir -p "$initdir"/etc/systemd/system
-    cat > "$initdir"/etc/systemd/system/testsuite.target << EOF
-[Unit]
-Description=Testsuite target
-Requires=basic.target
-After=basic.target
-Conflicts=rescue.target
-AllowIsolate=yes
-EOF
-
-    # setup the testsuite service
-    cat > "$initdir"/etc/systemd/system/testsuite.service << EOF
-[Unit]
-Description=Testsuite service
-After=basic.target
-
-[Service]
-ExecStart=/sbin/test-init
-Type=oneshot
-StandardInput=tty
-StandardOutput=tty
-EOF
-
-    mkdir -p "$initdir"/etc/systemd/system/testsuite.target.wants
-    ln -fs ../testsuite.service "$initdir"/etc/systemd/system/testsuite.target.wants/testsuite.service
-
-    # second, install the files needed to make the root filesystem
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -N -i "$TESTDIR"/overlay / \
+    call_dracut -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -a "btrfs crypt" \
         -I "mkfs.btrfs cryptsetup" \
-        -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
+        -i ./create-root.sh /usr/lib/dracut/hooks/initqueue/01-create-root.sh \
+        -f "$TESTDIR"/initramfs.makeroot
+    rm -rf "$TESTDIR"/overlay
+
+    KVERSION=$(determine_kernel_version "$TESTDIR"/initramfs.makeroot)
 
     # Create the blank file to use as a root filesystem
     declare -a disk_args=()
-    # shellcheck disable=SC2034
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.btrfs root 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_crypt.btrfs root_crypt 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/usr.btrfs usr 1
+    qemu_add_drive disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_args "$TESTDIR"/root.btrfs root 1
+    qemu_add_drive disk_args "$TESTDIR"/root_crypt.btrfs root_crypt 1
+    qemu_add_drive disk_args "$TESTDIR"/usr.btrfs usr 1
 
     # Invoke KVM and/or QEMU to actually create the target filesystem.
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=/dev/fakeroot quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-    test_marker_check dracut-root-block-created || return 1
+        -append "root=/dev/fakeroot quiet" \
+        -initrd "$TESTDIR"/initramfs.makeroot
+    test_marker_check dracut-root-block-created
 
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
+    echo -n test > /tmp/key
 
-    local optional_modules
-    if [ -f /usr/lib/systemd/systemd-battery-check ]; then
-        optional_modules="$optional_modules systemd-battery-check"
+    # force add all available dracut modules that are dependent on systemd
+    test_dracut --keep \
+        -a "dracut-systemd $dracut_modules" \
+        -i "/tmp/key" "/etc/key" \
+        --add-drivers "btrfs"
+
+    # verify that systemd-coredump user exists generated by systemd-sysuser
+    if ! grep -q '^systemd-coredump:' "$TESTDIR"/initrd/dracut.*/initramfs/etc/passwd; then
+        # fail the test
+        echo "systemd-coredump user is not present in /etc/passwd"
+        rm "$TESTDIR"/initramfs.testing
+        exit 1
     fi
-    if [ -f /usr/lib/systemd/systemd-bsod ]; then
-        optional_modules="$optional_modules systemd-bsod"
+
+    if command -v mkosi-initrd &> /dev/null; then
+        mkosi-initrd --kernel-version "$KVERSION" -t directory -o mkosi -O "$TESTDIR"
+
+        find "$TESTDIR"/mkosi/usr/lib/systemd/system/initrd.target.wants/ -printf "%f\n" | sort | uniq > systemd-mkosi
+        find "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/systemd/system/initrd.target.wants/ -printf "%f\n" | sort | uniq > systemd-dracut
+
+        # fail the test if mkosi installs some services that dracut does not
+        mkosi_units=$(comm -23 systemd-mkosi systemd-dracut)
+
+        if [ -n "$mkosi_units" ]; then
+            printf "\n *** systemd units included in initrd from mkosi-initrd but not from dracut:%s\n\n" "${mkosi_units}"
+            exit 1
+        fi
     fi
-    if [ -f /usr/lib/systemd/systemd-pcrextend ]; then
-        optional_modules="$optional_modules systemd-pcrphase"
-    fi
-    test_dracut \
-        -a "resume dracut-systemd systemd-ac-power systemd-coredump systemd-creds systemd-cryptsetup systemd-integritysetup systemd-ldconfig systemd-pstore systemd-repart systemd-sysext systemd-veritysetup $optional_modules" \
-        --add-drivers "btrfs" \
-        "$TESTDIR"/initramfs.testing
 
     if command -v mkinitcpio &> /dev/null; then
-        find "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/systemd/system/ -printf "%f\n" | sort | uniq > systemd-dracut
         mkinitcpio -k "$KVERSION" --builddir "$TESTDIR" --save -A systemd
+
         find "$TESTDIR"/mkinitcpio.*/root/usr/lib/systemd/system/ -printf "%f\n" | sort | uniq > systemd-mkinitcpio
+        find "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/systemd/system/ -printf "%f\n" | sort | uniq > systemd-dracut
 
         # fail the test if mkinitcpio installs some services that dracut does not
         mkinitcpio_units=$(comm -23 systemd-mkinitcpio systemd-dracut)
@@ -158,6 +150,16 @@ EOF
             printf "\n *** systemd units included in initrd from mkinitcpio but not from dracut:%s\n\n" "${mkinitcpio_units}"
             exit 1
         fi
+
+        # verify that in this configuration, dracut does not modify any native systemd service files and ensures compatibility with mkinitcpio
+        (cd "$TESTDIR"/mkinitcpio.*/root/usr/lib/systemd/system/ && find . -type f > /tmp/systemd-mkinitcpio)
+
+        while read -r unit; do
+            if ! diff -q "$TESTDIR"/mkinitcpio.*/root/usr/lib/systemd/system/"$unit" "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/systemd/system/"$unit"; then
+                exit 1
+            fi
+        done < /tmp/systemd-mkinitcpio
+
     fi
 }
 

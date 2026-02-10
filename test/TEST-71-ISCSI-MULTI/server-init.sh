@@ -4,8 +4,7 @@ set -x
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 export TERM=linux
 export PS1='server:\w\$ '
-stty sane
-echo "made it to the rootfs!"
+echo "made it to the iSCSI multi server rootfs!"
 echo server > /proc/sys/kernel/hostname
 
 wait_for_if_link() {
@@ -80,9 +79,7 @@ tgtadm --lld iscsi --mode target --op bind --tid 3 -I 192.168.50.101
 echo "Serving iSCSI"
 while pidof tgtd > /dev/null; do
     : > /dev/watchdog
-    dmesg -c
     sleep 1
 done
-dmesg -c
 mount -n -o remount,ro /
 poweroff -f

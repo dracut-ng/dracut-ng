@@ -11,12 +11,14 @@ dracut.conf - configuration file(s) for dracut
 _/etc/dracut.conf_
 _/etc/dracut.conf.d/\*.conf_
 _/usr/lib/dracut/dracut.conf.d/*.conf_
+_/run/initramfs/dracut.conf.d/*.conf_
 
 == Description
 _dracut.conf_ is loaded during the initialization phase of dracut.
 
-_*.conf_ files are read from `/usr/lib/dracut/dracut.conf.d` and
-/etc/dracut.conf.d. Files with the same name in `/etc/dracut.conf.d` will replace
+_*.conf_ files are read from `/run/initramfs/dracut.conf.d`,
+`/usr/lib/dracut/dracut.conf.d` and `/etc/dracut.conf.d`.
+Files with the same name in `/etc/dracut.conf.d` will replace
 files in `/usr/lib/dracut/dracut.conf.d`.
 
 The files are then read in alphanumerical order and will override parameters
@@ -53,7 +55,7 @@ Specify a space-separated list of dracut modules to call when building the
 initramfs. Modules are located in _/usr/lib/dracut/modules.d_.
 This option forces dracut to only include the specified dracut modules.
 In most cases the "add_dracutmodules" option is what you want to use.
-This option is not recomended to use (use at your own risk).
+This option is not recommended to use (use at your own risk).
 
 *add_drivers+=*" __<kernel modules>__ "::
 Specify a space-separated list of kernel modules to add to the initramfs.
@@ -73,7 +75,20 @@ the initramfs. The kernel modules have to be specified without the ".ko"
 suffix.
 This option forces dracut to only include the specified kernel modules.
 In most cases the "--add-drivers" option is what you want to use.
-This option is not recomended to use (use at your own risk).
+This option is not recommended to use (use at your own risk).
+
+*add_dlopen_features+=*" __<pattern>:<feature>__[__,<feature>__...] ... "::
+Specify a space-separated list of binaries matching _pattern_ against a
+comma-separated list of features to install dependencies for. For example,
+"libsystemd-shared-*.so:idn,ip4tc" will install the dependencies for systemd's
+international domain name and iptables support. _pattern_ should match the
+soname for libraries or the filename for executables.
+
+*omit_dlopen_features+=*" __<pattern>:<feature>__[__,<feature>__...] ... "::
+Specify a space-separated list of binaries matching _pattern_ against a
+comma-separated list of features to omit dependencies for. Some dracut modules
+add certain features by default. This takes precedence over add_dlopen_features
+above.
 
 *filesystems+=*" __<filesystem names>__ "::
 Specify a space-separated list of kernel filesystem modules to exclusively
@@ -92,6 +107,14 @@ Specify a space-separated list of directories where to look for libraries.
 *install_items+=*" __<file>__[ __<file>__ ...] "::
 Specify additional files to include in the initramfs, separated by spaces.
 
+*remove_items+=*" __<file/dir>__[ __<file/dir>__ ...] "::
+Specify additional files or directories to remove from the generated initramfs,
+separated by spaces.
+These __file/dir__ are shell wildcard patterns (see *glob*(7)).
+Warning: Avoid manually removing files or directories, as you may inadvertently
+remove essential ones that dracut won't detect or warn you about.
+Using this option is not recommended and is at your own risk.
+
 *install_optional_items+=*" __<file>__[ __<file>__ ...] "::
 Specify additional files to include in the initramfs, separated by spaces,
 if they exist.
@@ -109,6 +132,27 @@ Depending on what you pass, this may result in an initramfs that the
 kernel cannot decompress.
 +
 To disable compression, use "cat".
+
+*compress_level_bzip2=*"__\{1-9\}__"::
+Compression level when using bzip2 compression (default=9).
+
+*compress_level_gzip=*"__\{1-9\}__"::
+Compression level when using gzip compression (default=9).
+
+*compress_level_lz4=*"__\{1-12\}__"::
+Compression level when using lz4 compression (default=9).
+
+*compress_level_lzma=*"__\{0-9\}__"::
+Compression level when using lzma compression (default=9).
+
+*compress_level_lzop=*"__\{1-9\}__"::
+Compression level when using lzop compression (default=9).
+
+*compress_level_xz=*"__\{0-9\}__"::
+Compression level when using xz compression (default=unset, i.e. use xz default).
+
+*compress_level_zstd=*"__\{1-19\}__"::
+Compression level when using zstd compression (default=15).
 
 *squash_compress=*"__{<compressor [args ...]>}__"::
 Compress the squashfs image using the passed compressor and compressor specific
@@ -134,7 +178,7 @@ Prefix initramfs files with __<directory>__.
 *hostonly=*"__{yes|no}__"::
 Host-only mode: Install only what is needed for booting the local host
 instead of a generic host and generate host-specific configuration
-(default=no).
+(default=yes).
 
 *hostonly_mode=*"__{sloppy|strict}__"::
 Specify the host-only mode to use (default=sloppy).
@@ -151,7 +195,7 @@ the image unbootable.
 *hostonly_cmdline=*"__{yes|no}__"::
 If set to "yes", store the kernel command line arguments needed in the
 initramfs. If **hostonly="yes"** and this option is not configured, it's
-automatically set to "yes".
+automatically set to "yes". (default=no)
 
 *hostonly_nics+=*" [__<nic>__[ __<nic>__ ...]] "::
 Only enable listed NICs in the initramfs. The list can be empty, so other
@@ -233,7 +277,7 @@ Directory to search for ACPI tables if acpi_override= is set to yes.
 Combine early microcode with ramdisk (default=yes).
 
 *stdloglvl*="__\{0-6\}__"::
-Specify logging level for standard error (default=4).
+Specify logging level for standard error (default=3).
 +
 .Logging Levels
 [cols="1,1"]
@@ -352,6 +396,10 @@ exists in the directory where initramfs is loaded from.
 +
 Defaults to _initramfs-$\{kernel\}.img_.
 
+*dracut_rescue_image=*"__{yes|no}__"::
+Let kernel-install create a rescue image (default=no).
+This configuration option applies only to kernel-install.
+
 == Files
 _/etc/dracut.conf_::
 Old configuration file. It is recommended to use individual files in
@@ -360,7 +408,8 @@ _/etc/dracut.conf.d/_.
 _/etc/dracut.conf.d/_::
 Any _/etc/dracut.conf.d/*.conf_ file can override the values in
 _/etc/dracut.conf_. The configuration files are read in alphanumerical
-order.
+order. The recommended ordering for distribution or user provided
+configuration is in the range of 50-59.
 
 == AUTHOR
 Harald Hoyer

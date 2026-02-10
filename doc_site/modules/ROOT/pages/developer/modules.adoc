@@ -14,8 +14,9 @@ so you should install it on your system -- dash aims for strict POSIX
 compliance to the extent possible.
 * Hooks MUST be POSIX compliant -- they are sourced by the init script,
 and having a bashism break your user's ability to boot really sucks.
-* Generator modules should have a two digit numeric prefix -- they run in
-ascending sort order. Anything in the 90-99 range is stuff that dracut
+* Generator modules should have a two digit numeric prefix in the range
+of 50-59 -- they run in ascending sort order.
+Anything in the 80-89 range is stuff that dracut
 relies on, so try not to break those hooks.
 * Hooks must have a .sh extension.
 * Generator modules are described in more detail later on.
@@ -47,8 +48,18 @@ The name of the module prefixed by a two-digit numeric sort code.
 +
 The numeric code must be present and in the range of 00 - 99.
 +
-NOTE: Range 50 - 59 is reserved for out of tree (3rd party) dracut
-modules.
+NOTE: Range 00-09, 50-59 and 90-99 are reserved for out of tree
+(3rd party) dracut modules.
+
+It is strongly recommended to use the 50-59 range for out of tree
+dracut modules. Range 90-99 are reserved for unusual
+dracut customizations for completeness, but using range 90-99
+is not recommended for out of tree dracut modules.
+
+Not using the 50-59 range for out of tree dracut modules
+will likely lead to unintended errors in the initramfs
+generation process as your dracut module will either run too
+early or too late in the generaiton process. You have been warned.
 +
 Modules with lower numbers are installed first.  This is important
 because the dracut install functions (which install files onto
@@ -112,18 +123,25 @@ You are encouraged to provide a `README` that describes what the module is for.
 
 == Hooks
 
-init has the following hook points to inject scripts:
+Dracut init looks for custom hook scripts in the following locations
+(`HOOKDIR` below): `/var/lib/dracut/hooks`, `/etc/dracut/hooks`, and
+`/usr/lib/dracut/hooks`. The intended use of these locations is: standard,
+distribution shipped scripts are put to `/usr/lib/dracut/hooks`;
+`/etc/dracut/hooks` is used as a local override; dracut modules create
+(and remove) scripts in runtime in `/var/lib/dracut/hooks` (and `$hookdir`
+variable is provided). The following hook points to inject scripts are
+currently supported:
 
-`/lib/dracut/hooks/cmdline/*.sh`::
+`HOOKDIR/cmdline/*.sh`::
 scripts for command line parsing
 
-`/lib/dracut/hooks/pre-udev/*.sh`::
+`HOOKDIR/pre-udev/*.sh`::
 scripts to run before udev is started
 
-`/lib/dracut/hooks/pre-trigger/*.sh`::
+`HOOKDIR/pre-trigger/*.sh`::
 scripts to run before the main udev trigger is pulled
 
-`/lib/dracut/hooks/initqueue/*.sh`::
+`HOOKDIR/initqueue/*.sh`::
 runs in parallel to the udev trigger
 +
 Udev events can add scripts here with `/sbin/initqueue`.
@@ -131,7 +149,7 @@ Udev events can add scripts here with `/sbin/initqueue`.
 If `/sbin/initqueue` is called with the `--onetime` option, the script
 will be removed after it was run.
 +
-If `/lib/dracut/hooks/initqueue/work` is created and `udev >= 143` then
+If `/var/lib/dracut/hooks/initqueue/work` is created then
 this loop can process the jobs in parallel to the udevtrigger.
 +
 If the udev queue is empty and no root device is found or no root
@@ -140,23 +158,23 @@ a timeout.
 +
 Scripts can remove themselves from the initqueue by `rm $job`.
 
-`/lib/dracut/hooks/pre-mount/*.sh`::
+`HOOKDIR/pre-mount/*.sh`::
 scripts to run before the root filesystem is mounted
 +
 Network filesystems like NFS that do not use device files are an
 exception. Root can be mounted already at this point.
 
-`/lib/dracut/hooks/mount/*.sh`::
+`HOOKDIR/mount/*.sh`::
 scripts to mount the root filesystem
 +
 If the udev queue is empty and no root device is found or no root
 filesystem was mounted, the user will be dropped to a shell after
 a timeout.
 
-`/lib/dracut/hooks/pre-pivot/*.sh`::
+`HOOKDIR/pre-pivot/*.sh`::
 scripts to run before latter initramfs cleanups
 
-`/lib/dracut/hooks/cleanup/*.sh`::
+`HOOKDIR/cleanup/*.sh`::
 scripts to run before the real init is executed and the initramfs
 disappears
 +

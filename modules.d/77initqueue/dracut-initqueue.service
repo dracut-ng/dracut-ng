@@ -1,0 +1,28 @@
+#  This file is part of dracut.
+
+[Unit]
+Description=dracut initqueue hook
+Documentation=man:dracut-initqueue.service(8) man:dracut.bootup(7)
+DefaultDependencies=no
+Before=remote-fs-pre.target
+Wants=remote-fs-pre.target
+After=systemd-udev-trigger.service
+Wants=systemd-udev-trigger.service
+ConditionPathExists=/usr/lib/initrd-release
+ConditionPathExists=|/lib/dracut/need-initqueue
+ConditionKernelCommandLine=|rd.break=initqueue
+Conflicts=shutdown.target emergency.target
+
+[Service]
+Environment=DRACUT_SYSTEMD=1
+Environment=NEWROOT=/sysroot
+Type=oneshot
+ExecStart=-/usr/bin/dracut-initqueue
+StandardInput=null
+StandardError=journal+console
+KillMode=process
+RemainAfterExit=yes
+
+# Bash ignores SIGTERM, so we send SIGHUP instead, to ensure that bash
+# terminates cleanly.
+KillSignal=SIGHUP

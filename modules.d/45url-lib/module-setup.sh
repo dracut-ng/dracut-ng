@@ -28,8 +28,8 @@ install() {
     fi
 
     for _dir in $libdirs; do
-        [[ -d $dracutsysrootdir$_dir ]] || continue
-        for _lib in "$dracutsysrootdir$_dir"/libcurl.so.* "$dracutsysrootdir$_dir"/libcrypto.so.*; do
+        [[ -d ${dracutsysrootdir-}$_dir ]] || continue
+        for _lib in "${dracutsysrootdir-}$_dir"/libcurl.so.* "${dracutsysrootdir-}$_dir"/libcrypto.so.*; do
             [[ -e $_lib ]] || continue
             if ! [[ $_nssckbi ]]; then
                 read -r -d '' _nssckbi < <(grep -F --binary-files=text -z libnssckbi "$_lib")
@@ -45,7 +45,7 @@ install() {
     done
     if [[ $_found ]] && [[ -n $_crts ]]; then
         for _crt in $_crts; do
-            if ! inst "${_crt#"$dracutsysrootdir"}"; then
+            if ! inst "${_crt#"${dracutsysrootdir-}"}"; then
                 dwarn "Couldn't install '$_crt' SSL CA cert bundle; HTTPS might not work."
                 continue
             fi
@@ -60,25 +60,25 @@ install() {
         _found=1
         inst_libdir_file "libnssckbi.so*" || _found=
         for _dir in $libdirs; do
-            [[ -e $dracutsysrootdir$_dir/libnssckbi.so ]] || continue
+            [[ -e ${dracutsysrootdir-}$_dir/libnssckbi.so ]] || continue
             # this looks for directory-ish strings in the file
-            grep -z -o --binary-files=text '/[[:alpha:]][[:print:]]*' "${dracutsysrootdir}${_dir}"/libnssckbi.so \
+            grep -z -o --binary-files=text '/[[:alpha:]][[:print:]]*' "${dracutsysrootdir-}${_dir}"/libnssckbi.so \
                 | while read -r -d '' _p11roots || [[ $_p11roots ]]; do
                     IFS=":" read -r -a _p11roots <<< "$_p11roots"
                     # the string can be a :-separated list of dirs
                     for _p11root in "${_p11roots[@]}"; do
                         # check if it's actually a directory (there are
                         # several false positives in the results)
-                        [[ -d "$dracutsysrootdir$_p11root" ]] || continue
+                        [[ -d "${dracutsysrootdir-}$_p11root" ]] || continue
                         # check if it has some specific subdirs that all
                         # p11-kit trust dirs have
-                        [[ -d "$dracutsysrootdir${_p11root}/anchors" ]] || continue
-                        [[ -d "$dracutsysrootdir${_p11root}/blacklist" ]] || continue
+                        [[ -d "${dracutsysrootdir-}${_p11root}/anchors" ]] || continue
+                        [[ -d "${dracutsysrootdir-}${_p11root}/blacklist" ]] || continue
                         # so now we know it's really a p11-kit trust dir;
                         # install everything in it
                         mkdir -p -- "${initdir}/${_p11root}"
-                        if ! $DRACUT_CP -L -t "${initdir}/${_p11root}" "${dracutsysrootdir}${_p11root}"/*; then
-                            dwarn "Couldn't install from p11-kit trust dir '${_p11root#"$dracutsysrootdir"}'; HTTPS might not work."
+                        if ! $DRACUT_CP -L -t "${initdir}/${_p11root}" "${dracutsysrootdir-}${_p11root}"/*; then
+                            dwarn "Couldn't install from p11-kit trust dir '${_p11root#"${dracutsysrootdir-}"}'; HTTPS might not work."
                         fi
                     done
                 done

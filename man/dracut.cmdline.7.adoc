@@ -118,15 +118,16 @@ the ISO is found set it up as a loop device. Device containing this ISO
 image will stay mounted at /run/initramfs/isoscandev.
 Using iso-scan/filename with a Fedora/Red Hat/CentOS Live iso should just work
 by copying the original kernel cmdline parameters.
+Requires the dracut 'dmsquash-live' module.
 
 [listing]
 .Example
 --
-menuentry 'Live Fedora 20' --class fedora --class gnu-linux --class gnu --class os {
-    set isolabel=Fedora-Live-LXDE-x86_64-20-1
-    set isofile="/boot/iso/Fedora-Live-LXDE-x86_64-20-1.iso"
+menuentry 'Live' --class gnu-linux --class gnu --class os {
+    set isolabel=Live-x86_64
+    set isofile="/boot/iso/Live-x86_64.iso"
     loopback loop $isofile
-    linux (loop)/isolinux/vmlinuz0 boot=isolinux iso-scan/filename=$isofile root=live:LABEL=$isolabel ro rd.live.image quiet rhgb
+    linux (loop)/isolinux/vmlinuz0 boot=isolinux iso-scan/filename=$isofile root=live:LABEL=$isolabel ro rd.live.image quiet
     initrd (loop)/isolinux/initrd0.img
 }
 --
@@ -149,11 +150,17 @@ Misc
     force loading kernel module <drivername> after all automatic loading modules
     have been loaded. This parameter can be specified multiple times.
 
+**rd.driver.export**::
+    making all drivers from initramfs available to rootfs after switch_root.
+    This parameter can be set to 'force' for exporting over existing modules.
+    Requires the dracut 'kernel-modules-export' module.
+
 **rd.retry=**__<seconds>__::
     specify how long dracut should retry the initqueue to configure devices.
     The default is 180 seconds. After 2/3 of the time, degraded raids are force
     started. If you have hardware, which takes a very long time to announce its
     drives, you might want to extend this value.
+    Requires the dracut 'initqueue' module.
 
 **rd.timeout=**__<seconds>__::
     specify how long dracut should wait for devices to appear. The
@@ -162,6 +169,7 @@ Misc
 
 **rd.noverifyssl**::
     accept self-signed certificates for ssl downloads.
+    Requires the dracut 'url-lib' module.
 
 **rd.ctty=**__<terminal device>__::
    specify the controlling terminal for the console.
@@ -172,6 +180,7 @@ Misc
     during shutdown. This avoids the system from blocking when unmounting a file
     system cannot complete and waits indefinitely. Value '0' means to wait
     'forever'. The default is 90 seconds.
+    Requires the dracut 'shutdown' module.
 
 [[dracutkerneldebug]]
 Debug
@@ -229,6 +238,8 @@ It should be attached to any report about dracut problems.
 
 I18N
 ~~~~
+Requires the dracut 'i18n' module.
+
 **rd.vconsole.keymap=**__<keymap base file name>__::
     keyboard translation table loaded by loadkeys; taken from keymaps directory;
     will be written as KEYMAP to _/etc/vconsole.conf_ in the initramfs.
@@ -284,6 +295,8 @@ rd.locale.LANG=pl_PL.utf8
 
 LVM
 ~~~
+Requires the dracut 'lvm' module.
+
 **rd.lvm=0**::
     disable LVM detection
 
@@ -300,6 +313,8 @@ LVM
 
 crypto LUKS
 ~~~~~~~~~~~
+Requires the dracut 'crypt' module.
+
 **rd.luks=0**::
     disable crypto LUKS detection
 
@@ -348,7 +363,7 @@ information.
     of the filesystem on some device. It's REQUIRED. When
     _<keypath>_ ends with '.gpg' it's considered to be key encrypted
     symmetrically with GPG.  You will be prompted for the GPG password on
-    boot. GPG support comes with the 'crypt-gpg' module, which needs to be
+    boot. GPG support requires the 'crypt-gpg' dracut module, which needs to be
     added explicitly.
 +
 _<keydev>_ identifies the device on which the key file resides. It may
@@ -458,6 +473,8 @@ when not needed anymore.
 
 MD RAID
 ~~~~~~~
+Requires the dracut 'mdraid' module.
+
 **rd.md=0**::
     disable MD RAID detection
 
@@ -480,6 +497,8 @@ MD RAID
 
 DM RAID
 ~~~~~~~
+Requires the dracut 'dmraid' module.
+
 **rd.dm=0**::
     disable DM RAID detection
 
@@ -489,6 +508,8 @@ DM RAID
 
 MULTIPATH
 ~~~~~~~~~
+Requires the dracut 'multipath' module.
+
 **rd.multipath=0**::
    disable multipath detection
 
@@ -497,6 +518,8 @@ MULTIPATH
 
 FIPS
 ~~~~
+Requires the dracut 'fips' module.
+
 **rd.fips**::
     enable FIPS
 
@@ -708,6 +731,8 @@ interface name. Better name it "bootnet" or "bluesocket".
 
 NFS
 ~~~
+Requires the dracut 'nfs' module.
+
 **root=**\[_<server-ip>_:]__<root-dir>__[:__<nfs-options>__]::
     mount nfs share from <server-ip>:/<root-dir>, if no server-ip is given, use
     dhcp next_server. If server-ip is an IPv6 address it has to be put in
@@ -760,6 +785,8 @@ NFS
 
 CIFS
 ~~~
+Requires the dracut 'cifs' module.
+
 **root=**cifs://[__<username>__[:__<password>__]@]__<server-ip>__:__<root-dir>__::
     mount cifs share from <server-ip>:/<root-dir>, if no server-ip is given, use
     dhcp next_server. if server-ip is an IPv6 address it has to be put in
@@ -783,6 +810,8 @@ network, when using DHCP with DHCP root-path.
 
 iSCSI
 ~~~~~
+Requires the dracut 'iscsi' module.
+
 **root=**iscsi:[__<username>__:__<password>__[:__<reverse>__:__<password>__]@][__<servername>__]:[__<protocol>__]:[__<port>__][:[__<iscsi_iface_name>__]:[__<netdev_name>__]]:[__<LUN>__]:__<targetname>__::
     protocol defaults to "6", LUN defaults to "0". If the "servername" field is
     provided by BOOTP or DHCP, then that field is used in conjunction with other
@@ -877,8 +906,18 @@ iscsistart -b --param node.session.timeo.replacement_timeout=30
 **rd.iscsi.testroute=0**:
     Turn off checking, if the route to the iSCSI target IP is possible before trying to login.
 
+**rd.iscsi.transport=**__<transport_name>__::
+    Set the iSCSI transport name (see man:iscsiadm[8,external]). iSCSI offload
+    transports like **bnx2i** don't need the network to be up in order to bring
+    up iSCSI connections. This parameter indicates that network setup can be
+    skipped in the initramfs, which makes booting with iSCSI offload cards
+    faster and more reliable. This parameter currently only has an effect for
+    _<transport_name>=bnx2i_ or _<transport_name>=qedi_.
+
 FCoE
 ~~~~
+Requires the dracut 'fcoe' module.
+
 **rd.fcoe=0**::
     disable FCoE and lldpad
 
@@ -893,6 +932,8 @@ NOTE: letters in the MAC-address must be lowercase!
 
 NVMf
 ~~~~
+Requires the dracut 'nvmf' module.
+
 **rd.nonvmf**::
     Disable NVMf
 
@@ -932,6 +973,8 @@ rd.nvmf.discover=fc,nn-0x201700a05634f5bf:pn-0x201900a05634f5bf,nn-0x200000109b5
 
 NBD
 ~~~
+Requires the dracut 'nbd' module.
+
 **root=**??? **netroot=**nbd:__<server>__:__<port/exportname>__[:__<fstype>__[:__<mountopts>__[:__<nbdopts>__]]]::
     mount nbd share from <server>.
 +
@@ -950,6 +993,8 @@ NOTE:
 
 VIRTIOFS
 ~~~~~~~~
+Requires the dracut 'virtiofs' module.
+
 **root=**virtiofs:__<mount-tag>__::
     mount virtiofs share using the tag <mount-tag>.
     The tag name is arbitrary and must match the tag given in the qemu '-device' command.
@@ -969,6 +1014,8 @@ root=virtiofs:host rw
 
 DASD
 ~~~~
+Requires the dracut 'dasd' module.
+
 **rd.dasd=**....::
     same syntax as the kernel module parameter (s390 only).
     For more details on the syntax see the IBM book
@@ -983,6 +1030,8 @@ NOTE:
 
 ZFCP
 ~~~~
+Requires the dracut 'zfcp' module.
+
 **rd.zfcp=**__<zfcp adaptor device bus ID>__,__<WWPN>__,__<FCPLUN>__::
     rd.zfcp can be specified multiple times on the kernel command
     line.
@@ -1014,6 +1063,8 @@ rd.zfcp=0.0.4000
 
 ZNET
 ~~~~
+Requires the dracut 'znet' module.
+
 **rd.znet=**__<nettype>__,__<subchannels>__,__<options>__::
     Activates a channel-attached network interface on s390 architecture.
     <nettype> is one of: qeth, lcs, ctc.
@@ -1035,15 +1086,64 @@ rd.znet=qeth,0.0.0600,0.0.0601,0.0.0602,layer2=1,portname=foo
 rd.znet=ctc,0.0.0600,0.0.0601,protocol=bar
 --
 
+OverlayFS
+~~~~~~~~~
+Requires the dracut 'overlayfs' module.
+
+**rd.overlay**::
+Enables the use of the *OverlayFS* kernel module, if available, to provide a
+copy-on-write union directory for the root filesystem.  OverlayFS overlays are
+directories of the files that have changed on the read-only base (lower)
+filesystem.  The root filesystem is provided through a special overlay type
+mount that merges at least two directories, designated the lower and the upper.
+If an OverlayFS upper directory is not present on the boot device, a tmpfs
+directory will be created at `/run/overlayfs` to provide temporary storage.
+Persistent storage can be provided on vfat or msdos formatted devices by
+supplying the OverlayFS upper directory within an embedded filesystem that
+supports the creation of trusted.* extended attributes and provides a valid
+d_type in readdir responses, such as with btrfs, ext4, f2fs, & xfs.  On
+non-vfat-formatted devices, a persistent OverlayFS overlay can extend the
+available root filesystem storage up to the capacity of the LiveOS disk device.
++
+The **rd.overlay.readonly** option, which allows a persistent overlayfs to
+be mounted read-only through a higher level transient overlay directory, has
+been implemented through the multiple lower layers feature of OverlayFS.
+
+**rd.overlay=**__{LABEL=<label>|UUID=<uuid>|PARTUUID=<uuid>|PARTLABEL=<label>|/dev/<device>}__::
+Specifies the storage device for persistent overlay (for both live images and
+regular OverlayFS).  When a block device is specified, it will be mounted and
+used for persistent overlay storage.  For live images with LABEL= specification,
+if the labeled partition does not exist, it will be automatically created using
+available free space on the device.
++
+Supported device specifications:
++
+--
+* _LABEL=<label>_ - Use the device with the specified filesystem label.
+* _UUID=<uuid>_ - Use the device with the specified UUID.
+* _PARTUUID=<uuid>_ - Use the device with the specified partition UUID.
+* _PARTLABEL=<label>_ - Use the device with the specified partition label.
+* _/dev/<device>_ - Use the specified device path directly.
+--
++
+[listing]
+.Examples
+----
+rd.overlay=LABEL=persist
+rd.overlay=UUID=12345678-1234-1234-1234-123456789abc
+rd.overlay=/dev/sdb1
+----
+
 Booting live images
 ~~~~~~~~~~~~~~~~~~~
+Requires the dracut 'dmsquash-live' module.
 Dracut offers multiple options for live booted images:
 
 =====================
 SquashFS (read-only) base filesystem image:::
 Note -- There are 3 separate overlay types available:
 - Device-mapper snapshots (the original offering),
-- Device-mapper thin provisioning snapshots (see *_rd.live.overlay.thin_*,
+- Device-mapper thin provisioning snapshots (see _rd.live.overlay.thin_,
 a later offering), and
 - OverlayFS based overlay mounts (a more recent offering).
 
@@ -1060,12 +1160,12 @@ leading to application failures.  The snapshot overlay device is marked
 'Overflow', and a difficult recovery is required to repair and enlarge the
 overlay offline.
 
-When *_rd.live.overlay=_* is not specified for persistent overlay storage, or
+When _rd.overlay=_ is not specified for persistent overlay storage, or
 the specified file is not found or writable, a Device-mapper snapshot based
 non-persistent or temporary overlay is automatically created as a sparse file
 in RAM of the initramfs.  This file will only consume content space as required
 blocks are allocated. This snapshot based overlay defaults to an apparent size
-of 32 GiB in RAM, and can be adjusted with the *_rd.live.overlay.size=_* kernel
+of 32 GiB in RAM, and can be adjusted with the _rd.live.overlay.size=_ kernel
 command line option.  This file is hidden (and appears deleted) when the boot
 process switches out of the initramfs to the main root filesystem but its loop
 device remains connected to the Device-mapper snapshot.
@@ -1077,8 +1177,8 @@ filesystem, which often provide only a small number of gigabytes of free space.
 This shortage could be remedied by building the root filesystem with more
 allocated free space, or the OverlayFS based overlay mount method can be used.
 
-When the *_rd.live.overlay.overlayfs_* option is specified or when
-*_rd.live.overlay=_* points to an appropriate directory with a sister at
+When the _rd.overlay_ option is specified or when
+_rd.overlay=_ points to an appropriate directory with a sister at
 `/../ovlwork`, then an OverlayFS based overlay mount is employed.  Such a
 persistent OverlayFS overlay can extend the available root filesystem storage
 up to the capacity of the LiveOS disk device.
@@ -1141,7 +1241,7 @@ is involved during boot.
 root filesystem is copied during boot to `/run/initramfs/rootfs.img` in the
 `/run` tmpfs.
 +
-- If **rd.live.overlay=none** is provided as a kernel command line option,
+- If **rd.overlay=none** is provided as a kernel command line option,
 a writable, linear Device-mapper target is created on boot with no overlay.
 
 Writable filesystem image:::
@@ -1203,6 +1303,19 @@ root=live:ftp://ftp.example.com/liveboot.img
 root=live:torrent://example.com/liveboot.img.torrent
 --
 
+**root=**__<http-url>__::
+This is an alias for **root=**live:__<url>__.
+Boots a live image retrieved from __<http-url>__.
+Requires the dracut 'livenet' module.
+Valid handlers: __http, https__.
++
+[listing]
+.Examples
+--
+root=http://example.com/root.squashfs
+root=https://example.com/live.sqfs
+--
+
 **rd.live.debug=**1::
 Enables debug output from the live boot process.
 
@@ -1218,38 +1331,38 @@ By default, this is __squashfs.img__.
 Copy the complete image to RAM and use this for booting. This is useful
 when the image resides on, e.g., a DVD which needs to be ejected later on.
 
-**rd.live.overlay={**__<devspec>__[:__{<pathspec>|auto}__]|__none__}::
-Manage the usage of a persistent overlay.
+**rd.overlay={**__<devspec>__[:__{<pathspec>|auto}__]|__none__}::
+Manage the usage of a persistent overlay for live images.
 +
 --
-* *_<devspec>_* specifies the path to a device with a mountable filesystem.
-* *_<pathspec>_* is a path within the *_<devspec>_* filesystem to either
+* _<devspec>_ specifies the path to a device with a mountable filesystem.
+* _<pathspec>_ is a path within the _<devspec>_ filesystem to either
 ** a file (that is loop mounted for a Device-mapper overlay) or
 ** a directory (that is symbolically linked to `/run/overlayfs` for a OverlayFS
 mount overlay). (A required sister directory `/<pathspec>/../ovlwork` is
 automatically made.)
-* *_none_* (the word itself) specifies that no overlay will be used, such as
+* _none_ (the word itself) specifies that no overlay will be used, such as
 when an uncompressed, writable live root filesystem is available.
 
 The above method shall be used to persist the changes made to the root
 filesystem specified within the +
 **root=**live:__<path to blockdevice>__ or **root=**live:__<url>__ device.
 
-The default *_pathspec_*, when *:auto* or
-no **:__<pathspec>__** is given, is `/<rd.live.dir>/overlay-<label>-<uuid>`,
+The default _pathspec_, when *:auto* or
+no **:**__<pathspec>__ is given, is `/<rd.live.dir>/overlay-<label>-<uuid>`,
 where _<label>_ and _<uuid>_ are the LABEL and UUID of the filesystem specified
 by the **root=**live:__<path|url>__ device.
 
 If a persistent overlay __is detected__ at the standard LiveOS path,
-and *_rd.live.overlay.overlayfs_* is not set to 1, the overlay type (either
+and _rd.overlay_ is not set to 1, the overlay type (either
 Device-mapper or OverlayFS) will be detected and it will be used.
 --
 +
 [listing]
 .Examples
 --
-rd.live.overlay=/dev/sdb1:/persistent-overlay.img
-rd.live.overlay=UUID=99440c1f-8daa-41bf-b965-b7240a8996f4
+rd.overlay=/dev/sdb1:/persistent-overlay.img
+rd.overlay=UUID=99440c1f-8daa-41bf-b965-b7240a8996f4
 --
 
 **rd.live.overlay.cowfs=**__[btrfs|ext4|xfs]__::
@@ -1277,7 +1390,7 @@ Suppresses the 'Using temporary overlay' blocking prompt that asks for a
 user confirmation before proceeding to boot. This allows the boot process
 to continue to completion without user interation.
 
-**rd.live.overlay.reset=**1::
+**rd.overlay.reset=**1::
 Specifies that a persistent overlay should be reset on boot.  All previous root
 filesystem changes are vacated by this action.
 
@@ -1288,28 +1401,10 @@ blocks that are not claimed by the filesystem. In this use case, this means
 that memory is given back to the kernel when the filesystem does not claim it
 anymore.
 
-**rd.live.overlay.overlayfs=**1::
-Enables the use of the *OverlayFS* kernel module, if available, to provide a
-copy-on-write union directory for the root filesystem.  OverlayFS overlays are
-directories of the files that have changed on the read-only base (lower)
-filesystem.  The root filesystem is provided through a special overlay type
-mount that merges at least two directories, designated the lower and the upper.
-If an OverlayFS upper directory is not present on the boot device, a tmpfs
-directory will be created at `/run/overlayfs` to provide temporary storage.
-Persistent storage can be provided on vfat or msdos formatted devices by
-supplying the OverlayFS upper directory within an embedded filesystem that
-supports the creation of trusted.* extended attributes and provides a valid
-d_type in readdir responses, such as with btrfs, ext4, f2fs, & xfs.  On
-non-vfat-formatted devices, a persistent OverlayFS overlay can extend the
-available root filesystem storage up to the capacity of the LiveOS disk device.
-+
-The **rd.live.overlay.readonly** option, which allows a persistent overlayfs to
-be mounted read-only through a higher level transient overlay directory, has
-been implemented through the multiple lower layers feature of OverlayFS.
-
-
 ZIPL
 ~~~~
+Requires the dracut 'zipl' module.
+
 **rd.zipl=**__<path to blockdevice>__::
     Update the dracut commandline with the values found in the
     _dracut-cmdline.conf_ file on the given device.
@@ -1324,6 +1419,8 @@ rd.zipl=UUID=0fb28157-99e3-4395-adef-da3f7d44835a
 
 CIO_IGNORE
 ~~~~~~~~~~
+Requires the dracut 'cio_ignore' module.
+
 **rd.cio_accept=**__<device-ids>__::
     Remove the devices listed in <device-ids> from the default
     cio_ignore kernel command-line settings.
@@ -1339,6 +1436,8 @@ rd.cio_accept=0.0.0180,0.0.0800,0.0.0801,0.0.0802
 
 Plymouth Boot Splash
 ~~~~~~~~~~~~~~~~~~~~
+Requires the dracut 'plymouth' module.
+
 **plymouth.enable=0**::
     disable the plymouth bootsplash completely.
 
@@ -1396,59 +1495,65 @@ Deprecated, renamed Options
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Here is a list of options and their new replacement.
 
-rd_NO_DM:: rd.dm=0
+rd_NO_DM:: rd.dm=0 (since version 008)
 
-rd_NO_MDADMCONF:: rd.md.conf=0
+rd_NO_MDADMCONF:: rd.md.conf=0 (since version 008)
 
-rd_NO_MDIMSM:: rd.md.imsm=0
+rd_NO_MDIMSM:: rd.md.imsm=0 (since version 008)
 
-rd_NO_MD:: rd.md=0
+rd_NO_MD:: rd.md=0 (since version 008)
 
-rd_MD_UUID:: rd.md.uuid
+rd_MD_UUID:: rd.md.uuid (since version 008)
 
-rd_NO_MULTIPATH: rd.multipath=0
+iscsi_initiator:: rd.iscsi.initiator (since version 008)
 
-iscsi_initiator:: rd.iscsi.initiator
+iscsi_target_name:: rd.iscsi.target.name (since version 008)
 
-iscsi_target_name:: rd.iscsi.target.name
+iscsi_target_ip:: rd.iscsi.target.ip (since version 008)
 
-iscsi_target_ip:: rd.iscsi.target.ip
+iscsi_target_port:: rd.iscsi.target.port (since version 008)
 
-iscsi_target_port:: rd.iscsi.target.port
+iscsi_target_group:: rd.iscsi.target.group (since version 008)
 
-iscsi_target_group:: rd.iscsi.target.group
+iscsi_username:: rd.iscsi.username (since version 008)
 
-iscsi_username:: rd.iscsi.username
+iscsi_password:: rd.iscsi.password (since version 008)
 
-iscsi_password:: rd.iscsi.password
+iscsi_in_username:: rd.iscsi.in.username (since version 008)
 
-iscsi_in_username:: rd.iscsi.in.username
+iscsi_in_password:: rd.iscsi.in.password (since version 008)
 
-iscsi_in_password:: rd.iscsi.in.password
+iscsi_firmware:: rd.iscsi.firmware=0 (since version 008)
 
-iscsi_firmware:: rd.iscsi.firmware=0
+rdudevdebug:: rd.udev.udev_log=debug (since version 102)
 
-rdudevdebug:: rd.udev.udev_log=debug
+rdudevinfo:: rd.udev.udev_log=info (since version 102)
 
-rdudevinfo:: rd.udev.udev_log=info
+rd.udev.debug:: rd.udev.udev_log=debug (since version 102)
 
-rd.udev.debug:: rd.udev.udev_log=debug
+rd.udev.info:: rd.udev.udev_log=info (since version 102)
 
-rd.udev.info:: rd.udev.udev_log=info
+KEYMAP:: vconsole.keymap (since version 008)
 
-KEYMAP:: vconsole.keymap
+KEYTABLE:: vconsole.keymap (since version 008)
 
-KEYTABLE:: vconsole.keymap
+SYSFONT:: vconsole.font (since version 008)
 
-SYSFONT:: vconsole.font
+CONTRANS:: vconsole.font.map (since version 008)
 
-CONTRANS:: vconsole.font.map
+UNIMAP:: vconsole.font.unimap (since version 008)
 
-UNIMAP:: vconsole.font.unimap
+UNICODE:: vconsole.unicode (since version 008)
 
-UNICODE:: vconsole.unicode
+EXT_KEYMAP:: vconsole.keymap.ext (since version 008)
 
-EXT_KEYMAP:: vconsole.keymap.ext
+rd.live.overlay.overlayfs:: rd.overlay (since version 110)
+
+rd.live.overlay.readonly:: rd.overlay.readonly (since version 110)
+
+rd.live.overlay:: rd.overlay (since version 110)
+
+rd.live.overlay.reset:: rd.overlay.reset (since version 110)
 
 Configuration in the Initramfs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

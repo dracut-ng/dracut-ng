@@ -45,14 +45,10 @@ struct HardlinkPath {
 struct HardlinkState {
     names: Vec<HardlinkPath>,
     source_ino: u64,
+    source_dev: u64,
     mapped_ino: u32,
     nlink: u32,
     seen: u32,
-}
-
-struct DevState {
-    dev: u64,
-    hls: Vec<HardlinkState>,
 }
 
 struct ArchiveProperties {
@@ -105,42 +101,23 @@ impl ArchiveProperties {
 }
 
 struct ArchiveState {
-    // 2d dev + inode vector serves two purposes:
-    // - dev index provides reproducible major,minor values
-    // - inode@dev provides hardlink state tracking
-    ids: Vec<DevState>,
+    // dev + inode provides hardlink state tracking
+    hls: Vec<HardlinkState>,
     // offset from the start of this archive
     off: u64,
     // next mapped inode number, used instead of source file inode numbers to
-    // ensure reproducibility. XXX: should track inode per mapped dev?
+    // ensure reproducibility. Inode numbers all share the same dev (major=0
+    // minor=0) namespace.
     ino: u32,
 }
 
 impl ArchiveState {
     pub fn new(ino_start: u32) -> ArchiveState {
         ArchiveState {
-            ids: Vec::new(),
+            hls: Vec::new(),
             off: 0,
             ino: ino_start,
         }
-    }
-
-    // lookup or create DevState for @dev. Return @major/@minor based on index
-    pub fn dev_seen(&mut self, dev: u64) -> Option<(u32, u32)> {
-        let index: u64 = match self.ids.iter().position(|i| i.dev == dev) {
-            Some(idx) => idx.try_into().ok()?,
-            None => {
-                self.ids.push(DevState {
-                    dev: dev,
-                    hls: Vec::new(),
-                });
-                (self.ids.len() - 1).try_into().ok()?
-            }
-        };
-
-        let major: u32 = (index >> 32).try_into().unwrap();
-        let minor: u32 = (index & u64::from(u32::MAX)).try_into().unwrap();
-        Some((major, minor))
     }
 
     // Check whether we've already seen this hardlink's dev/inode combination.
@@ -150,8 +127,6 @@ impl ArchiveState {
         &mut self,
         props: &ArchiveProperties,
         mut writer: W,
-        major: u32,
-        minor: u32,
         md: fs::Metadata,
         inpath: &Path,
         outpath: &Path,
@@ -159,22 +134,19 @@ impl ArchiveState {
         mapped_nlink: &mut Option<u32>,
     ) -> std::io::Result<bool> {
         assert!(md.nlink() > 1);
-        let index = u64::from(major) << 32 | u64::from(minor);
-        // reverse index->major/minor conversion that was just done
-        let devstate: &mut DevState = &mut self.ids[index as usize];
-        let (_index, hl) = match devstate
-            .hls
+        let (_index, hl) = match self.hls
             .iter_mut()
             .enumerate()
-            .find(|(_, hl)| hl.source_ino == md.ino())
+            .find(|(_, hl)| hl.source_ino == md.ino() && hl.source_dev == md.dev())
         {
             Some(hl) => hl,
             None => {
-                devstate.hls.push(HardlinkState {
+                self.hls.push(HardlinkState {
                     names: vec![HardlinkPath {
                         infile: inpath.to_path_buf(),
                         outfile: outpath.to_path_buf(),
                     }],
+                    source_dev: md.dev(),
                     source_ino: md.ino(),
                     mapped_ino: self.ino,
                     nlink: md.nlink().try_into().unwrap(), // pre-checked
@@ -243,8 +215,8 @@ impl ArchiveState {
                     None => md.mtime().try_into().unwrap(),
                 },
                 filesize = 0,
-                major = major,
-                minor = major,
+                major = 0,
+                minor = 0,
                 rmajor = 0,
                 rminor = 0,
                 namesize = fname.len() + 1,
@@ -271,7 +243,7 @@ impl ArchiveState {
         // GNU cpio: if a name is given multiple times, exceeding nlink, then
         // subsequent names continue to be packed (with a repeat data segment),
         // using the same mapped inode.
-        dout!("resetting hl at index {}", index);
+        dout!("resetting hl with dev {} ino {}", hl.source_dev, hl.source_ino);
         hl.seen = 0;
         hl.names.clear();
 
@@ -318,11 +290,6 @@ fn archive_path<W: Seek + Write>(
         }
     };
     dout!("archiving {} with mode {:o}", outpath.display(), md.mode());
-
-    let (major, minor) = match state.dev_seen(md.dev()) {
-        Some((maj, min)) => (maj, min),
-        None => return Err(io::Error::new(io::ErrorKind::Other, "failed to map dev")),
-    };
 
     if md.nlink() > u32::MAX as u64 {
         return Err(io::Error::new(
@@ -386,8 +353,6 @@ fn archive_path<W: Seek + Write>(
             let deferred = state.hardlink_seen(
                 &props,
                 &mut writer,
-                major,
-                minor,
                 md.clone(),
                 &inpath,
                 outpath,
@@ -455,8 +420,8 @@ fn archive_path<W: Seek + Write>(
         },
         mtime = mtime,
         filesize = datalen,
-        major = major,
-        minor = major,
+        major = 0,
+        minor = 0,
         rmajor = rmajor,
         rminor = rminor,
         namesize = fname.len() + 1 + data_align_seek as usize,
@@ -515,27 +480,25 @@ fn archive_flush_unseen_hardlinks<W: Write + Seek>(
     mut writer: W,
 ) -> std::io::Result<()> {
     let mut deferred_inpaths: Vec<PathBuf> = Vec::new();
-    for id in state.ids.iter_mut() {
-        for hl in id.hls.iter_mut() {
-            if hl.seen == 0 || hl.seen == hl.nlink {
-                dout!("HardlinkState complete with seen {}", hl.seen);
-                continue;
-            }
-            dout!(
-                "pending HardlinkState with seen {} != nlinks {}",
-                hl.seen,
-                hl.nlink
-            );
-
-            while hl.names.len() > 0 {
-                let path = hl.names.pop().unwrap();
-                deferred_inpaths.push(path.infile);
-            }
-            // ensure that data segment gets added on archive_path recall
-            hl.nlink = hl.seen;
-            hl.seen = 0;
-            // existing allocated inode should be used
+    for hl in state.hls.iter_mut() {
+        if hl.seen == 0 || hl.seen == hl.nlink {
+            dout!("HardlinkState complete with seen {}", hl.seen);
+            continue;
         }
+        dout!(
+            "pending HardlinkState with seen {} != nlinks {}",
+            hl.seen,
+            hl.nlink
+        );
+
+        while hl.names.len() > 0 {
+            let path = hl.names.pop().unwrap();
+            deferred_inpaths.push(path.infile);
+        }
+        // ensure that data segment gets added on archive_path recall
+        hl.nlink = hl.seen;
+        hl.seen = 0;
+        // existing allocated inode should be used
     }
 
     if deferred_inpaths.len() > 0 {
@@ -813,8 +776,6 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
-// tests change working directory, so need to be run with:
-// cargo test -- --test-threads=1 --nocapture
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -823,7 +784,12 @@ mod tests {
     use std::path::PathBuf;
     use std::process::{Command, Stdio};
 
-    struct TempWorkDir {
+    pub static TEST_LOCK: std::sync::Mutex<u32> = std::sync::Mutex::new(0);
+
+    struct TempWorkDir<'a> {
+        // Hold a mutex alongside directory change, to avoid failures due to
+        // multi-threaded "cargo test".
+        cwd_lock: std::sync::MutexGuard<'a, u32>,
         prev_dir: PathBuf,
         parent_tmp_dir: PathBuf,
         cleanup_files: Vec<PathBuf>,
@@ -831,10 +797,10 @@ mod tests {
         ignore_cleanup: bool, // useful for debugging
     }
 
-    impl TempWorkDir {
+    impl TempWorkDir<'_> {
         // create a temporary directory under CWD and cd into it.
         // The directory will be cleaned up when twd goes out of scope.
-        pub fn new() -> TempWorkDir {
+        pub fn new() -> TempWorkDir<'static> {
             let mut buf = [0u8; 16];
             let mut s = String::from("cpio-selftest-");
             fs::File::open("/dev/urandom")
@@ -844,7 +810,14 @@ mod tests {
             for i in &buf {
                 s.push_str(&format!("{:02x}", i).to_string());
             }
+
             let mut twd = TempWorkDir {
+                cwd_lock: TEST_LOCK.lock().unwrap_or_else(|mut e| {
+                    // another test panicked while holding the lock
+                    **e.get_mut() = 1;
+                    TEST_LOCK.clear_poison();
+                    e.into_inner()
+                }),
                 prev_dir: env::current_dir().unwrap(),
                 parent_tmp_dir: {
                     let mut t = env::current_dir().unwrap().clone();
@@ -908,7 +881,7 @@ mod tests {
         }
     }
 
-    impl Drop for TempWorkDir {
+    impl Drop for TempWorkDir<'_> {
         fn drop(&mut self) {
             for f in self.cleanup_files.iter().rev() {
                 if self.ignore_cleanup {
@@ -934,12 +907,25 @@ mod tests {
             }
             println!("returning cwd to {}", self.prev_dir.display());
             env::set_current_dir(self.prev_dir.as_path()).unwrap();
+            // cwd_lock should be dropped automatically
         }
     }
 
     fn gnu_cpio_create(stdinput: &[u8], out: &str) {
         let mut proc = Command::new("cpio")
-            .args(&["--quiet", "-o", "-H", "newc", "--reproducible", "-F", out])
+            // As of GNU cpio commit 6a94d5e ("New option --ignore-dirnlink"),
+            // the --reproducible option hardcodes archived directory nlink
+            // values as 2. Omit it and use the dir.st_nlink value.
+            .args(&[
+                "--quiet",
+                "-o",
+                "-H",
+                "newc",
+                "--ignore-devno",
+                "--renumber-inodes",
+                "-F",
+                out,
+            ])
             .stdin(Stdio::piped())
             .spawn()
             .expect("GNU cpio failed to start");
@@ -1522,7 +1508,8 @@ mod tests {
                 "-o",
                 "-H",
                 "newc",
-                "--reproducible",
+                "--ignore-devno",
+                "--renumber-inodes",
                 "-F",
                 "gnu.cpio",
                 "--null",
@@ -1809,5 +1796,47 @@ mod tests {
                    s, gmd.rdev(), dmd.rdev());
             assert!(gmd.rdev() == dmd.rdev());
         }
+    }
+
+    // Inode numbers are unique (for non-hardlinks) within the archive, so
+    // device ID mapping is unnecessary. Confirm that dracut-cpio behaves like
+    // GNU cpio --ignore-devno. Check this by archiving the /tmp directory
+    // alongside a working-directory nested file; despite differing source
+    // device IDs, the archived major/minor numbers should be zero.
+    #[test]
+    fn test_archive_major_minor() {
+        let mut twd = TempWorkDir::new();
+        twd.create_tmp_file("file1", 0);
+        let twd_md = fs::symlink_metadata(PathBuf::from("file1")).unwrap();
+
+        let slash_tmp_md = match fs::symlink_metadata(PathBuf::from("/tmp")) {
+            Err(_) => {
+                println!("SKIPPED: this test requires /tmp stat access");
+                return;
+            },
+            Ok(md) => md,
+        };
+
+        if twd_md.dev() == slash_tmp_md.dev() {
+            println!("SKIPPED: this test requires a unique /tmp device ID");
+            return;
+        }
+        let file_list: &str = "file1\n/tmp\n";
+
+        gnu_cpio_create(file_list.as_bytes(), "gnu.cpio");
+        twd.cleanup_files.push(PathBuf::from("gnu.cpio"));
+
+        let f = fs::File::create("dracut.cpio").unwrap();
+        let mut writer = io::BufWriter::new(f);
+        let mut reader = io::BufReader::new(file_list.as_bytes());
+        let wrote = archive_loop(&mut reader, &mut writer, &ArchiveProperties::default()).unwrap();
+        twd.cleanup_files.push(PathBuf::from("dracut.cpio"));
+        assert!(wrote > NEWC_HDR_LEN);
+
+        let status = Command::new("diff")
+            .args(&["gnu.cpio", "dracut.cpio"])
+            .status()
+            .expect("diff failed to start");
+        assert!(status.success());
     }
 }

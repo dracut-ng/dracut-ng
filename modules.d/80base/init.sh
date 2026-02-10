@@ -55,7 +55,7 @@ fi
 
 if ! ismounted /dev/pts; then
     mkdir -m 0755 -p /dev/pts
-    mount -t devpts -o gid=5,mode=620,noexec,nosuid devpts /dev/pts > /dev/null
+    mount -t devpts -o gid=5,mode=600,noexec,nosuid devpts /dev/pts > /dev/null
 fi
 
 if ! ismounted /dev/shm; then
@@ -146,8 +146,11 @@ getargbool 0 rd.udev.log_level=info -d rd.udev.log-priority=info -d rd.udev.info
 getargbool 0 rd.udev.log_level=debug -d rd.udev.log-priority=debug -d rd.udev.debug -d -y rdudevdebug \
     && UDEV_LOG=debug
 
+mkdir -p /etc/udev
+echo "udev_log=${UDEV_LOG}" >> /etc/udev/udev.conf
+
 # start up udev and trigger cold plugs
-UDEV_LOG=$UDEV_LOG "$systemdutildir"/systemd-udevd --daemon --resolve-names=never
+"$systemdutildir"/systemd-udevd --daemon --resolve-names=never
 
 UDEV_QUEUE_EMPTY="udevadm settle --timeout=0"
 
@@ -183,8 +186,7 @@ while :; do
         rm -f -- "$hookdir"/initqueue/work
     fi
 
-    for job in "$hookdir"/initqueue/*.sh; do
-        [ -e "$job" ] || break
+    for job in $(list_hooks "initqueue"); do
         # shellcheck disable=SC2097 disable=SC1090 disable=SC2098
         job=$job . "$job"
         check_finished && break 2
@@ -192,8 +194,7 @@ while :; do
 
     $UDEV_QUEUE_EMPTY > /dev/null 2>&1 || continue
 
-    for job in "$hookdir"/initqueue/settled/*.sh; do
-        [ -e "$job" ] || break
+    for job in $(list_hooks "initqueue/settled"); do
         # shellcheck disable=SC2097 disable=SC1090 disable=SC2098
         job=$job . "$job"
         check_finished && break 2
@@ -205,8 +206,7 @@ while :; do
     sleep 0.5
 
     if [ $main_loop -gt $((2 * RDRETRY / 3)) ]; then
-        for job in "$hookdir"/initqueue/timeout/*.sh; do
-            [ -e "$job" ] || break
+        for job in $(list_hooks "initqueue/timeout"); do
             # shellcheck disable=SC2097 disable=SC1090 disable=SC2098
             job=$job . "$job"
             udevadm settle --timeout=0 > /dev/null 2>&1 || main_loop=0
@@ -241,9 +241,9 @@ while :; do
         usable_root "$NEWROOT" && break
         umount "$NEWROOT"
     fi
-    for f in "$hookdir"/mount/*.sh; do
+    for f in $(list_hooks "mount"); do
         # shellcheck disable=SC1090
-        [ -f "$f" ] && . "$f"
+        . "$f"
         if ismounted "$NEWROOT"; then
             usable_root "$NEWROOT" && break
             warn "$NEWROOT has no proper rootfs layout, ignoring and removing offending mount hook"
@@ -361,10 +361,8 @@ else
 fi
 debug_on
 
-if ! [ -d "$NEWROOT"/run ]; then
-    NEWRUN=/dev/.initramfs
-    mkdir -m 0755 -p "$NEWRUN"
-    mount --rbind /run/initramfs "$NEWRUN"
+if [ -d "$NEWROOT"/run ]; then
+    mount --move /run "$NEWROOT"/run
 fi
 
 wait_for_loginit

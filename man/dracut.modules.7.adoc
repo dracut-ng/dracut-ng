@@ -14,9 +14,9 @@ DESCRIPTION
 
 dracut uses a modular system to build and extend the initramfs image. All
 modules are located in _/usr/lib/dracut/modules.d_ or in _<git-src>/modules.d_.
-The most basic dracut module is _99base_. In _99base_ the initial shell script
+The most basic dracut module is _80base_. In _80base_ the initial shell script
 init is defined, which gets run by the kernel after initramfs loading. Although
-you can replace init with your own version of _99base_, this is not encouraged.
+you can replace init with your own version of _80base_, this is not encouraged.
 Instead you should use, if possible, the hooks of dracut. All hooks, and the
 point of time in which they are executed, are described in <<stages>>.
 
@@ -47,6 +47,17 @@ These hooks are plain directories containing shell scripts ending with ".sh",
 which are sourced by init.
 Common used functions are in _dracut-lib.sh_, which can be sourced by any script.
 
+dracut looks for custom hook scripts in subdirectories (cmdline, pre-udev,
+pre-trigger, initqueue, pre-mount, mount, pre-pivot, cleanup) of the following
+locations:  _/var/lib/dracut/hooks_, _/etc/dracut/hooks_, and
+_/usr/lib/dracut/hooks_. The intended use of these locations is: standard,
+distribution shipped scripts are put to _/usr/lib/dracut/hooks_;
+_/etc/dracut/hooks_ is used as a local override; dracut modules create (and
+remove) scripts in runtime in _/var/lib/dracut/hooks_. If a hook with the same
+name exists in multiple locations simultaneously, the most privileged location
+(_/var/lib/dracut/hooks_, then _/etc/dracut/hooks_, and then
+_/usr/lib/dracut/hooks_) wins and only one instance of the hook is executed.
+
 === Hook: cmdline
 
 The _cmdline_ hook is a place to insert scripts to parse the kernel command line
@@ -71,7 +82,7 @@ Now udev is started and the logging for udev is setup.
 === Hook: pre-trigger
 
 In this hook, you can set udev environment variables with **udevadm control
---property=KEY=_value_** or control the further execution of udev with
+--property=KEY=**__value__ or control the further execution of udev with
 udevadm.
 
 === Trigger Udev
@@ -156,6 +167,16 @@ after udev has settled and the basic device drivers have been loaded.
 
 All module installation information is in the file module-setup.sh.
 
+The following are the most commonly used shell variables used inside
+drauct modules. These shell variables are always declared and assigned
+values (the assigned value might be an empty string). There is a
+compatibility promise on these variables between dracut releases.
+Module should only read (and not write) these variables.
+ * `$hostonly` (could be an empty string)
+ * `$hostonly_mode` (could be an empty string)
+ * `$hostonly_cmdline` (not an empty string)
+ * `$moddir` (not an empty string)
+
 First we create a check() function, which just exits with 0 indicating that this
 module should be included by default.
 
@@ -213,6 +234,10 @@ the initramfs.
 $hostonly:: If the $hostonly variable is set, then the module check() function
 should be in "hostonly" mode, which means, that the check() should only return
 0, if the module is really needed to boot this specific host.
+
+Avoid making decisions inside this function based on the value of the
+$hostonly_mode variable. This principle ensures the inclusion of the
+same dracut modules in both sloppy and strict modes.
 
 check() should return with:
 
@@ -303,6 +328,11 @@ installs an executable/script <src> in the dracut hook <hookdir> with priority
 installs one or more udev rules. Non-existent udev rules are reported, but do
 not let dracut fail.
 
+==== inst_sysusers <sysuserconf>
+
+installs one sysuser config files. Non-existent sysuser config file
+is reported, but does not let dracut fail.
+
 ==== inst_libdir_dir <dir> [<dir>...]
 
 installs multiple directories (but not their content) located on a library
@@ -332,16 +362,52 @@ To install a kernel module regardless of the hostonly mode use the form:
 hostonly='' instmods <kernelmodule>
 ----
 
+a common pattern to call instmods is to use the following form:
+----
+`hostonly=$(optional_hostonly) instmods <kernelmodule>`
+----
+This statement installs the kernel module in either of the following conditions:
+* in non-hostonly mode (regardless of the host state)
+* in `sloppy` hostonly mode (regardless of the host state)
+* in hostonly mode if the kernel module is already loaded in the host
+
 options:
 
 -c:: check that kernel modules exists and can be installed (i.e., not optional).
 
 -s:: reduce verbosity.
 
+==== dracut_need_initqueue
+
+Obsolete function as of dracut v108 that expresses a dependency on the initqueue.
+Instead of using this function, add a dracut module dependency for the initqueue
+dracut module.
+This function is maintained only to provide compatibility for modules aimed at older
+dracut releases.
+
+==== require_binaries
+
+Helper function for check() in module-setup.sh to check for required installed binaries.
+All of the binaries listed in the arguments of this function should exists in the host.
+Issues a standardized warning message.
+
+==== require_any_binary
+
+Helper function for check() in module-setup.sh to check for required installed binaries.
+At least one of the binaries listed in the arguments of this function should exists in
+the host.
+Issues a standardized warning message.
+
+==== require_kernel_modules
+
+Helper function for check() in module-setup.sh to check for required kernel modules.
+Issues a standardized warning message.
+
 === Initramfs Functions
 
-FIXME
+==== determine_kernel_image <kversion>
 
+Helper function for determining the path for the kernel image file.
 
 === Network Modules
 

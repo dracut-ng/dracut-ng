@@ -1,9 +1,13 @@
 #!/bin/sh
 
-command -v nm_generate_connections > /dev/null || . /lib/nm-lib.sh
+command -v getargbool > /dev/null || . /lib/dracut-lib.sh
+
+[ -e /usr/lib/systemd/system/NetworkManager-initrd.service ] \
+    && nm_service_name="NetworkManager-initrd" \
+    || nm_service_name="nm-initrd"
 
 if [ -n "$netroot" ] || [ -e /tmp/net.ifaces ]; then
-    echo rd.neednet >> /etc/cmdline.d/35-neednet.conf
+    echo rd.neednet >> /etc/cmdline.d/20-neednet.conf
 fi
 
 if getargbool 0 rd.debug; then
@@ -17,13 +21,13 @@ if getargbool 0 rd.debug; then
         echo 'level=TRACE'
     ) > /run/NetworkManager/conf.d/initrd-logging.conf
 
-    if [ -n "$DRACUT_SYSTEMD" ]; then
+    if [ -n "${DRACUT_SYSTEMD-}" ]; then
         # Enable tty output if a usable console is found
         # See https://github.com/coreos/fedora-coreos-tracker/issues/943
         # shellcheck disable=SC2217
         if [ -w /dev/console ] && (echo < /dev/console) > /dev/null 2> /dev/null; then
-            mkdir -p /run/systemd/system/nm-initrd.service.d
-            cat << EOF > /run/systemd/system/nm-initrd.service.d/tty-output.conf
+            mkdir -p /run/systemd/system/"$nm_service_name".service.d
+            cat << EOF > /run/systemd/system/"$nm_service_name".service.d/tty-output.conf
 [Service]
 StandardOutput=tty
 EOF
@@ -32,4 +36,7 @@ EOF
     fi
 fi
 
-nm_generate_connections
+if [ "$nm_service_name" = "nm-initrd" ]; then
+    command -v nm_generate_connections > /dev/null || . /lib/nm-lib.sh
+    nm_generate_connections
+fi

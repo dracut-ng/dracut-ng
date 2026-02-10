@@ -110,7 +110,7 @@ case "$COMMAND" in
         fi
 
         # source our config dir
-        for f in $(dropindirs_sort ".conf" "/etc/dracut.conf.d" "/usr/lib/dracut/dracut.conf.d"); do
+        for f in $(dropindirs_sort ".conf" "/etc/dracut.conf.d" "/usr/lib/dracut/dracut.conf.d" "/run/initramfs/dracut.conf.d"); do
             if [[ -e $f ]]; then
                 # shellcheck disable=SC1090
                 . "$f"

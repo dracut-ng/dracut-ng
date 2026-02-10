@@ -4,39 +4,39 @@ export PATH
 
 # shellcheck disable=SC1090
 [[ -e .testdir${TEST_RUN_ID:+-$TEST_RUN_ID} ]] && . .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
-if [[ -z $TESTDIR ]] || [[ ! -d $TESTDIR ]]; then
+if [[ -z ${TESTDIR-} ]] || [[ ! -d $TESTDIR ]]; then
     TESTDIR=$(mktemp -d -p "/var/tmp" -t dracut-test.XXXXXX)
 fi
 echo "TESTDIR=\"$TESTDIR\"" > .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
 export TESTDIR
+export BOOT_ROOT="$TESTDIR"
+export QEMU_LOGFILE="$TESTDIR/qemu.log"
 
-# inspired by kernel version detection in lsinitrd.sh
-
-# Some test containers do not include systemd-detect-virt, so let's just assume
-# we are running inside a container already
-
-# shellcheck disable=SC2012
-[[ $KVERSION ]] || KVERSION="$(cd /lib/modules && ls -1 | tail -1)"
-# shellcheck disable=SC2012
-[[ $KVERSION ]] || KVERSION="$(cd /usr/lib/modules && ls -1 | tail -1)"
-[[ $KVERSION ]] || KVERSION="$(uname -r)"
-
-[ -z "$USE_NETWORK" ] && USE_NETWORK="network"
-[ -z "$TEST_FSTYPE" ] && TEST_FSTYPE="ext4"
-
-if [[ -z $basedir ]]; then basedir="$(realpath ../..)"; fi
+if [[ -z ${basedir-} ]]; then basedir="$(realpath ../..)"; fi
 
 DRACUT=${DRACUT-dracut}
 PKGLIBDIR=${PKGLIBDIR-$basedir}
 
-TEST_KERNEL_CMDLINE+=" rd.retry=10 rd.timeout=30 rd.info rd.shell=0 panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot console=ttyS0,115200n81 $DEBUGFAIL "
-if [[ $V != "1" && $V != "2" ]]; then
+if [[ -f /etc/machine-id ]]; then
+    read -r TOKEN < /etc/machine-id || true
+fi
+[ -z "${TOKEN-}" ] && . /etc/os-release && TOKEN="$ID"
+
+TEST_KERNEL_CMDLINE+=" panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot ${DEBUGFAIL-} "
+
+if [[ ${V-} == "1" || ${V-} == "2" ]]; then
+    TEST_KERNEL_CMDLINE+="systemd.journald.forward_to_console=1 "
+fi
+
+if [[ ${V-} != "1" && ${V-} != "2" ]]; then
     TEST_KERNEL_CMDLINE+="quiet "
 fi
 
-if [[ $V == "2" ]]; then
+if [[ ${V-} == "2" ]]; then
     TEST_KERNEL_CMDLINE+="rd.debug "
 fi
+
+ARCH="${ARCH-$(uname -m)}"
 
 test_dracut() {
     # directory for test configurations and for the generated initrd (extracted)
@@ -48,7 +48,7 @@ test_dracut() {
     fi
 
     # pick up configuration from $TESTDIR/dracut.conf.d when running the tests
-    TEST_DRACUT_ARGS+=" --confdir $TESTDIR/dracut.conf.d --add-confdir test --keep --tmpdir $TESTDIR/initrd --kver $KVERSION"
+    TEST_DRACUT_ARGS+=" --confdir $TESTDIR/dracut.conf.d --add-confdir test --tmpdir $TESTDIR/initrd"
 
     # include $TESTDIR"/overlay if exists
     if [ -d "$TESTDIR"/overlay ]; then
@@ -58,69 +58,209 @@ test_dracut() {
     # shellcheck disable=SC2162
     IFS=' ' read -a TEST_DRACUT_ARGS_ARRAY <<< "$TEST_DRACUT_ARGS"
 
-    "$DRACUT" \
+    call_dracut \
         "${TEST_DRACUT_ARGS_ARRAY[@]}" \
-        "$@" || return 1
+        "$@" "$TESTDIR"/initramfs.testing || return 1
+}
+
+quote_args() {
+    local arg args=()
+    for arg in "$@"; do
+        if [[ -z $arg || $arg =~ [[:space:]\'] ]]; then
+            args+=("'${arg//\'/\'\\\'\'}'")
+        else
+            args+=("$arg")
+        fi
+    done
+    echo "${args[*]}"
+}
+
+# Create the base for a trivial root file system
+build_rootfs_base() {
+    local rootdir="$1"
+
+    # Create basic directory structure (with merged /usr)
+    test ! -e "${rootdir}"
+    mkdir -p "${rootdir}"
+    for subdir in etc dev proc run sys tmp usr usr/bin usr/lib usr/sbin var; do
+        mkdir "${rootdir}/${subdir}"
+    done
+    for subdir in bin lib sbin; do
+        ln -s "usr/$subdir" "${rootdir}/${subdir}"
+    done
+
+    # Include os-release to make systemd's initrd-switch-root.service happy
+    cp /usr/lib/os-release "$rootdir/usr/lib/os-release"
+}
+
+# Expects dracut-functions.sh being sourced and configured
+install_minimal_systemd() {
+    local systemdutildir=/usr/lib/systemd
+    inst_multiple \
+        "$systemdutildir"/system/basic.target \
+        "$systemdutildir"/system/ctrl-alt-del.target \
+        "$systemdutildir"/system/final.target \
+        "$systemdutildir"/system/multi-user.target \
+        "$systemdutildir"/system/poweroff.target \
+        "$systemdutildir"/system/rescue.target \
+        "$systemdutildir"/system/shutdown.target \
+        "$systemdutildir"/system/sysinit.target \
+        "$systemdutildir"/system/systemd-poweroff.service \
+        "$systemdutildir"/system/umount.target \
+        "$systemdutildir"/systemd \
+        "$systemdutildir"/systemd-executor \
+        "$systemdutildir"/systemd-shutdown \
+        systemctl umount
+
+    # Install required libraries.
+    _arch=${DRACUT_ARCH:-$(uname -m)}
+    inst_libdir_file {"tls/$_arch/",tls/,"$_arch/",}"libkmod.so*"
+
+    : > "$rootdir/etc/machine-id"
+    chmod 444 "$rootdir/etc/machine-id"
+}
+
+# Create a minimal root file system to simulate a client
+build_client_rootfs() {
+    local rootdir="$1"
+    local binaries
+
+    build_rootfs_base "$rootdir"
+
+    if [[ "$(type -t inst_multiple 2> /dev/null)" != "function" ]]; then
+        # shellcheck source=./dracut-functions.sh
+        . "$PKGLIBDIR/dracut-functions.sh"
+    fi
+    # variables for inst* functions
+    export DRACUT_NO_XATTR=1
+    initdir="$rootdir"
+
+    binaries=$(sed -n "s/^# required binaries: \(.*\)/\1/p" "$PKGLIBDIR/modules.d/70test-root/test-init.sh")
+    # shellcheck disable=SC2086
+    inst_multiple $binaries
+
+    local systemdutildir=/usr/lib/systemd
+    if [[ -x "$systemdutildir/systemd" ]]; then
+        install_minimal_systemd
+        inst_script "$PKGLIBDIR/modules.d/70test-root/test-init.sh" "/sbin/test-init"
+        inst_simple "$PKGLIBDIR/modules.d/70test-root/testsuite.service" "$systemdutildir/system/testsuite.service"
+        inst_simple "$PKGLIBDIR/modules.d/70test-root/testsuite.target" "$systemdutildir/system/testsuite.target"
+        mkdir "${rootdir}${systemdutildir}/system/testsuite.target.wants"
+        ln -sfn ../testsuite.service "${rootdir}${systemdutildir}/system/testsuite.target.wants/testsuite.service"
+        ln -sfn "testsuite.target" "${rootdir}${systemdutildir}/system/default.target"
+        ln -sfn ../lib/systemd/systemd "${rootdir}/sbin/init"
+    else
+        inst_script "$PKGLIBDIR/modules.d/70test-root/test-init.sh" /sbin/init
+        inst poweroff
+    fi
+
+    if [[ -x assertion.sh ]]; then
+        inst_script ./assertion.sh /assertion.sh
+        binaries=$(sed -n "s/^# required binaries: \(.*\)/\1/p" ./assertion.sh)
+        # shellcheck disable=SC2086
+        inst_multiple $binaries
+    fi
+
+    if command -v hardlink > /dev/null; then
+        hardlink -q "$rootdir"
+    fi
+
+    unset DRACUT_NO_XATTR
+}
+
+# Call dracut and log its call in verbose mode
+call_dracut() {
+    # Uncomment this to debug failures
+    #set -- --stdlog 4 "$@"
+    if [[ ${V-} == "1" || ${V-} == "2" ]]; then
+        echo "Calling $DRACUT $(quote_args "$@")"
+    fi
+    "$DRACUT" "$@"
+}
+
+# Check QEMU logs for success marker
+check_qemu_log() {
+    local logfile="${1-$QEMU_LOGFILE}"
+
+    if ! grep -q "^All OK" "${logfile}"; then
+        echo >&2 "E: Message 'All OK' not found in QEMU log output '${logfile}'."
+        return 1
+    fi
+}
+
+# Log the start of a client test.
+client_test_start() {
+    local test_name="$1"
+    echo "CLIENT TEST START: $test_name"
+    echo "$test_name" > "$TESTDIR/client_test_name.txt"
+}
+
+# Log the end of a client test if one was started with client_test_start before.
+client_test_end() {
+    local status="${1-OK}"
+    local test_name
+    [[ -e "$TESTDIR/client_test_name.txt" ]] || return 0
+    test_name=$(cat "$TESTDIR/client_test_name.txt")
+    echo "CLIENT TEST END: $test_name [$status]"
+    rm "$TESTDIR/client_test_name.txt"
+}
+
+# Start a HTTP server that serves the content of TESTDIR
+start_webserver() {
+    local pid port
+
+    echo "Starting HTTP server..." >&2
+    python3 -u -m http.server -d "$TESTDIR" 0 > "$TESTDIR/webserver.log" 2>&1 &
+    pid=$!
+    echo "$pid" > "$TESTDIR/webserver.pid"
+
+    while ! grep -q 'Serving HTTP on' "$TESTDIR/webserver.log"; do
+        echo "sleeping..." >&2
+        sleep 0.05
+    done
+
+    port=$(sed -n 's/.*port \([0-9]\+\).*/\1/p' "$TESTDIR/webserver.log")
+    echo "HTTP server running on port $port (pid $pid)" >&2
+    echo "$port"
+}
+
+# Stop HTTP server that was started by start_webserver
+stop_webserver() {
+    if [[ -s "$TESTDIR/webserver.pid" ]]; then
+        pid=$(cat "$TESTDIR/webserver.pid")
+        echo "Stopping HTTP server (pid $pid)..." >&2
+        kill "$pid"
+        rm "$TESTDIR/webserver.pid"
+    fi
 }
 
 # Wait for the server QEMU has been started up.
 # It should print "Serving" in the server.log in that case.
 wait_for_server_startup() {
-    local server_pid
+    local lines printed_lines=0 server_pid
     server_pid=$(cat "$TESTDIR"/server.pid)
 
+    echo "Waiting for the server to startup"
     while ! grep -q Serving "$TESTDIR"/server.log; do
-        echo "Waiting for the server to startup"
-        tail "$TESTDIR"/server.log
+        if [ "${V-}" -ge 1 ]; then
+            lines=$(wc -l "$TESTDIR"/server.log | cut -f 1 -d ' ')
+            if [ "$lines" -gt "$printed_lines" ]; then
+                tail -n "+$((printed_lines + 1))" "$TESTDIR"/server.log
+                printed_lines=$lines
+            fi
+        fi
         if ! test -f "/proc/$server_pid/status"; then
             echo "Error: Server QEMU process $server_pid is gone. Please check $TESTDIR/server.log for failures." >&2
             return 1
         fi
         sleep 1
     done
-}
 
-ovmf_code() {
-    for path in \
-        "/usr/share/OVMF/OVMF_CODE.fd" \
-        "/usr/share/OVMF/OVMF_CODE_4M.fd" \
-        "/usr/share/edk2/x64/OVMF_CODE.fd" \
-        "/usr/share/edk2-ovmf/OVMF_CODE.fd" \
-        "/usr/share/qemu/ovmf-x86_64-4m.bin"; do
-        [[ -s $path ]] && echo -n "$path" && return
-    done
-}
-
-VMLINUZ=${VMLINUZ-"/lib/modules/${KVERSION}/vmlinuz"}
-if ! [ -f "$VMLINUZ" ]; then
-    VMLINUZ="/lib/modules/${KVERSION}/vmlinux"
-fi
-
-if ! [ -f "$VMLINUZ" ]; then
-    [[ -f /etc/machine-id ]] && read -r MACHINE_ID < /etc/machine-id
-
-    if [[ $MACHINE_ID ]] && { [[ -d /boot/${MACHINE_ID} ]] || [[ -L /boot/${MACHINE_ID} ]]; }; then
-        VMLINUZ="/boot/${MACHINE_ID}/$KVERSION/linux"
-    elif [ -f "/boot/vmlinuz-${KVERSION}" ]; then
-        VMLINUZ="/boot/vmlinuz-${KVERSION}"
-    elif [ -f "/boot/vmlinux-${KVERSION}" ]; then
-        VMLINUZ="/boot/vmlinux-${KVERSION}"
-    elif [ -f "/boot/kernel-${KVERSION}" ]; then
-        VMLINUZ="/boot/kernel-${KVERSION}"
+    if [ "${V-}" -ge 1 ]; then
+        tail -n "+$((printed_lines + 1))" "$TESTDIR"/server.log
+        echo "Server has been start up."
     fi
-fi
-
-if ! [ -f "$VMLINUZ" ]; then
-    VMLINUZ=$(find /boot/vmlinuz-* -type f 2> /dev/null | tail -1)
-fi
-
-if ! [ -f "$VMLINUZ" ]; then
-    echo "Could not find a Linux kernel version $KVERSION to test with!" >&2
-    echo "Please install linux." >&2
-    exit 1
-fi
-
-export VMLINUZ
+}
 
 command -v test_check &> /dev/null || test_check() {
     :
@@ -128,6 +268,10 @@ command -v test_check &> /dev/null || test_check() {
 
 command -v test_cleanup &> /dev/null || test_cleanup() {
     :
+}
+
+determine_kernel_version() {
+    lsinitrd "$1" | grep modules.dep$ | head -1 | sed 's;.*/\([^/]\+\)/modules.dep;\1;'
 }
 
 # terminal sequence to set color to a 'success' color (currently: green)
@@ -144,11 +288,37 @@ COLOR_FAILURE='\033[0;31m'
 COLOR_WARNING='\033[0;33m'
 COLOR_NORMAL='\033[0;39m'
 
+# build an ext4 image from the given directory
+build_ext4_image() {
+    local source_dir="$1"
+    local image="$2"
+    local label="$3"
+
+    local size
+    size="$(du -s -b "${source_dir}" | cut -f 1)"
+    # Add 5% extra + 5% for reserved blocks + 10% for metadata + 8 MB for ext4 journal
+    size="$((size * 120 / 100 + 8000000))"
+
+    rm -f "$image"
+    truncate -s "$size" "$image"
+    mkfs.ext4 -q -L "$label" -d "$source_dir" "$image"
+}
+
+# override the init script from the test-root dracut module (see module-setup.sh)
+inst_init() {
+    local init_script="$1"
+    local rootdir="$2"
+    if [ -e "$rootdir/sbin/test-init" ]; then
+        cp "$init_script" "$rootdir/sbin/test-init"
+    else
+        cp "$init_script" "$rootdir/sbin/init"
+    fi
+}
+
 # generate qemu arguments for named raw disks
 #
-# qemu_add_drive <index> <args> <filename> <id-name> [<bootindex>]
+# qemu_add_drive <args> <filename> <id-name> [<bootindex>]
 #
-# index: name of the index variable (set to 0 at start)
 # args: name of the argument array variable (set to () at start)
 # filename: filename of the raw disk image
 # id-name: name of the disk in /dev/disk/by-id -> /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_$name
@@ -163,19 +333,24 @@ COLOR_NORMAL='\033[0;39m'
 # # EXAMPLES
 # ```
 #   declare -a disk_args=()
-#   declare -i disk_index=0
-#   qemu_add_drive disk_index disk_args "$TESTDIR"/root.ext3 root 0 1
-#   qemu_add_drive disk_index disk_args "$TESTDIR"/client.img client
-#   qemu_add_drive disk_index disk_args "$TESTDIR"/iscsidisk2.img iscsidisk2
-#   qemu_add_drive disk_index disk_args "$TESTDIR"/iscsidisk3.img iscsidisk3
+#   qemu_add_drive disk_args "$TESTDIR"/root.ext3 root 0 1
+#   qemu_add_drive disk_args "$TESTDIR"/client.img client
+#   qemu_add_drive disk_args "$TESTDIR"/iscsidisk2.img iscsidisk2
+#   qemu_add_drive disk_args "$TESTDIR"/iscsidisk3.img iscsidisk3
 #   qemu "${disk_args[@]}"
 # ```
 qemu_add_drive() {
-    local index=${!1}
-    local file=$3
-    local name=${4:-$index}
-    local size=${5:-0}
-    local bootindex=$6
+    # shellcheck disable=SC2178  # args is a nameref to an array
+    local -n args=$1
+    local file=$2
+    local name=$3
+    local size=${4:-0}
+    local bootindex=${5-}
+
+    local index=0
+    while [[ ${args[*]} == *id=scsi${index}* ]]; do
+        index=$((index + 1))
+    done
 
     if [ "${size}" -ne 0 ]; then
         if [[ ${name} =~ "marker" ]]; then
@@ -184,42 +359,63 @@ qemu_add_drive() {
             size=512
         fi
 
-        dd if=/dev/zero of="${file}" bs=1MiB count="${size}" status=none
-        sync
+        rm -f "$file"
+        truncate -s "${size}M" "$file"
     fi
 
-    eval "${2}"'+=(' \
-        -device "virtio-scsi-pci,id=scsi${index}" \
-        -drive "if=none,format=raw,file=${file},id=drive-data${index}" \
-        -device "scsi-hd,bus=scsi${index}.0,drive=drive-data${index},id=data${index},${bootindex:+bootindex=$bootindex,}serial=${name}" \
-        ')'
-
-    [ $(("${1}++")) -ne 0 ]
+    args+=(
+        -device "virtio-scsi-pci,id=scsi${index}"
+        -drive "if=none,format=raw,file=${file},id=drive-data${index}"
+        -device "scsi-hd,bus=scsi${index}.0,drive=drive-data${index},id=data${index},${bootindex:+bootindex=$bootindex,}serial=${name}"
+    )
 }
 
 test_marker_reset() {
-    dd if=/dev/zero of="$TESTDIR"/marker.img bs=1MiB count=1 status=none
-    sync
+    rm -f "$TESTDIR/marker.img"
+    truncate -s 1M "$TESTDIR/marker.img"
 }
 
 test_marker_check() {
     local marker=${1:-dracut-root-block-success}
     local file=${2:-marker.img}
 
-    grep -U --binary-files=binary -F -m 1 -q "$marker" "$TESTDIR/$file"
+    grep -F -a -m 1 -q "$marker" "$TESTDIR/$file"
     return $?
+}
+
+print_test_result() {
+    local ret=${1-1}
+    if [ "$ret" -eq 0 ]; then
+        client_test_end
+        rm -- test${TEST_RUN_ID:+-$TEST_RUN_ID}.log
+        echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_SUCCESS" "[OK]" "$COLOR_NORMAL"
+    else
+        client_test_end "FAILED"
+        echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_FAILURE" "[FAILED]" "$COLOR_NORMAL"
+        if [[ -f "$TESTDIR"/server.log ]]; then
+            mv "$TESTDIR"/server.log ./server${TEST_RUN_ID:+-$TEST_RUN_ID}.log
+        fi
+        if [ "${V-}" == "2" ]; then
+            tail -c 1048576 "$(pwd)/server${TEST_RUN_ID:+-$TEST_RUN_ID}.log" "$(pwd)/test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
+            echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_FAILURE" "[FAILED]" "$COLOR_NORMAL"
+        else
+            echo "see $(pwd)/test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
+        fi
+    fi
 }
 
 while (($# > 0)); do
     case $1 in
         --run)
             echo "TEST RUN: $TEST_DESCRIPTION"
-            test_check && test_run
+            test_check
+            test_run
             exit $?
             ;;
         --setup)
             echo "TEST SETUP: $TEST_DESCRIPTION"
-            test_check && test_setup
+            test_check
+            test_setup
             exit $?
             ;;
         --clean)
@@ -231,50 +427,37 @@ while (($# > 0)); do
             ;;
         --all)
             if ! test_check 2 &> test${TEST_RUN_ID:+-$TEST_RUN_ID}.log; then
+                if [[ ${V-} == "1" || ${V-} == "2" ]]; then
+                    cat test${TEST_RUN_ID:+-$TEST_RUN_ID}.log
+                fi
                 echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_WARNING" "[SKIPPED]" "$COLOR_NORMAL"
-                exit 0
+                exit 77
             else
                 echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_SUCCESS" "[STARTED]" "$COLOR_NORMAL"
             fi
-            if [[ $V == "1" || $V == "2" ]]; then
+            trap print_test_result ERR
+            if [[ ${V-} == "1" || ${V-} == "2" ]]; then
                 tee_command="tee"
                 set -o pipefail
                 (
-                    test_setup && test_run
-                    ret=$?
+                    test_setup
+                    test_run
                     test_cleanup
-                    if ((ret != 0)) && [[ -f "$TESTDIR"/server.log ]]; then
-                        mv "$TESTDIR"/server.log ./server${TEST_RUN_ID:+-$TEST_RUN_ID}.log
-                    fi
                     rm -fr -- "$TESTDIR"
                     rm -f -- .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
-                    exit $ret
                 ) 2>&1 | "$tee_command" "test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
             else
                 (
-                    test_setup && test_run
-                    ret=$?
+                    test_setup
+                    test_run
                     test_cleanup
                     rm -fr -- "$TESTDIR"
                     rm -f -- .testdir${TEST_RUN_ID:+-$TEST_RUN_ID}
-                    exit $ret
                 ) > test${TEST_RUN_ID:+-$TEST_RUN_ID}.log 2>&1
             fi
-            ret=$?
             set +o pipefail
-            if [ $ret -eq 0 ]; then
-                rm -- test${TEST_RUN_ID:+-$TEST_RUN_ID}.log
-                echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_SUCCESS" "[OK]" "$COLOR_NORMAL"
-            else
-                echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_FAILURE" "[FAILED]" "$COLOR_NORMAL"
-                if [ "$V" == "2" ]; then
-                    tail -c 1048576 "$(pwd)/server${TEST_RUN_ID:+-$TEST_RUN_ID}.log" "$(pwd)/test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
-                    echo -e "TEST: $TEST_DESCRIPTION " "$COLOR_FAILURE" "[FAILED]" "$COLOR_NORMAL"
-                else
-                    echo "see $(pwd)/test${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
-                fi
-            fi
-            exit $ret
+            print_test_result 0
+            exit 0
             ;;
         *) break ;;
     esac

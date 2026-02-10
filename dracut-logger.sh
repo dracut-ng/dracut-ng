@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export __DRACUT_LOGGER__=1
-
 ## @brief Logging facility module for dracut both at build- and boot-time.
 #
 # @section intro Introduction
@@ -103,17 +101,17 @@ export __DRACUT_LOGGER__=1
 dlog_init() {
     local __oldumask
     local ret=0
-    local errmsg
-    [ -z "$stdloglvl" ] && stdloglvl=4
-    [ -z "$sysloglvl" ] && sysloglvl=0
-    [ -z "$kmsgloglvl" ] && kmsgloglvl=0
+    local errmsgs=()
+    [ -z "${stdloglvl-}" ] && stdloglvl=4
+    [ -z "${sysloglvl-}" ] && sysloglvl=0
+    [ -z "${kmsgloglvl-}" ] && kmsgloglvl=0
     # Skip initialization if it's already done.
-    [ -n "$maxloglvl" ] && return 0
+    [ -n "${maxloglvl-}" ] && return 0
 
-    if [ -z "$fileloglvl" ]; then
-        [ -w "$logfile" ] && fileloglvl=4 || fileloglvl=0
+    if [ -z "${fileloglvl-}" ]; then
+        [ -w "${logfile-}" ] && fileloglvl=4 || fileloglvl=0
     elif ((fileloglvl > 0)); then
-        if [[ $logfile ]]; then
+        if [[ ${logfile-} ]]; then
             __oldumask=$(umask)
             umask 0377
             ! [ -e "$logfile" ] && : > "$logfile"
@@ -131,7 +129,7 @@ dlog_init() {
                 # We cannot log to file, so turn this facility off.
                 fileloglvl=0
                 ret=1
-                errmsg="'$logfile' is not a writable file"
+                errmsgs+=("'$logfile' is not a writable file")
             fi
         fi
     fi
@@ -153,11 +151,19 @@ dlog_init() {
             exec 15> "$_systemdcatfile"
         elif ! ([[ -S /dev/log ]] && [[ -w /dev/log ]] && command -v logger > /dev/null); then
             # We cannot log to syslog, so turn this facility off.
-            kmsgloglvl=$sysloglvl
+            if [[ -w /dev/kmsg ]]; then
+                kmsgloglvl=$sysloglvl
+            fi
             sysloglvl=0
             ret=1
-            errmsg="No '/dev/log' or 'logger' included for syslog logging"
+            errmsgs+=("No '/dev/log' or 'logger' included for syslog logging")
         fi
+    fi
+
+    if ((kmsgloglvl > 0)) && [[ ! -w /dev/kmsg ]]; then
+        kmsgloglvl=0
+        ret=1
+        errmsgs+=("'/dev/kmsg' not writable. Disabling logging to kernel ring buffer.")
     fi
 
     if ((sysloglvl > 0)) || ((kmsgloglvl > 0)); then
@@ -166,7 +172,6 @@ dlog_init() {
         else
             readonly syslogfacility=daemon
         fi
-        export syslogfacility
     fi
 
     local lvl
@@ -175,48 +180,49 @@ dlog_init() {
         ((lvl > maxloglvl_l)) && maxloglvl_l=$lvl
     done
     readonly maxloglvl=$maxloglvl_l
-    export maxloglvl
 
     if ((stdloglvl < 6)) && ((kmsgloglvl < 6)) && ((fileloglvl < 6)) && ((sysloglvl < 6)); then
         unset dtrace
-        # shellcheck disable=SC2317  # exposed via API
+        # shellcheck disable=SC2317,SC2329  # exposed via API
         dtrace() { :; }
     fi
 
     if ((stdloglvl < 5)) && ((kmsgloglvl < 5)) && ((fileloglvl < 5)) && ((sysloglvl < 5)); then
         unset ddebug
-        # shellcheck disable=SC2317  # exposed via API
+        # shellcheck disable=SC2317,SC2329  # exposed via API
         ddebug() { :; }
     fi
 
     if ((stdloglvl < 4)) && ((kmsgloglvl < 4)) && ((fileloglvl < 4)) && ((sysloglvl < 4)); then
         unset dinfo
-        # shellcheck disable=SC2317  # exposed via API
+        # shellcheck disable=SC2317,SC2329  # exposed via API
         dinfo() { :; }
     fi
 
     if ((stdloglvl < 3)) && ((kmsgloglvl < 3)) && ((fileloglvl < 3)) && ((sysloglvl < 3)); then
         unset dwarn
-        # shellcheck disable=SC2317  # exposed via API
+        # shellcheck disable=SC2317,SC2329  # exposed via API
         dwarn() { :; }
         unset dwarning
-        # shellcheck disable=SC2317  # exposed via API
+        # shellcheck disable=SC2317,SC2329  # exposed via API
         dwarning() { :; }
     fi
 
     if ((stdloglvl < 2)) && ((kmsgloglvl < 2)) && ((fileloglvl < 2)) && ((sysloglvl < 2)); then
         unset derror
-        # shellcheck disable=SC2317  # exposed via API
+        # shellcheck disable=SC2317,SC2329  # exposed via API
         derror() { :; }
     fi
 
     if ((stdloglvl < 1)) && ((kmsgloglvl < 1)) && ((fileloglvl < 1)) && ((sysloglvl < 1)); then
         unset dfatal
-        # shellcheck disable=SC2317  # exposed via API
+        # shellcheck disable=SC2317,SC2329  # exposed via API
         dfatal() { :; }
     fi
 
-    [ -n "$errmsg" ] && derror "$errmsg"
+    for errmsg in "${errmsgs[@]}"; do
+        derror "$errmsg"
+    done
 
     return $ret
 }
@@ -301,7 +307,8 @@ _dlvl2syslvl() {
 #
 # @param lvl Numeric logging level.
 # @param msg Message.
-# @retval 0 It's always returned, even if logging failed.
+# @retval 0 if level is in range, even if logging fails.
+# @retval 1 if level is out of range.
 #
 # @note This function is not supposed to be called manually. Please use
 # dtrace(), ddebug(), or others instead which wrap this one.
@@ -326,11 +333,13 @@ _do_dlog() {
     local lvlc
     local lvl="$1"
     shift
-    lvlc=$(_lvl2char "$lvl") || return 0
+    lvlc=$(_lvl2char "$lvl") || return 1
     local msg="$*"
     local lmsg="$lvlc: $*"
 
-    ((lvl <= stdloglvl)) && printf -- 'dracut[%s]: %s\n' "$lvlc" "$msg" >&2
+    if ((lvl <= stdloglvl)); then
+        printf -- 'dracut[%s]: %s\n' "$lvlc" "$msg" >&2
+    fi
 
     if ((lvl <= sysloglvl)); then
         if [[ "$_dlogfd" ]]; then
@@ -344,36 +353,130 @@ _do_dlog() {
         echo "$lmsg" >> "$logfile"
     fi
 
-    ((lvl <= kmsgloglvl)) \
-        && echo "<$(_dlvl2syslvl "$lvl")>dracut[$$] $msg" > /dev/kmsg
+    if ((lvl <= kmsgloglvl)); then
+        echo "<$(_dlvl2syslvl "$lvl")>dracut[$$] $msg" > /dev/kmsg
+    fi
+
+    return 0
+}
+
+## @brief Like _do_dlog() but accepts messages on standard input and sends them
+# to the appropriate logging outputs in a batch.
+#
+# @param lvl Numeric logging level.
+# @retval 0 if level is in range, even if logging fails.
+# @retval 1 if level is out of range.
+_do_dlog_batch() {
+    # Return early if level out of range
+    _lvl2char "$1" > /dev/null || return 1
+
+    # shellcheck disable=SC1003
+    sed -e '$a\' - | tee \
+        >(_do_dlog_batch_stdlog "$1") \
+        >(_do_dlog_batch_syslog "$1") \
+        >(_do_dlog_batch_filelog "$1") \
+        >(_do_dlog_batch_kmsglog "$1") \
+        > /dev/null
+}
+
+## @brief Batch processor for logging to standard error.
+#
+# @param lvl Numeric logging level.
+# @retval 0 if level is in range, even if logging fails.
+# @retval 1 if level is out of range.
+_do_dlog_batch_stdlog() {
+    local lvl="$1"
+    local lvlc
+    if ((lvl <= stdloglvl)); then
+        lvlc=$(_lvl2char "$lvl") || return 1
+        awk -v prefix="dracut[${lvlc}]: " '{ print prefix $0 }' >&2
+    else
+        cat > /dev/null
+    fi
+}
+
+## @brief Batch processor for logging to system journal.
+#
+# @param lvl Numeric logging level.
+# @retval 0 if level is in range, even if logging fails.
+# @retval 1 if level is out of range.
+_do_dlog_batch_syslog() {
+    local lvl="$1"
+    local syslog_lvlc
+    if ((lvl <= sysloglvl)); then
+        if [[ "${_dlogfd}" ]]; then
+            syslog_lvlc="$(($(_dlvl2syslvl "$lvl") & 7))" || return 1
+            awk -v prefix="<${syslog_lvlc}>" '{ print prefix $0 }' >&"${_dlogfd}"
+        else
+            syslog_lvlc="$(_lvl2syspri "$lvl")" || return 1
+            logger -t "dracut[$$]" -p "${syslog_lvlc}"
+        fi
+    else
+        cat > /dev/null
+    fi
+}
+
+## @brief Batch processor for logging to log file.
+#
+# @param lvl Numeric logging level.
+# @retval 0 if level is in range, even if logging fails.
+# @retval 1 if level is out of range.
+_do_dlog_batch_filelog() {
+    local lvl="$1"
+    local lvlc
+    if ((lvl <= fileloglvl)) && [[ -w $logfile ]] && [[ -f $logfile ]]; then
+        lvlc=$(_lvl2char "$lvl") || return 1
+        awk -v prefix="${lvlc}: " '{ print prefix $0 }' >> "${logfile}"
+    else
+        cat > /dev/null
+    fi
+}
+
+## @brief Batch processor for logging to kernel log buffer.
+#
+# @param lvl Numeric logging level.
+# @retval 0 if level is in range, even if logging fails.
+# @retval 1 if level is out of range.
+_do_dlog_batch_kmsglog() {
+    local lvl="$1"
+    local kmsg_lvlc
+    if ((lvl <= kmsgloglvl)); then
+        kmsg_lvlc="$(_dlvl2syslvl "$lvl")" || return 1
+        # /dev/kmsg is designed to only accept single lines at a time, so the
+        # output of awk has to be line-buffered.
+        awk -v prefix="<${kmsg_lvlc}>dracut[$$] " '{ print prefix $0; fflush() }' > /dev/kmsg
+    else
+        cat > /dev/null
+    fi
 }
 
 ## @brief Internal helper function for _do_dlog()
 #
 # @param lvl Numeric logging level.
 # @param msg Message.
-# @retval 0 It's always returned, even if logging failed.
+# @retval 0 if level is in range, even if logging fails.
+# @retval 1 if level is out of range.
 #
 # @note This function is not supposed to be called manually. Please use
 # dtrace(), ddebug(), or others instead which wrap this one.
 #
-# This function calls _do_dlog() either with parameter msg, or if
-# none is given, it will read standard input and will use every line as
-# a message.
+# This function either calls _do_dlog() with parameter msg, or if none
+# is given, it will pass standard input on to _do_dlog_batch() for batch
+# processing.
 #
 # This enables:
 # dwarn "This is a warning"
 # echo "This is a warning" | dwarn
 dlog() {
     [ -z "$maxloglvl" ] && return 0
-    (($1 <= maxloglvl)) || return 0
+    local lvl="$1"
+    shift
+    ((lvl <= maxloglvl)) || return 0
 
-    if (($# > 1)); then
-        _do_dlog "$@"
+    if (($# > 0)); then
+        _do_dlog "$lvl" "$@"
     else
-        while read -r line || [ -n "$line" ]; do
-            _do_dlog "$1" "$line"
-        done
+        _do_dlog_batch "$lvl"
     fi
 }
 
@@ -384,7 +487,7 @@ dlog() {
 dtrace() {
     set +x
     dlog 6 "$@"
-    if [ -n "$debug" ]; then
+    if [ -n "${debug-}" ]; then
         set -x
     fi
 }
@@ -396,7 +499,7 @@ dtrace() {
 ddebug() {
     set +x
     dlog 5 "$@"
-    if [ -n "$debug" ]; then
+    if [ -n "${debug-}" ]; then
         set -x
     fi
 }
@@ -408,7 +511,7 @@ ddebug() {
 dinfo() {
     set +x
     dlog 4 "$@"
-    if [ -n "$debug" ]; then
+    if [ -n "${debug-}" ]; then
         set -x
     fi
 }
@@ -420,7 +523,7 @@ dinfo() {
 dwarn() {
     set +x
     dlog 3 "$@"
-    if [ -n "$debug" ]; then
+    if [ -n "${debug-}" ]; then
         set -x
     fi
 }
@@ -432,7 +535,7 @@ dwarn() {
 dwarning() {
     set +x
     dwarn "$@"
-    if [ -n "$debug" ]; then
+    if [ -n "${debug-}" ]; then
         set -x
     fi
 }
@@ -444,7 +547,7 @@ dwarning() {
 derror() {
     set +x
     dlog 2 "$@"
-    if [ -n "$debug" ]; then
+    if [ -n "${debug-}" ]; then
         set -x
     fi
 }
@@ -456,7 +559,7 @@ derror() {
 dfatal() {
     set +x
     dlog 1 "$@"
-    if [ -n "$debug" ]; then
+    if [ -n "${debug-}" ]; then
         set -x
     fi
 }

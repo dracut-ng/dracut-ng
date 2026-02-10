@@ -1,9 +1,12 @@
 # Test coverage provided by this container:
-# - xfs, ntfs-3g
-# - mkinitcpio, mkosi
+# - ntfs-3g
+# - mkinitcpio
 # - sbsigntools
 # - qrencode (systemd-bsod)
 # - rdma out of tree dracut module
+# - both dbus-daemon and dbus-broker
+# - dmraid (not activly maintained)
+# - network: network-manager, systemd-networkd
 
 # Not installed
 # - busybox (no need, tested elsewhere)
@@ -13,30 +16,30 @@
 
 FROM docker.io/archlinux
 
-# prefer running tests with xfs
-ENV TEST_FSTYPE=xfs
+# prefer running tests with btrfs
+ENV TEST_FSTYPE=btrfs
 
 RUN pacman --noconfirm -Syu \
-    asciidoc \
+    3cpio \
+    asciidoctor \
     bluez \
     btrfs-progs \
-    busybox \
     cargo \
     cpio \
-    dhclient \
     dhcp \
     dmraid \
+    dnsmasq \
     dracut \
     elfutils \
     erofs-utils \
     gcc \
     jq \
+    libfido2 \
     linux \
     lvm2 \
     make \
     mdadm \
     mkinitcpio \
-    mkosi \
     multipath-tools \
     nbd \
     networkmanager \
@@ -49,13 +52,16 @@ RUN pacman --noconfirm -Syu \
     pciutils \
     pkgconf \
     plymouth \
+    python \
     qemu \
     qrencode \
     sbsigntools \
     squashfs-tools \
     swtpm \
+    systemd-libs \
     systemd-ukify \
     tgt \
     tpm2-tools \
     xfsprogs \
+    xorriso \
     && yes | pacman -Scc

@@ -31,9 +31,11 @@ cat _CONTRIBUTORS >> CONTRIBUTORS.md
 make AUTHORS
 
 # Update the contributors list in NEWS.md
-cargo install clog-cli --version 0.9.3
-head -2 NEWS.md > NEWS_header.md
-tail +2 NEWS.md > NEWS_body.md
+if ! type -p clog &> /dev/null; then
+    cargo install clog-cli --version 0.9.3
+fi
+head --lines=2 NEWS.md > NEWS_header.md
+tail --lines=+2 NEWS.md > NEWS_body.md
 printf "dracut-ng-%s\n=============\n" "$NEW_VERSION" > NEWS_header_new.md
 
 # Append the list to the section in `NEWS.md`
@@ -50,36 +52,27 @@ cat NEWS_header.md NEWS_header_new.md NEWS_body_new.md NEWS_body_with_conttribut
 # message for https://github.com/dracut-ng/dracut-ng/releases/tag
 cat -s NEWS_body_new.md CONTRIBUTORS.md > release.md
 
-# dracut-version.sh
-printf "#!/bin/sh\n# shellcheck disable=SC2034\nDRACUT_VERSION=%s\n" "$NEW_VERSION" > dracut-version.sh
+# update DRACUT_VERSION
+sed -i "s;^\(DRACUT_VERSION\)=\".*\"$;\1=\"${NEW_VERSION}\";" dracut.sh
 
 if [ -z "$(git config --get user.name)" ]; then
     git config user.name "dracutng[bot]"
 fi
 
 if [ -z "$(git config --get user.email)" ]; then
-    git config user.email "<dracutng@gombos.dev>"
+    git config user.email "<dracutng@localhost.localdomain>"
 fi
 
 # Check in AUTHORS and NEWS.md
-git commit -m "docs: update NEWS.md and AUTHORS for release $NEW_VERSION" NEWS.md AUTHORS dracut-version.sh
+git commit -m "docs: update NEWS.md and AUTHORS for release $NEW_VERSION" NEWS.md AUTHORS dracut.sh
 
 # git push can fail due to insufficient permissions
-if ! git push -u origin release; then
+if ! git push --force -u origin release; then
     exit $?
 fi
 
-# Tag the release, validate the tag and push
-KEYS=$(gpg --list-secret-keys --keyid-format=long 2> /dev/null)
-
-if [ -z "$KEYS" ]; then
-    echo "Could not find gpg or gpg secrets, not signing the git tag."
-    git tag "$NEW_VERSION" -m "$NEW_VERSION"
-else
-    git tag -s "$NEW_VERSION" -m "$NEW_VERSION"
-    git tag -v "$NEW_VERSION"
-fi
-
-# export new version to Github Action
-# release will not be generated if pushing the tag failed
-git push --tags && echo "new_version=${NEW_VERSION,,}" >> "${GITHUB_ENV}"
+# tagging and release genaration is no longer automated
+# Once the created release commit is merged, create a (signed) release tag:
+#
+# DRACUT_VERSION=$(sed -n 's/^DRACUT_VERSION="\(.*\)"$/\1/p' dracut.sh)
+# git tag -s -m "Dracut $DRACUT_VERSION release" "$DRACUT_VERSION"

@@ -6,7 +6,7 @@ set -e
 modprobe btrfs || :
 mkfs.btrfs -q -L dracut /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root
 printf test > keyfile
-cryptsetup -q luksFormat /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_crypt /keyfile
+cryptsetup --pbkdf pbkdf2 -q luksFormat /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_crypt /keyfile
 cryptsetup luksOpen /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_crypt dracut_crypt_test < /keyfile
 mkfs.btrfs -q -L dracut_crypt /dev/mapper/dracut_crypt_test
 mkfs.btrfs -q -L dracutusr /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_usr
@@ -37,5 +37,6 @@ eval "$(udevadm info --query=property --name=/dev/disk/by-id/scsi-0QEMU_QEMU_HAR
 {
     echo "dracut-root-block-created"
     echo "ID_FS_UUID=$ID_FS_UUID"
-} | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
+} | dd oflag=direct of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
+sync
 poweroff -f

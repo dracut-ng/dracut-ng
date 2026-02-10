@@ -10,21 +10,21 @@ if [ "$TEST_FSTYPE" = "zfs" ]; then
     zpool create dracut mirror /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
     zfs create dracut/root
 elif [ "$TEST_FSTYPE" = "btrfs" ]; then
-    mkfs.btrfs -q -draid1 -mraid1 -L root /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
+    mkfs.btrfs -q -draid1 -mraid1 -L dracut /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
     udevadm settle
     btrfs device scan
 else
     # storage layers (if available)
     # mdadm (optional) --> crypt (optional) --> lvm --> TEST_FSTYPE (e.g. ext4)
     if ! grep -qF 'rd.md=0' /proc/cmdline && command -v mdadm > /dev/null; then
-        mdadm --create /dev/md0 --run --auto=yes --level=1 --metadata=0.90 --raid-devices=2 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
+        mdadm --create /dev/md0 --run --level=1 --metadata=0.90 --raid-devices=2 /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk[12]
         # wait for the array to finish initializing, otherwise this sometimes fails randomly.
         mdadm -W /dev/md0 || :
     fi
 
     if ! grep -qF 'rd.luks=0' /proc/cmdline && command -v cryptsetup > /dev/null; then
         printf test > keyfile
-        cryptsetup -q luksFormat /dev/md0 /keyfile
+        cryptsetup --pbkdf pbkdf2 -q luksFormat /dev/md0 /keyfile
         echo "The passphrase is test"
         cryptsetup luksOpen /dev/md0 dracut_crypt_test < /keyfile
         lvm pvcreate -ff -y /dev/mapper/dracut_crypt_test
@@ -51,7 +51,7 @@ else
 
     lvm vgchange --ignoremonitoring -ay
 
-    eval "mkfs.${TEST_FSTYPE} -q -L root /dev/dracut/root"
+    eval "mkfs.${TEST_FSTYPE} -q -L dracut /dev/dracut/root"
 fi
 
 udevadm settle
@@ -84,7 +84,7 @@ fi
     echo "dracut-root-block-created"
     echo "MD_UUID=$MD_UUID"
     echo "ID_FS_UUID=$ID_FS_UUID"
-} | dd oflag=direct,dsync of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
+} | dd oflag=direct of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
 
 sync
 poweroff -f

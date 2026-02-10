@@ -1,12 +1,18 @@
 # Test coverage provided by this container:
+# - arm64
 # - dash default shell (instead of bash)
 # - runit (instead of systemd)
 # - eudev (instead of systemd-udev)
 # - elogind (instead of logind)
-# - uki (without systemd)
+# - UEFI boot, UKI (without systemd)
 # - zfs and zfs out of tree dracut module
 # - gzip compression
 # - clang
+# - dbus-daemon
+# - network: network-legacy, network-manager
+
+# Not installed
+# - kernel-install is not available
 
 FROM ghcr.io/void-linux/void-glibc-full
 
@@ -15,7 +21,6 @@ ENV TEST_FSTYPE=zfs
 ENV CC=clang
 
 RUN xbps-install -Syu xbps && xbps-install -yu \
-    asciidoc \
     bash \
     binutils \
     btrfs-progs \
@@ -25,7 +30,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     cryptsetup \
     dhclient \
     dhcp \
-    dmraid \
+    dnsmasq \
     e2fsprogs \
     edk2-ovmf \
     elfutils \
@@ -43,15 +48,20 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     lvm2 \
     make \
     mdadm \
+    NetworkManager \
     nfs-utils \
     nvme-cli \
     parted \
     pkg-config \
     plymouth \
-    qemu-system-amd64 \
+    python3 \
+    qemu \
+    ruby-asciidoctor \
     squashfs-tools \
     systemd-boot-efistub \
     ncurses-base \
     ukify \
+    xorriso \
     zfs \
-    && rm -rf /var/cache/xbps
+    && rm -rf /var/cache/xbps \
+    && rm -rf /usr/lib/firmware

@@ -1,6 +1,7 @@
 # Test coverage provided by this container:
 # - arm64
-# - hostonly
+# - strict hostonly
+# - xfs
 # - memstrack
 # - ndctl (for nvdimm)
 # - fcoe-utils (Fibre Channel over Ethernet)
@@ -12,6 +13,8 @@
 # - nss-softokn, kdumpbase out of tree dracut modules
 # - fips
 # - ignition
+# - dbus-broker
+# - network: network-manager
 
 ARG DISTRIBUTION=fedora
 ARG REGISTRY=registry.fedoraproject.org
@@ -21,32 +24,37 @@ FROM ${REGISTRY}/${DISTRIBUTION}
 # export ARG
 ARG DISTRIBUTION
 
+# prefer running tests with xfs
+ENV TEST_FSTYPE=xfs
+
+# btrfs kernel module is not available on CentOS
 RUN \
 if [[ "${DISTRIBUTION}" =~ "centos:" ]]; then \
     dnf config-manager --set-enabled crb; \
+    dnf -y install epel-release; \
 else \
     dnf -y install --setopt=install_weak_deps=False \
     btrfs-progs \
-    busybox \
-    dhcp-client \
     dhcp-server \
-    dmraid \
+    gnupg2 \
+    gnupg2-gpg-agent \
     nbd \
-    /usr/bin/qemu-system-$(uname -m) \
+    qemu \
     scsi-target-utils \
-    systemd-networkd \
 ; fi
 
 RUN dnf -y install --setopt=install_weak_deps=False \
-    asciidoc \
+    3cpio \
+    asciidoctor \
     bash-completion \
     bluez \
     cargo \
     cifs-utils \
     cryptsetup \
     crypto-policies-scripts \
-    dbus-daemon \
     device-mapper-multipath \
+    diffutils \
+    dnsmasq \
     dracut-live \
     e2fsprogs \
     erofs-utils \
@@ -62,6 +70,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     kdump-utils \
     kernel \
     kmod-devel \
+    libfido2 \
     libkcapi-hmaccalc \
     libselinux-utils \
     lvm2 \
@@ -75,26 +84,27 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     parted \
     pcsc-lite \
     plymouth \
+    python3 \
     qemu-kvm \
     rng-tools \
     rsyslog \
     squashfs-tools \
     swtpm \
     systemd-boot-unsigned \
+    systemd-container \
+    systemd-devel \
     systemd-resolved \
     systemd-ukify \
+    tar \
     tpm2-tools \
+    xfsprogs \
+    xorriso \
     && dnf -y update && dnf clean all
 
 # CentOS Stream ships only qemu-kvm, but it disables the KVM accel when it's not available
-# force non-hostonly mode, but keep all the other config
-# this workaround is needed to pass crypt tests with rd.auto
 RUN \
 if [[ "${DISTRIBUTION}" =~ "centos:" ]]; then \
     [[ -e /usr/bin/qemu-kvm ]] || ln -sf /usr/libexec/qemu-kvm /usr/bin/qemu-kvm ;\
     [[ -e /usr/bin/qemu-system-$(uname -m) ]] || ln -sv /usr/libexec/qemu-kvm /usr/bin/qemu-system-$(uname -m) ;\
-    echo 'hostonly="no"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf ;\
-    update-crypto-policies --no-reload --set FIPS ;\
-else \
-    fips-mode-setup --enable ;\
-fi
+fi ;\
+update-crypto-policies --no-reload --set FIPS

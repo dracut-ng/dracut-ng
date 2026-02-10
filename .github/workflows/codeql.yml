@@ -5,53 +5,53 @@
 name: "CodeQL"
 
 on:  # yamllint disable-line rule:truthy
-  push:
-    branches:
-      - main
-    paths:
-      - 'src/**'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'src/**'
+    push:
+        branches:
+            - main
+        paths:
+            - 'src/**'
+    pull_request:
+        branches:
+            - main
+        paths:
+            - 'src/**'
 
 permissions:
-  contents: read
+    contents: read
 
 jobs:
-  analyze:
-    name: Analyze
-    runs-on: ubuntu-latest
-    concurrency:
-      group: ${{ github.workflow }}-${{ matrix.language }}-${{ github.ref }}
-      cancel-in-progress: true
-    permissions:
-      actions: read
-      security-events: write
+    analyze:
+        name: Analyze
+        runs-on: ubuntu-latest
+        concurrency:
+            group: codeql-${{ github.workflow }}-${{ matrix.language }}-${{ github.ref }}
+            cancel-in-progress: true
+        permissions:
+            actions: read
+            security-events: write
 
-    strategy:
-      fail-fast: false
-      matrix:
-        language: ['cpp', 'python']
+        strategy:
+            fail-fast: false
+            matrix:
+                language: ['cpp', 'python']
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v6
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: ${{ matrix.language }}
-          queries: +security-extended,security-and-quality
+            - name: Initialize CodeQL
+              uses: github/codeql-action/init@v4
+              with:
+                  languages: ${{ matrix.language }}
+                  queries: +security-extended,security-and-quality
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get -y update
-          sudo apt-get -y install asciidoc gcc libkmod-dev libsystemd-dev pkg-config
+            - name: Install dependencies
+              run: |
+                  sudo apt-get -y update
+                  sudo apt-get -y install asciidoctor gcc libkmod-dev libsystemd-dev pkg-config
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+            - name: Autobuild
+              uses: github/codeql-action/autobuild@v4
 
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+            - name: Perform CodeQL Analysis
+              uses: github/codeql-action/analyze@v4

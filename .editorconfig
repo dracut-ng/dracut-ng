@@ -18,6 +18,7 @@ switch_case_indent = true
 function_next_line = false
 binary_next_line   = true
 space_redirects    = true
+simplify           = true
 
 # Match config files, set indent to spaces with width of eight.
 [*.{c,h}]

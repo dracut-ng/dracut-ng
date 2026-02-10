@@ -1,0 +1,58 @@
+---
+name: Daily Tests - hostonlystrict
+
+on:  # yamllint disable-line rule:truthy
+    schedule:
+        - cron: '30 23 * * *'   # every day at 23:30 UTC
+
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+    pull_request:
+        paths:
+            - '.github/workflows/daily-hostonlystrict.yml'
+
+jobs:
+    hostonlystrict:
+        name: ${{ matrix.test }} on ${{ matrix.container }} with hostonly-mode strict
+        runs-on: ${{ matrix.architecture.runner }}
+        timeout-minutes: 20
+        concurrency:
+            group: >
+                daily-hostonlystrict-${{ github.workflow }}-${{ github.ref }}
+                -${{ matrix.container }}-${{ matrix.test }}-${{ matrix.architecture.tag }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                architecture:
+                    - {runner: 'ubuntu-24.04', tag: 'amd'}
+                    - {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                container:
+                    - ubuntu:devel
+                test:
+                    - "10"
+                    - "11"
+                    - "13"
+                    - "14"
+                    - "20"
+                    - "21"
+                    - "26"
+                    - "30"
+                    - "40"
+                    - "41"
+                    - "42"
+                    - "50"
+                    - "80"
+                    - "81"
+                    - "82"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            options: '--device=/dev/kvm --privileged'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v6
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: >
+                TEST_DRACUT_ARGS="--hostonly-mode strict"
+                ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}

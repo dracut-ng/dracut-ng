@@ -13,19 +13,19 @@ on:  # yamllint disable-line rule:truthy
                 default: 'all'
                 options:
                     - "all"
-                    - "alpine"
                     - "alpine:edge"
-                    - "centos:stream10-development"
-                    - "fedora"
+                    - "azurelinux:3.0"
+                    - "centos:latest"
+                    - "fedora:latest"
                     - "fedora:rawhide"
-                    - "arch"
-                    - "debian"
+                    - "arch:latest"
+                    - "debian:latest"
                     - "debian:sid"
-                    - "ubuntu"
                     - "ubuntu:devel"
-                    - "opensuse"
-                    - "gentoo"
-                    - "void"
+                    - "ubuntu:rolling"
+                    - "opensuse:latest"
+                    - "gentoo:latest"
+                    - "void:latest"
             env:
                 description: 'Environment (optional)'
                 default: '{"DEBUGFAIL": "rd.debug"}'
@@ -37,14 +37,14 @@ env:
 
 jobs:
     matrix:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         outputs:
             registry: ${{ steps.set-matrix.outputs.registry }}
             container: ${{ steps.set-matrix.outputs.container }}
             tests: ${{ steps.set-matrix.outputs.tests }}
         steps:
             - name: "Checkout Repository"
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
               with:
                   fetch-depth: 0
             - id: set-matrix
@@ -58,10 +58,12 @@ jobs:
                    || ( tests=$(find test -type d -a -name "TEST-*" | cut -d\- -f2 | sed -z 's/\n/","/g' ); echo "tests=[\"${tests%??}]" >> $GITHUB_OUTPUT )
     test:
         needs: matrix
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 20
         concurrency:
-            group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.container }}-${{ matrix.test }}
+            group: >
+                manual-${{ github.workflow }}-${{ github.ref }}
+                -${{ matrix.container }}-${{ matrix.test }}
             cancel-in-progress: true
         strategy:
             matrix:
@@ -73,8 +75,8 @@ jobs:
             options: "--privileged -v /dev:/dev"
         steps:
             - name: "Checkout Repository"
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
               with:
                   fetch-depth: 0
             - name: "${{ matrix.container }} ${{ matrix.test }}"
-              run: ./test/test-github.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}

@@ -1,15 +1,13 @@
 # Test coverage provided by this container:
+# - 3cpio
 # - arm64
 # - dash default shell (instead of bash)
+# - curl (url-lib)
 # - mawk (instead of gawk)
 # - zstd compression
 # - verbose logging for tests
-
-# Not installed
-# - dmraid (no longer maintained, https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1056944)
-# - plymouth-themes (not yet working with dracut, https://bugs.launchpad.net/ubuntu/+source/dracut/+bug/1596220)
-# - iscsiuio, open-iscsi (not yet working with dracut, https://bugs.launchpad.net/ubuntu/+source/open-iscsi/+bug/2072484)
-# - busybox-static
+# - dbus-daemon
+# - network: network-manager, systemd-networkd
 
 ARG DISTRIBUTION=debian
 FROM docker.io/${DISTRIBUTION}
@@ -17,36 +15,33 @@ FROM docker.io/${DISTRIBUTION}
 # export ARG
 ARG DISTRIBUTION
 
-# prefer running tests in verbose mode
-ENV V=2
-
 # Install dracut as a linux-initramfs-tool provider so that the default initramfs-tool package does not get installed
-RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --no-install-recommends dracut
+RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --install-recommends dracut dracut-network dracut-test
 
-# extra packages for sid, ubuntu
-RUN if [ "${DISTRIBUTION}" ! = "debian:latest" ] ; then \
+# Install 3cpio where available
+RUN if [ "$DISTRIBUTION" != "debian:latest" ] ; then cpio=3cpio; else cpio=cpio; fi; \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
-    network-manager \
-    systemd-ukify \
-    ; fi
+    $cpio
 
-# extra packages for sid, rolling, devel
-RUN if [ "$DISTRIBUTION" = "debian:sid" ] || [ "${DISTRIBUTION}" = "ubuntu:rolling" ] || [ "${DISTRIBUTION}" = "ubuntu:devel" ] ; then \
+# use GNU coreutils instead of uutil's coreutils until https://github.com/uutils/coreutils/issues/9057 and https://launchpad.net/bugs/2129037 are fixed
+RUN if [ "$DISTRIBUTION" = "ubuntu:rolling" ]; then \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
-    systemd-cryptsetup \
-    systemd-repart \
-    ; fi
+    coreutils-from-gnu coreutils-from-uutils- --allow-remove-essential; \
+    fi
 
+# libarchive is required by systemd-import for systemd >= v259: https://launchpad.net/bugs/2139822
 RUN \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
-    asciidoc \
+    asciidoctor \
     bluez \
     btrfs-progs \
     ca-certificates \
     cargo \
-    console-setup \
-    cpio \
+    console-data \
     cryptsetup \
+    curl \
+    dmsetup \
+    dnsmasq \
     docbook \
     docbook-xml \
     docbook-xsl \
@@ -55,13 +50,19 @@ RUN \
     file \
     gcc \
     gpg \
+    gpg-agent \
     iputils-arping \
     iputils-ping \
-    isc-dhcp-client \
+    iproute2 \
     isc-dhcp-server \
+    iscsiuio \
     jq \
+    kbd \
     kmod \
+    libarchive13t64 \
+    libfido2-1 \
     libkmod-dev \
+    libsystemd-dev \
     linux-image-generic \
     lvm2 \
     make \
@@ -69,27 +70,38 @@ RUN \
     multipath-tools \
     nbd-client \
     nbd-server \
+    network-manager \
     nfs-kernel-server \
     ntfs-3g \
     nvme-cli \
+    open-iscsi \
     ovmf \
     parted \
     pcscd \
     pkg-config \
+    plymouth-themes \
     procps \
+    python3 \
+    qemu-efi-aarch64 \
     qemu-kvm \
+    qemu-system \
     rng-tools5 \
     squashfs-tools \
     swtpm \
     systemd-boot-efi \
     systemd-container \
     systemd-coredump \
+    systemd-cryptsetup \
+    systemd-repart \
     systemd-resolved \
     systemd-sysv \
     systemd-timesyncd \
+    systemd-ukify \
     tgt \
     thin-provisioning-tools \
     tpm2-tools \
+    util-linux-extra \
+    xfsprogs \
+    xorriso \
     zstd \
-    && apt-get clean \
-    && chmod a+r /boot/vmlinu*
+    && apt-get clean

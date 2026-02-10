@@ -10,8 +10,16 @@ check() {
 
 # called by dracut
 depends() {
-    echo dbus bash net-lib kernel-network-modules
+    echo bash net-lib kernel-network-modules initqueue
+    if dracut_module_included systemd; then
+        echo dbus
+    fi
     return 0
+}
+
+# called by dracut
+installkernel() {
+    hostonly='' instmods nf_tables nfnetlink nft_fwd_netdev
 }
 
 # called by dracut
@@ -27,7 +35,7 @@ install() {
     inst NetworkManager
     inst_multiple -o /usr/{lib,libexec}/nm-initrd-generator
     inst_multiple -o /usr/{lib,libexec}/nm-daemon-helper
-    inst_multiple -o teamd dhclient
+    inst_multiple -o teamd dhclient nft
     inst_hook cmdline 99 "$moddir/nm-config.sh"
     if dracut_module_included "systemd"; then
 
@@ -36,23 +44,51 @@ install() {
 
         # teaming support under systemd+dbus
         inst_multiple -o \
-            "$dbussystem"/teamd.conf \
-            "$dbussystemconfdir"/teamd.conf
+            "$dbussystem"/teamd.conf
+
+        if [[ $hostonly ]]; then
+            inst_multiple -H -o \
+                "$dbussystemconfdir"/teamd.conf
+        fi
 
         # Install a configuration snippet to prevent the automatic creation of
         # "Wired connection #" DHCP connections for Ethernet interfaces
         inst_simple "$moddir"/initrd-no-auto-default.conf /usr/lib/NetworkManager/conf.d/
 
-        inst_simple "$moddir"/nm-initrd.service "$systemdsystemunitdir"/nm-initrd.service
-        inst_simple "$moddir"/nm-wait-online-initrd.service "$systemdsystemunitdir"/nm-wait-online-initrd.service
+        # Install systemd service units
+        if [[ -e "$systemdsystemunitdir"/NetworkManager-config-initrd.service ]]; then
+            # NetworkManager-1.54 provides its own initrd services
+            inst_multiple -o \
+                "$systemdsystemunitdir"/NetworkManager-config-initrd.service \
+                "$systemdsystemunitdir"/NetworkManager-initrd.service \
+                "$systemdsystemunitdir"/NetworkManager-wait-online-initrd.service
+
+            # dracut specific dropins to override upstream systemd services
+            inst_simple "$moddir/NetworkManager-config-initrd-dracut.conf" \
+                "$systemdsystemunitdir/NetworkManager-config-initrd.service.d/NetworkManager-config-initrd-dracut.conf"
+            inst_simple "$moddir/NetworkManager-wait-online-initrd-dracut.conf" \
+                "$systemdsystemunitdir/NetworkManager-wait-online-initrd.service.d/NetworkManager-wait-online-initrd-dracut.conf"
+
+            # NetworkManager-1.56 provides a systemd generator to install initrd
+            # services, so they no longer have an "[Install]" section.
+            if [[ -e "$systemdutildir"/system-generators/nm-initrd-generator.sh ]]; then
+                inst "$systemdutildir"/system-generators/nm-initrd-generator.sh
+            else
+                $SYSTEMCTL -q --root "$initdir" enable NetworkManager-initrd.service
+            fi
+        else
+            #TODO: remove custom systemd services when NetworkManager-1.56 is the minimum supported version
+            inst_simple "$moddir"/nm-initrd.service "$systemdsystemunitdir"/nm-initrd.service
+            inst_simple "$moddir"/nm-wait-online-initrd.service "$systemdsystemunitdir"/nm-wait-online-initrd.service
+
+            $SYSTEMCTL -q --root "$initdir" enable nm-initrd.service
+        fi
 
         # Adding default link and (if exists) 98-default-mac-none.link
         inst_multiple -o \
             "${systemdnetwork}/99-default.link" \
             "${systemdnetwork}/98-default-mac-none.link"
         [[ $hostonly ]] && inst_multiple -H -o "${systemdnetworkconfdir}/*.link"
-
-        $SYSTEMCTL -q --root "$initdir" enable nm-initrd.service
     fi
 
     inst_hook initqueue/settled 99 "$moddir/nm-run.sh"
@@ -71,10 +107,6 @@ install() {
         UUID=$(< /proc/sys/kernel/random/uuid)
         echo "${UUID//-/}" > "$initdir/etc/machine-id"
     fi
-
-    # We don't install the ifcfg files from the host automatically.
-    # But the user might choose to include them, so we pull in the machinery to read them.
-    inst_libdir_file "NetworkManager/$_nm_version/libnm-settings-plugin-ifcfg-rh.so"
 
     _arch=${DRACUT_ARCH:-$(uname -m)}
 

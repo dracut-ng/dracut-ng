@@ -1,56 +1,64 @@
 # Test coverage provided by this container:
+# - arm64
+# - hostonly
 # - network-legacy
 # - hmaccalc (fido)
 # - rdma out of tree dracut module
+# - dbus-broker
+# - network: network-legacy, network-manager
+# - zstd compression
+# - erofs is blacklisted by default and not supported in openSUSE
 
-FROM registry.opensuse.org/opensuse/tumbleweed-dnf:latest
-
-# prefer running tests with btrfs
-ENV TEST_FSTYPE=btrfs
+FROM registry.opensuse.org/opensuse/tumbleweed:latest
 
 # Install needed packages for the dracut CI container
-RUN dnf -y install --setopt=install_weak_deps=False \
-    asciidoc \
+RUN zypper --non-interactive install --no-recommends \
     bash-completion \
     btrfsprogs \
     cargo \
+    cpio \
     cryptsetup \
-    dbus-broker \
     dhcp-client \
     dhcp-server \
-    dmraid \
+    diffutils \
+    dnsmasq \
+    distribution-gpg-keys \
     e2fsprogs \
-    erofs-utils \
     gcc \
+    git \
+    gpg2 \
     hmaccalc \
-    iproute \
+    iproute2 \
     iputils \
     iscsiuio \
     kbd \
-    kernel \
+    kernel-vanilla \
+    libfido2 \
     libkmod-devel \
     lvm2 \
     make \
     mdadm \
     nbd \
     NetworkManager \
-    nfs-utils \
+    nfs-kernel-server \
     open-iscsi \
     parted \
     pciutils \
-    procps \
+    python3 \
     python3-pefile \
-    qemu-kvm \
+    qemu \
+    ruby4.0-rubygem-asciidoctor \
     squashfs \
     swtpm \
     systemd-boot \
+    systemd-container \
+    systemd-devel \
     systemd-experimental \
+    systemd-portable \
     tgt \
     tpm2.0-tools \
-    /usr/bin/qemu-system-$(uname -m) \
     util-linux-systemd \
-    && dnf -y update && dnf clean all
-
-# force non-hostonly mode, but keep all the other config
-RUN \
-  echo 'hostonly="no"' > /usr/lib/dracut/dracut.conf.d/02-dist.conf
+    xfsprogs \
+    xorriso \
+    zstd \
+    && zypper --non-interactive dist-upgrade --no-recommends

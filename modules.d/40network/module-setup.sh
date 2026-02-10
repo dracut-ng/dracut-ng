@@ -5,6 +5,8 @@ check() {
     return 255
 }
 
+# due to the dependencies below, this dracut module needs to be ordered later than network-manager, systemd-networkd, connman and network-legacy dracut modules
+
 # called by dracut
 depends() {
     for module in network-manager systemd-networkd connman network-legacy; do
@@ -17,7 +19,7 @@ depends() {
     for module in network-manager systemd-networkd connman; do
         # install the first viable module, unless there omitted
         module_check $module > /dev/null 2>&1
-        if [[ $? == 255 ]] && ! [[ " $omit_dracutmodules " == *\ $module\ * ]] && check_module "$module"; then
+        if [[ $? == 255 ]] && ! [[ " $omit_dracutmodules " == *\ $module\ * ]]; then
             echo "$module"
             return 0
         fi

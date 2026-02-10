@@ -58,6 +58,10 @@ IMG=$(find_initrd_for_kernel_version "$KERNEL_VERSION")
 if [ -z "$IMG" ]; then
     if [[ -f /boot/initramfs-linux.img ]]; then
         IMG="/boot/initramfs-linux.img"
+    elif [[ -f /boot/initrd.img ]]; then
+        IMG="/boot/initrd.img"
+    elif [[ -f /initrd.img ]]; then
+        IMG="/initrd.img"
     else
         echo "No initramfs image found to restore!"
         exit 1
@@ -95,7 +99,7 @@ elif [[ -f erofs-root.img ]]; then
     fi
 fi
 
-if grep -q -w selinux /sys/kernel/security/lsm 2> /dev/null \
+if grep -qs -w selinux /sys/kernel/security/lsm \
     && [ -e /etc/selinux/config ] && [ -x /usr/sbin/setfiles ]; then
     . /etc/selinux/config
     if [[ $SELINUX != "disabled" && -n $SELINUXTYPE ]]; then

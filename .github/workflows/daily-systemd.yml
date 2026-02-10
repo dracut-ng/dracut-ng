@@ -1,0 +1,97 @@
+---
+name: Daily Tests - systemd
+
+on:  # yamllint disable-line rule:truthy
+    schedule:
+        - cron: '30 23 * * *'   # every day at 23:30 UTC
+
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+    pull_request:
+        paths:
+            - '.github/workflows/daily-systemd.yml'
+
+jobs:
+    systemd:
+        name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }}
+        runs-on: ${{ matrix.architecture.runner }}
+        timeout-minutes: 20
+        concurrency:
+            group: >
+                daily-systemd-${{ github.workflow }}-${{ github.ref }}
+                -${{ matrix.container }}-${{ matrix.test }}-${{ matrix.architecture.tag }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                architecture:
+                    - {runner: 'ubuntu-24.04', tag: 'amd'}
+                    - {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                container:
+                    - arch:latest
+                    - azurelinux:3.0
+                    - debian:latest
+                    - debian:sid
+                    - fedora:latest
+                    - fedora:rawhide
+                    - centos:latest
+                    - gentoo:latest
+                    - opensuse:latest
+                    - ubuntu:devel
+                    - ubuntu:rolling
+                test:
+                    - "40"
+                    - "41"
+                    - "42"
+                    - "43"
+                    - "44"
+                    - "45"
+                exclude:
+                    - container: arch:latest
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                    - container: azurelinux:3.0
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                    - container: fedora:latest
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                    - container: fedora:rawhide
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                    - container: centos:latest
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                    # https://github.com/dracut-ng/dracut-ng/issues/1677
+                    - container: arch:latest
+                      test: "41"
+                    # intentionally skipped
+                    - container: centos:latest
+                      test: "41"
+                    # /boot/vmlinuz-... is missing .efi suffix: https://launchpad.net/bugs/2133402
+                    # Ubuntu 25.10 is affected, will work with Ubuntu 26.04
+                    - container: ubuntu:rolling
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                      test: "43"
+                    # https://github.com/dracut-ng/dracut-ng/issues/1988
+                    - container: debian:sid
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                    # TEST-45-SYSTEMD-IMPORT requires systemd >= v258
+                    - container: azurelinux:3.0
+                      test: "45"
+                    # TEST-45-SYSTEMD-IMPORT requires systemd >= v258
+                    - container: centos:latest
+                      test: "45"
+                    # TEST-45-SYSTEMD-IMPORT requires systemd >= v258
+                    - container: debian:latest
+                      test: "45"
+                    # TEST-45-SYSTEMD-IMPORT requires systemd >= v258
+                    - container: opensuse:latest
+                      test: "45"
+                    # TEST-45-SYSTEMD-IMPORT requires systemd >= v258
+                    - container: ubuntu:rolling
+                      test: "45"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            options: '--device=/dev/kvm --privileged'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v6
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}

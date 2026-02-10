@@ -1,10 +1,121 @@
 #!/usr/bin/env bash
 # Check which virtualization technology to use
 # We prefer kvm, kqemu, userspace in that order.
+set -eu
 
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 ARCH="${ARCH-$(uname -m)}"
 QEMU_CPU="${QEMU_CPU:-max}"
+
+add_to_append() {
+    local extra="$1"
+    local i
+
+    for i in "${!ARGS[@]}"; do
+        if [[ ${ARGS[i]} == -append ]]; then
+            ARGS[i + 1]="$extra ${ARGS[i + 1]# }"
+            return
+        fi
+    done
+
+    ARGS+=(-append "$extra")
+}
+
+get_initrd() {
+    local next
+    for i in $(seq 1 $(($# - 1))); do
+        if [[ ${!i} == "-initrd" ]]; then
+            next=$((i + 1))
+            echo "${!next}"
+            return
+        fi
+    done
+}
+
+# Search for the UEFI firmware file
+# Print UEFI firmware file on stdout on success.
+# Return 1 in case no UEFI firmware file was found.
+get_uefi_code() {
+    local paths=()
+    case "$ARCH" in
+        aarch64 | arm64)
+            paths=("/usr/share/AAVMF/AAVMF_CODE.no-secboot.fd")
+            ;;
+        amd64 | x86_64)
+            paths=(
+                "/usr/share/OVMF/OVMF_CODE.fd"
+                "/usr/share/OVMF/OVMF_CODE_4M.fd"
+                "/usr/share/edk2/x64/OVMF_CODE.fd"
+                "/usr/share/edk2/x64/OVMF_CODE.4m.fd"
+                "/usr/share/edk2-ovmf/OVMF_CODE.fd"
+                "/usr/share/qemu/ovmf-x86_64-4m.bin"
+            )
+            ;;
+        arm | armhf | armv7l)
+            paths=("/usr/share/AAVMF/AAVMF32_CODE.fd")
+            ;;
+    esac
+    for path in "${paths[@]}"; do
+        if [[ -s $path ]]; then
+            echo -n "$path"
+            return 0
+        fi
+    done
+    return 1
+}
+
+quote_args() {
+    local arg args=()
+    for arg in "$@"; do
+        if [[ -z $arg || $arg =~ [[:space:]\'] ]]; then
+            args+=("'${arg//\'/\'\\\'\'}'")
+        else
+            args+=("$arg")
+        fi
+    done
+    echo "${args[*]}"
+}
+
+set_vmlinux_env() {
+    if [[ ${KVERSION-} ]]; then
+        VMLINUZ=${VMLINUZ-"/lib/modules/${KVERSION}/vmlinuz"}
+        if ! [ -f "$VMLINUZ" ]; then
+            VMLINUZ="/lib/modules/${KVERSION}/vmlinux"
+        fi
+
+        if ! [ -f "$VMLINUZ" ]; then
+            VMLINUZ="/lib/modules/${KVERSION}/Image"
+        fi
+
+        if ! [ -f "$VMLINUZ" ]; then
+            [[ -f /etc/machine-id ]] && read -r MACHINE_ID < /etc/machine-id
+
+            if [[ ${MACHINE_ID-} ]] && { [[ -d /boot/${MACHINE_ID} ]] || [[ -L /boot/${MACHINE_ID} ]]; }; then
+                VMLINUZ="/boot/${MACHINE_ID}/$KVERSION/linux"
+            elif [ -f "/boot/vmlinuz-${KVERSION}" ]; then
+                VMLINUZ="/boot/vmlinuz-${KVERSION}"
+            elif [ -f "/boot/vmlinux-${KVERSION}" ]; then
+                VMLINUZ="/boot/vmlinux-${KVERSION}"
+            elif [ -f "/boot/kernel-${KVERSION}" ]; then
+                VMLINUZ="/boot/kernel-${KVERSION}"
+            elif [ -f "/boot/Image-${KVERSION}" ]; then
+                VMLINUZ="/boot/Image-${KVERSION}"
+            fi
+        fi
+    fi
+
+    ! [ -f "${VMLINUZ-}" ] && VMLINUZ=$(find /boot/vmlinuz-* -type f 2> /dev/null | tail -1)
+    ! [ -f "${VMLINUZ-}" ] && VMLINUZ=$(find /boot/vmlinux-* -type f 2> /dev/null | tail -1)
+    ! [ -f "${VMLINUZ-}" ] && VMLINUZ=$(find /lib/modules/ -type f -name vmlinuz 2> /dev/null | tail -1)
+    ! [ -f "${VMLINUZ-}" ] && VMLINUZ=$(find /lib/modules/ -type f -name vmlinux 2> /dev/null | tail -1)
+    ! [ -f "${VMLINUZ-}" ] && VMLINUZ=$(find /lib/modules/ -type f -name Image 2> /dev/null | tail -1)
+
+    if ! [ -f "$VMLINUZ" ]; then
+        echo "${0##*/}: Could not find a Linux kernel version to test with!" >&2
+        echo "${0##*/}: Please install linux." >&2
+        exit 1
+    fi
+}
 
 [[ -x /usr/bin/qemu ]] && BIN=/usr/bin/qemu && ARGS=(-cpu "$QEMU_CPU")
 (lsmod | grep -q '^kqemu ') && BIN=/usr/bin/qemu && ARGS=(-kernel-kqemu -cpu host)
@@ -14,43 +125,83 @@ QEMU_CPU="${QEMU_CPU:-max}"
 [[ -x "/usr/bin/qemu-system-${ARCH}" ]] && BIN="/usr/bin/qemu-system-${ARCH}" && ARGS=(-cpu "$QEMU_CPU")
 [[ -z ${NO_KVM-} && -c /dev/kvm && -x "/usr/bin/qemu-system-${ARCH}" ]] && BIN="/usr/bin/qemu-system-${ARCH}" && ARGS=(-enable-kvm -cpu host)
 
-[[ $BIN ]] || {
-    echo "Could not find a working KVM or QEMU to test with!" >&2
-    echo "Please install kvm or qemu." >&2
+[[ ${BIN-} ]] || {
+    echo "${0##*/}: Could not find a working KVM or QEMU to test with!" >&2
+    echo "${0##*/}: Please install kvm or qemu." >&2
     exit 1
 }
+
+if test "${1-}" = "--check-uefi"; then
+    get_uefi_code > /dev/null
+    exit 0
+fi
+
+if test "${1-}" = "--supports"; then
+    option="$2"
+    "$BIN" -help | grep -q "^$option"
+    exit 0
+fi
 
 case "$ARCH" in
     aarch64 | arm64)
         ARGS+=(-M "virt,gic-version=max")
+        console=ttyAMA0
         ;;
     amd64 | i?86 | x86_64)
         ARGS+=(-M q35)
         ;;
     arm | armhf | armv7l)
         ARGS+=(-M virt)
+        console=ttyAMA0
         ;;
     ppc64el | ppc64le)
         ARGS+=(-M "cap-ccf-assist=off,cap-cfpc=broken,cap-ibs=broken,cap-sbbc=broken")
+        console=hvc0
+        ;;
+    riscv64)
+        ARGS+=(-M virt)
+        rng_device=virtio-rng-device
+        ;;
+    s390x)
+        console=hvc0
         ;;
 esac
 
-# Provide rng device sourcing the hosts /dev/urandom and other standard parameters
-ARGS+=(-smp 2 -m "${MEMORY-1024}" -nodefaults -vga none -display none -no-reboot -watchdog-action poweroff -device virtio-rng-pci)
-
-if ! [[ $* == *-daemonize* ]] && ! [[ $* == *-daemonize* ]]; then
-    ARGS+=(-serial stdio)
+if uefi_code=$(get_uefi_code); then
+    ARGS+=(-drive "if=pflash,format=raw,readonly=on,unit=0,file=$uefi_code")
 fi
+
+# Provide rng device sourcing the hosts /dev/urandom and other standard parameters
+ARGS+=(-smp 2 -m "${MEMORY-1024}" -nodefaults -vga none -display none -no-reboot -watchdog-action poweroff -device "${rng_device:-virtio-rng-pci}")
 
 # virtual hardware watchdog not available on s390x
 if [[ $ARCH != "s390x" ]]; then
     ARGS+=(-device i6300esb)
 fi
 
+ARGS+=("$@")
+
 # only set -kernel if -initrd is specified
-if [[ $* == *-initrd* ]]; then
+initrd=$(get_initrd "${ARGS[@]}")
+if [[ -n $initrd ]]; then
+    KVERSION=$(lsinitrd "$initrd" | grep modules.dep | head -1 | sed 's;.*/\([^/]\+\)/modules.dep;\1;')
+    set_vmlinux_env
     ARGS+=(-kernel "$VMLINUZ")
+    add_to_append "console=${console:-ttyS0},115200"
 fi
 
-echo "${0##*/}: $BIN ${ARGS[*]@Q} ${*@Q}"
-exec "$BIN" "${ARGS[@]}" "$@"
+if ! [[ $* == *-daemonize* ]] && timeout --help 2> /dev/null | grep -q -- --foreground; then
+    # Run QEMU with a timeout (defaut: 10min) unless daemonized
+    ARGS=(--foreground "${QEMU_TIMEOUT-600}" "$BIN" "${ARGS[@]}")
+    BIN=timeout
+fi
+
+if ! [[ $* == *-daemonize* ]]; then
+    ARGS+=(-serial stdio)
+    if [[ ${QEMU_LOGFILE-} ]]; then
+        exec > >(tee "$QEMU_LOGFILE")
+    fi
+fi
+
+echo "${0##*/}: $BIN $(quote_args "${ARGS[@]}")"
+exec "$BIN" "${ARGS[@]}"

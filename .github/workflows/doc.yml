@@ -6,7 +6,7 @@ on:  # yamllint disable-line rule:truthy
         branches: [main]
         paths:
             - 'man/**'
-
+            - '.github/workflows/doc.yml'
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
 
@@ -22,18 +22,18 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - alpine
-                    - arch
-                    - debian
-                    - fedora
-                    - gentoo
-                    - opensuse
-                    - ubuntu
-                    - void
+                    - alpine:edge
+                    - arch:latest
+                    - debian:latest
+                    - fedora:latest
+                    - gentoo:latest
+                    - opensuse:latest
+                    - ubuntu:devel
+                    - void:latest
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
         steps:
             - name: "Checkout Repository"
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
             - name: doc on "${{ matrix.container }}"
-              run: TARGETS=all enable_documentation=yes ./test/test-github.sh
+              run: TARGETS=all enable_documentation=yes ./test/test-container.sh

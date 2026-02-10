@@ -1,0 +1,40 @@
+#!/bin/bash
+
+check() {
+    # Only include the module if another module requires it
+    return 255
+}
+
+depends() {
+    local deps
+    deps="terminfo"
+
+    if [[ ${V-} == "2" ]]; then
+        deps+=" debug"
+    fi
+
+    # Use systemd if available
+    if [[ -e "$systemdutildir"/systemd ]]; then
+        deps+=" systemd systemd-journald"
+    fi
+
+    echo "$deps"
+    return 0
+}
+
+install() {
+    inst_simple /etc/os-release
+
+    inst_multiple mkdir ln dd mount poweroff umount setsid sync cat grep
+
+    if dracut_module_included "systemd"; then
+        inst_simple "$moddir/testsuite.target" "${systemdsystemunitdir}/testsuite.target"
+        inst_simple "$moddir/testsuite.service" "${systemdsystemunitdir}/testsuite.service"
+        $SYSTEMCTL -q --root "$initdir" add-wants testsuite.target "testsuite.service"
+        ln_r "${systemdsystemunitdir}/testsuite.target" "${systemdsystemunitdir}/default.target"
+        inst_script "$moddir/test-init.sh" "/sbin/test-init"
+        ln -sfn ../lib/systemd/systemd "$initdir/sbin/init"
+    else
+        inst_script "$moddir/test-init.sh" "/sbin/init"
+    fi
+}

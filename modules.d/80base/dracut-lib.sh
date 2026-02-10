@@ -8,8 +8,9 @@ if [ -n "$NEWROOT" ]; then
     [ -d "$NEWROOT" ] || mkdir -p -m 0755 "$NEWROOT"
 fi
 
-if [ -z "$PREFIX" ]; then
+if [ -z "${PREFIX-}" ]; then
     if ! [ -d /run/initramfs ]; then
+        mkdir -p -m 0755 /run/initramfs/cmdline.d
         mkdir -p -m 0755 /run/initramfs/log
         ln -sfn /run/initramfs/log /var/log
     fi
@@ -64,7 +65,7 @@ trim() {
     printf "%s" "$var"
 }
 
-if [ -z "$DRACUT_SYSTEMD" ]; then
+if [ -z "${DRACUT_SYSTEMD-}" ]; then
 
     warn() {
         check_quiet
@@ -128,6 +129,7 @@ getcmdline() {
     local CMDLINE_ETC_D=''
     local CMDLINE_ETC=''
     local CMDLINE_PROC=''
+    local CMDLINE_RUN=''
     unset _line
 
     if [ -e /etc/cmdline ]; then
@@ -146,7 +148,13 @@ getcmdline() {
             CMDLINE_PROC="$CMDLINE_PROC $_line"
         done < /proc/cmdline
     fi
-    CMDLINE="$CMDLINE_ETC_D $CMDLINE_ETC $CMDLINE_PROC"
+    for _i in /run/initramfs/cmdline.d/*.conf; do
+        [ -e "$_i" ] || continue
+        while read -r _line || [ -n "$_line" ]; do
+            CMDLINE_RUN="$CMDLINE_RUN $_line"
+        done < "$_i"
+    done
+    CMDLINE="$CMDLINE_ETC_D $CMDLINE_ETC $CMDLINE_PROC $CMDLINE_RUN"
     printf "%s" "$CMDLINE"
 }
 
@@ -274,9 +282,8 @@ getargs() {
     debug_off
     CMDLINE=$(getcmdline)
     export CMDLINE
-    local _val _i _gfound _deprecated
+    local _val _i _gfound="" _deprecated=""
     unset _val
-    unset _gfound
     _newoption="$1"
     for _i in "$@"; do
         if [ "$_i" = "-d" ]; then
@@ -340,7 +347,7 @@ splitsep() {
 }
 
 setdebug() {
-    [ -f /usr/lib/initrd-release ] || return
+    [ -f /usr/lib/initrd-release ] || return 0
     if [ -z "$RD_DEBUG" ]; then
         if [ -e /proc/cmdline ]; then
             RD_DEBUG=no
@@ -357,35 +364,45 @@ setdebug() {
 
 setdebug
 
-source_all() {
-    local f
-    local _dir
-    _dir=$1
-    shift
-    [ "$_dir" ] && [ -d "/$_dir" ] || return
-    for f in "/$_dir"/*.sh; do
-        if [ -e "$f" ]; then
-            # shellcheck disable=SC1090
-            # shellcheck disable=SC2240
-            . "$f" "$@"
-        fi
+hookdir=/var/lib/dracut/hooks
+export hookdir
+
+list_hooks() {
+    local dir="$1"
+    local pattern="$2"
+    [ -z "$pattern" ] && pattern="*.sh"
+    local hook
+
+    # It is allowed to override hooks by creating a file with the same name
+    # in a directory which has higher priority. '/var/lib/dracut/hooks' gets top
+    # priority, '/etc/dracut/hooks' comes after and '/usr/lib/dracut/hooks' is the
+    # least priviliged location.
+    for hook in "/var/lib/dracut/hooks/$dir/"$pattern; do
+        [ -f "$hook" ] && echo "$hook"
+    done
+    for hook in "/etc/dracut/hooks/$dir/"$pattern; do
+        [ -f "$hook" ] && [ ! -f "/var/lib/dracut/hooks/$dir/${hook##*/}" ] && echo "$hook"
+    done
+    for hook in "/usr/lib/dracut/hooks/$dir/"$pattern; do
+        [ -f "$hook" ] && [ ! -f "/var/lib/dracut/hooks/$dir/${hook##*/}" ] \
+            && [ ! -f "/etc/dracut/hooks/$dir/${hook##*/}" ] && echo "$hook"
     done
 }
-
-hookdir=/lib/dracut/hooks
-export hookdir
 
 source_hook() {
     local _dir
     _dir=$1
     shift
-    source_all "/lib/dracut/hooks/$_dir" "$@"
+    for f in $(list_hooks "$_dir"); do
+        # shellcheck disable=SC1090
+        # shellcheck disable=SC2240
+        . "$f" "$@"
+    done
 }
 
 check_finished() {
     local f rc=0
-    for f in "$hookdir"/initqueue/finished/*.sh; do
-        [ "$f" = "$hookdir/initqueue/finished/*.sh" ] && return 0
+    for f in $(list_hooks "initqueue/finished"); do
         # shellcheck disable=SC1090
         if [ -e "$f" ] && (. "$f"); then
             rm -f "$f"
@@ -423,7 +440,7 @@ die() {
         source_hook "shutdown-emergency"
     fi
 
-    if [ -n "$DRACUT_SYSTEMD" ]; then
+    if [ -n "${DRACUT_SYSTEMD-}" ]; then
         systemctl --no-block --force poweroff
     fi
 
@@ -835,7 +852,7 @@ fi
 
 _emergency_shell() {
     local _name="$1"
-    if [ -n "$DRACUT_SYSTEMD" ]; then
+    if [ -n "${DRACUT_SYSTEMD-}" ]; then
         : > /.console_lock
         echo "PS1=\"$_name:\\\${PWD}# \"" > /etc/profile
         systemctl start dracut-emergency.service
@@ -896,15 +913,6 @@ emergency_shell() {
     echo
 
     _emergency_action=$(getarg rd.emergency)
-
-    #  emergency dracut module is not included
-    if ! [ -e /bin/dracut-emergency ]; then
-        _emergency_action=poweroff
-
-        source_hook "shutdown-emergency"
-        warn "emergency dracut module is not included, shutting down!"
-    fi
-
     [ -z "$_emergency_action" ] \
         && [ -e /run/initramfs/.die ] \
         && _emergency_action=poweroff
@@ -980,7 +988,7 @@ are_lists_eq() {
 }
 
 setmemdebug() {
-    if [ -z "$DEBUG_MEM_LEVEL" ]; then
+    if [ -z "${DEBUG_MEM_LEVEL-}" ]; then
         DEBUG_MEM_LEVEL=$(getargnum 0 0 5 rd.memdebug)
         export DEBUG_MEM_LEVEL
     fi

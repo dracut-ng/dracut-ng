@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+set -eu
+
+[ -z "${TEST_FSTYPE-}" ] && TEST_FSTYPE="ext4"
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="live root on a squash filesystem"
@@ -13,166 +16,141 @@ test_check() {
     fi
 }
 
-test_run() {
+client_run() {
+    local test_name="$1"
+    shift
+    local client_opts="$*"
+
+    client_test_start "$test_name"
+
     declare -a disk_args=()
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root
+    qemu_add_drive disk_args "$TESTDIR"/root.img root
+    qemu_add_drive disk_args "$TESTDIR"/root_erofs.img root_erofs
+    qemu_add_drive disk_args "$TESTDIR"/root_iso.img root_iso
 
-    # shellcheck source=$TESTDIR/fs
-    . "$TESTDIR"/fs
-
-    # erofs drive
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs
-
-    # NTFS drive
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_ntfs.img root_ntfs
-
-    test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -boot order=d \
-        -append "$TEST_KERNEL_CMDLINE rd.live.overlay.overlayfs=1 root=live:/dev/disk/by-label/dracut" \
+        -append "$TEST_KERNEL_CMDLINE rd.overlay root=live:/dev/disk/by-label/dracut $client_opts" \
         -initrd "$TESTDIR"/initramfs.testing
+    check_qemu_log
 
-    test_marker_check || return 1
+    client_test_end
+}
 
-    # Run the erofs test only if mkfs.ntfs is available
-    if [[ "$EROFS" ]]; then
-        test_marker_reset
-        "$testdir"/run-qemu \
-            "${disk_args[@]}" \
-            -boot order=d \
-            -append "$TEST_KERNEL_CMDLINE rd.live.overlay.overlayfs=1 root=live:/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_erofs" \
-            -initrd "$TESTDIR"/initramfs.testing
+# Verify autooverlay created a second partition and wrote the marker to it.
+# Extract only the second partition to avoid false positives from the test
+# script in the first partition.
+check_autooverlay_marker() {
+    local rootPartitions part2_info part2_start part2_size
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    if [ "$rootPartitions" -ne 2 ]; then
+        echo >&2 "E: Expected two partitions on root.img, but got $rootPartitions."
+        return 1
+    fi
+    part2_info=$(sfdisk -d "$TESTDIR"/root.img | grep 'root\.img2')
+    part2_start=$(echo "$part2_info" | sed -n 's/.*start= *\([0-9]*\).*/\1/p')
+    part2_size=$(echo "$part2_info" | sed -n 's/.*size= *\([0-9]*\).*/\1/p')
+    dd if="$TESTDIR"/root.img of="$TESTDIR"/overlay-part.img bs=512 skip="$part2_start" count="$part2_size" status=none
+    test_marker_check dracut-autooverlay-success overlay-part.img
+}
 
-        test_marker_check || return 1
+# Reset root.img to single partition state for autooverlay test
+reset_overlay_partition() {
+    test_marker_reset
+    sfdisk --delete "$TESTDIR"/root.img 2 2> /dev/null || true
+    dd if=/dev/zero of="$TESTDIR"/root.img bs=1M seek=320 count=50 conv=notrunc status=none
+    local rootPartitions
+    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
+    [ "$rootPartitions" -eq 1 ]
+}
+
+test_run() {
+    client_run "overlayfs" ""
+
+    client_run "live" "rd.live.image"
+    client_run "livedir" "rd.live.image rd.live.dir=LiveOS"
+
+    # Run the erofs test only if mkfs.erofs is available
+    if command -v mkfs.erofs &> /dev/null; then
+        client_run "erofs" "root=live:/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_erofs"
     fi
 
-    test_marker_reset
-    "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -boot order=d \
-        -append "$TEST_KERNEL_CMDLINE rd.live.image rd.live.overlay.overlayfs=1 root=LABEL=dracut" \
-        -initrd "$TESTDIR"/initramfs.testing
-
-    test_marker_check || return 1
-
-    test_marker_reset
-    "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -boot order=d \
-        -append "$TEST_KERNEL_CMDLINE rd.live.image rd.live.overlay.overlayfs=1 rd.live.dir=testdir root=LABEL=dracut" \
-        -initrd "$TESTDIR"/initramfs.testing
-
-    test_marker_check || return 1
-
-    # Run the NTFS test only if mkfs.ntfs is available
-    if [[ "$NTFS" ]]; then
-        dd if=/dev/zero of="$TESTDIR"/marker.img bs=1MiB count=1 status=none
-        "$testdir"/run-qemu \
-            "${disk_args[@]}" \
-            -boot order=d \
-            -append "$TEST_KERNEL_CMDLINE rd.live.image rd.live.overlay.overlayfs=1 rd.live.dir=testdir root=LABEL=dracut_ntfs" \
-            -initrd "$TESTDIR"/initramfs.testing
-
-        test_marker_check || return 1
+    # Run the iso test only if xorriso is available
+    if command -v xorriso &> /dev/null; then
+        client_run "iso" "iso-scan/filename=linux.iso root=live:/dev/disk/by-label/ISO rd.driver.pre=squashfs rd.driver.pre=ext4"
     fi
 
-    test_marker_reset
-    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
-    [ "$rootPartitions" -eq 1 ] || return 1
+    reset_overlay_partition
+    client_run "autooverlay" "rd.live.image rd.overlay=LABEL=persist rd.live.dir=LiveOS"
+    check_autooverlay_marker
 
-    "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -boot order=d \
-        -append "init=/sbin/init-persist rd.live.image rd.live.overlay.overlayfs=1 rd.live.overlay=LABEL=persist rd.live.dir=testdir root=LABEL=dracut console=ttyS0,115200n81 quiet rd.info rd.shell=0 panic=1 oops=panic softlockup_panic=1 $DEBUGFAIL" \
-        -initrd "$TESTDIR"/initramfs.testing-autooverlay
+    # Test backward compatibility with rd.live.overlay (deprecated parameter)
+    reset_overlay_partition
+    client_run "autooverlay (deprecated rd.live.overlay)" "rd.live.image rd.live.overlay=LABEL=persist rd.live.dir=LiveOS"
+    check_autooverlay_marker
 
-    rootPartitions=$(sfdisk -d "$TESTDIR"/root.img | grep -c 'root\.img[0-9]')
-    [ "$rootPartitions" -eq 2 ] || return 1
-
-    (
-        # Ensure that this test works when run with the `V=1` parameter, which runs the script with `set -o pipefail`.
-        set +o pipefail
-
-        # Verify that the string "dracut-autooverlay-success" occurs in the second partition in the image file.
-        dd if="$TESTDIR"/root.img bs=1MiB skip=80 status=none \
-            | grep -U --binary-files=binary -F -m 1 -q dracut-autooverlay-success
-    ) || return 1
+    return 0
 }
 
 test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
-    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -i ./test-init.sh /sbin/init-persist \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
-    mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
+    build_client_rootfs "$TESTDIR/rootfs"
 
     # test to make sure /proc /sys and /dev is not needed inside the generated initrd
-    rm -rf "$TESTDIR"/dracut.*/initramfs/proc "$TESTDIR"/dracut.*/initramfs/sys "$TESTDIR"/dracut.*/initramfs/dev
+    rm -rf "$TESTDIR"/rootfs/proc "$TESTDIR"/rootfs/sys "$TESTDIR"/rootfs/dev
 
-    # second, install the files needed to make the root filesystem
-    # create an initramfs that will create the target root filesystem.
-    # We do it this way so that we do not risk trashing the host mdraid
-    # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -N -i "$TESTDIR"/overlay / \
-        --add-confdir test-makeroot \
-        --install "sfdisk mkfs.ntfs mksquashfs mkfs.erofs" \
-        --drivers "ntfs3 erofs" \
-        --include ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        --force "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
+    mkdir -p "$TESTDIR"/live/LiveOS
+    mksquashfs "$TESTDIR"/rootfs/ "$TESTDIR"/live/LiveOS/rootfs.img -quiet -no-progress
 
     # Create the blank file to use as a root filesystem
     declare -a disk_args=()
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root.img root 1
+    qemu_add_drive disk_args "$TESTDIR"/root.img root 1
 
-    # erofs drive
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_erofs.img root_erofs 1
-
-    # NTFS drive
-    qemu_add_drive disk_index disk_args "$TESTDIR"/root_ntfs.img root_ntfs 1
-
-    # Invoke KVM and/or QEMU to actually create the target filesystem.
-    "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -append "root=/dev/dracut/root quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-
-    if ! test_marker_check dracut-root-block-created; then
-        echo "Could not create root filesystem"
-        return 1
-    fi
-
-    # grab the list of supported filesystem kernel modules
-    grep -F -a -m 1 EROFS "$TESTDIR"/marker.img >> "$TESTDIR"/fs
-    grep -F -a -m 1 NTFS "$TESTDIR"/marker.img >> "$TESTDIR"/fs
-
-    # mount NTFS with ntfs3 driver inside the generated initramfs
-    cat > /tmp/ntfs3.rules << 'EOF'
-SUBSYSTEM=="block", ENV{ID_FS_TYPE}=="ntfs", ENV{ID_FS_TYPE}="ntfs3"
+    sfdisk "$TESTDIR"/root.img << EOF
+2048,652688
 EOF
 
-    test_dracut \
-        --no-hostonly \
-        --add "dmsquash-live qemu" \
-        --omit "systemd" \
-        --drivers "ntfs3" \
-        --install "mkfs.ext4" \
-        -a bash \
-        --include /tmp/ntfs3.rules /lib/udev/rules.d/ntfs3.rules \
-        "$TESTDIR"/initramfs.testing
+    rm -f "$TESTDIR/ext4.img"
+    truncate -s "$((512 * 652688))" "$TESTDIR/ext4.img"
+    # Use the live structure (with LiveOS/rootfs.img squashfs) instead of raw rootfs
+    mkfs.ext4 -q -L dracut -d "$TESTDIR"/live/ "$TESTDIR"/ext4.img
+    dd if="$TESTDIR"/ext4.img of="$TESTDIR"/root.img bs=512 seek=2048 conv=noerror,notrunc
+
+    # erofs drive
+    qemu_add_drive disk_args "$TESTDIR"/root_erofs.img root_erofs 1
+
+    # Write the erofs compressed filesystem to the partition
+    if command -v mkfs.erofs &> /dev/null; then
+        mkfs.erofs "$TESTDIR"/root_erofs.img "$TESTDIR"/rootfs/
+    fi
+
+    # iso drive
+    qemu_add_drive disk_args "$TESTDIR"/root_iso.img root_iso 1
+
+    # Write the iso to the partition
+    if command -v xorriso &> /dev/null; then
+        mkdir "$TESTDIR"/iso
+        xorriso -as mkisofs -output "$TESTDIR"/iso/linux.iso "$TESTDIR"/live/ -volid "ISO" -iso-level 3
+        mkfs.ext4 -q -L dracut_iso -d "$TESTDIR"/iso/ "$TESTDIR"/root_iso.img
+    fi
+
+    local dracut_modules="dmsquash-live-autooverlay convertfs pollcdrom kernel-modules kernel-modules-extra qemu"
+
+    if type -p ntfs-3g &> /dev/null; then
+        dracut_modules="$dracut_modules dmsquash-live-ntfs"
+    fi
+
+    if type -p NetworkManager &> /dev/null; then
+        dracut_modules="$dracut_modules network-manager"
+        if type -p curl &> /dev/null; then
+            dracut_modules="$dracut_modules livenet"
+        fi
+    fi
 
     test_dracut \
         --no-hostonly \
-        --add "dmsquash-live-autooverlay qemu" \
-        --omit "systemd" \
-        --install "mkfs.ext4" \
-        -a bash \
-        "$TESTDIR"/initramfs.testing-autooverlay
+        --add-drivers "${TEST_FSTYPE}" \
+        --modules " $dracut_modules "
 }
 
 # shellcheck disable=SC1090

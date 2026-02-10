@@ -1,0 +1,67 @@
+---
+name: Daily Tests - network
+
+on:  # yamllint disable-line rule:truthy
+    schedule:
+        - cron: '30 23 * * *'   # every day at 23:30 UTC
+
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+    pull_request:
+        paths:
+            - '.github/workflows/daily-network.yml'
+
+jobs:
+    network:
+        name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }}
+        runs-on: ${{ matrix.architecture.runner }}
+        timeout-minutes: 40
+        concurrency:
+            group: >
+                daily-network-${{ github.workflow }}-${{ github.ref }}
+                -${{ matrix.container }}-${{ matrix.test }}-${{ matrix.architecture.tag }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                architecture:
+                    - {runner: 'ubuntu-24.04', tag: 'amd'}
+                    - {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                container:
+                    - arch:latest
+                    - debian:latest
+                    - debian:sid
+                    - fedora:latest
+                    - fedora:rawhide
+                    - opensuse:latest
+                    - ubuntu:devel
+                    - ubuntu:rolling
+                test:
+                    - "31"
+                    - "60"
+                    - "72"
+                exclude:
+                    - container: arch:latest
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                    - container: fedora:latest
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                    - container: fedora:rawhide
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                    # https://github.com/dracut-ng/dracut-ng/issues/1815
+                    - container: ubuntu:devel
+                      test: "72"
+                    # https://github.com/dracut-ng/dracut-ng/issues/1815
+                    - container: ubuntu:rolling
+                      test: "72"
+                    # https://github.com/dracut-ng/dracut-ng/issues/1988
+                    - container: debian:sid
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            options: '--device=/dev/kvm --privileged'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v6
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}

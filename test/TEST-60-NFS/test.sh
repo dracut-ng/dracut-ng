@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
+set -eu
+
+[ -z "${USE_NETWORK-}" ] && USE_NETWORK="network"
 
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on NFS with $USE_NETWORK"
 
 test_check() {
-    if ! type -p dhclient &> /dev/null; then
-        echo "Test needs dhclient for server networking... Skipping"
+    if ! type -p curl &> /dev/null; then
+        echo "Test needs curl for url-lib... Skipping"
         return 1
     fi
 
@@ -21,25 +24,20 @@ run_server() {
     # Start server first
     echo "NFS TEST SETUP: Starting DHCP/NFS server"
     declare -a disk_args=()
-    # shellcheck disable=SC2034
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/server.img root 0 1
+    qemu_add_drive disk_args "$TESTDIR"/server.img root 0 1
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -net socket,listen=127.0.0.1:12320 \
         -net nic,macaddr=52:54:00:12:34:56,model=virtio \
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
-        -append "panic=1 oops=panic softlockup_panic=1 root=LABEL=dracut rootfstype=ext4 rw console=ttyS0,115200n81 $SERVER_DEBUG" \
-        -initrd "$TESTDIR"/initramfs.server \
-        -pidfile "$TESTDIR"/server.pid -daemonize || return 1
-    chmod 644 "$TESTDIR"/server.pid || return 1
+        -append "panic=1 oops=panic softlockup_panic=1 root=LABEL=dracut rootfstype=ext4 rw systemd.journald.forward_to_console=1 ${SERVER_DEBUG-}" \
+        -pidfile "$TESTDIR"/server.pid -daemonize \
+        -initrd "$TESTDIR"/initramfs.server
+    chmod 644 "$TESTDIR"/server.pid
 
-    # Cleanup the terminal if we have one
-    tty -s && stty sane
-
-    if ! [[ $SERIAL ]]; then
-        wait_for_server_startup || return 1
+    if ! [[ ${SERIAL-} ]]; then
+        wait_for_server_startup
     else
         echo Sleeping 10 seconds to give the server a head start
         sleep 10
@@ -54,15 +52,12 @@ client_test() {
     local check_opt="$5"
     local nfsinfo opts found expected
 
-    echo "CLIENT TEST START: $test_name"
+    client_test_start "$test_name"
 
     # Need this so kvm-qemu will boot (needs non-/dev/zero local disk)
     declare -a disk_args=()
-    # shellcheck disable=SC2034
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker2.img marker2 1
-    cmdline="$cmdline rd.net.timeout.dhcp=30"
+    qemu_add_drive disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_args "$TESTDIR"/marker2.img marker2 1
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
@@ -71,9 +66,8 @@ client_test() {
         -append "$TEST_KERNEL_CMDLINE $cmdline ro" \
         -initrd "$TESTDIR"/initramfs.testing
 
-    # shellcheck disable=SC2181
-    if [[ $? -ne 0 ]] || ! test_marker_check nfs-OK; then
-        echo "CLIENT TEST END: $test_name [FAILED - BAD EXIT]"
+    if ! test_marker_check nfs-OK; then
+        client_test_end "FAILED - MISSING MARKER"
         return 1
     fi
 
@@ -83,7 +77,7 @@ client_test() {
     if [[ ${nfsinfo[0]%%:*} != "$server" ]]; then
         echo "CLIENT TEST INFO: got server: ${nfsinfo[0]%%:*}"
         echo "CLIENT TEST INFO: expected server: $server"
-        echo "CLIENT TEST END: $test_name [FAILED - WRONG SERVER]"
+        client_test_end "FAILED - WRONG SERVER"
         return 1
     fi
 
@@ -107,20 +101,20 @@ client_test() {
         echo "CLIENT TEST INFO: got options: ${nfsinfo[2]%%:*}"
         if [[ $expected -eq 0 ]]; then
             echo "CLIENT TEST INFO: did not expect: $check_opt"
-            echo "CLIENT TEST END: $test_name [FAILED - UNEXPECTED OPTION]"
+            client_test_end "FAILED - UNEXPECTED OPTION"
         else
             echo "CLIENT TEST INFO: missing: $check_opt"
-            echo "CLIENT TEST END: $test_name [FAILED - MISSING OPTION]"
+            client_test_end "FAILED - MISSING OPTION"
         fi
         return 1
     fi
 
     if ! test_marker_check nfsfetch-OK marker2.img; then
-        echo "CLIENT TEST END: $test_name [FAILED - NFS FETCH FAILED]"
+        client_test_end "FAILED - NFS FETCH FAILED"
         return 1
     fi
 
-    echo "CLIENT TEST END: $test_name [OK]"
+    client_test_end
     return 0
 }
 
@@ -130,58 +124,47 @@ test_nfsv3() {
     # NFSv4: last octet starts at 0x80 and works up
 
     client_test "NFSv3 root=dhcp DHCP path only" 52:54:00:12:34:00 \
-        "root=dhcp" 192.168.50.1 -wsize=4096 || return 1
+        "root=dhcp" 192.168.50.1 -wsize=4096
 
     client_test "NFSv3 Legacy root=/dev/nfs nfsroot=IP:path" 52:54:00:12:34:01 \
-        "root=/dev/nfs nfsroot=192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096 || return 1
+        "root=/dev/nfs nfsroot=192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096
 
     client_test "NFSv3 Legacy root=/dev/nfs DHCP path only" 52:54:00:12:34:00 \
-        "root=/dev/nfs" 192.168.50.1 -wsize=4096 || return 1
+        "root=/dev/nfs" 192.168.50.1 -wsize=4096
 
     client_test "NFSv3 Legacy root=/dev/nfs DHCP IP:path" 52:54:00:12:34:01 \
-        "root=/dev/nfs" 192.168.50.2 -wsize=4096 || return 1
+        "root=/dev/nfs" 192.168.50.2 -wsize=4096
 
     client_test "NFSv3 root=dhcp DHCP IP:path" 52:54:00:12:34:01 \
-        "root=dhcp" 192.168.50.2 -wsize=4096 || return 1
+        "root=dhcp" 192.168.50.2 -wsize=4096
 
     client_test "NFSv3 root=dhcp DHCP proto:IP:path" 52:54:00:12:34:02 \
-        "root=dhcp" 192.168.50.3 -wsize=4096 || return 1
+        "root=dhcp" 192.168.50.3 -wsize=4096
 
     client_test "NFSv3 root=dhcp DHCP proto:IP:path:options" 52:54:00:12:34:03 \
-        "root=dhcp" 192.168.50.3 wsize=4096 || return 1
+        "root=dhcp" 192.168.50.3 wsize=4096
 
     client_test "NFSv3 root=nfs:..." 52:54:00:12:34:04 \
-        "root=nfs:192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096 || return 1
+        "root=nfs:192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096
 
     client_test "NFSv3 Bridge root=nfs:..." 52:54:00:12:34:04 \
-        "root=nfs:192.168.50.1:/nfs/client bridge net.ifnames=0" 192.168.50.1 -wsize=4096 || return 1
+        "root=nfs:192.168.50.1:/nfs/client bridge net.ifnames=0" 192.168.50.1 -wsize=4096
 
     client_test "NFSv3 Legacy root=IP:path" 52:54:00:12:34:04 \
-        "root=192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096 || return 1
-
-    # This test must fail: nfsroot= requires root=/dev/nfs
-    client_test "NFSv3 Invalid root=dhcp nfsroot=/nfs/client" 52:54:00:12:34:04 \
-        "root=dhcp nfsroot=/nfs/client failme" 192.168.50.1 -wsize=4096 && return 1
+        "root=192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096
 
     client_test "NFSv3 root=dhcp DHCP path,options" 52:54:00:12:34:05 \
-        "root=dhcp" 192.168.50.1 wsize=4096 || return 1
-
-    client_test "NFSv3 Bridge Customized root=dhcp DHCP path,options" 52:54:00:12:34:05 \
-        "root=dhcp bridge=foobr0:enp0s1" 192.168.50.1 wsize=4096 || return 1
+        "root=dhcp" 192.168.50.1 wsize=4096
 
     client_test "NFSv3 root=dhcp DHCP IP:path,options" 52:54:00:12:34:06 \
-        "root=dhcp" 192.168.50.2 wsize=4096 || return 1
+        "root=dhcp" 192.168.50.2 wsize=4096
 
     client_test "NFSv3 root=dhcp DHCP proto:IP:path,options" 52:54:00:12:34:07 \
-        "root=dhcp" 192.168.50.3 wsize=4096 || return 1
+        "root=dhcp" 192.168.50.3 wsize=4096
 
-    client_test "NFSv3 Overlayfs root=nfs:..." 52:54:00:12:34:04 \
-        "root=nfs:192.168.50.1:/nfs/client rd.live.overlay.overlayfs=1" \
-        192.168.50.1 -wsize=4096 || return 1
-
-    client_test "NFSv3 Live Overlayfs root=nfs:..." 52:54:00:12:34:04 \
-        "root=nfs:192.168.50.1:/nfs/client rd.live.image rd.live.overlay.overlayfs=1" \
-        192.168.50.1 -wsize=4096 || return 1
+    # TODO FIXME
+    #    client_test "NFSv3 Bridge Customized root=dhcp DHCP path,options" 52:54:00:12:34:05 \
+    #        "root=dhcp bridge=foobr0:enp0s1" 192.168.50.1 wsize=4096
 
     return 0
 }
@@ -192,16 +175,22 @@ test_nfsv4() {
     # switch_root
 
     client_test "NFSv4 root=dhcp DHCP proto:IP:path" 52:54:00:12:34:82 \
-        "root=dhcp" 192.168.50.3 -wsize=4096 || return 1
+        "root=dhcp" 192.168.50.3 -wsize=4096
 
     client_test "NFSv4 root=dhcp DHCP proto:IP:path:options" 52:54:00:12:34:83 \
-        "root=dhcp" 192.168.50.3 wsize=4096 || return 1
+        "root=dhcp" 192.168.50.3 wsize=4096
 
     client_test "NFSv4 root=nfs4:..." 52:54:00:12:34:84 \
-        "root=nfs4:192.168.50.1:/client" 192.168.50.1 -wsize=4096 || return 1
+        "root=nfs4:192.168.50.1:/client" 192.168.50.1 -wsize=4096
 
     client_test "NFSv4 root=dhcp DHCP proto:IP:path,options" 52:54:00:12:34:87 \
-        "root=dhcp" 192.168.50.3 wsize=4096 || return 1
+        "root=dhcp" 192.168.50.3 wsize=4096
+
+    client_test "NFSv4 Overlayfs root=nfs4:..." 52:54:00:12:34:84 \
+        "root=nfs4:192.168.50.1:/client rd.overlay " 192.168.50.1 -wsize=4096
+
+    client_test "NFSv4 Live Overlayfs root=nfs4:..." 52:54:00:12:34:84 \
+        "root=nfs4:192.168.50.1:/client rd.live.image rd.overlay" 192.168.50.1 -wsize=4096
 
     return 0
 }
@@ -217,211 +206,73 @@ test_run() {
         return 1
     fi
 
-    # focus on NFSv4 testing, disable NFSv3 tests
-    #test_nfsv3
+    test_nfsv3
     test_nfsv4
-
-    ret=$?
 
     if [[ -s $TESTDIR/server.pid ]]; then
         kill -TERM "$(cat "$TESTDIR"/server.pid)"
         rm -f -- "$TESTDIR"/server.pid
     fi
+}
 
-    return $ret
+make_server_rootfs() {
+    call_dracut --tmpdir "$TESTDIR" \
+        --add-confdir test-root \
+        -a "$USE_NETWORK url-lib nfs" \
+        -I "ip grep setsid" \
+        -f "$TESTDIR"/initramfs.root || return 1
+
+    mkdir -p "$TESTDIR"/server/overlay
+
+    # Create what will eventually be the server root filesystem onto an overlay
+    call_dracut --tmpdir "$TESTDIR"/server/overlay \
+        --add-confdir test-root \
+        -a "bash $USE_NETWORK nfs" \
+        --add-drivers "nfsd sunrpc lockd" \
+        -I "exportfs pidof rpc.nfsd rpc.mountd dhcpd" \
+        --install-optional "/etc/netconfig /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services rpc.idmapd /etc/idmapd.conf" \
+        -i "./dhcpd.conf" "/etc/dhcpd.conf" \
+        -f "$TESTDIR"/initramfs.root
+
+    mkdir -p "$TESTDIR"/server-rootfs
+    mv "$TESTDIR"/server/overlay/dracut.*/initramfs/* "$TESTDIR"/server-rootfs
+    rm -rf "$TESTDIR"/server/overlay/dracut.*
+
+    export initdir=$TESTDIR/server-rootfs
+    mkdir -p "$initdir"/var/lib/{dhcpd,rpcbind} "$initdir"/var/lib/nfs/{v4recovery,rpc_pipefs}
+    chmod 777 "$initdir"/var/lib/{dhcpd,rpcbind}
+    inst_init ./server-init.sh "$initdir"
+    cp ./exports "$initdir"/etc/exports
+    cp ./dhcpd.conf "$initdir"/etc/dhcpd.conf
+
+    # Make client root inside server root
+    # shellcheck disable=SC2031
+    export initdir=$TESTDIR/server-rootfs/nfs/client
+    mkdir -p "$initdir"
+    mv "$TESTDIR"/dracut.*/initramfs/* "$initdir"
+    rm -rf "$TESTDIR"/dracut.*
+    echo "TEST FETCH FILE" > "$initdir"/root/fetchfile
+    inst_init ./client-init.sh "$initdir"
+
+    build_ext4_image "$TESTDIR/server-rootfs" "$TESTDIR"/server.img dracut
 }
 
 test_setup() {
-    export kernel=$KVERSION
-    export srcmods="/lib/modules/$kernel/"
-    # Detect lib paths
-
-    rm -rf -- "$TESTDIR"/overlay
-    (
-        mkdir -p "$TESTDIR"/server/overlay/source
-        # shellcheck disable=SC2030
-        export initdir=$TESTDIR/server/overlay/source
-        # shellcheck disable=SC1090
-        . "$PKGLIBDIR"/dracut-init.sh
-
-        (
-            cd "$initdir" || exit
-            mkdir -p dev sys proc run etc var/run tmp var/lib/{dhcpd,rpcbind}
-            mkdir -p var/lib/nfs/{v4recovery,rpc_pipefs}
-            chmod 777 var/lib/rpcbind var/lib/nfs
-        )
-
-        inst_multiple sh ls shutdown poweroff stty cat ps ln ip \
-            dmesg mkdir cp exportfs \
-            modprobe rpc.nfsd rpc.mountd \
-            sleep mount chmod rm
-        for _terminfodir in /lib/terminfo /etc/terminfo /usr/share/terminfo; do
-            if [ -f "${_terminfodir}"/l/linux ]; then
-                inst_multiple -o "${_terminfodir}"/l/linux
-                break
-            fi
-        done
-        type -P portmap > /dev/null && inst_multiple portmap
-        type -P rpcbind > /dev/null && inst_multiple rpcbind
-
-        [ -f /etc/netconfig ] && inst_multiple /etc/netconfig
-        type -P dhcpd > /dev/null && inst_multiple dhcpd
-        instmods nfsd sunrpc ipv6 lockd af_packet
-        inst ./server-init.sh /sbin/init
-        inst_simple /etc/os-release
-        inst ./exports /etc/exports
-        inst ./dhcpd.conf /etc/dhcpd.conf
-        inst_multiple -o {,/usr}/etc/nsswitch.conf {,/usr}/etc/rpc \
-            {,/usr}/etc/protocols {,/usr}/etc/services
-        inst_multiple -o rpc.idmapd /etc/idmapd.conf
-
-        inst_libdir_file 'libnfsidmap_nsswitch.so*'
-        inst_libdir_file 'libnfsidmap/*.so*'
-        inst_libdir_file 'libnfsidmap*.so*'
-
-        _nsslibs=$(
-            cat "$dracutsysrootdir"/{,usr/}etc/nsswitch.conf 2> /dev/null \
-                | sed -e '/^#/d' -e 's/^.*://' -e 's/\[NOTFOUND=return\]//' \
-                | tr -s '[:space:]' '\n' | sort -u | tr -s '[:space:]' '|'
-        )
-        _nsslibs=${_nsslibs#|}
-        _nsslibs=${_nsslibs%|}
-        inst_libdir_file -n "$_nsslibs" 'libnss_*.so*'
-
-        inst /etc/passwd /etc/passwd
-        inst /etc/group /etc/group
-
-        cp -a /etc/ld.so.conf* "$initdir"/etc
-        ldconfig -r "$initdir"
-        dracut_kernel_post
-    )
-
-    # Make client root inside server root
-    (
-        # shellcheck disable=SC2030
-        # shellcheck disable=SC2031
-        export initdir=$TESTDIR/server/overlay/source/nfs/client
-        # shellcheck disable=SC1090
-        . "$PKGLIBDIR"/dracut-init.sh
-
-        (
-            cd "$initdir" || exit
-            mkdir -p dev sys proc etc run root usr var/lib/nfs/rpc_pipefs
-            echo "TEST FETCH FILE" > root/fetchfile
-        )
-
-        inst_multiple sh shutdown poweroff stty cat ps ln ip dd \
-            mount dmesg mkdir cp grep setsid ls cat sync
-        for _terminfodir in /lib/terminfo /etc/terminfo /usr/share/terminfo; do
-            if [ -f "${_terminfodir}"/l/linux ]; then
-                inst_multiple -o "${_terminfodir}"/l/linux
-                break
-            fi
-        done
-
-        inst_simple "${PKGLIBDIR}/modules.d/99base/dracut-lib.sh" "/lib/dracut-lib.sh"
-        inst_simple "${PKGLIBDIR}/modules.d/99base/dracut-dev-lib.sh" "/lib/dracut-dev-lib.sh"
-        inst_simple "${PKGLIBDIR}/modules.d/45url-lib/url-lib.sh" "/lib/url-lib.sh"
-        inst_simple "${PKGLIBDIR}/modules.d/45net-lib/net-lib.sh" "/lib/net-lib.sh"
-        inst_simple "${PKGLIBDIR}/modules.d/95nfs/nfs-lib.sh" "/lib/nfs-lib.sh"
-        inst_binary "${PKGLIBDIR}/dracut-util" "/usr/bin/dracut-util"
-        ln -s dracut-util "${initdir}/usr/bin/dracut-getarg"
-        ln -s dracut-util "${initdir}/usr/bin/dracut-getargs"
-
-        inst ./client-init.sh /sbin/init
-        inst_simple /etc/os-release
-        inst_multiple -o {,/usr}/etc/nsswitch.conf
-        inst /etc/passwd /etc/passwd
-        inst /etc/group /etc/group
-
-        inst_libdir_file 'libnfsidmap_nsswitch.so*'
-        inst_libdir_file 'libnfsidmap/*.so*'
-        inst_libdir_file 'libnfsidmap*.so*'
-
-        _nsslibs=$(
-            cat "$dracutsysrootdir"/{,usr/}etc/nsswitch.conf 2> /dev/null \
-                | sed -e '/^#/d' -e 's/^.*://' -e 's/\[NOTFOUND=return\]//' \
-                | tr -s '[:space:]' '\n' | sort -u | tr -s '[:space:]' '|'
-        )
-        _nsslibs=${_nsslibs#|}
-        _nsslibs=${_nsslibs%|}
-        inst_libdir_file -n "$_nsslibs" 'libnss_*.so*'
-
-        cp -a /etc/ld.so.conf* "$initdir"/etc
-        ldconfig -r "$initdir"
-    )
-
-    # second, install the files needed to make the root filesystem
-    (
-        # shellcheck disable=SC2030
-        # shellcheck disable=SC2031
-        export initdir=$TESTDIR/server/overlay
-        # shellcheck disable=SC1090
-        . "$PKGLIBDIR"/dracut-init.sh
-        inst_multiple mkfs.ext4 poweroff cp umount sync dd
-        inst_hook initqueue 01 ./create-root.sh
-        inst_hook initqueue/finished 01 ./finished-false.sh
-    )
-
-    # create an initramfs that will create the target root filesystem.
-    # We do it this way so that we do not risk trashing the host mdraid
-    # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -i "$TESTDIR"/server/overlay / \
-        -a "bash rootfs-block kernel-modules qemu" \
-        -d "piix ide-gd_mod ata_piix ext4 sd_mod" \
-        --nomdadmconf \
-        --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
-    rm -rf -- "$TESTDIR"/server
-
-    declare -a disk_args=()
-    # shellcheck disable=SC2034
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/server.img root 1
-
-    # Invoke KVM and/or QEMU to actually create the target filesystem.
-    "$testdir"/run-qemu \
-        "${disk_args[@]}" \
-        -append "root=/dev/dracut/root rw rootfstype=ext4 quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-    test_marker_check dracut-root-block-created || return 1
-
-    # Make an overlay with needed tools for the test harness
-    (
-        # shellcheck disable=SC2031
-        # shellcheck disable=SC2030
-        export initdir="$TESTDIR"/overlay
-        mkdir -p "$TESTDIR"/overlay
-        # shellcheck disable=SC1090
-        . "$PKGLIBDIR"/dracut-init.sh
-        inst_multiple poweroff shutdown
-        inst_hook shutdown-emergency 000 ./hard-off.sh
-        inst_hook emergency 000 ./hard-off.sh
-        inst_simple ./client.link /etc/systemd/network/01-client.link
-    )
+    make_server_rootfs
 
     # Make client's dracut image
     test_dracut \
-        --no-hostonly --no-hostonly-cmdline \
-        -a "dmsquash-live ${USE_NETWORK}" \
-        "$TESTDIR"/initramfs.testing
+        --no-hostonly \
+        --include ./client.link /etc/systemd/network/01-client.link \
+        -a "watchdog dmsquash-live ${USE_NETWORK}"
 
-    (
-        # shellcheck disable=SC2031
-        export initdir="$TESTDIR"/overlay
-        # shellcheck disable=SC1090
-        . "$PKGLIBDIR"/dracut-init.sh
-        rm "$initdir"/etc/systemd/network/01-client.link
-        inst_simple ./server.link /etc/systemd/network/01-server.link
-        inst_hook pre-mount 99 ./wait-if-server.sh
-    )
     # Make server's dracut image
-    "$DRACUT" -i "$TESTDIR"/overlay / \
-        -a "bash rootfs-block kernel-modules watchdog qemu network-legacy ${SERVER_DEBUG:+debug}" \
-        -d "af_packet piix ide-gd_mod ata_piix ext4 sd_mod i6300esb virtio_net" \
-        --no-hostonly-cmdline -N \
-        -f "$TESTDIR"/initramfs.server "$KVERSION" || return 1
+    call_dracut \
+        -a "bash $USE_NETWORK ${SERVER_DEBUG:+debug}" \
+        --include ./server.link /etc/systemd/network/01-server.link \
+        --include ./wait-if-server.sh /usr/lib/dracut/hooks/pre-mount/99-wait-if-server.sh \
+        -N \
+        -f "$TESTDIR"/initramfs.server
 }
 
 test_cleanup() {

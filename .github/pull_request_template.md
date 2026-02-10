@@ -1,10 +1,8 @@
-This pull request changes...
+<!-- This pull request changes... -->
 
-## Changes
+<!-- Fixes: https://github.com/dracut-ng/dracut-ng/issues/<number> -->
 
-## Checklist
+### Checklist
 - [ ] I have tested it locally
 - [ ] I have reviewed and updated any documentation if relevant
 - [ ] I am providing new code and test(s) for it
-
-Fixes #

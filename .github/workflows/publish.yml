@@ -2,55 +2,56 @@
 name: Publish to GitHub Pages
 
 on:  # yamllint disable-line rule:truthy
-  push:
-    branches: [main]
-    paths-ignore:
-      - 'modules.d/**'
-      - 'test/**'
-      - 'src/**'
+    push:
+        branches: [main]
+        paths-ignore:
+            - 'modules.d/**'
+            - 'test/**'
+            - 'src/**'
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
 
 concurrency:
-  group: github-pages
-  cancel-in-progress: false
+    group: github-pages
+    cancel-in-progress: false
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+    contents: read
+    pages: write
+    id-token: write
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-      - name: Install dependencies
-        run: |
-          sudo apt-get -y update
-          sudo apt-get -y install make asciidoc
-      - name: Install Antora
-        run: npm i antora
-      - name: Generate Site
-        run: make doc_site
-      - name: Upload Artifacts
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: build/site
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+    build:
+        if: github.repository == 'dracut-ng/dracut-ng'
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v6
+              with:
+                  fetch-depth: 0
+            - name: Configure Pages
+              uses: actions/configure-pages@v5
+            - name: Install Node.js
+              uses: actions/setup-node@v6
+              with:
+                  node-version: '18'
+            - name: Install dependencies
+              run: |
+                  sudo apt-get -y update
+                  sudo apt-get -y install make asciidoctor
+            - name: Install Antora
+              run: npm i antora
+            - name: Generate Site
+              run: make doc_site
+            - name: Upload Artifacts
+              uses: actions/upload-pages-artifact@v4
+              with:
+                  path: build/site
+            - name: Deploy to GitHub Pages
+              id: deployment
+              uses: actions/deploy-pages@v4

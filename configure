@@ -22,6 +22,28 @@ fi
 CC="${CC:-cc}"
 PKG_CONFIG="${PKG_CONFIG:-pkg-config}"
 
+# set configprofile based on ID and ID_LIKE from os-release
+if [[ -f /etc/os-release ]]; then
+    . /etc/os-release
+elif [[ -f /usr/lib/os-release ]]; then
+    . /usr/lib/os-release
+fi
+
+case " $ID $ID_LIKE " in
+    *" debian "*)
+        configprofile=debian
+        ;;
+    *" fedora "*)
+        configprofile=fedora
+        ;;
+    *" gentoo "*)
+        configprofile=gentoo
+        ;;
+    *" suse "*)
+        configprofile=opensuse
+        ;;
+esac
+
 # Little helper function for reading args from the commandline.
 # it automatically handles -a b and -a=b variants, and returns 1 if
 # we need to shift $3.
@@ -62,7 +84,10 @@ while (($# > 0)); do
         --bashcompletiondir) read_arg bashcompletiondir "$@" || shift ;;
         --enable-dracut-cpio) enable_dracut_cpio=yes ;;
         --disable-dracut-cpio) enable_dracut_cpio=no ;;
+        --enable-test) enable_test=yes ;;
+        --enable-network-legacy) enable_network_legacy=yes ;;
         --configprofile) read_arg configprofile "$@" || shift ;;
+        --disable-asciidoctor) disable_asciidoctor=yes ;;
         *) echo "Ignoring unknown option '$1'" ;;
     esac
     shift
@@ -185,12 +210,18 @@ datadir ?= ${datadir:-${prefix}/share}
 sysconfdir ?= ${sysconfdir:-${prefix}/etc}
 sbindir ?= ${sbindir:-${prefix}/sbin}
 mandir ?= ${mandir:-${prefix}/share/man}
+disable_asciidoctor ?= ${disable_asciidoctor:-no}
 enable_documentation ?= ${enable_documentation:-yes}
+enable_test ?= ${enable_test:-no}
+enable_network_legacy ?= ${enable_network_legacy:-no}
 enable_dracut_cpio ?= ${enable_dracut_cpio}
 bindir ?= ${bindir:-${prefix}/bin}
 KMOD_CFLAGS ?= $(${PKG_CONFIG} --cflags " libkmod >= 23 ") ${KMOD_CFLAGS_EXTRA}
 KMOD_LIBS ?= $(${PKG_CONFIG} --libs " libkmod >= 23 ")
 FTS_LIBS ?= ${FTS_LIBS}
+# For the sd-json API, which was added in systemd v257. This is optional.
+SYSTEMD_CFLAGS ?= $(${PKG_CONFIG} --silence-errors --cflags "libsystemd >= 257" || echo "Disabling JSON support: libsystemd >= 257 required" >&2)
+SYSTEMD_LIBS ?= $(${PKG_CONFIG} --silence-errors --libs "libsystemd >= 257")
 EOF
 
 {

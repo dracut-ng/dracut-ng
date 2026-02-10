@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+set -eu
 # shellcheck disable=SC2034
-TEST_DESCRIPTION="root filesystem on LVM on encrypted partitions of a RAID-5"
+TEST_DESCRIPTION="root filesystem on LVM on encrypted partitions of a RAID"
 
 # Uncomment this to debug failures
 #DEBUGFAIL="rd.shell rd.break" # udev.log-priority=debug
@@ -22,69 +23,62 @@ test_check() {
 test_run() {
     LUKSARGS=$(cat "$TESTDIR"/luks.txt)
 
-    echo "CLIENT TEST START: $LUKSARGS"
+    client_test_start "$LUKSARGS"
 
     declare -a disk_args=()
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-3.img disk3
+    qemu_add_drive disk_args "$TESTDIR"/disk-1.img disk1
+    qemu_add_drive disk_args "$TESTDIR"/disk-2.img disk2
 
-    test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root ro rd.auto rootwait $LUKSARGS" \
         -initrd "$TESTDIR"/initramfs.testing
-    test_marker_check || return 1
-    echo "CLIENT TEST END: [OK]"
+    check_qemu_log
+    client_test_end
 
-    test_marker_reset
-
-    echo "CLIENT TEST START: Any LUKS"
+    client_test_start "Any LUKS"
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -append "$TEST_KERNEL_CMDLINE root=/dev/dracut/root rd.auto" \
         -initrd "$TESTDIR"/initramfs.testing
-    test_marker_check || return 1
-    echo "CLIENT TEST END: [OK]"
+    check_qemu_log
+    client_test_end
 
     return 0
 }
 
-test_setup() {
+make_test_rootfs() {
     # Create what will eventually be our root filesystem onto an overlay
-    "$DRACUT" -N --keep --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -f "$TESTDIR"/initramfs.root "$KVERSION" || return 1
-    mkdir -p "$TESTDIR"/overlay/source && mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/overlay/source && rm -rf "$TESTDIR"/dracut.*
-
-    # second, install the files needed to make the root filesystem
+    build_client_rootfs "$TESTDIR/overlay/source"
 
     # create an initramfs that will create the target root filesystem.
     # We do it this way so that we do not risk trashing the host mdraid
     # devices, volume groups, encrypted partitions, etc.
-    "$DRACUT" -N -i "$TESTDIR"/overlay / \
+    call_dracut -i "$TESTDIR"/overlay / \
         --add-confdir test-makeroot \
         -a "bash crypt lvm mdraid" \
         -I "grep cryptsetup" \
-        -i ./create-root.sh /lib/dracut/hooks/initqueue/01-create-root.sh \
-        -f "$TESTDIR"/initramfs.makeroot "$KVERSION" || return 1
+        -i ./create-root.sh /usr/lib/dracut/hooks/initqueue/01-create-root.sh \
+        -f "$TESTDIR"/initramfs.makeroot
 
     # Create the blank files to use as a root filesystem
     declare -a disk_args=()
-    declare -i disk_index=0
-    qemu_add_drive disk_index disk_args "$TESTDIR"/marker.img marker 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-1.img disk1 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-2.img disk2 1
-    qemu_add_drive disk_index disk_args "$TESTDIR"/disk-3.img disk3 1
+    qemu_add_drive disk_args "$TESTDIR"/marker.img marker 1
+    qemu_add_drive disk_args "$TESTDIR"/disk-1.img disk1 1
+    qemu_add_drive disk_args "$TESTDIR"/disk-2.img disk2 1
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=/dev/fakeroot quiet console=ttyS0,115200n81" \
-        -initrd "$TESTDIR"/initramfs.makeroot || return 1
-    test_marker_check dracut-root-block-created || return 1
-    cryptoUUIDS=$(grep -F --binary-files=text -m 3 ID_FS_UUID "$TESTDIR"/marker.img)
+        -append "root=/dev/fakeroot quiet" \
+        -initrd "$TESTDIR"/initramfs.makeroot
+    test_marker_check dracut-root-block-created
+    rm -rf "$TESTDIR"/overlay
+}
+
+test_setup() {
+    make_test_rootfs
+
+    cryptoUUIDS=$(grep -F -a -m 3 ID_FS_UUID "$TESTDIR"/marker.img)
     for uuid in $cryptoUUIDS; do
         eval "$uuid"
         printf ' rd.luks.uuid=luks-%s ' "$ID_FS_UUID"
@@ -102,8 +96,7 @@ test_setup() {
     test_dracut \
         -a "crypt lvm mdraid" \
         -i "/tmp/crypttab" "/etc/crypttab" \
-        -i "/tmp/key" "/etc/key" \
-        "$TESTDIR"/initramfs.testing
+        -i "/tmp/key" "/etc/key"
 }
 
 # shellcheck disable=SC1090
