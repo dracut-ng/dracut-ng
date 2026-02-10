@@ -400,6 +400,9 @@ Defaults to _initramfs-$\{kernel\}.img_.
 Let kernel-install create a rescue image (default=no).
 This configuration option applies only to kernel-install.
 
+*keep=*"__{yes|no}__"::
+Keep (do not delete) the temporary initramfs directory for debugging purposes.
+
 == Files
 _/etc/dracut.conf_::
 Old configuration file. It is recommended to use individual files in
