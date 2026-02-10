@@ -41,7 +41,7 @@ test_run() {
 }
 
 test_setup() {
-    build_client_rootfs "$TESTDIR/rootfs"
+    build_client_rootfs "$TESTDIR/rootfs" ./assertion.sh
     build_ext4_image "$TESTDIR/rootfs" "$TESTDIR"/root.img dracut
 
     rm -f "$TESTDIR"/overlay.img

@@ -94,7 +94,7 @@ test_run() {
 
 test_setup() {
     # Create what will eventually be our root filesystem onto an overlay
-    build_client_rootfs "$TESTDIR/rootfs"
+    build_client_rootfs "$TESTDIR/rootfs" ./assertion.sh
 
     # test to make sure /proc /sys and /dev is not needed inside the generated initrd
     rm -rf "$TESTDIR"/rootfs/proc "$TESTDIR"/rootfs/sys "$TESTDIR"/rootfs/dev

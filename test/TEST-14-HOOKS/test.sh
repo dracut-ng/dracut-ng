@@ -62,7 +62,7 @@ test_setup() {
         )
     done
 
-    build_client_rootfs "$TESTDIR/rootfs"
+    build_client_rootfs "$TESTDIR/rootfs" ./assertion.sh
     for hook in "${expected_hooks_run[@]}"; do
         echo "$hook" >> "$TESTDIR/rootfs/expected_hooks_run"
     done

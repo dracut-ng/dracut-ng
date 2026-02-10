@@ -24,7 +24,7 @@ test_run() {
 
 test_setup() {
     # create root filesystem
-    build_client_rootfs "$TESTDIR/rootfs"
+    build_client_rootfs "$TESTDIR/rootfs" ./assertion.sh
     build_ext4_image "$TESTDIR/rootfs" "$TESTDIR"/root.img dracut
 
     test_dracut --add-drivers "virtio_net" --add "qemu-net $USE_NETWORK"
