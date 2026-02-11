@@ -3,7 +3,7 @@
 set -e
 
 if ! [ -x /usr/bin/memdiskfind ]; then
-    exit 0
+    return 0
 fi
 
 if ! dd if=/dev/mem of=/dev/null bs=1 count=1 > /dev/null 2>&1; then
@@ -11,11 +11,11 @@ if ! dd if=/dev/mem of=/dev/null bs=1 count=1 > /dev/null 2>&1; then
     # where /dev/mem is unreadable.
     # Avoids ugly error message from memdiskfind.
     printf "access to /dev/mem is restricted, skipping memdisk setup"
-    exit 0
+    return 0
 fi
 
 if ! MEMDISK=$(/usr/bin/memdiskfind); then
-    exit 0
+    return 0
 fi
 
 # We found a memdisk, set up phram
