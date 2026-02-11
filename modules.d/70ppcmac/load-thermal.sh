@@ -3,7 +3,7 @@
 # This hook attempts to load the appropriate thermal modules
 # for PowerPC Macs depending on the specific machine you have.
 
-[ -r /proc/cpuinfo ] || exit 0
+[ -r /proc/cpuinfo ] || return 0
 
 load_windfarm() {
     local pm_model
