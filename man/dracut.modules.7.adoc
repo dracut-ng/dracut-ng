@@ -44,7 +44,12 @@ scripts and udev rules.
 dracut modules can insert custom script at various points, to control the boot
 process.
 These hooks are plain directories containing shell scripts ending with ".sh",
-which are sourced by init.
+which are sourced by init or other scripts.
+Since hook scripts are sourced instead of directly executed, "return" must
+be used instead of "exit" at the end of a hook to avoid having dracut quit
+prematurely.
+Please unset any used variables (or, better yet, use local variables within
+functions) to avoid influencing subsequent code.
 Common used functions are in _dracut-lib.sh_, which can be sourced by any script.
 
 dracut looks for custom hook scripts in subdirectories (cmdline, pre-udev,
