@@ -7,7 +7,7 @@ command -v getarg > /dev/null || . /lib/dracut-lib.sh
 # prevent starting again if already running
 if [ -f /var/run/syslogd.pid ]; then
     read -r pid < /var/run/syslogd.pid
-    kill -0 "$pid" && exit 0
+    kill -0 "$pid" && return 0
 fi
 
 rsyslog_config() {
