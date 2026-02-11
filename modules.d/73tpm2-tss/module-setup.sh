@@ -4,13 +4,15 @@
 
 # Prerequisite check(s) for module.
 check() {
-
     # If the binary(s) requirements are not fulfilled the module can't be installed.
     require_binaries tpm2 || return 1
 
-    # Return 255 to only include the module, if another module requires it.
-    return 255
+    # Include the tpm2-tss dracut module if TPM2 HW is available in sloppy hostonly mode
+    if [[ $hostonly_mode == "sloppy" ]] && [ -d "/sys/class/tpmrm" ] && [[ "$(ls -A /sys/class/tpmrm/)" ]]; then
+        return 0
+    fi
 
+    return 255
 }
 
 # Module dependency requirements.
