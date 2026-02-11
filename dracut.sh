@@ -1609,7 +1609,7 @@ module_check() {
     check() { true; }
     # shellcheck disable=SC1090
     . "$_moddir"/module-setup.sh
-    is_func check || return 0
+    _is_func check || return 0
     [[ $_forced != 0 ]] && unset hostonly
     # don't quote $hostonly to leave argument empty
     # shellcheck disable=SC2086

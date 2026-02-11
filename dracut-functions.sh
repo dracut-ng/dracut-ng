@@ -27,9 +27,9 @@
 #
 export LC_MESSAGES=C
 
-# is_func <command>
+# _is_func <command>
 # Check whether $1 is a function.
-is_func() {
+_is_func() {
     [[ "$(type -t "$1")" == "function" ]]
 }
 
@@ -1528,7 +1528,7 @@ _detect_library_directories() {
     echo "${libdirs# }"
 }
 
-if ! is_func dinfo > /dev/null 2>&1; then
+if ! _is_func dinfo > /dev/null 2>&1; then
     # shellcheck source=./dracut-logger.sh
     . "${BASH_SOURCE[0]%/*}/dracut-logger.sh"
     dlog_init
