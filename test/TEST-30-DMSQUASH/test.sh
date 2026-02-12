@@ -121,7 +121,7 @@ EOF
 
     # Write the erofs compressed filesystem to the partition
     if command -v mkfs.erofs &> /dev/null; then
-        mkfs.erofs "$TESTDIR"/root_erofs.img "$TESTDIR"/rootfs/
+        mkfs.erofs --quiet "$TESTDIR"/root_erofs.img "$TESTDIR"/rootfs/
     fi
 
     # iso drive

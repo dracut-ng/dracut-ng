@@ -86,7 +86,7 @@ test_setup() {
     # (e.g., in openSUSE distributions)
     if command -v mkfs.erofs &> /dev/null \
         && ! grep -q -r -w "blacklist erofs" /{etc,usr/lib}/modprobe.d; then
-        mkfs.erofs "$TESTDIR/root_erofs.img" "$TESTDIR/rootfs"
+        mkfs.erofs --quiet "$TESTDIR/root_erofs.img" "$TESTDIR/rootfs"
         images+=("root_erofs.img")
     fi
 
