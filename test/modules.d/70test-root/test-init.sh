@@ -54,7 +54,11 @@ if [ -s /run/failed ]; then
     cat /run/failed
     echo "**************************FAILED**************************"
 else
-    echo "dracut-root-block-success" | dd oflag=direct status=none of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
-    sync /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
+    # writing a marker is not necessary for all tests, but only for those that
+    # verify it using test_marker_check()
+    if [ -e /dev/disk/by-id ]; then
+        echo "dracut-root-block-success" | dd oflag=direct status=none of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
+        sync /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker
+    fi
     echo "All OK"
 fi
