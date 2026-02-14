@@ -123,6 +123,7 @@ install_minimal_systemd() {
 # Create a minimal root file system to simulate a client
 build_client_rootfs() {
     local rootdir="$1"
+    local assertion_file="${2-}"
     local binaries
 
     build_rootfs_base "$rootdir"
@@ -154,9 +155,9 @@ build_client_rootfs() {
         inst poweroff
     fi
 
-    if [[ -x assertion.sh ]]; then
-        inst_script ./assertion.sh /assertion.sh
-        binaries=$(sed -n "s/^# required binaries: \(.*\)/\1/p" ./assertion.sh)
+    if [[ -n $assertion_file ]]; then
+        inst_script "$assertion_file" /assertion.sh
+        binaries=$(sed -n "s/^# required binaries: \(.*\)/\1/p" "$assertion_file")
         # shellcheck disable=SC2086
         inst_multiple $binaries
     fi
