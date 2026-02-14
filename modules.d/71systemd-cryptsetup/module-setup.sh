@@ -23,7 +23,7 @@ check() {
 depends() {
     local deps
     deps="crypt systemd-ask-password"
-    if [[ $hostonly && -f "${dracutsysrootdir-}"/etc/crypttab ]]; then
+    if [[ ${hostonly-} && $hostonly_mode == "strict" && -f "${dracutsysrootdir-}"/etc/crypttab ]]; then
         if grep -q -e "fido2-device=" -e "fido2-cid=" "${dracutsysrootdir-}"/etc/crypttab; then
             deps+=" fido2"
         fi
@@ -33,7 +33,7 @@ depends() {
         if grep -q "tpm2-device=" "${dracutsysrootdir-}"/etc/crypttab; then
             deps+=" tpm2-tss"
         fi
-    elif [[ ! $hostonly ]]; then
+    else
         for module in fido2 pkcs11 tpm2-tss; do
             module_check $module > /dev/null 2>&1
             if [[ $? == 255 ]] && ! [[ " $omit_dracutmodules " == *\ $module\ * ]]; then
