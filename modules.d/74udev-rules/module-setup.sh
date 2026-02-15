@@ -101,6 +101,6 @@ install() {
         inst_multiple -H -o \
             "$udevconfdir"/udev.conf \
             "$udevconfdir/udev.conf.d/*.conf" \
-            "$udevrulesconfdir/*.rules"
+            "$udevconfdir/rules.d/*.rules"
     fi
 }

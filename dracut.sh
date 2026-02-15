@@ -2163,7 +2163,6 @@ set_global_var "dbus" "dbussystemservices" "${dbus}/system-services"
 set_global_var "udev" "udevdir" "/lib/udev:/lib/udev/ata_id" "/usr/lib/udev:/usr/lib/udev/ata_id"
 [[ $hostonly ]] && set_global_var "udev" "udevconfdir" "/etc/udev"
 set_global_var "udev" "udevrulesdir" "${udevdir}/rules.d"
-[[ $hostonly ]] && set_global_var "udev" "udevrulesconfdir" "${udevconfdir}/rules.d"
 
 # systemd global variables
 set_global_var "systemd" "prefix:systemdprefix" "/usr"
