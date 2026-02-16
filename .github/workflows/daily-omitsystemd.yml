@@ -16,7 +16,7 @@ jobs:
     omitsystemd:
         name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }} with no systemd
         runs-on: ${{ matrix.architecture.runner }}
-        timeout-minutes: 20
+        timeout-minutes: 40
         concurrency:
             group: >
                 daily-omitsystemd-${{ github.workflow }}-${{ github.ref }}
@@ -33,11 +33,19 @@ jobs:
                 test:
                     - "10"
                     - "11"
+                    - "13"
+                    - "14"
                     - "20"
                     - "21"
                     - "26"
                     - "30"
                     - "31"
+                    - "50"
+                    - "60"
+                    - "71"
+                    - "80"
+                    - "81"
+                    - "82"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm --privileged'
