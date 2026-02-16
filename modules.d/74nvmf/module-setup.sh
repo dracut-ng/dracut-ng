@@ -1,5 +1,15 @@
 #!/bin/bash
 
+__nvmf_has_nbft() {
+    local f found=
+    for f in /sys/firmware/acpi/tables/NBFT*; do
+        [ -f "$f" ] || continue
+        found=1
+        break
+    done
+    [[ $found ]]
+}
+
 # called by dracut
 check() {
     local -A nvmf_trtypes
@@ -32,16 +42,6 @@ check() {
         fi
     }
 
-    has_nbft() {
-        local f found=
-        for f in /sys/firmware/acpi/tables/NBFT*; do
-            [ -f "$f" ] || continue
-            found=1
-            break
-        done
-        [[ $found ]]
-    }
-
     [[ $hostonly ]] || [[ $mount_needs ]] && {
         [ -f /etc/nvme/hostnqn ] || return 255
         [ -f /etc/nvme/hostid ] || return 255
@@ -53,7 +53,7 @@ check() {
         require_kernel_modules "${!nvmf_trtypes[@]}" || return 1
         if [ ! -f /sys/class/fc/fc_udev_device/nvme_discovery ] \
             && [ ! -f /etc/nvme/discovery.conf ] \
-            && [ ! -f /etc/nvme/config.json ] && ! has_nbft; then
+            && [ ! -f /etc/nvme/config.json ] && ! __nvmf_has_nbft; then
             echo "No discovery arguments present"
             return 255
         fi
@@ -125,12 +125,14 @@ cmdline() {
                 [[ $i =~ ^trsvcid= ]] && trsvcid="${i#trsvcid=}"
             done
             [[ -z $traddr && -z $host_traddr && -z $trsvcid ]] && continue
+            [[ $trtype == tcp && $nvmf_nbft_mode == nbft ]] \
+                && __nvmf_has_nbft && continue
             # _nbft_subsystems is set in cmdline() scope below.
             # It lists all subsystems found in the NBFT in the format
             # "traddr,trsvcid"
             # If the subsystem found is listed in the NBFT, don't add it
             # explicitly to the command line.
-            if [[ $trtype == tcp ]]; then
+            if [[ $trtype == tcp && $nvmf_nbft_mode == match ]]; then
                 for nbft_entry in "${_nbft_subsystems[@]}"; do
                     if [[ "$traddr,$trsvcid" == "$nbft_entry" ]]; then
                         continue 2
