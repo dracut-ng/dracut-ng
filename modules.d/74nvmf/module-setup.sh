@@ -98,6 +98,7 @@ cmdline() {
         local _address
         local -a _address_parts
         local nbft_entry
+        local -a version
 
         [[ -L "/sys/dev/block/$_dev" ]] || return 0
         cd -P "/sys/dev/block/$_dev" || return 0
@@ -150,6 +151,13 @@ cmdline() {
     if [ -f /etc/nvme/hostid ]; then
         read -r _hostid < /etc/nvme/hostid
         echo -n " rd.nvmf.hostid=${_hostid}"
+    fi
+
+    if dracut_module_included network-manager; then
+        mapfile -t -d . version < <(NetworkManager --version)
+        [[ ${#version[@]} == 3 &&
+            $((10000 * version[0] + 100 * version[1] + version[2])) -ge 15400 ]] \
+            && echo -n " rd.nvmf.nm=1 "
     fi
 
     [[ $hostonly ]] || [[ $mount_needs ]] && {
