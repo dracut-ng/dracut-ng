@@ -75,6 +75,7 @@ RUN \
     ntfs-3g \
     nvme-cli \
     open-iscsi \
+    openssl \
     ovmf \
     parted \
     pcscd \

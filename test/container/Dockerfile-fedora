@@ -81,6 +81,7 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     NetworkManager \
     nfs-utils \
     nvme-cli \
+    openssl \
     parted \
     pcsc-lite \
     plymouth \

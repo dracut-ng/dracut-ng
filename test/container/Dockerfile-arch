@@ -48,6 +48,7 @@ RUN pacman --noconfirm -Syu \
     ntfs-3g \
     nvme-cli \
     open-iscsi \
+    openssl \
     parted \
     pciutils \
     pkgconf \
