@@ -42,6 +42,7 @@ RUN zypper --non-interactive install --no-recommends \
     NetworkManager \
     nfs-kernel-server \
     open-iscsi \
+    openssl \
     parted \
     pciutils \
     python3 \
