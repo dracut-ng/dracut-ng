@@ -97,10 +97,10 @@ install() {
 
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
-        inst_dir "$udevconfdir"
+        inst_dir /etc/udev
         inst_multiple -H -o \
-            "$udevconfdir"/udev.conf \
-            "$udevconfdir/udev.conf.d/*.conf" \
-            "$udevconfdir/rules.d/*.rules"
+            /etc/udev/udev.conf \
+            "/etc/udev/udev.conf.d/*.conf" \
+            "/etc/udev/rules.d/*.rules"
     fi
 }
