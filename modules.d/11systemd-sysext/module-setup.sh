@@ -17,7 +17,7 @@ check() {
 depends() {
 
     # This module has external dependency on other module(s).
-    echo systemd
+    echo systemd systemd-veritysetup
     # Return 0 to include the dependent module(s) in the initramfs.
     return 0
 
@@ -25,7 +25,7 @@ depends() {
 
 # Install kernel module(s).
 installkernel() {
-    hostonly=$(optional_hostonly) instmods -s erofs
+    hostonly=$(optional_hostonly) instmods -s erofs ext4 squashfs
     hostonly='' instmods loop
 }
 
@@ -41,7 +41,6 @@ install() {
     # regular files, but not with directory trees.
 
     inst_multiple -o \
-        "/usr/lib/extension-release.d/extension-release.*" \
         "$systemdsystemunitdir"/systemd-confext${_suffix}.service \
         "$systemdsystemunitdir/systemd-confext${_suffix}.service.d/*.conf" \
         "$systemdsystemunitdir"/systemd-sysext${_suffix}.service \
@@ -63,11 +62,9 @@ install() {
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
-            "/etc/extension-release.d/extension-release.*" \
             "$systemdsystemconfdir"/systemd-confext${_suffix}.service \
             "$systemdsystemconfdir/systemd-confext${_suffix}.service.d/*.conf" \
             "$systemdsystemconfdir"/systemd-sysext${_suffix}.service \
             "$systemdsystemconfdir/systemd-sysext${_suffix}.service.d/*.conf"
     fi
-
 }

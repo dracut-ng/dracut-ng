@@ -181,9 +181,10 @@ call_dracut() {
 # Check QEMU logs for success marker
 check_qemu_log() {
     local logfile="${1-$QEMU_LOGFILE}"
+    local message="${2-^All OK}"
 
-    if ! grep -q "^All OK" "${logfile}"; then
-        echo >&2 "E: Message 'All OK' not found in QEMU log output '${logfile}'."
+    if ! grep -q "${message}" "${logfile}"; then
+        echo >&2 "E: Message '${message}' not found in QEMU log output '${logfile}'."
         return 1
     fi
 }
