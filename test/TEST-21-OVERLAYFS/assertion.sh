@@ -20,6 +20,13 @@ if grep -q 'test.expect=device' /proc/cmdline; then
     if ! grep -q "/run/overlayfs-backing" /proc/mounts; then
         echo "persistent overlay device not mounted at /run/overlayfs-backing" >> /run/failed
     fi
+elif grep -q 'test.expect=crypt' /proc/cmdline; then
+    if ! grep -q "/run/overlayfs-backing" /proc/mounts; then
+        echo "encrypted overlay not mounted at /run/overlayfs-backing" >> /run/failed
+    fi
+    if [ ! -e /dev/mapper/overlay-crypt ]; then
+        echo "encrypted overlay device /dev/mapper/overlay-crypt not found" >> /run/failed
+    fi
 else
     if grep -q "/run/overlayfs-backing" /proc/mounts; then
         echo "persistent overlay device is mounted at /run/overlayfs-backing" >> /run/failed
