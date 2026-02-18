@@ -7,7 +7,7 @@ getargbool 0 rd.overlay -d rd.live.overlay.overlayfs && overlayfs="yes"
 getargbool 0 rd.overlay.readonly -d rd.live.overlayfs.readonly && readonly_overlay="--readonly" || readonly_overlay=""
 overlay=$(get_rd_overlay)
 
-[ -n "$overlayfs" ] || [ -n "$overlay" ] || return 0
+[ -n "$overlayfs" ] || [ -n "$overlay" ] || [ -e /run/overlayfs-crypt-ready ] || return 0
 
 # Only proceed if prepare-overlayfs.sh has run and set up rootfsbase.
 # This handles the case where root isn't available yet (e.g., network root like NFS).
