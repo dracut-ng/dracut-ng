@@ -1186,6 +1186,7 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $kernel_image_l ]] && kernel_image=$(path_rel_to_abs "$kernel_image_l")
 [[ $sbat_l ]] && sbat="$sbat_l"
 [[ $machine_id_l ]] && machine_id="$machine_id_l"
+[[ $nvmf_nbft_mode ]] || nvmf_nbft_mode=match
 
 # shellcheck source=./dracut-functions.sh
 . "$dracutbasedir"/dracut-functions.sh
@@ -2055,6 +2056,14 @@ else
     unset enhanced_cpio
 fi
 unset threecpio_help_output
+
+case $nvmf_nbft_mode in
+    nbft | match | static) ;;
+    *)
+        dwarn "Invalid value \"$nvmf_nbft_mode\" for nvmf_nbft_mode. Assuming \"match\"."
+        nvmf_nbft_mode=match
+        ;;
+esac
 
 if [[ $no_kernel != yes ]] && ! [[ -d $srcmods ]]; then
     dfatal "Cannot find module directory $srcmods"
