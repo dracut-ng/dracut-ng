@@ -1109,6 +1109,29 @@ The **rd.overlay.readonly** option, which allows a persistent overlayfs to
 be mounted read-only through a higher level transient overlay directory, has
 been implemented through the multiple lower layers feature of OverlayFS.
 
+**rd.overlay=**__tmpfs:{size=<size>[,nr_blocks=<n>,nr_inodes=<n>]}__::
+Mounts a dedicated tmpfs with the specified options for the OverlayFS upper
+directory, instead of using the default `/run` tmpfs.  This allows controlling
+the size of the writable overlay at boot time, which is useful for deployments
+where the available RAM is known in advance (e.g. MAAS ephemeral environments).
++
+Supported options (comma-separated):
++
+--
+* _size=<size>_ - Maximum size of the tmpfs (e.g. `4G`, `512M`, `25%`).
+  Accepts the same values as the tmpfs `size=` mount option.
+* _nr_blocks=<n>_ - Maximum number of blocks allocated to the tmpfs.
+* _nr_inodes=<n>_ - Maximum number of inodes in the tmpfs.
+--
++
+[listing]
+.Examples
+----
+rd.overlay=tmpfs:size=4G
+rd.overlay=tmpfs:size=25%
+rd.overlay=tmpfs:size=512M,nr_inodes=100000
+----
+
 **rd.overlay=**__{LABEL=<label>|UUID=<uuid>|PARTUUID=<uuid>|PARTLABEL=<label>|/dev/<device>}__::
 Specifies the storage device for persistent overlay (for both live images and
 regular OverlayFS).  When a block device is specified, it will be mounted and

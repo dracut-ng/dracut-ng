@@ -10,6 +10,7 @@ overlay=$(get_rd_overlay)
 
 overlay_mode="tmpfs"
 overlay_device=""
+overlay_tmpfs_opts=""
 
 case "$overlay" in
     LABEL=* | UUID=* | PARTLABEL=* | PARTUUID=* | /dev/*)
@@ -19,6 +20,24 @@ case "$overlay" in
             warn "Failed to resolve device from '$overlay', falling back to tmpfs"
             overlay_mode="tmpfs"
         fi
+        ;;
+    tmpfs:*)
+        overlay_mode="tmpfs"
+        # Parse comma-separated key=value pairs from rd.overlay=tmpfs:key=val,
+        old_IFS="$IFS"
+        IFS=,
+        set -f
+        for _param in ${overlay#tmpfs:}; do
+            _key="${_param%%=*}"
+            _val="${_param#*=}"
+            case "$_key" in
+                size | nr_blocks | nr_inodes)
+                    overlay_tmpfs_opts="${overlay_tmpfs_opts:+${overlay_tmpfs_opts},}${_key}=${_val}"
+                    ;;
+            esac
+        done
+        set +f
+        IFS="$old_IFS"
         ;;
     *)
         # For dmsquash-live compatibility, any other format uses tmpfs
@@ -61,10 +80,20 @@ if [ "$overlay_mode" = "tmpfs" ]; then
     info "Using tmpfs overlay (changes will not persist across reboots)"
 
     [ -d /run/overlayfs ] || {
-        mkdir -m 0755 -p /run/initramfs/overlay/overlayfs
-        mkdir -m 0755 -p /run/initramfs/overlay/ovlwork
-        ln -sf /run/initramfs/overlay/overlayfs /run/overlayfs
-        ln -sf /run/initramfs/overlay/ovlwork /run/ovlwork
+        _overlay_dir="/run/initramfs/overlay"
+        if [ -n "$overlay_tmpfs_opts" ]; then
+            info "Mounting tmpfs overlay with options: ${overlay_tmpfs_opts}"
+            mkdir -m 0755 -p /run/overlayfs-tmpfs
+            if mount -t tmpfs -o "${overlay_tmpfs_opts}" tmpfs /run/overlayfs-tmpfs; then
+                _overlay_dir="/run/overlayfs-tmpfs"
+            else
+                warn "Failed to mount tmpfs with options '${overlay_tmpfs_opts}', using default"
+            fi
+        fi
+        mkdir -m 0755 -p "${_overlay_dir}/overlayfs"
+        mkdir -m 0755 -p "${_overlay_dir}/ovlwork"
+        ln -sf "${_overlay_dir}/overlayfs" /run/overlayfs
+        ln -sf "${_overlay_dir}/ovlwork" /run/ovlwork
     }
 fi
 
