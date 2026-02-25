@@ -5,7 +5,16 @@ set -eu
 
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 ARCH="${ARCH-$(uname -m)}"
-QEMU_CPU="${QEMU_CPU:-max}"
+if [ -z "${QEMU_CPU-}" ]; then
+    case "$ARCH" in
+        aarch64 | arm64)
+            QEMU_CPU="neoverse-n1"
+            ;;
+        *)
+            QEMU_CPU="max"
+            ;;
+    esac
+fi
 
 add_to_append() {
     local extra="$1"
