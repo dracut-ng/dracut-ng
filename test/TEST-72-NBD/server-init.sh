@@ -46,9 +46,6 @@ linkup() {
     wait_for_if_link "$1" 2> /dev/null && ip link set "$1" up 2> /dev/null && wait_for_if_up "$1" 2> /dev/null
 }
 
-ip addr add 127.0.0.1/8 dev lo
-ip link set lo up
-
 wait_for_if_link enx525400123456
 ip addr add 192.168.50.1/24 dev enx525400123456
 linkup enx525400123456
