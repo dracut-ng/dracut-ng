@@ -55,8 +55,6 @@ linkup enx525400123456
 ip addr add 192.168.51.1/24 dev enx525400123457
 linkup enx525400123457
 
-modprobe af_packet
-
 dnsmasq
 
 tgtd

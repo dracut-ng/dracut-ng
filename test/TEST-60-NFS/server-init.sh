@@ -55,8 +55,6 @@ ip addr add 192.168.50.3/24 dev enx525400123456
 linkup enx525400123456
 
 : > /dev/watchdog
-modprobe af_packet
-: > /dev/watchdog
 mkdir /nfs/nfs3-4
 mount --bind /nfs/client /nfs/nfs3-4
 : > /dev/watchdog

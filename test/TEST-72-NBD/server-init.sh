@@ -50,7 +50,6 @@ wait_for_if_link enx525400123456
 ip addr add 192.168.50.1/24 dev enx525400123456
 linkup enx525400123456
 
-modprobe af_packet
 nbd-server
 dnsmasq
 echo "Serving NBD disks"
