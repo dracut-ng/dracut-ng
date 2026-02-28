@@ -39,6 +39,12 @@ install() {
         inst_simple "${moddir}/sysconfig" "/etc/sysconfig/rngd"
     fi
 
+    # Install the hosts local configurations
+    if [[ $hostonly ]]; then
+        inst_multiple -H -o \
+            /etc/conf.d/rngd
+    fi
+
     # make sure dependent libs are installed too
     inst_libdir_file opensc-pkcs11.so
 
