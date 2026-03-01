@@ -129,6 +129,10 @@ code, there are no specific types or categories for dracut modules.
 | queue for the initramfs boot process
 | library
 
+| isoscan
+| support for iso-scan/filename command line to boot from iso file
+|
+
 | kernel-modules
 | kernel modules for root filesystems and other boot-time devices
 | kernel
