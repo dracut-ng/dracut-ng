@@ -251,6 +251,10 @@ connman:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]connman/*'
 
+devicetree-firmware:
+    - changed-files:
+          - any-glob-to-any-file: 'modules.d/[0-9][0-9]devicetree-firmware/*'
+
 network-legacy:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]network-legacy/*'

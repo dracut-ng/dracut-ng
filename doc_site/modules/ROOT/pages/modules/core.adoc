@@ -69,6 +69,10 @@ code, there are no specific types or categories for dracut modules.
 | debug features
 |
 
+| devicetree-firmware
+| add firmware files from DT firmware-name properties
+|
+
 | dm
 | device-mapper
 | library
