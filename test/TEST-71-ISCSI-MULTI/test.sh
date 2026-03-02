@@ -23,9 +23,10 @@ run_server() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
-        -net nic,macaddr=52:54:00:12:34:56,model=virtio \
-        -net nic,macaddr=52:54:00:12:34:57,model=virtio \
-        -net socket,listen=127.0.0.1:12331 \
+        -device virtio-net-pci,netdev=lan0,mac=52:54:00:12:34:56 \
+        -netdev socket,id=lan0,listen=127.0.0.1:60710 \
+        -device virtio-net-pci,netdev=lan1,mac=52:54:00:12:34:57 \
+        -netdev socket,id=lan1,listen=127.0.0.1:60711 \
         -append "panic=1 oops=panic softlockup_panic=1 systemd.crash_reboot root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_serverroot rootfstype=ext4 rw systemd.journald.forward_to_console=1 ${SERVER_DEBUG-}" \
         -pidfile "$TESTDIR"/server.pid -daemonize \
         -initrd "$TESTDIR"/initramfs.server
@@ -50,9 +51,10 @@ run_client() {
     test_marker_reset
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -net nic,macaddr=52:54:00:12:34:00,model=virtio \
-        -net nic,macaddr=52:54:00:12:34:01,model=virtio \
-        -net socket,connect=127.0.0.1:12331 \
+        -device virtio-net-pci,netdev=lan0,mac=52:54:00:12:34:00 \
+        -netdev socket,id=lan0,connect=127.0.0.1:60710 \
+        -device virtio-net-pci,netdev=lan1,mac=52:54:00:12:34:01 \
+        -netdev socket,id=lan1,connect=127.0.0.1:60711 \
         -append "$TEST_KERNEL_CMDLINE rw rd.auto $*" \
         -initrd "$TESTDIR"/initramfs.testing
     if ! test_marker_check iscsi-OK; then
