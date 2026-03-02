@@ -59,14 +59,14 @@ linkup enx525400123456
 : > /dev/watchdog
 modprobe af_packet
 : > /dev/watchdog
-mkdir /nfs/nfs3-5
-mount --bind /nfs/client /nfs/nfs3-5
+mkdir /nfs/nfs3-4
+mount --bind /nfs/client /nfs/nfs3-4
 : > /dev/watchdog
 mkdir -p /nfs/ip/192.168.50.101
 mount --bind /nfs/client /nfs/ip/192.168.50.101
 : > /dev/watchdog
-mkdir -p /nfs/tftpboot/nfs4-5
-mount --bind /nfs/client /nfs/tftpboot/nfs4-5
+mkdir -p /nfs/tftpboot/nfs4-4
+mount --bind /nfs/client /nfs/tftpboot/nfs4-4
 : > /dev/watchdog
 modprobe sunrpc
 : > /dev/watchdog
