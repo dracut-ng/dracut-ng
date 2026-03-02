@@ -30,14 +30,14 @@ run_server() {
         "${disk_args[@]}" \
         -net socket,listen=127.0.0.1:12320 \
         -net nic,macaddr=52:54:00:12:34:56,model=virtio \
-        -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
+        -serial "${SERIAL:-"file:./server${TEST_RUN_ID:+-$TEST_RUN_ID}.log"}" \
         -append "panic=1 oops=panic softlockup_panic=1 root=LABEL=dracut rootfstype=ext4 rw systemd.journald.forward_to_console=1 ${SERVER_DEBUG-}" \
         -pidfile "$TESTDIR"/server.pid -daemonize \
         -initrd "$TESTDIR"/initramfs.server
     chmod 644 "$TESTDIR"/server.pid
 
     if ! [[ ${SERIAL-} ]]; then
-        wait_for_server_startup
+        wait_for_server_startup "./server${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
     else
         echo Sleeping 10 seconds to give the server a head start
         sleep 10
