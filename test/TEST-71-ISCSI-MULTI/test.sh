@@ -22,7 +22,7 @@ run_server() {
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
+        -serial "${SERIAL:-"file:./server${TEST_RUN_ID:+-$TEST_RUN_ID}.log"}" \
         -device virtio-net-pci,netdev=lan0,mac=52:54:00:12:34:56 \
         -netdev socket,id=lan0,listen=127.0.0.1:60710 \
         -device virtio-net-pci,netdev=lan1,mac=52:54:00:12:34:57 \
@@ -33,7 +33,7 @@ run_server() {
     chmod 644 "$TESTDIR"/server.pid
 
     if ! [[ ${SERIAL-} ]]; then
-        wait_for_server_startup
+        wait_for_server_startup "./server${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
     else
         echo Sleeping 10 seconds to give the server a head start
         sleep 10

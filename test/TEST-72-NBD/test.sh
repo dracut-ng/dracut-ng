@@ -32,7 +32,7 @@ run_server() {
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -serial "${SERIAL:-"file:$TESTDIR/server.log"}" \
+        -serial "${SERIAL:-"file:./server${TEST_RUN_ID:+-$TEST_RUN_ID}.log"}" \
         -net nic,macaddr=52:54:00:12:34:56,model=virtio \
         -net socket,listen=127.0.0.1:12340 \
         -append "panic=1 oops=panic softlockup_panic=1 rd.luks=0 systemd.crash_reboot quiet root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_serverroot rootfstype=ext4 rw systemd.journald.forward_to_console=1 ${SERVER_DEBUG-}" \
@@ -41,7 +41,7 @@ run_server() {
     chmod 644 "$TESTDIR"/server.pid
 
     if ! [[ ${SERIAL-} ]]; then
-        wait_for_server_startup
+        wait_for_server_startup "./server${TEST_RUN_ID:+-$TEST_RUN_ID}.log"
     else
         echo Sleeping 10 seconds to give the server a head start
         sleep 10
