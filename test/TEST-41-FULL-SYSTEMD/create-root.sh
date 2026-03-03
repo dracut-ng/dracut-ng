@@ -5,7 +5,7 @@ set -e
 
 modprobe btrfs || :
 mkfs.btrfs -q -L dracut /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root
-printf test > keyfile
+printf verySecurePassword > keyfile
 cryptsetup --pbkdf pbkdf2 -q luksFormat /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_crypt /keyfile
 cryptsetup luksOpen /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_root_crypt dracut_crypt_test < /keyfile
 mkfs.btrfs -q -L dracut_crypt /dev/mapper/dracut_crypt_test

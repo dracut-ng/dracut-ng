@@ -2,7 +2,7 @@
 
 trap 'poweroff -f' EXIT
 set -ex
-printf test > keyfile
+printf verySecurePassword > keyfile
 cryptsetup --pbkdf pbkdf2 -q luksFormat /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk1 /keyfile
 cryptsetup --pbkdf pbkdf2 -q luksFormat /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk2 /keyfile
 cryptsetup luksOpen /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk1 dracut_disk1 < /keyfile

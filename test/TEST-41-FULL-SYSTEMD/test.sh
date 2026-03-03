@@ -107,7 +107,7 @@ test_setup() {
     test_marker_check dracut-root-block-created
 
     grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img > "$TESTDIR"/luks.uuid
-    echo -n test > /tmp/key
+    echo -n verySecurePassword > /tmp/key
 
     # force add all available dracut modules that are dependent on systemd
     test_dracut --keep \
