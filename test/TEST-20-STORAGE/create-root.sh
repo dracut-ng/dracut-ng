@@ -23,9 +23,9 @@ else
     fi
 
     if ! grep -qF 'rd.luks=0' /proc/cmdline && command -v cryptsetup > /dev/null; then
-        printf test > keyfile
+        printf verySecurePassword > keyfile
         cryptsetup --pbkdf pbkdf2 -q luksFormat /dev/md0 /keyfile
-        echo "The passphrase is test"
+        echo "The passphrase is verySecurePassword"
         cryptsetup luksOpen /dev/md0 dracut_crypt_test < /keyfile
         lvm pvcreate -ff -y /dev/mapper/dracut_crypt_test
         lvm vgcreate dracut /dev/mapper/dracut_crypt_test

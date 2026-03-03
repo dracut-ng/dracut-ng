@@ -255,7 +255,7 @@ test_setup() {
     . "$TESTDIR"/luks.uuid
 
     echo "luks-$ID_FS_UUID /dev/nbd0 /etc/key" > /tmp/crypttab
-    echo -n test > /tmp/key
+    echo -n verySecurePassword > /tmp/key
 
     test_dracut \
         --no-hostonly \

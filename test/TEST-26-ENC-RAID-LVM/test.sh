@@ -90,7 +90,7 @@ test_setup() {
         printf 'luks-%s /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_disk%s /etc/key timeout=0\n' "$ID_FS_UUID" $i
         ((i += 1))
     done > /tmp/crypttab
-    echo -n test > /tmp/key
+    echo -n verySecurePassword > /tmp/key
     chmod 0600 /tmp/key
 
     test_dracut \

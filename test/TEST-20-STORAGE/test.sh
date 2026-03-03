@@ -152,7 +152,7 @@ test_setup() {
         eval "$(grep -F -a -m 1 ID_FS_UUID "$TESTDIR"/marker.img)"
         echo "$ID_FS_UUID" > "$TESTDIR"/luksuuid
         echo "testluks UUID=$ID_FS_UUID /etc/key" > /tmp/crypttab
-        echo -n "test" > /tmp/key
+        echo -n "verySecurePassword" > /tmp/key
         chmod 0600 /tmp/key
     fi
 
