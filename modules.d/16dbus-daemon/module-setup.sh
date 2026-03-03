@@ -50,14 +50,16 @@ install() {
         "$systemdsystemunitdir"/sockets.target.wants/dbus.socket \
         busctl dbus-send dbus-daemon
 
-    # Adjusting dependencies for initramfs in the dbus service unit.
+    # Remove After/Requires=sysinit.target and After=basic.target for initramfs in the dbus service unit.
     sed -i -e \
-        '/^\[Unit\]/aDefaultDependencies=no\nConflicts=shutdown.target\nBefore=shutdown.target' \
+        '/^\(After\|DefaultDependencies\|Requires\)=/d
+        /^\[Unit\]/aDefaultDependencies=no\nConflicts=shutdown.target\nBefore=shutdown.target' \
         "$initdir$systemdsystemunitdir/dbus.service"
 
-    # Adjusting dependencies for initramfs in the dbus socket unit.
+    # Remove After/Requires=sysinit.target for initramfs in the dbus socket unit.
     sed -i -e \
-        '/^\[Unit\]/aDefaultDependencies=no\nConflicts=shutdown.target\nBefore=shutdown.target
+        '/^\(After\|DefaultDependencies\|Requires\)=/d
+        /^\[Unit\]/aDefaultDependencies=no\nConflicts=shutdown.target\nBefore=shutdown.target sockets.target
         /^\[Socket\]/aRemoveOnStop=yes' \
         "$initdir$systemdsystemunitdir/dbus.socket"
 
