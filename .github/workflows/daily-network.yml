@@ -16,7 +16,7 @@ jobs:
     network:
         name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }}
         runs-on: ${{ matrix.architecture.runner }}
-        timeout-minutes: 40
+        timeout-minutes: ${{ matrix.architecture.timeout }}
         concurrency:
             group: >
                 daily-network-${{ github.workflow }}-${{ github.ref }}
@@ -26,8 +26,8 @@ jobs:
             fail-fast: false
             matrix:
                 architecture:
-                    - {runner: 'ubuntu-24.04', tag: 'amd'}
-                    - {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                    - {runner: 'ubuntu-24.04', tag: 'amd', timeout: 20}
+                    - {runner: 'ubuntu-24.04-arm', tag: 'arm', timeout: 60}
                 container:
                     - arch:latest
                     - debian:latest
