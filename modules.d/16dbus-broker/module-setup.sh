@@ -53,9 +53,10 @@ install() {
         "$systemdsystemunitdir"/dbus.target.wants \
         busctl dbus-broker dbus-broker-launch
 
-    # Adjusting dependencies for initramfs in the dbus socket unit.
+    # Remove After/Requires=sysinit.target for initramfs in the dbus socket unit.
     sed -i -e \
-        '/^\[Unit\]/aDefaultDependencies=no\nConflicts=shutdown.target\nBefore=shutdown.target
+        '/^\(After\|DefaultDependencies\|Requires\)=/d
+        /^\[Unit\]/aDefaultDependencies=no\nConflicts=shutdown.target\nBefore=shutdown.target sockets.target
         /^\[Socket\]/aRemoveOnStop=yes' \
         "$initdir$systemdsystemunitdir/dbus.socket"
 
