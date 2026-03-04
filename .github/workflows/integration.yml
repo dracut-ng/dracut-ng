@@ -40,7 +40,8 @@ jobs:
                     - gentoo:latest
                     - opensuse:latest
                     - ubuntu:devel
-                    - void:latest
+                    # Fails due escaping bug in dash 0.5.13.1: https://github.com/dracut-ng/dracut-ng/issues/2280
+                    # - void:latest
                 test:
                     - "10"
         container:
@@ -85,7 +86,8 @@ jobs:
                     - gentoo:latest
                     - opensuse:latest
                     - ubuntu:devel
-                    - void:latest
+                    # Fails due escaping bug in dash 0.5.13.1: https://github.com/dracut-ng/dracut-ng/issues/2280
+                    # - void:latest
                 test:
                     - "11"
                     - "12"
@@ -280,7 +282,8 @@ jobs:
                     - debian:latest
                     - opensuse:latest
                     - ubuntu:rolling
-                    - void:latest
+                    # Fails due escaping bug in dash 0.5.13.1: https://github.com/dracut-ng/dracut-ng/issues/2280
+                    # - void:latest
                 test:
                     - "10"
         container:
