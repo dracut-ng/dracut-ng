@@ -28,8 +28,8 @@ run_server() {
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -net socket,listen=127.0.0.1:12320 \
-        -net nic,macaddr=52:54:00:12:34:56,model=virtio \
+        -device virtio-net-pci,netdev=lan0,mac=52:54:00:12:34:56 \
+        -netdev dgram,id=lan0,local.type=inet,local.host=localhost,local.port=60600,remote.type=inet,remote.host=localhost,remote.port=60601 \
         -serial "${SERIAL:-"file:./server${TEST_RUN_ID:+-$TEST_RUN_ID}.log"}" \
         -append "panic=1 oops=panic softlockup_panic=1 root=LABEL=dracut rootfstype=ext4 rw systemd.journald.forward_to_console=1 ${SERVER_DEBUG-}" \
         -pidfile "$TESTDIR"/server.pid -daemonize \
@@ -61,8 +61,8 @@ client_test() {
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -net nic,macaddr="$mac",model=virtio \
-        -net socket,connect=127.0.0.1:12320 \
+        -device virtio-net-pci,netdev=lan0,mac="$mac" \
+        -netdev dgram,id=lan0,local.type=inet,local.host=localhost,local.port=60601,remote.type=inet,remote.host=localhost,remote.port=60600 \
         -append "$TEST_KERNEL_CMDLINE $cmdline ro" \
         -initrd "$TESTDIR"/initramfs.testing
 

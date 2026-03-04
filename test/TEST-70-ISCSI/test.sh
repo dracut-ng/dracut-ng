@@ -24,9 +24,9 @@ run_server() {
         "${disk_args[@]}" \
         -serial "${SERIAL:-"file:./server${TEST_RUN_ID:+-$TEST_RUN_ID}.log"}" \
         -device virtio-net-pci,netdev=lan0,mac=52:54:00:12:34:56 \
-        -netdev socket,id=lan0,listen=127.0.0.1:60700 \
+        -netdev dgram,id=lan0,local.type=inet,local.host=localhost,local.port=60700,remote.type=inet,remote.host=localhost,remote.port=60701 \
         -device virtio-net-pci,netdev=lan1,mac=52:54:00:12:34:57 \
-        -netdev socket,id=lan1,listen=127.0.0.1:60701 \
+        -netdev dgram,id=lan1,local.type=inet,local.host=localhost,local.port=60702,remote.type=inet,remote.host=localhost,remote.port=60703 \
         -append "panic=1 oops=panic softlockup_panic=1 quiet root=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_serverroot rw systemd.journald.forward_to_console=1 ${SERVER_DEBUG-}" \
         -pidfile "$TESTDIR"/server.pid -daemonize \
         -initrd "$TESTDIR"/initramfs.server
@@ -54,9 +54,9 @@ run_client() {
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
         -device virtio-net-pci,netdev=lan0,mac=52:54:00:12:34:00 \
-        -netdev socket,id=lan0,connect=127.0.0.1:60700 \
+        -netdev dgram,id=lan0,local.type=inet,local.host=localhost,local.port=60701,remote.type=inet,remote.host=localhost,remote.port=60700 \
         -device virtio-net-pci,netdev=lan1,mac=52:54:00:12:34:01 \
-        -netdev socket,id=lan1,connect=127.0.0.1:60701 \
+        -netdev dgram,id=lan1,local.type=inet,local.host=localhost,local.port=60703,remote.type=inet,remote.host=localhost,remote.port=60702 \
         ${acpitable_file:+-acpitable "file=${acpitable_file}"} \
         -append "$TEST_KERNEL_CMDLINE $*" \
         -initrd "$TESTDIR"/initramfs.testing
