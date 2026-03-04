@@ -129,41 +129,41 @@ test_nfsv3() {
     client_test "NFSv3 Legacy root=/dev/nfs nfsroot=IP:path" 52:54:00:12:34:01 \
         "root=/dev/nfs nfsroot=192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096
 
-    client_test "NFSv3 Legacy root=/dev/nfs DHCP path only" 52:54:00:12:34:00 \
+    client_test "NFSv3 Legacy root=/dev/nfs DHCP path only" 52:54:00:12:34:02 \
         "root=/dev/nfs" 192.168.50.1 -wsize=4096
 
-    client_test "NFSv3 Legacy root=/dev/nfs DHCP IP:path" 52:54:00:12:34:01 \
+    client_test "NFSv3 Legacy root=/dev/nfs DHCP IP:path" 52:54:00:12:34:03 \
         "root=/dev/nfs" 192.168.50.2 -wsize=4096
 
-    client_test "NFSv3 root=dhcp DHCP IP:path" 52:54:00:12:34:01 \
+    client_test "NFSv3 root=dhcp DHCP IP:path" 52:54:00:12:34:04 \
         "root=dhcp" 192.168.50.2 -wsize=4096
 
-    client_test "NFSv3 root=dhcp DHCP proto:IP:path" 52:54:00:12:34:02 \
+    client_test "NFSv3 root=dhcp DHCP proto:IP:path" 52:54:00:12:34:05 \
         "root=dhcp" 192.168.50.3 -wsize=4096
 
-    client_test "NFSv3 root=dhcp DHCP proto:IP:path:options" 52:54:00:12:34:03 \
+    client_test "NFSv3 root=dhcp DHCP proto:IP:path:options" 52:54:00:12:34:06 \
         "root=dhcp" 192.168.50.3 wsize=4096
 
-    client_test "NFSv3 root=nfs:..." 52:54:00:12:34:04 \
+    client_test "NFSv3 root=nfs:..." 52:54:00:12:34:07 \
         "root=nfs:192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096
 
-    client_test "NFSv3 Bridge root=nfs:..." 52:54:00:12:34:04 \
+    client_test "NFSv3 Bridge root=nfs:..." 52:54:00:12:34:08 \
         "root=nfs:192.168.50.1:/nfs/client bridge net.ifnames=0" 192.168.50.1 -wsize=4096
 
-    client_test "NFSv3 Legacy root=IP:path" 52:54:00:12:34:04 \
+    client_test "NFSv3 Legacy root=IP:path" 52:54:00:12:34:09 \
         "root=192.168.50.1:/nfs/client" 192.168.50.1 -wsize=4096
 
-    client_test "NFSv3 root=dhcp DHCP path,options" 52:54:00:12:34:05 \
+    client_test "NFSv3 root=dhcp DHCP path,options" 52:54:00:12:34:10 \
         "root=dhcp" 192.168.50.1 wsize=4096
 
-    client_test "NFSv3 root=dhcp DHCP IP:path,options" 52:54:00:12:34:06 \
+    client_test "NFSv3 root=dhcp DHCP IP:path,options" 52:54:00:12:34:11 \
         "root=dhcp" 192.168.50.2 wsize=4096
 
-    client_test "NFSv3 root=dhcp DHCP proto:IP:path,options" 52:54:00:12:34:07 \
+    client_test "NFSv3 root=dhcp DHCP proto:IP:path,options" 52:54:00:12:34:12 \
         "root=dhcp" 192.168.50.3 wsize=4096
 
     # TODO FIXME
-    #    client_test "NFSv3 Bridge Customized root=dhcp DHCP path,options" 52:54:00:12:34:05 \
+    #    client_test "NFSv3 Bridge Customized root=dhcp DHCP path,options" 52:54:00:12:34:13 \
     #        "root=dhcp bridge=foobr0:enp0s1" 192.168.50.1 wsize=4096
 
     return 0
@@ -174,22 +174,22 @@ test_nfsv4() {
     # server, so put these later in the list to avoid a pause when doing
     # switch_root
 
-    client_test "NFSv4 root=dhcp DHCP proto:IP:path" 52:54:00:12:34:82 \
+    client_test "NFSv4 root=dhcp DHCP proto:IP:path" 52:54:00:12:34:80 \
         "root=dhcp" 192.168.50.3 -wsize=4096
 
-    client_test "NFSv4 root=dhcp DHCP proto:IP:path:options" 52:54:00:12:34:83 \
+    client_test "NFSv4 root=dhcp DHCP proto:IP:path:options" 52:54:00:12:34:81 \
         "root=dhcp" 192.168.50.3 wsize=4096
 
-    client_test "NFSv4 root=nfs4:..." 52:54:00:12:34:84 \
+    client_test "NFSv4 root=nfs4:..." 52:54:00:12:34:82 \
         "root=nfs4:192.168.50.1:/client" 192.168.50.1 -wsize=4096
 
-    client_test "NFSv4 root=dhcp DHCP proto:IP:path,options" 52:54:00:12:34:87 \
+    client_test "NFSv4 root=dhcp DHCP proto:IP:path,options" 52:54:00:12:34:83 \
         "root=dhcp" 192.168.50.3 wsize=4096
 
     client_test "NFSv4 Overlayfs root=nfs4:..." 52:54:00:12:34:84 \
         "root=nfs4:192.168.50.1:/client rd.overlay " 192.168.50.1 -wsize=4096
 
-    client_test "NFSv4 Live Overlayfs root=nfs4:..." 52:54:00:12:34:84 \
+    client_test "NFSv4 Live Overlayfs root=nfs4:..." 52:54:00:12:34:85 \
         "root=nfs4:192.168.50.1:/client rd.live.image rd.overlay" 192.168.50.1 -wsize=4096
 
     return 0
