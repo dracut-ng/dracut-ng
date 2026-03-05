@@ -157,19 +157,16 @@ make_client_rootfs() {
 }
 
 make_server_rootfs() {
-    call_dracut --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -a "$USE_NETWORK" \
-        -d "iscsi_tcp crc32c ipv6" \
-        -I "modprobe chmod ip setsid pidof tgtd tgtadm /etc/passwd" \
-        --install-optional "/etc/netconfig dnsmasq /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
-        -i "./dnsmasq.conf" "/etc/dnsmasq.conf" \
-        -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/server-rootfs
-    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/server-rootfs
-    rm -rf "$TESTDIR"/dracut.*
+    build_rootfs_base "$TESTDIR"/server-rootfs
 
-    inst_init ./server-init.sh "$TESTDIR"/server-rootfs
+    binaries=$(sed -n "s/^# required binaries: \(.*\)/\1/p" ./server-init.sh)
+    # shellcheck disable=SC2086
+    inst_multiple $binaries
+    inst_script ./server-init.sh /sbin/init
+
+    inst ./dnsmasq.conf /etc/dnsmasq.conf
+    echo "root:x:0:0:root:/root:/bin/sh" > "$initdir/etc/passwd"
+    echo "root:x:0:" > "$initdir/etc/group"
 
     build_ext4_image "$TESTDIR/server-rootfs" "$TESTDIR"/server.img dracut
     rm -rf "$TESTDIR"/server-rootfs
