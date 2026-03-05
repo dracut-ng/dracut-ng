@@ -239,7 +239,8 @@ make_server_rootfs() {
 
     export initdir=$TESTDIR/server-rootfs
     mkdir -p "$initdir"/var/lib/rpcbind "$initdir"/var/lib/nfs/{v4recovery,rpc_pipefs}
-    chmod 777 "$initdir"/var/lib/rpcbind
+    : > "$initdir"/var/lib/nfs/rmtab
+    chmod 777 "$initdir"/var/lib/{nfs/rmtab,rpcbind}
     inst_init ./server-init.sh "$initdir"
     cp ./exports "$initdir"/etc/exports
     cp ./dnsmasq.conf "$initdir"/etc/dnsmasq.conf
