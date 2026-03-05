@@ -213,8 +213,10 @@ make_client_rootfs() {
 
 make_server_rootfs() {
     rm -fr "$TESTDIR"/server-rootfs
+    build_rootfs_base "$TESTDIR"/server-rootfs
 
-    cat > /tmp/config << EOF
+    mkdir -p "$initdir/etc/nbd-server"
+    cat > "$initdir/etc/nbd-server/config" << EOF
 [generic]
 [raw]
 exportname = /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_unencrypted
@@ -226,21 +228,14 @@ port = 2001
 bs = 4096
 EOF
 
-    call_dracut --keep --tmpdir "$TESTDIR" \
-        --add-confdir test-root \
-        -a "$USE_NETWORK" \
-        -I "ip grep sleep nbd-server chmod modprobe pidof" \
-        --install-optional "/etc/netconfig dnsmasq /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
-        -i /tmp/config /etc/nbd-server/config \
-        -i "./dnsmasq.conf" "/etc/dnsmasq.conf" \
-        --no-hostonly \
-        -f "$TESTDIR"/initramfs.root
-    mkdir -p "$TESTDIR"/server-rootfs
-    mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/server-rootfs
-    rm -rf "$TESTDIR"/dracut.*
+    binaries=$(sed -n "s/^# required binaries: \(.*\)/\1/p" ./server-init.sh)
+    # shellcheck disable=SC2086
+    inst_multiple $binaries
+    inst_script ./server-init.sh /sbin/init
 
-    mkdir -p -- "$TESTDIR"/server-rootfs/etc/nbd-server
-    inst_init ./server-init.sh "$TESTDIR"/server-rootfs
+    inst ./dnsmasq.conf /etc/dnsmasq.conf
+    echo "root:x:0:0:root:/root:/bin/sh" > "$initdir/etc/passwd"
+    echo "root:x:0:" > "$initdir/etc/group"
 
     build_ext4_image "$TESTDIR/server-rootfs" "$TESTDIR"/server.img dracut
     rm -fr "$TESTDIR"/server-rootfs

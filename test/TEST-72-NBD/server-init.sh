@@ -1,4 +1,7 @@
 #!/bin/sh
+
+# required binaries: dnsmasq ip mount nbd-server pidof poweroff sleep
+
 exec < /dev/console > /dev/console 2>&1
 set -x
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin

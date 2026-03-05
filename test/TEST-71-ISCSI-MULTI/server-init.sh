@@ -1,4 +1,7 @@
 #!/bin/sh
+
+# required binaries: dnsmasq ip mount pidof poweroff sleep tgtadm tgtd
+
 exec < /dev/console > /dev/console 2>&1
 set -x
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
