@@ -88,6 +88,7 @@ build_rootfs_base() {
     for subdir in bin lib sbin; do
         ln -s "usr/$subdir" "${rootdir}/${subdir}"
     done
+    ln -s /run "${rootdir}/var/run"
 
     # Include os-release to make systemd's initrd-switch-root.service happy
     cp /usr/lib/os-release "$rootdir/usr/lib/os-release"
