@@ -55,6 +55,7 @@ emerge --quiet --deep --autounmask-continue=y --with-bdeps=n --noreplace \
     dev-libs/libxslt \
     dev-libs/openssl \
     dev-ruby/asciidoctor \
+    net-analyzer/tcpdump \
     net-dns/dnsmasq \
     net-fs/nfs-utils \
     net-misc/dhcp \

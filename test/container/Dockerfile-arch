@@ -61,6 +61,7 @@ RUN pacman --noconfirm -Syu \
     swtpm \
     systemd-libs \
     systemd-ukify \
+    tcpdump \
     tgt \
     tpm2-tools \
     xfsprogs \
