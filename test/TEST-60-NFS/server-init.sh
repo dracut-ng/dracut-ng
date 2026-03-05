@@ -89,14 +89,11 @@ command -v rpc.idmapd > /dev/null && [ -z "$(pidof rpc.idmapd)" ] && rpc.idmapd
 : > /dev/watchdog
 exportfs -r
 : > /dev/watchdog
-mkdir -p /var/lib/dhcpd
-: > /var/lib/dhcpd/dhcpd.leases
+dnsmasq
 : > /dev/watchdog
-chmod 777 /var/lib/dhcpd/dhcpd.leases
-: > /dev/watchdog
-rm -f /var/run/dhcpd.pid
-dhcpd -d -cf /etc/dhcpd.conf -lf /var/lib/dhcpd/dhcpd.leases &
 exportfs -s
+# tcpdump is a workaround for https://github.com/dracut-ng/dracut-ng/issues/2283
+tcpdump -Z root -i enx525400123456 -n port 67 or port 68 &
 echo "Serving NFS mounts"
 while :; do
     [ -n "$(jobs -rp)" ] && : > /dev/watchdog
