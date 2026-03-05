@@ -57,9 +57,7 @@ linkup enx525400123457
 
 modprobe af_packet
 
-: > /var/lib/dhcpd/dhcpd.leases
-chmod 777 /var/lib/dhcpd/dhcpd.leases
-dhcpd -d -cf /etc/dhcpd.conf -lf /var/lib/dhcpd/dhcpd.leases &
+dnsmasq
 
 tgtd
 tgtadm --lld iscsi --mode target --op new --tid 1 --targetname iqn.2009-06.dracut:target0

@@ -230,16 +230,16 @@ EOF
         --add-confdir test-root \
         -a "$USE_NETWORK" \
         -I "ip grep sleep nbd-server chmod modprobe pidof" \
-        --install-optional "/etc/netconfig dhcpd /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
+        --install-optional "/etc/netconfig dnsmasq /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
         -i /tmp/config /etc/nbd-server/config \
-        -i "./dhcpd.conf" "/etc/dhcpd.conf" \
+        -i "./dnsmasq.conf" "/etc/dnsmasq.conf" \
         --no-hostonly \
         -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/server-rootfs
     mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/server-rootfs
     rm -rf "$TESTDIR"/dracut.*
 
-    mkdir -p -- "$TESTDIR"/server-rootfs/var/lib/dhcpd "$TESTDIR"/server-rootfs/etc/nbd-server
+    mkdir -p -- "$TESTDIR"/server-rootfs/etc/nbd-server
     inst_init ./server-init.sh "$TESTDIR"/server-rootfs
 
     build_ext4_image "$TESTDIR/server-rootfs" "$TESTDIR"/server.img dracut

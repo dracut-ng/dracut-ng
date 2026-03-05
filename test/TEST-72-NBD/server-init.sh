@@ -52,11 +52,9 @@ linkup enx525400123456
 
 modprobe af_packet
 nbd-server
-: > /var/lib/dhcpd/dhcpd.leases
-chmod 777 /var/lib/dhcpd/dhcpd.leases
-dhcpd -d -cf /etc/dhcpd.conf -lf /var/lib/dhcpd/dhcpd.leases &
+dnsmasq
 echo "Serving NBD disks"
-while pidof nbd-server && pidof dhcpd; do
+while pidof nbd-server && pidof dnsmasq; do
     echo > /dev/watchdog
     sleep 1
 done

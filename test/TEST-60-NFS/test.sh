@@ -229,9 +229,8 @@ make_server_rootfs() {
         --add-confdir test-root \
         -a "bash $USE_NETWORK nfs" \
         --add-drivers "nfsd sunrpc lockd" \
-        -I "exportfs pidof rpc.nfsd rpc.mountd dhcpd" \
+        -I "exportfs pidof rpc.nfsd rpc.mountd dnsmasq tcpdump" \
         --install-optional "/etc/netconfig /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services rpc.idmapd /etc/idmapd.conf" \
-        -i "./dhcpd.conf" "/etc/dhcpd.conf" \
         -f "$TESTDIR"/initramfs.root
 
     mkdir -p "$TESTDIR"/server-rootfs
@@ -239,11 +238,11 @@ make_server_rootfs() {
     rm -rf "$TESTDIR"/server/overlay/dracut.*
 
     export initdir=$TESTDIR/server-rootfs
-    mkdir -p "$initdir"/var/lib/{dhcpd,rpcbind} "$initdir"/var/lib/nfs/{v4recovery,rpc_pipefs}
-    chmod 777 "$initdir"/var/lib/{dhcpd,rpcbind}
+    mkdir -p "$initdir"/var/lib/rpcbind "$initdir"/var/lib/nfs/{v4recovery,rpc_pipefs}
+    chmod 777 "$initdir"/var/lib/rpcbind
     inst_init ./server-init.sh "$initdir"
     cp ./exports "$initdir"/etc/exports
-    cp ./dhcpd.conf "$initdir"/etc/dhcpd.conf
+    cp ./dnsmasq.conf "$initdir"/etc/dnsmasq.conf
 
     # Make client root inside server root
     # shellcheck disable=SC2031

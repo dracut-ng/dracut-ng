@@ -162,14 +162,13 @@ make_server_rootfs() {
         -a "$USE_NETWORK" \
         -d "iscsi_tcp crc32c ipv6" \
         -I "modprobe chmod ip setsid pidof tgtd tgtadm /etc/passwd" \
-        --install-optional "/etc/netconfig dhcpd /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
-        -i "./dhcpd.conf" "/etc/dhcpd.conf" \
+        --install-optional "/etc/netconfig dnsmasq /etc/group /etc/nsswitch.conf /etc/rpc /etc/protocols /etc/services /usr/etc/nsswitch.conf /usr/etc/rpc /usr/etc/protocols /usr/etc/services" \
+        -i "./dnsmasq.conf" "/etc/dnsmasq.conf" \
         -f "$TESTDIR"/initramfs.root
     mkdir -p "$TESTDIR"/server-rootfs
     mv "$TESTDIR"/dracut.*/initramfs/* "$TESTDIR"/server-rootfs
     rm -rf "$TESTDIR"/dracut.*
 
-    mkdir -p "$TESTDIR"/server-rootfs/var/lib/dhcpd
     inst_init ./server-init.sh "$TESTDIR"/server-rootfs
 
     build_ext4_image "$TESTDIR/server-rootfs" "$TESTDIR"/server.img dracut
