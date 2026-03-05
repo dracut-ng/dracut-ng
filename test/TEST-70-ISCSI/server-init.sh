@@ -1,4 +1,5 @@
 #!/bin/sh
+set -eu
 
 # required binaries: dnsmasq ip mount pidof poweroff sleep tgtadm tgtd
 

@@ -1,4 +1,5 @@
 #!/bin/sh
+set -eu
 
 # required binaries: dnsmasq ip mount nbd-server pidof poweroff sleep
 

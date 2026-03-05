@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 
