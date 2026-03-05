@@ -2,9 +2,23 @@
 
 # required binaries: dnsmasq ip mount nbd-server pidof poweroff sleep
 
+export PATH=/usr/sbin:/usr/bin:/sbin:/bin
+
+# shellcheck disable=SC2317,SC2329  # called via EXIT trap
+_poweroff() {
+    local exit_code="$?"
+
+    set +x
+    [ "$exit_code" -eq 0 ] || echo "Error: $0 failed with exit code $exit_code."
+    echo "Powering down."
+
+    poweroff -f
+}
+
+trap _poweroff EXIT
+
 exec < /dev/console > /dev/console 2>&1
 set -x
-export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 export TERM=linux
 export PS1='nbdtest-server:\w\$ '
 echo "made it to the NBD server rootfs!"
@@ -61,4 +75,3 @@ while pidof nbd-server && pidof dnsmasq; do
     sleep 1
 done
 mount -n -o remount,ro /
-poweroff -f

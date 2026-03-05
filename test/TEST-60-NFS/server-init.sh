@@ -1,7 +1,22 @@
 #!/bin/bash
+
+export PATH=/usr/sbin:/usr/bin:/sbin:/bin
+
+# shellcheck disable=SC2317,SC2329  # called via EXIT trap
+_poweroff() {
+    local exit_code="$?"
+
+    set +x
+    [ "$exit_code" -eq 0 ] || echo "Error: $0 failed with exit code $exit_code."
+    echo "Powering down."
+
+    poweroff -f
+}
+
+trap _poweroff EXIT
+
 exec < /dev/console > /dev/console 2>&1
 set -x
-export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 export TERM=linux
 export PS1='nfstest-server:\w\$ '
 : > /dev/watchdog
@@ -98,4 +113,3 @@ while :; do
     sleep 10
 done
 mount -n -o remount,ro /
-poweroff -f
