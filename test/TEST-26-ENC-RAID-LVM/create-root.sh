@@ -34,4 +34,3 @@ cryptsetup luksClose /dev/mapper/dracut_disk2
     done
 } | dd oflag=direct of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
 sync
-poweroff -f
