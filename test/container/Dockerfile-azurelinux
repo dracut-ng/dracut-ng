@@ -52,6 +52,7 @@ RUN tdnf -y install --setopt=install_weak_deps=False \
     systemd-devel \
     systemd-resolved \
     tar \
+    tcpdump \
     tpm2-tools \
     xfsprogs \
     xorriso \

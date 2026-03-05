@@ -30,6 +30,7 @@ RUN apk add --no-cache \
     dnsmasq \
     dracut-tests \
     efistub \
+    tcpdump \
     ukify
 
 RUN \

@@ -59,6 +59,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     ruby-asciidoctor \
     squashfs-tools \
     systemd-boot-efistub \
+    tcpdump \
     ncurses-base \
     ukify \
     xorriso \

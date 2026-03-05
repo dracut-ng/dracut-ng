@@ -98,6 +98,7 @@ RUN \
     systemd-sysv \
     systemd-timesyncd \
     systemd-ukify \
+    tcpdump \
     tgt \
     thin-provisioning-tools \
     tpm2-tools \
