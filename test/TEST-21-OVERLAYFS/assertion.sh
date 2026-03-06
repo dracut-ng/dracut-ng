@@ -27,6 +27,12 @@ else
     fi
 fi
 
+if grep -q 'test.expect=tmpfs-sized' /proc/cmdline; then
+    if ! grep -q " /run/overlayfs-tmpfs tmpfs " /proc/mounts; then
+        echo "sized tmpfs not mounted at /run/overlayfs-tmpfs" >> /run/failed
+    fi
+fi
+
 # Dump /proc/mounts at the end if there were any failures for easier debugging
 if [ -s /run/failed ]; then
     {
