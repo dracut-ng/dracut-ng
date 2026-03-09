@@ -1187,6 +1187,61 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $sbat_l ]] && sbat="$sbat_l"
 [[ $machine_id_l ]] && machine_id="$machine_id_l"
 
+TMPDIR="$(realpath -e "$tmpdir")"
+readonly TMPDIR
+[ -d "$TMPDIR" ] || {
+    dfatal "Invalid tmpdir '$tmpdir'."
+    exit 1
+}
+
+if findmnt --raw -n --target "$tmpdir" --output=options | grep -q noexec; then
+    [[ $debug == yes ]] && printf "%s\n" "dracut[D]: Tmpdir '$tmpdir' is mounted with 'noexec'." >&2
+    noexec=1
+fi
+
+DRACUT_TMPDIR="$(mktemp -p "$TMPDIR/" -d -t dracut.dXXXXXX)"
+readonly DRACUT_TMPDIR
+[ -d "$DRACUT_TMPDIR" ] || {
+    dfatal "mktemp -p '$TMPDIR/' -d -t dracut.dXXXXXX failed."
+    exit 1
+}
+
+# Cache file used to optimize get_maj_min()
+declare -x -r get_maj_min_cache_file="${DRACUT_TMPDIR}/majmin_cache"
+: > "$get_maj_min_cache_file"
+
+# clean up after ourselves no matter how we die.
+trap '
+    ret=$?;
+    [[ $keep ]] && echo "Not removing $DRACUT_TMPDIR." >&2 || { [[ $DRACUT_TMPDIR ]] && rm -rf -- "$DRACUT_TMPDIR"; };
+    if [[ ${FSFROZEN} ]]; then
+      fsfreeze -u "${FSFROZEN}"
+    fi
+    exit $ret;
+    ' EXIT
+
+# clean up after ourselves no matter how we die.
+trap 'exit 1;' SIGINT
+
+readonly initdir="${DRACUT_TMPDIR}/initramfs"
+readonly squashdir="$initdir/squash_root"
+readonly manifest="${DRACUT_TMPDIR}/manifest"
+mkdir -p "$initdir"
+
+if [[ $early_microcode == yes ]] || { [[ $acpi_override == yes ]] && [[ -d $acpi_table_dir ]]; }; then
+    readonly early_cpio_dir="${DRACUT_TMPDIR}/earlycpio"
+    mkdir "$early_cpio_dir"
+fi
+
+[[ "${dracutsysrootdir-}" ]] || [[ "$noexec" ]] || export DRACUT_RESOLVE_LAZY="1"
+
+if [[ $print_cmdline ]]; then
+    stdloglvl=0
+    sysloglvl=0
+    fileloglvl=0
+    kmsgloglvl=0
+fi
+
 # shellcheck source=./dracut-functions.sh
 . "$dracutbasedir"/dracut-functions.sh
 
@@ -1396,61 +1451,6 @@ if [[ -z $DRACUT_KMODDIR_OVERRIDE && -n $drivers_dir ]]; then
         dfatal "or set DRACUT_KMODDIR_OVERRIDE=1 to ignore this check."
         exit 1
     fi
-fi
-
-TMPDIR="$(realpath -e "$tmpdir")"
-readonly TMPDIR
-[ -d "$TMPDIR" ] || {
-    dfatal "Invalid tmpdir '$tmpdir'."
-    exit 1
-}
-
-if findmnt --raw -n --target "$tmpdir" --output=options | grep -q noexec; then
-    [[ $debug == yes ]] && ddebug "Tmpdir '$tmpdir' is mounted with 'noexec'."
-    noexec=1
-fi
-
-DRACUT_TMPDIR="$(mktemp -p "$TMPDIR/" -d -t dracut.dXXXXXX)"
-readonly DRACUT_TMPDIR
-[ -d "$DRACUT_TMPDIR" ] || {
-    dfatal "mktemp -p '$TMPDIR/' -d -t dracut.dXXXXXX failed."
-    exit 1
-}
-
-# Cache file used to optimize get_maj_min()
-declare -x -r get_maj_min_cache_file="${DRACUT_TMPDIR}/majmin_cache"
-: > "$get_maj_min_cache_file"
-
-# clean up after ourselves no matter how we die.
-trap '
-    ret=$?;
-    [[ $keep ]] && echo "Not removing $DRACUT_TMPDIR." >&2 || { [[ $DRACUT_TMPDIR ]] && rm -rf -- "$DRACUT_TMPDIR"; };
-    if [[ ${FSFROZEN} ]]; then
-      fsfreeze -u "${FSFROZEN}"
-    fi
-    exit $ret;
-    ' EXIT
-
-# clean up after ourselves no matter how we die.
-trap 'exit 1;' SIGINT
-
-readonly initdir="${DRACUT_TMPDIR}/initramfs"
-readonly squashdir="$initdir/squash_root"
-readonly manifest="${DRACUT_TMPDIR}/manifest"
-mkdir -p "$initdir"
-
-if [[ $early_microcode == yes ]] || { [[ $acpi_override == yes ]] && [[ -d $acpi_table_dir ]]; }; then
-    readonly early_cpio_dir="${DRACUT_TMPDIR}/earlycpio"
-    mkdir "$early_cpio_dir"
-fi
-
-[[ "${dracutsysrootdir-}" ]] || [[ "$noexec" ]] || export DRACUT_RESOLVE_LAZY="1"
-
-if [[ $print_cmdline ]]; then
-    stdloglvl=0
-    sysloglvl=0
-    fileloglvl=0
-    kmsgloglvl=0
 fi
 
 export LC_MESSAGES=C kernel
