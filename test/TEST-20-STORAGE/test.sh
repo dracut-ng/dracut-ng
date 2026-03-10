@@ -6,6 +6,9 @@ set -eu
 # shellcheck disable=SC2034
 TEST_DESCRIPTION="root filesystem on multiple device $TEST_FSTYPE (on top of RAID and LUKS)"
 
+# Uncomment this to debug failures
+#DEBUGFAIL="rd.debug rd.shell"
+
 test_check() {
     (command -v zfs || (command -v lvm && command -v "mkfs.$TEST_FSTYPE")) &> /dev/null
 }
