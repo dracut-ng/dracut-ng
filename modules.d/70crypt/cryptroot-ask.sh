@@ -4,7 +4,7 @@ PATH=/usr/sbin:/usr/bin:/sbin:/bin
 NEWROOT=${NEWROOT:-"/sysroot"}
 
 # do not ask, if we already have root
-[ -f "$NEWROOT"/proc ] && exit 0
+[ -d "$NEWROOT"/proc ] && exit 0
 
 command -v getarg > /dev/null || . /lib/dracut-lib.sh
 
