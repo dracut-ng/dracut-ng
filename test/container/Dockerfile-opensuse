@@ -33,6 +33,7 @@ RUN zypper --non-interactive install --no-recommends \
     iscsiuio \
     kbd \
     kernel-vanilla \
+    libarchive13 \
     libfido2 \
     libkmod-devel \
     lvm2 \
