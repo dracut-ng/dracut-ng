@@ -114,13 +114,17 @@ if [[ ! $no_overlay && ! -d $overlay ]]; then
 fi
 
 if [[ ! $no_overlay ]]; then
-    ofile="$imagedir/90-overlay.img"
-    dinfo "Creating image $ofile from directory $overlay"
-    type pigz &> /dev/null && gzip=pigz || gzip=gzip
-    (
-        cd "$overlay" || return 1
-        find . | cpio --quiet -H newc -o | $gzip -9 > "$ofile"
-    )
+    if [[ ! $no_imagedir ]]; then
+        ofile="$imagedir/90-overlay.img"
+        dinfo "Creating image $ofile from directory $overlay"
+        type pigz &> /dev/null && gzip=pigz || gzip=gzip
+        (
+            cd "$overlay" || return 1
+            find . | cpio --quiet -H newc -o | $gzip -9 > "$ofile"
+        )
+    else
+        dinfo "Overlay image will not be created without the additional image directory"
+    fi
 fi
 
 if [[ ! $no_imagedir ]]; then
