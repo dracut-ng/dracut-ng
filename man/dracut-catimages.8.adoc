@@ -15,7 +15,7 @@ SYNOPSIS
 DESCRIPTION
 -----------
 dracut-catimages creates an initial ramdisk image by concatenating several
-images from the command line and /boot/dracut/*.img
+images from the command line and /var/lib/dracut/images/*.img
 
 OPTIONS
 -------
@@ -23,7 +23,7 @@ OPTIONS
     overwrite existing initramfs file.
 
 **-i, --imagedir**::
-    Directory with additional images to add (default: /boot/dracut/)
+    Directory with additional images to add (default: /var/lib/dracut/images/)
 
 **-o, --overlaydir**::
     Overlay directory, which contains additional files that will be used to
@@ -41,7 +41,7 @@ OPTIONS
 
 FILES
 -----
-_/boot/dracut/*.img_::
+_/var/lib/dracut/images/*.img_::
     images to work with
 
 AUTHORS

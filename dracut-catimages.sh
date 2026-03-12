@@ -29,11 +29,11 @@ usage() {
     cat << EOF
 Usage: $0 [OPTION]... <initramfs> <base image> [<image>...]
 Creates initial ramdisk image by concatenating several images from the command
-line and /boot/dracut/
+line and /var/lib/dracut/images/
 
   -f, --force           Overwrite existing initramfs file.
   -i, --imagedir        Directory with additional images to add
-                        (default: /boot/dracut/)
+                        (default: /var/lib/dracut/images/)
   -o, --overlaydir      Overlay directory, which contains files that
                         will be used to create an additional image
   --nooverlay           Do not use the overlay directory
@@ -44,7 +44,7 @@ line and /boot/dracut/
 EOF
 }
 
-imagedir=/boot/dracut/
+imagedir=/var/lib/dracut/images
 overlay=/var/lib/dracut/overlay
 
 while (($# > 0)); do
