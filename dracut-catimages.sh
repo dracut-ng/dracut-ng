@@ -60,11 +60,9 @@ while (($# > 0)); do
             ;;
         --nooverlay)
             no_overlay=yes
-            shift
             ;;
         --noimagedir)
             no_imagedir=yes
-            shift
             ;;
         -h | --help)
             usage
