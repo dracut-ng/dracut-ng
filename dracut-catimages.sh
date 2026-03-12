@@ -106,7 +106,7 @@ if [[ -f $outfile && ! $force ]]; then
 fi
 
 if [[ ! $no_imagedir && ! -d $imagedir ]]; then
-    derror "Image directory $overlay is not a directory"
+    derror "Image directory $imagedir is not a directory"
     exit 1
 fi
 
