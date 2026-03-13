@@ -379,6 +379,10 @@ qemu-net:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]qemu-net/*'
 
+qcom-adsp:
+    - changed-files:
+          - any-glob-to-any-file: 'modules.d/[0-9][0-9]qcom-adsp/*'
+
 systemd-cryptsetup:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-cryptsetup/*'
