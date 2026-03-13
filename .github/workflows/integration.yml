@@ -133,6 +133,7 @@ jobs:
                     - "43"
                     - "44"
                     - "45"
+                    - "46"
                 exclude:
                     # https://github.com/dracut-ng/dracut-ng/issues/1677
                     - container: arch:latest
