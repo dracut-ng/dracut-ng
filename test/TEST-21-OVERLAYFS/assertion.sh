@@ -27,6 +27,18 @@ else
     fi
 fi
 
+if grep -q 'test.expect=tmpfs-sized' /proc/cmdline; then
+    if ! grep -q "^tmpfs /run/initramfs/overlay tmpfs " /proc/mounts; then
+        echo "sized tmpfs not mounted at /run/initramfs/overlay" >> /run/failed
+    fi
+    if ! grep -q "^tmpfs /run/initramfs/overlay tmpfs .*size=32768k" /proc/mounts; then
+        echo "sized tmpfs does not have expected size (32M)" >> /run/failed
+    fi
+    if ! grep -q "^tmpfs /run/initramfs/overlay tmpfs .*nr_inodes=100000" /proc/mounts; then
+        echo "sized tmpfs does not have expected nr_inodes (100000)" >> /run/failed
+    fi
+fi
+
 # Dump /proc/mounts at the end if there were any failures for easier debugging
 if [ -s /run/failed ]; then
     {
