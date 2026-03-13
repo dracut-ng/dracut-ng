@@ -18,6 +18,6 @@ install() {
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
-            "$udevconfdir"/hwdb.bin
+            /etc/udev/hwdb.bin
     fi
 }
