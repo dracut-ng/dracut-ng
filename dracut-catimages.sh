@@ -29,11 +29,11 @@ usage() {
     cat << EOF
 Usage: $0 [OPTION]... <initramfs> <base image> [<image>...]
 Creates initial ramdisk image by concatenating several images from the command
-line and /boot/dracut/
+line and /var/lib/dracut/images/
 
   -f, --force           Overwrite existing initramfs file.
   -i, --imagedir        Directory with additional images to add
-                        (default: /boot/dracut/)
+                        (default: /var/lib/dracut/images/)
   -o, --overlaydir      Overlay directory, which contains files that
                         will be used to create an additional image
   --nooverlay           Do not use the overlay directory
@@ -44,7 +44,7 @@ line and /boot/dracut/
 EOF
 }
 
-imagedir=/boot/dracut/
+imagedir=/var/lib/dracut/images
 overlay=/var/lib/dracut/overlay
 
 while (($# > 0)); do
@@ -60,11 +60,9 @@ while (($# > 0)); do
             ;;
         --nooverlay)
             no_overlay=yes
-            shift
             ;;
         --noimagedir)
             no_imagedir=yes
-            shift
             ;;
         -h | --help)
             usage
@@ -106,7 +104,7 @@ if [[ -f $outfile && ! $force ]]; then
 fi
 
 if [[ ! $no_imagedir && ! -d $imagedir ]]; then
-    derror "Image directory $overlay is not a directory"
+    derror "Image directory $imagedir is not a directory"
     exit 1
 fi
 
@@ -116,13 +114,17 @@ if [[ ! $no_overlay && ! -d $overlay ]]; then
 fi
 
 if [[ ! $no_overlay ]]; then
-    ofile="$imagedir/90-overlay.img"
-    dinfo "Creating image $ofile from directory $overlay"
-    type pigz &> /dev/null && gzip=pigz || gzip=gzip
-    (
-        cd "$overlay" || return 1
-        find . | cpio --quiet -H newc -o | $gzip -9 > "$ofile"
-    )
+    if [[ ! $no_imagedir ]]; then
+        ofile="$imagedir/90-overlay.img"
+        dinfo "Creating image $ofile from directory $overlay"
+        type pigz &> /dev/null && gzip=pigz || gzip=gzip
+        (
+            cd "$overlay" || return 1
+            find . | cpio --quiet -H newc -o | $gzip -9 > "$ofile"
+        )
+    else
+        dinfo "Overlay image will not be created without the additional image directory"
+    fi
 fi
 
 if [[ ! $no_imagedir ]]; then
