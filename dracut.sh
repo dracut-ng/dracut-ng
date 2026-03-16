@@ -1559,7 +1559,7 @@ inst_fsck_help() {
 # shellcheck disable=SC2317,SC2329
 mark_hostonly() {
     for i in "$@"; do
-        echo "$i" >> "$initdir/lib/dracut/hostonly-files"
+        printf "%s\n" "$i" >> "$initdir/lib/dracut/hostonly-files"
     done
 }
 
