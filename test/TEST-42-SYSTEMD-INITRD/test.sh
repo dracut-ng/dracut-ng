@@ -22,7 +22,7 @@ client_run() {
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=LABEL=dracut $TEST_KERNEL_CMDLINE $client_opts" \
+        -append "root=LABEL=dracut systemd.default_device_timeout_sec=0 $TEST_KERNEL_CMDLINE $client_opts" \
         -initrd "$TESTDIR"/initramfs.testing
     check_qemu_log
 
