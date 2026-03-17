@@ -66,7 +66,7 @@ client_test() {
         "${disk_args[@]}" \
         -device virtio-net-pci,netdev=lan0,mac="$mac" \
         -netdev dgram,id=lan0,local.type=inet,local.host=localhost,local.port=60721,remote.type=inet,remote.host=localhost,remote.port=60720 \
-        -append "$cmdline rd.auto ro" \
+        -append "$TEST_KERNEL_CMDLINE $cmdline rd.auto ro" \
         -initrd "$TESTDIR"/initramfs.testing
 
     if ! test_marker_check nbd-OK; then
