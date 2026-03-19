@@ -36,13 +36,6 @@ else
     LUKS=$(getargs rd.luks.uuid)
     tout=$(getarg rd.luks.key.tout)
 
-    if [ -e /etc/crypttab ]; then
-        while read -r _ _source_device _ || [ -n "$_source_device" ]; do
-            _dev=$(label_uuid_to_dev "$_source_device")
-            set_systemd_timeout_for_dev "$_dev"
-        done < /etc/crypttab
-    fi
-
     if [ -n "$PARTUUID" ]; then
         for uuid in $PARTUUID; do
 
