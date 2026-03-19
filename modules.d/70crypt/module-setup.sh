@@ -85,7 +85,9 @@ install() {
     fi
 
     inst_hook cmdline 30 "$moddir/parse-crypt.sh"
-    if ! dracut_module_included "systemd"; then
+    if dracut_module_included "systemd"; then
+        inst_script "$moddir/crypt-generator.sh" "$systemdutildir"/system-generators/dracut-crypt-generator
+    else
         inst_multiple cryptsetup rmdir readlink umount
         inst_script "$moddir"/cryptroot-ask.sh /sbin/cryptroot-ask
         inst_script "$moddir"/probe-keydev.sh /sbin/probe-keydev
