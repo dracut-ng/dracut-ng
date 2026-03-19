@@ -52,6 +52,8 @@ installkernel() {
             "=drivers/tty/serial" \
             "=drivers/input/serio" \
             "=drivers/input/keyboard" \
+            "=drivers/mmc/core" \
+            "=drivers/mmc/host" \
             "=drivers/pci/host" \
             "=drivers/pci/controller" \
             "=drivers/pinctrl" \
@@ -80,8 +82,6 @@ installkernel() {
                 "=drivers/mailbox" \
                 "=drivers/memory" \
                 "=drivers/mfd" \
-                "=drivers/mmc/core" \
-                "=drivers/mmc/host" \
                 "=drivers/nvmem" \
                 "=drivers/phy" \
                 "=drivers/platform/chrome" \
