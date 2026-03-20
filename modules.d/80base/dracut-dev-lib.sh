@@ -75,12 +75,6 @@ set_systemd_timeout_for_dev() {
     _timeout=${_timeout:-infinity}
 
     _name=$(dev_unit_name "$1")
-    if ! [ -L "${PREFIX-}/etc/systemd/system/initrd.target.wants/${_name}.device" ]; then
-        [ -d "${PREFIX-}"/etc/systemd/system/initrd.target.wants ] || mkdir -p "${PREFIX-}"/etc/systemd/system/initrd.target.wants
-        ln -s ../"${_name}".device "${PREFIX-}/etc/systemd/system/initrd.target.wants/${_name}.device"
-        type mark_hostonly > /dev/null 2>&1 && mark_hostonly /etc/systemd/system/initrd.target.wants/"${_name}".device
-        _needreload=1
-    fi
 
     if ! [ -f "${PREFIX-}/etc/systemd/system/${_name}.device.d/timeout.conf" ]; then
         mkdir -p "${PREFIX-}/etc/systemd/system/${_name}.device.d"
@@ -105,7 +99,9 @@ set_systemd_timeout_for_dev() {
 # if the device <dev> is recognized by the system.
 wait_for_dev() {
     local _name
+    local _needreload
     local _noreload
+    local _unit
 
     if [ "$1" = "-n" ]; then
         _noreload=-n
@@ -124,6 +120,20 @@ wait_for_dev() {
         printf '[ -e "%s" ] || ' "$1"
         printf 'warn "\"%s\" does not exist"\n' "$1"
     } >> "${PREFIX-}$hookdir/emergency/80-${_name}.sh"
+
+    [ -n "${DRACUT_SYSTEMD-}" ] || return 0
+    _unit="$(dev_unit_name "$1").device"
+
+    if ! [ -L "${PREFIX-}/etc/systemd/system/initrd.target.wants/${_unit}" ]; then
+        [ -d "${PREFIX-}"/etc/systemd/system/initrd.target.wants ] || mkdir -p "${PREFIX-}"/etc/systemd/system/initrd.target.wants
+        ln -s ../"${_unit}" "${PREFIX-}/etc/systemd/system/initrd.target.wants/${_unit}"
+        type mark_hostonly > /dev/null 2>&1 && mark_hostonly /etc/systemd/system/initrd.target.wants/"${_unit}"
+        _needreload=1
+    fi
+
+    if [ -z "${PREFIX-}" ] && [ "$_needreload" = 1 ] && [ -z "$_noreload" ]; then
+        /sbin/initqueue --onetime --unique --name daemon-reload systemctl daemon-reload
+    fi
 
     set_systemd_timeout_for_dev $_noreload "$@"
 }
