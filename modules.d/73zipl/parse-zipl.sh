@@ -9,22 +9,22 @@ if [ -n "$zipl_arg" ]; then
         LABEL=*)
             zipl_env="ENV{ID_FS_LABEL}"
             zipl_val=${zipl_arg#LABEL=}
-            zipl_arg="$(label_uuid_to_dev "${zipl_val}")"
+            zipl_arg="$(label_uuid_to_dev "${zipl_arg}")"
             ;;
         UUID=*)
             zipl_env="ENV{ID_FS_UUID}"
             zipl_val=${zipl_arg#UUID=}
-            zipl_arg="$(label_uuid_to_dev "${zipl_val}")"
+            zipl_arg="$(label_uuid_to_dev "${zipl_arg}")"
             ;;
         PARTLABEL=*)
             zipl_env="ENV{ID_FS_PARTLABEL}"
             zipl_val=${zipl_arg#PARTLABEL=}
-            zipl_arg="$(label_uuid_to_dev "${zipl_val}")"
+            zipl_arg="$(label_uuid_to_dev "${zipl_arg}")"
             ;;
         PARTUUID=*)
             zipl_env="ENV{ID_FS_PARTUUID}"
             zipl_val=${zipl_arg#PARTUUID=}
-            zipl_arg="$(label_uuid_to_dev "${zipl_val}")"
+            zipl_arg="$(label_uuid_to_dev "${zipl_arg}")"
             ;;
         /dev/mapper/*)
             zipl_env="ENV{DM_NAME}"
