@@ -974,11 +974,12 @@ export DRACUT_LOG_LEVEL=warning
 export add_dlopen_features="" omit_dlopen_features=""
 
 if ! [[ $kernel ]] && [[ $regenerate_all_l != "yes" ]]; then
-    if type -P systemd-detect-virt &> /dev/null && ! systemd-detect-virt -c &> /dev/null && ! systemd-detect-virt -r &> /dev/null; then
+    if [[ -z ${dracutsysrootdir-} ]] \
+        && type -P systemd-detect-virt &> /dev/null && ! systemd-detect-virt -c &> /dev/null && ! systemd-detect-virt -r &> /dev/null; then
         kernel="$(uname -r)"
     else
         # shellcheck disable=SC2012
-        kernel="$(cd /lib/modules && ls -1v | tail -1)"
+        kernel="$(cd "${dracutsysrootdir-}"/lib/modules && ls -1v | tail -1)"
     fi
 fi
 
