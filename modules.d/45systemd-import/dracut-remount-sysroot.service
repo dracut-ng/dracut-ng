@@ -1,0 +1,14 @@
+[Unit]
+Description=Workaround for https://github.com/systemd/systemd/issues/41352
+After=imports.target sysroot.mount
+ConditionPathExists=/etc/initrd-release
+ConditionKernelCommandLine=rd.systemd.pull
+ConditionKernelCommandLine=root
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/mount -o remount,suid,dev /sysroot
+
+[Install]
+WantedBy=initrd.target
