@@ -66,7 +66,7 @@ test_setup() {
     local image images=() local_pubring=() network_handler
 
     # Create plain root filesystem
-    build_client_rootfs "$TESTDIR/rootfs"
+    build_client_rootfs "$TESTDIR/rootfs" ./assertion.sh
 
     # Create a compressed tarball with the plain rootfs
     tar -C "$TESTDIR/rootfs" --zstd -cf "$TESTDIR/root.tar.zst" .

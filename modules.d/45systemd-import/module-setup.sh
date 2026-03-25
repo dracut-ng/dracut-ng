@@ -52,6 +52,9 @@ install() {
         "$systemdsystemunitdir"/sysinit.target.wants/imports.target \
         gpg systemd-dissect
 
+    inst "$moddir/dracut-remount-sysroot.service" "$systemdsystemunitdir"/dracut-remount-sysroot.service
+    $SYSTEMCTL -q --root "$initdir" enable dracut-remount-sysroot.service
+
     # systemd < v259: requires the tar binary
     # See: https://github.com/systemd/systemd/commit/a7c8f92d1f937113a279adbe62399f6f0773473f
     if ((_systemd_version < 259)); then
