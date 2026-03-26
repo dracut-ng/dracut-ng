@@ -30,8 +30,12 @@ RUN if [ "$DISTRIBUTION" = "ubuntu:rolling" ]; then \
     fi
 
 # libarchive is required by systemd-import for systemd >= v259: https://launchpad.net/bugs/2139822
-RUN \
+RUN case $(dpkg --print-architecture) in \
+        amd64) arch_pkgs="qemu-system-x86" ;; \
+        arm64) arch_pkgs="qemu-efi-aarch64 qemu-system-arm" ;; \
+    esac; \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
+    $arch_pkgs \
     asciidoctor \
     bluez \
     btrfs-progs \
@@ -83,9 +87,6 @@ RUN \
     plymouth-themes \
     procps \
     python3 \
-    qemu-efi-aarch64 \
-    qemu-kvm \
-    qemu-system \
     rng-tools5 \
     squashfs-tools \
     swtpm \
