@@ -5,6 +5,7 @@ set -eu
 
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 ARCH="${ARCH-$(uname -m)}"
+default_qemu_timeout=600 # 10 min (default might be increased based on the architecture)
 if [ -z "${QEMU_CPU-}" ]; then
     case "$ARCH" in
         aarch64 | arm64)
@@ -157,6 +158,8 @@ case "$ARCH" in
     aarch64 | arm64)
         ARGS+=(-M "virt,gic-version=max")
         console=ttyAMA0
+        # Doule timeout to 20 min
+        default_qemu_timeout=1200
         ;;
     amd64 | i?86 | x86_64)
         ARGS+=(-M q35)
@@ -164,6 +167,8 @@ case "$ARCH" in
     arm | armhf | armv7l)
         ARGS+=(-M virt)
         console=ttyAMA0
+        # Doule timeout to 20 min
+        default_qemu_timeout=1200
         ;;
     ppc64el | ppc64le)
         ARGS+=(-M "cap-ccf-assist=off,cap-cfpc=broken,cap-ibs=broken,cap-sbbc=broken")
@@ -172,6 +177,8 @@ case "$ARCH" in
     riscv64)
         ARGS+=(-M virt)
         rng_device=virtio-rng-device
+        # Tripple timeout to 30 min
+        default_qemu_timeout=1800
         ;;
     s390x)
         console=hvc0
@@ -202,8 +209,8 @@ if [[ -n $initrd ]]; then
 fi
 
 if ! [[ $* == *-daemonize* ]] && timeout --help 2> /dev/null | grep -q -- --foreground; then
-    # Run QEMU with a timeout (defaut: 10min) unless daemonized
-    ARGS=(--foreground "${QEMU_TIMEOUT-600}" "$BIN" "${ARGS[@]}")
+    # Run QEMU with a timeout unless daemonized
+    ARGS=(--foreground "${QEMU_TIMEOUT-${default_qemu_timeout}}" "$BIN" "${ARGS[@]}")
     BIN=timeout
 fi
 
