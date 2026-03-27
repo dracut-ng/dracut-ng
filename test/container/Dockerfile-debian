@@ -29,7 +29,6 @@ RUN if [ "$DISTRIBUTION" = "ubuntu:rolling" ]; then \
     coreutils-from-gnu coreutils-from-uutils- --allow-remove-essential; \
     fi
 
-# libarchive is required by systemd-import for systemd >= v259: https://launchpad.net/bugs/2139822
 RUN case $(dpkg --print-architecture) in \
         amd64) arch_pkgs="qemu-system-x86" ;; \
         arm64) arch_pkgs="qemu-efi-aarch64 qemu-system-arm" ;; \
@@ -63,7 +62,6 @@ RUN case $(dpkg --print-architecture) in \
     jq \
     kbd \
     kmod \
-    libarchive13t64 \
     libfido2-1 \
     libkmod-dev \
     libsystemd-dev \
