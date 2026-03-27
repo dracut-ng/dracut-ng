@@ -30,7 +30,7 @@ client_run() {
 
     "$testdir"/run-qemu \
         "${disk_args[@]}" \
-        -append "root=LABEL=dracut $TEST_KERNEL_CMDLINE mount.usr=LABEL=dracutusr mount.usrflags=subvol=usr $client_opts ${DEBUGOUT-}" \
+        -append "root=LABEL=dracut systemd.default_device_timeout_sec=0 $TEST_KERNEL_CMDLINE mount.usr=LABEL=dracutusr mount.usrflags=subvol=usr $client_opts ${DEBUGOUT-}" \
         -initrd "$TESTDIR"/initramfs.testing
     check_qemu_log
 
