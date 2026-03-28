@@ -16,25 +16,21 @@ FROM docker.io/${DISTRIBUTION}
 ARG DISTRIBUTION
 
 # Install dracut as a linux-initramfs-tool provider so that the default initramfs-tool package does not get installed
-RUN apt-get update -y -qq && apt-get upgrade -y -qq && apt-get install -y -qq --install-recommends dracut dracut-network dracut-test
-
 # Install 3cpio where available
-RUN if [ "$DISTRIBUTION" != "debian:latest" ] ; then cpio=3cpio; else cpio=cpio; fi; \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
-    $cpio
-
-# use GNU coreutils instead of uutil's coreutils until https://github.com/uutils/coreutils/issues/9057 and https://launchpad.net/bugs/2129037 are fixed
-RUN if [ "$DISTRIBUTION" = "ubuntu:rolling" ]; then \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
-    coreutils-from-gnu coreutils-from-uutils- --allow-remove-essential; \
-    fi
-
+# use GNU coreutils on Ubuntu 25.10 instead of uutil's coreutils until https://github.com/uutils/coreutils/issues/9057 and https://launchpad.net/bugs/2129037 are fixed
 RUN case $(dpkg --print-architecture) in \
         amd64) arch_pkgs="qemu-system-x86" ;; \
         arm64) arch_pkgs="qemu-efi-aarch64 qemu-system-arm" ;; \
     esac; \
+    if [ "$DISTRIBUTION" != "debian:latest" ]; then cpio=3cpio; else cpio=cpio; fi; \
+    if [ "$DISTRIBUTION" = "ubuntu:rolling" ]; then \
+        coreutils="coreutils-from-gnu coreutils-from-uutils- --allow-remove-essential"; \
+    fi; \
+    apt-get update -y -qq && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -qq && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
     $arch_pkgs \
+    $cpio \
+    $coreutils \
     asciidoctor \
     bluez \
     btrfs-progs \
@@ -48,6 +44,9 @@ RUN case $(dpkg --print-architecture) in \
     docbook \
     docbook-xml \
     docbook-xsl \
+    dracut \
+    dracut-network \
+    dracut-test \
     erofs-utils \
     fdisk \
     file \
