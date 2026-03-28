@@ -56,6 +56,7 @@ RUN case $(dpkg --print-architecture) in \
     iputils-arping \
     iputils-ping \
     iproute2 \
+    ipxe-qemu \
     isc-dhcp-server \
     iscsiuio \
     jq \
