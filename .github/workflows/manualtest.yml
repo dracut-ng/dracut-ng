@@ -17,7 +17,6 @@ on:  # yamllint disable-line rule:truthy
                     - "azurelinux:3.0"
                     - "centos:latest"
                     - "fedora:latest"
-                    - "fedora:rawhide"
                     - "arch:latest"
                     - "debian:latest"
                     - "debian:sid"
