@@ -68,7 +68,6 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     jq \
     kbd \
     kdump-utils \
-    kernel \
     kmod-devel \
     libfido2 \
     libkcapi-hmaccalc \
@@ -102,6 +101,20 @@ RUN dnf -y install --setopt=install_weak_deps=False \
     xfsprogs \
     xorriso \
     && dnf -y update && dnf clean all
+
+
+RUN rm -rf /usr/lib/kernel/
+
+RUN chmod 777 /boot && MACHINE_ID=$(cat /etc/machine-id) && mkdir -p "/boot/${MACHINE_ID}" && chmod 777 "/boot/${MACHINE_ID}"
+
+
+RUN ls -lRa /boot
+
+RUN cat /etc/machine-id
+
+RUN rm -rf /usr/bin/dracut
+
+RUN dnf -y install --setopt=install_weak_deps=False kernel-core
 
 # CentOS Stream ships only qemu-kvm, but it disables the KVM accel when it's not available
 RUN \
