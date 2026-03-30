@@ -5,7 +5,6 @@
 # - eudev (instead of systemd-udev)
 # - elogind (instead of logind)
 # - UEFI boot, UKI (without systemd)
-# - zfs and zfs out of tree dracut module
 # - gzip compression
 # - clang
 # - dbus-daemon
@@ -16,8 +15,7 @@
 
 FROM ghcr.io/void-linux/void-glibc-full
 
-# prefer running tests with zfs and clang
-ENV TEST_FSTYPE=zfs
+# prefer running tests with clang
 ENV CC=clang
 
 RUN xbps-install -Syu xbps && xbps-install -yu \
