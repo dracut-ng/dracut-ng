@@ -43,7 +43,6 @@ jobs:
                     - {dockerfile: 'Dockerfile-azurelinux', tag: 'azurelinux:3.0', registry: 'mcr.microsoft.com'}
                     - {dockerfile: 'Dockerfile-fedora', tag: 'centos:latest', registry: 'quay.io/centos'}
                     - {dockerfile: 'Dockerfile-debian', tag: 'debian:sid'}
-                    - {dockerfile: 'Dockerfile-fedora', tag: 'fedora:rawhide', registry: 'registry.fedoraproject.org'}
                     - {dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:amd64-openrc', option: 'amd64-openrc'}
                     - {dockerfile: 'Dockerfile-gentoo', tag: 'gentoo:latest', option: 'systemd'}
                 exclude:
@@ -89,7 +88,6 @@ jobs:
                     - {tag: 'azurelinux:3.0', platforms: ['amd', 'arm']}
                     - {tag: 'centos:latest', platforms: ['amd', 'arm']}
                     - {tag: 'debian:sid', platforms: ['amd', 'arm']}
-                    - {tag: 'fedora:rawhide', platforms: ['amd', 'arm']}
                     - {tag: 'gentoo:latest', platforms: ['amd', 'arm']}
                     - {tag: 'gentoo:amd64-openrc', platforms: ['amd']}
         steps:
