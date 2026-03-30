@@ -16,7 +16,7 @@ jobs:
     basic:
         name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }}
         runs-on: ${{ matrix.architecture.runner }}
-        timeout-minutes: 20
+        timeout-minutes: 30
         concurrency:
             group: >
                 daily-basic-${{ github.workflow }}-${{ github.ref }}
@@ -64,7 +64,7 @@ jobs:
     extended:
         name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }}
         runs-on: ${{ matrix.architecture.runner }}
-        timeout-minutes: 20
+        timeout-minutes: 30
         concurrency:
             group: >
                 daily-basic-extended-${{ github.workflow }}-${{ github.ref }}

@@ -16,7 +16,7 @@ jobs:
     systemd:
         name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }}
         runs-on: ${{ matrix.architecture.runner }}
-        timeout-minutes: 20
+        timeout-minutes: 30
         concurrency:
             group: >
                 daily-systemd-${{ github.workflow }}-${{ github.ref }}

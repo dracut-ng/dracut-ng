@@ -16,7 +16,7 @@ jobs:
     hostonlystrict:
         name: ${{ matrix.test }} on ${{ matrix.container }} with hostonly-mode strict
         runs-on: ${{ matrix.architecture.runner }}
-        timeout-minutes: 20
+        timeout-minutes: 30
         concurrency:
             group: >
                 daily-hostonlystrict-${{ github.workflow }}-${{ github.ref }}

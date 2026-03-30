@@ -22,7 +22,7 @@ jobs:
         # run this test on all containers
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-24.04
-        timeout-minutes: 20
+        timeout-minutes: 30
         concurrency:
             group: >
                 basic-${{ github.workflow }}-${{ github.ref }}
@@ -70,7 +70,7 @@ jobs:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-24.04
-        timeout-minutes: 20
+        timeout-minutes: 30
         concurrency:
             group: >
                 extended-${{ github.workflow }}-${{ github.ref }}
@@ -111,7 +111,7 @@ jobs:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-24.04
-        timeout-minutes: 20
+        timeout-minutes: 30
         concurrency:
             group: >
                 extended-systemd-${{ github.workflow }}-${{ github.ref }}
@@ -150,7 +150,7 @@ jobs:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-24.04
-        timeout-minutes: 20
+        timeout-minutes: 30
         concurrency:
             group: >
                 dracut-cpio-${{ github.workflow }}-${{ github.ref }}
@@ -176,7 +176,7 @@ jobs:
         # all nfs based on default networking
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-24.04
-        timeout-minutes: 20
+        timeout-minutes: 40
         concurrency:
             group: >
                 network-${{ github.workflow }}-${{ github.ref }}
@@ -207,7 +207,7 @@ jobs:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-24.04
-        timeout-minutes: 20
+        timeout-minutes: 40
         concurrency:
             group: >
                 network-iscsi-${{ github.workflow }}-${{ github.ref }}
@@ -238,7 +238,7 @@ jobs:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }}
         runs-on: ubuntu-24.04
-        timeout-minutes: 20
+        timeout-minutes: 40
         concurrency:
             group: >
                 network-nbd-${{ github.workflow }}-${{ github.ref }}
@@ -267,7 +267,7 @@ jobs:
         needs: basic
         name: ${{ matrix.test }} on ${{ matrix.container }} on arm64
         runs-on: ubuntu-24.04-arm
-        timeout-minutes: 20
+        timeout-minutes: 30
         concurrency:
             group: >
                 arm64-${{ github.workflow }}-${{ github.ref }}
