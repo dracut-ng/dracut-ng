@@ -158,8 +158,8 @@ case "$ARCH" in
     aarch64 | arm64)
         ARGS+=(-M "virt,gic-version=max")
         console=ttyAMA0
-        # Doule timeout to 20 min
-        default_qemu_timeout=1200
+        # Increase timeout to 30 min
+        default_qemu_timeout=1800
         ;;
     amd64 | i?86 | x86_64)
         ARGS+=(-M q35)
@@ -167,8 +167,8 @@ case "$ARCH" in
     arm | armhf | armv7l)
         ARGS+=(-M virt)
         console=ttyAMA0
-        # Doule timeout to 20 min
-        default_qemu_timeout=1200
+        # Increase timeout to 30 min
+        default_qemu_timeout=1800
         ;;
     ppc64el | ppc64le)
         ARGS+=(-M "cap-ccf-assist=off,cap-cfpc=broken,cap-ibs=broken,cap-sbbc=broken")
@@ -177,7 +177,7 @@ case "$ARCH" in
     riscv64)
         ARGS+=(-M virt)
         rng_device=virtio-rng-device
-        # Tripple timeout to 30 min
+        # Increase timeout to 30 min
         default_qemu_timeout=1800
         ;;
     s390x)
