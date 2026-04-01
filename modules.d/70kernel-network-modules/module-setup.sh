@@ -8,12 +8,11 @@ check() {
 # called by dracut
 installkernel() {
     # Include wired net drivers, excluding wireless
-    local _arch=${DRACUT_ARCH:-$(uname -m)}
     local _net_symbols='eth_type_trans|register_virtio_device|usbnet_open'
     local _unwanted_drivers='/(wireless|isdn|uwb|net/ethernet|net/phy|net/team)/'
     local _net_drivers
 
-    if [[ $_arch == "s390" ]] || [[ $_arch == "s390x" ]]; then
+    if [[ $DRACUT_ARCH == "s390" ]] || [[ $DRACUT_ARCH == "s390x" ]]; then
         dracut_instmods -o -P ".*${_unwanted_drivers}.*" -s "$_net_symbols" "=drivers/s390/net"
     fi
 

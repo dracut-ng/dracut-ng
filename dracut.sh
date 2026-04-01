@@ -970,6 +970,8 @@ export DRACUT_LOG_LEVEL=warning
 
 [[ ${dracutbasedir-} ]] || dracutbasedir="${dracutsysrootdir-}"/usr/lib/dracut
 
+export DRACUT_ARCH=${DRACUT_ARCH:-$(uname -m)}
+
 # These config variables needs to be exported for dracut-install.
 export add_dlopen_features="" omit_dlopen_features=""
 
@@ -1953,19 +1955,19 @@ dracut_kernel_post() {
         # Using `rm -f' below as some distribution may not ship all firmware.
 
         # Non-x86 APU is not a thing (yet).
-        if [[ ${DRACUT_ARCH:-$(uname -m)} != x86_64 ]]; then
+        if [[ ${DRACUT_ARCH} != x86_64 ]]; then
             ddebug "Removing AMDGPU firmware unused by non-x86-64 systems ..."
             for _amdgpu_prefix in ${_apu_prefix}; do
                 rm -f "${_amdgpu_prefix}"*
             done
         fi
 
-        if [[ ${DRACUT_ARCH:-$(uname -m)} == arm64 ]]; then
+        if [[ ${DRACUT_ARCH} == arm64 ]]; then
             ddebug "Removing AMDGPU firmware unused by AArch64 systems ..."
             for _amdgpu_prefix in ${_mobile_prefix}; do
                 rm -f "${_amdgpu_prefix}"*
             done
-        elif [[ ${DRACUT_ARCH:-$(uname -m)} == mips64 ]]; then
+        elif [[ ${DRACUT_ARCH} == mips64 ]]; then
             # No post-GCN 4.0 support - crashes firmware.
             # Mobile AMD GPUs likely.
             ddebug "Removing AMDGPU firmware unused by MIPS64 (Loongson 3) systems ..."
@@ -2247,7 +2249,7 @@ if ! [[ $print_cmdline ]] && ! [[ $printconfig ]]; then
             exit 1
         fi
         unset EFI_MACHINE_TYPE_NAME
-        case "${DRACUT_ARCH:-$(uname -m)}" in
+        case "${DRACUT_ARCH}" in
             x86_64)
                 EFI_MACHINE_TYPE_NAME=x64
                 ;;
@@ -2264,7 +2266,7 @@ if ! [[ $print_cmdline ]] && ! [[ $printconfig ]]; then
                 EFI_MACHINE_TYPE_NAME=loongarch64
                 ;;
             *)
-                dfatal "Architecture '${DRACUT_ARCH:-$(uname -m)}' not supported to create a UEFI executable"
+                dfatal "Architecture '${DRACUT_ARCH}' not supported to create a UEFI executable"
                 exit 1
                 ;;
         esac
@@ -2306,7 +2308,7 @@ if [[ $early_microcode == yes ]]; then
             && unset early_microcode
     fi
     # Do not complain on non-x86 architectures as it makes no sense
-    case "${DRACUT_ARCH:-$(uname -m)}" in
+    case "${DRACUT_ARCH}" in
         x86_64 | i?86)
             [[ $early_microcode != yes ]] \
                 && dwarn "Disabling early microcode, because kernel does not support it. CONFIG_MICROCODE!=y"

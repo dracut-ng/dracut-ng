@@ -42,20 +42,19 @@ install() {
     done
 
     # Install library file(s)
-    _arch=${DRACUT_ARCH:-$(uname -m)}
     inst_libdir_file \
-        {"tls/$_arch/",tls/,"$_arch/",}"libopensc.so.*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libsmm-local.so.*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"opensc-pkcs11.so" \
-        {"tls/$_arch/",tls/,"$_arch/",}"onepin-opensc-pkcs11.so" \
-        {"tls/$_arch/",tls/,"$_arch/",}"pkcs11/opensc-pkcs11.so" \
-        {"tls/$_arch/",tls/,"$_arch/",}"pkcs11/onepin-opensc-pkcs11.so" \
-        {"tls/$_arch/",tls/,"$_arch/",}"pcsc/drivers/ifd-ccid.bundle/Contents/Info.plist" \
-        {"tls/$_arch/",tls/,"$_arch/",}"pcsc/drivers/ifd-ccid.bundle/Contents/Linux/libccid.so" \
-        {"tls/$_arch/",tls/,"$_arch/",}"pcsc/drivers/serial/libccidtwin.so" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libeac.so*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libpcsclite.so.*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libpcsclite_real.so.*"
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libopensc.so.*" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libsmm-local.so.*" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"opensc-pkcs11.so" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"onepin-opensc-pkcs11.so" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"pkcs11/opensc-pkcs11.so" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"pkcs11/onepin-opensc-pkcs11.so" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"pcsc/drivers/ifd-ccid.bundle/Contents/Info.plist" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"pcsc/drivers/ifd-ccid.bundle/Contents/Linux/libccid.so" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"pcsc/drivers/serial/libccidtwin.so" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libeac.so*" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libpcsclite.so.*" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libpcsclite_real.so.*"
 
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then

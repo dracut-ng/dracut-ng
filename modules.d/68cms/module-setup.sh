@@ -2,16 +2,14 @@
 
 # called by dracut
 check() {
-    arch=${DRACUT_ARCH:-$(uname -m)}
-    [ "$arch" = "s390" ] || [ "$arch" = "s390x" ] || return 1
+    [ "$DRACUT_ARCH" = "s390" ] || [ "$DRACUT_ARCH" = "s390x" ] || return 1
     require_binaries chzdev lszdev || return 1
     return 255
 }
 
 # called by dracut
 depends() {
-    arch=${DRACUT_ARCH:-$(uname -m)}
-    [ "$arch" = "s390" ] || [ "$arch" = "s390x" ] || return 1
+    [ "$DRACUT_ARCH" = "s390" ] || [ "$DRACUT_ARCH" = "s390x" ] || return 1
     echo znet bash initqueue
     return 0
 }

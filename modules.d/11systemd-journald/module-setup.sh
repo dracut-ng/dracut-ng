@@ -57,13 +57,12 @@ install() {
         journalctl
 
     # Install library file(s)
-    _arch=${DRACUT_ARCH:-$(uname -m)}
     if [[ ! $USE_SYSTEMD_DLOPEN_DEPS ]]; then
         inst_libdir_file \
-            {"tls/$_arch/",tls/,"$_arch/",}"libgcrypt.so*" \
-            {"tls/$_arch/",tls/,"$_arch/",}"liblz4.so.*" \
-            {"tls/$_arch/",tls/,"$_arch/",}"liblzma.so.*" \
-            {"tls/$_arch/",tls/,"$_arch/",}"libzstd.so.*"
+            {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libgcrypt.so*" \
+            {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"liblz4.so.*" \
+            {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"liblzma.so.*" \
+            {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libzstd.so.*"
     fi
 
     # Install the hosts local user configurations if enabled.

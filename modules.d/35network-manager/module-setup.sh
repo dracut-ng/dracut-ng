@@ -108,8 +108,6 @@ install() {
         echo "${UUID//-/}" > "$initdir/etc/machine-id"
     fi
 
-    _arch=${DRACUT_ARCH:-$(uname -m)}
-
-    inst_libdir_file {"tls/$_arch/",tls/,"$_arch/",}"libnss_dns.so.*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libnss_mdns4_minimal.so.*"
+    inst_libdir_file {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libnss_dns.so.*" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libnss_mdns4_minimal.so.*"
 }

@@ -2,9 +2,7 @@
 
 # called by dracut
 check() {
-    local _arch=${DRACUT_ARCH:-$(uname -m)}
-    [ "$_arch" = "s390" ] || [ "$_arch" = "s390x" ] || return 1
-
+    [ "$DRACUT_ARCH" = "s390" ] || [ "$DRACUT_ARCH" = "s390x" ] || return 1
     return 0
 }
 

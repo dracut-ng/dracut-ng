@@ -150,8 +150,7 @@ EOF
     unset _systemdbinary
 
     # Install library file(s)
-    _arch=${DRACUT_ARCH:-$(uname -m)}
     inst_libdir_file \
-        {"tls/$_arch/",tls/,"$_arch/",}"libbpf.so*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libnss_*"
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libbpf.so*" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libnss_*"
 }

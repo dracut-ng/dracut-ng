@@ -23,9 +23,8 @@ depends() {
 
 # called by dracut
 installkernel() {
-    local _arch=${DRACUT_ARCH:-$(uname -m)}
     local _s390drivers=
-    if [[ $_arch == "s390" ]] || [[ $_arch == "s390x" ]]; then
+    if [[ $DRACUT_ARCH == "s390" ]] || [[ $DRACUT_ARCH == "s390x" ]]; then
         _s390drivers="=drivers/s390/crypto"
     fi
 
@@ -158,8 +157,7 @@ install() {
     inst_script "$moddir/crypt-run-generator.sh" "/sbin/crypt-run-generator"
 
     # Install required libraries.
-    _arch=${DRACUT_ARCH:-$(uname -m)}
     inst_libdir_file \
-        {"tls/$_arch/",tls/,"$_arch/",}"/ossl-modules/fips.so" \
-        {"tls/$_arch/",tls/,"$_arch/",}"/ossl-modules/legacy.so"
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"/ossl-modules/fips.so" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"/ossl-modules/legacy.so"
 }

@@ -90,10 +90,9 @@ install() {
         "${udevdir}"/udev.conf.d/*.conf
 
     # Install required libraries.
-    _arch=${DRACUT_ARCH:-$(uname -m)}
     inst_libdir_file \
-        {"tls/$_arch/",tls/,"$_arch/",}"libkmod.so*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libnss_files*"
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libkmod.so*" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libnss_files*"
 
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then

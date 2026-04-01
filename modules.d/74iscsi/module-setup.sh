@@ -159,13 +159,12 @@ depends() {
 
 # called by dracut
 installkernel() {
-    local _arch=${DRACUT_ARCH:-$(uname -m)}
     local _funcs='iscsi_register_transport'
 
     hostonly=$(optional_hostonly) instmods bnx2i qla4xxx cxgb3i cxgb4i be2iscsi qedi
     hostonly="" instmods iscsi_tcp iscsi_ibft crc32c iscsi_boot_sysfs 8021q
 
-    if [ "$_arch" = "s390" ] || [ "$_arch" = "s390x" ]; then
+    if [ "$DRACUT_ARCH" = "s390" ] || [ "$DRACUT_ARCH" = "s390x" ]; then
         _s390drivers="=drivers/s390/scsi"
     fi
 

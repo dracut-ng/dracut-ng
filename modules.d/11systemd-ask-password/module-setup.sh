@@ -26,7 +26,7 @@ depends() {
         # - virtio-vga is not supported
         # - ramfb is not enough
         # Therefore, depend on the drm module if virtio_gpu is loaded on the system.
-        if [[ ${DRACUT_ARCH:-$(uname -m)} == arm* || ${DRACUT_ARCH:-$(uname -m)} == aarch64 ]] \
+        if [[ ${DRACUT_ARCH} == arm* || ${DRACUT_ARCH} == aarch64 ]] \
             && grep -r -qs "virtio:d00000010v" /sys/bus/virtio/devices/*/modalias; then
             echo drm
         fi
