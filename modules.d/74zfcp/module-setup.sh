@@ -2,8 +2,7 @@
 
 # called by dracut
 check() {
-    arch=${DRACUT_ARCH:-$(uname -m)}
-    [ "$arch" = "s390" ] || [ "$arch" = "s390x" ] || return 1
+    [ "$DRACUT_ARCH" = "s390" ] || [ "$DRACUT_ARCH" = "s390x" ] || return 1
 
     require_binaries zfcp_cio_free sed || return 1
 

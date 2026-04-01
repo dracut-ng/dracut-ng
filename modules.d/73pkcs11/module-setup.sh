@@ -24,12 +24,11 @@ depends() {
 install() {
 
     # Install library file(s)
-    _arch=${DRACUT_ARCH:-$(uname -m)}
     inst_libdir_file \
-        {"tls/$_arch/",tls/,"$_arch/",}"libtasn1.so.*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libffi.so.*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libp11-kit.so.*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libcryptsetup.so.*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"/cryptsetup/libcryptsetup-token-systemd-pkcs11.so*"
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libtasn1.so.*" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libffi.so.*" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libp11-kit.so.*" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libcryptsetup.so.*" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"/cryptsetup/libcryptsetup-token-systemd-pkcs11.so*"
 
 }

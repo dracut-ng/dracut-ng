@@ -66,7 +66,7 @@ installkernel() {
             virtio virtio_ring virtio_pci pci_hyperv \
             surface_aggregator_registry psmouse
 
-        if [[ ${DRACUT_ARCH:-$(uname -m)} == arm* || ${DRACUT_ARCH:-$(uname -m)} == aarch64 || ${DRACUT_ARCH:-$(uname -m)} == riscv* ]]; then
+        if [[ ${DRACUT_ARCH} == arm* || ${DRACUT_ARCH} == aarch64 || ${DRACUT_ARCH} == riscv* ]]; then
             # arm/aarch64 specific modules
             _blockfuncs+='|dw_mc_probe|dw_mci_pltfm_register|nvme_init_ctrl'
             hostonly=$(optional_hostonly) instmods \
@@ -131,7 +131,7 @@ installkernel() {
             hostonly='' instmods "${host_fs_types[@]}"
         fi
 
-        arch=${DRACUT_ARCH:-$(uname -m)}
+        local arch=${DRACUT_ARCH}
 
         # We don't want to play catch up with hash and encryption algorithms.
         # To be safe, just use the hammer and include all crypto.

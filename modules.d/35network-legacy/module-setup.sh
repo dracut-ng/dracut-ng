@@ -16,8 +16,6 @@ depends() {
 
 # called by dracut
 install() {
-    local _arch
-
     # Adding default link and (if exists) 98-default-mac-none.link
     if dracut_module_included "systemd"; then
         inst_multiple -o \
@@ -87,8 +85,6 @@ install() {
         )
     done
 
-    _arch=${DRACUT_ARCH:-$(uname -m)}
-
-    inst_libdir_file {"tls/$_arch/",tls/,"$_arch/",}"libnss_dns.so.*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libnss_mdns4_minimal.so.*"
+    inst_libdir_file {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libnss_dns.so.*" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libnss_mdns4_minimal.so.*"
 }

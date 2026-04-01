@@ -37,8 +37,7 @@ install() {
         ldconfig.real
 
     # Install required libraries.
-    _arch=${DRACUT_ARCH:-$(uname -m)}
-    inst_libdir_file {"tls/$_arch/",tls/,"$_arch/",}"ld.so"
+    inst_libdir_file {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"ld.so"
 
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then

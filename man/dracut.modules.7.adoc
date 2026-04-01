@@ -177,6 +177,7 @@ drauct modules. These shell variables are always declared and assigned
 values (the assigned value might be an empty string). There is a
 compatibility promise on these variables between dracut releases.
 Module should only read (and not write) these variables.
+ * `$DRACUT_ARCH` (not an empty string)
  * `$hostonly` (could be an empty string)
  * `$hostonly_mode` (could be an empty string)
  * `$hostonly_cmdline` (not an empty string)

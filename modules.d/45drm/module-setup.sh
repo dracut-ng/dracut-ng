@@ -9,7 +9,7 @@ check() {
 installkernel() {
     # Include KMS capable drm drivers
 
-    if [[ ${DRACUT_ARCH:-$(uname -m)} == arm* || ${DRACUT_ARCH:-$(uname -m)} == aarch64 ]]; then
+    if [[ ${DRACUT_ARCH} == arm* || ${DRACUT_ARCH} == aarch64 ]]; then
         # arm/aarch64 specific modules needed by drm
         hostonly=$(optional_hostonly) instmods \
             "=drivers/gpu/drm/i2c" \

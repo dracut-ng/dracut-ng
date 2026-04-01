@@ -75,16 +75,15 @@ install() {
     fi
 
     # libcurl and libopenssl are not loaded via dlopen
-    _arch=${DRACUT_ARCH:-$(uname -m)}
     inst_libdir_file \
-        {"tls/$_arch/",tls/,"$_arch/",}"libcurl.so*" \
-        {"tls/$_arch/",tls/,"$_arch/",}"libssl.so*"
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libcurl.so*" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libssl.so*"
 
     if [[ ! $USE_SYSTEMD_DLOPEN_DEPS ]]; then
         inst_libdir_file \
-            {"tls/$_arch/",tls/,"$_arch/",}"libarchive.so*" \
-            {"tls/$_arch/",tls/,"$_arch/",}"liblz4.so*" \
-            {"tls/$_arch/",tls/,"$_arch/",}"liblzma.so*" \
-            {"tls/$_arch/",tls/,"$_arch/",}"libzstd.so*"
+            {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libarchive.so*" \
+            {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"liblz4.so*" \
+            {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"liblzma.so*" \
+            {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libzstd.so*"
     fi
 }
