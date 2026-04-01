@@ -1509,23 +1509,23 @@ determine_kernel_image() {
 }
 
 _detect_library_directories() {
-    local libdirs=""
+    local -a libdirs=()
+    local line
 
     if [[ $($DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} --dry-run -R "$DRACUT_TESTBIN") == */lib64/* ]] &> /dev/null \
         && [[ -d "${dracutsysrootdir-}/lib64" ]]; then
-        libdirs+=" /lib64"
-        [[ -d "${dracutsysrootdir-}/usr/lib64" ]] && libdirs+=" /usr/lib64"
+        libdirs+=("/lib64")
+        [[ -d "${dracutsysrootdir-}/usr/lib64" ]] && libdirs+=("/usr/lib64")
     fi
 
     if [[ -d "${dracutsysrootdir-}/lib" ]]; then
-        libdirs+=" /lib"
-        [[ -d "${dracutsysrootdir-}/usr/lib" ]] && libdirs+=" /usr/lib"
+        libdirs+=("/lib")
+        [[ -d "${dracutsysrootdir-}/usr/lib" ]] && libdirs+=("/usr/lib")
     fi
 
-    # shellcheck disable=SC2046  # word splitting is wanted, libraries must not contain spaces
-    libdirs+="$(printf ' %s' $(ldconfig_paths))"
+    while IFS='' read -r line; do libdirs+=("$line"); done < <(ldconfig_paths)
 
-    echo "${libdirs# }"
+    echo "${libdirs[@]}"
 }
 
 if ! _is_func dinfo > /dev/null 2>&1; then
