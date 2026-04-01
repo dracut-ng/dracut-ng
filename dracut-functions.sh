@@ -1509,23 +1509,39 @@ determine_kernel_image() {
 }
 
 _detect_library_directories() {
-    local libdirs=""
+    local -a _libdirs=()
+    local _host_path _initrd_path
 
     if [[ $($DRACUT_INSTALL ${dracutsysrootdir:+-r "$dracutsysrootdir"} --dry-run -R "$DRACUT_TESTBIN") == */lib64/* ]] &> /dev/null \
         && [[ -d "${dracutsysrootdir-}/lib64" ]]; then
-        libdirs+=" /lib64"
-        [[ -d "${dracutsysrootdir-}/usr/lib64" ]] && libdirs+=" /usr/lib64"
+        _host_path="$(readlink -f "${dracutsysrootdir-}"/lib64)"
+        _initrd_path="${_host_path#"${dracutsysrootdir-}"}"
+        _libdirs+=("$_initrd_path")
+        if [[ -d "${dracutsysrootdir-}/usr/lib64" ]] && [[ $_host_path != "${dracutsysrootdir-}/usr/lib64" ]]; then
+            _host_path="$(readlink -f "${dracutsysrootdir-}"/usr/lib64)"
+            _initrd_path="${_host_path#"${dracutsysrootdir-}"}"
+            _libdirs+=("$_initrd_path")
+        fi
     fi
 
     if [[ -d "${dracutsysrootdir-}/lib" ]]; then
-        libdirs+=" /lib"
-        [[ -d "${dracutsysrootdir-}/usr/lib" ]] && libdirs+=" /usr/lib"
+        _host_path="$(readlink -f "${dracutsysrootdir-}"/lib)"
+        _initrd_path="${_host_path#"${dracutsysrootdir-}"}"
+        _libdirs+=("$_initrd_path")
+        if [[ -d "${dracutsysrootdir-}/usr/lib" ]] && [[ $_host_path != "${dracutsysrootdir-}/usr/lib" ]]; then
+            _host_path="$(readlink -f "${dracutsysrootdir-}"/usr/lib)"
+            _initrd_path="${_host_path#"${dracutsysrootdir-}"}"
+            [[ " ${_libdirs[*]} " == *" $_initrd_path "* ]] || _libdirs+=("$_initrd_path")
+        fi
     fi
 
-    # shellcheck disable=SC2046  # word splitting is wanted, libraries must not contain spaces
-    libdirs+="$(printf ' %s' $(ldconfig_paths))"
+    for _host_path in $(ldconfig_paths); do
+        _host_path="$(readlink -f "${dracutsysrootdir-}${_host_path}")"
+        _initrd_path="${_host_path#"${dracutsysrootdir-}"}"
+        [[ " ${_libdirs[*]} " == *" $_initrd_path "* ]] || _libdirs+=("$_initrd_path")
+    done
 
-    echo "${libdirs# }"
+    echo "${_libdirs[@]}"
 }
 
 if ! _is_func dinfo > /dev/null 2>&1; then
