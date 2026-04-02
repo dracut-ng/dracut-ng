@@ -71,8 +71,8 @@ These modules would require including a version of systemd into initramfs.
 | systemd-creds
 | https://www.freedesktop.org/software/systemd/man/systemd-creds.html[systemd-creds]
 
-| systemd-cyptsetup
-| https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptsetup@.service.html[systemd-cyptsetup]
+| systemd-cryptsetup
+| https://www.freedesktop.org/software/systemd/man/latest/systemd-cryptsetup@.service.html[systemd-cryptsetup]
 
 | systemd-emergency
 | https://www.freedesktop.org/software/systemd/man/latest/systemd.special.html#emergency.target[systemd-emergency]
