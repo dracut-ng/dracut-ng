@@ -46,6 +46,7 @@ RUN xbps-install -Syu xbps && xbps-install -yu \
     kbd \
     libkmod-devel \
     linux \
+    linux-headers \
     lvm2 \
     make \
     mdadm \
