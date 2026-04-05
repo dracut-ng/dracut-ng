@@ -26,11 +26,15 @@ RUN case $(dpkg --print-architecture) in \
     if [ "$DISTRIBUTION" = "ubuntu:rolling" ]; then \
         coreutils="coreutils-from-gnu coreutils-from-uutils- --allow-remove-essential"; \
     fi; \
+    if [ "$DISTRIBUTION" != "debian:latest" ] && [ "$DISTRIBUTION" != "debian:sid" ]; then \
+        zfs="zfs-dracut"; \
+    fi; \
     apt-get update -y -qq && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -qq && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
     $arch_pkgs \
     $cpio \
     $coreutils \
+    $zfs \
     asciidoctor \
     bluez \
     btrfs-progs \
