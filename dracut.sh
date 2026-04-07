@@ -1141,7 +1141,6 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $hostonly_l ]] && hostonly=$hostonly_l
 [[ $hostonly_cmdline_l ]] && hostonly_cmdline=$hostonly_cmdline_l
 [[ $hostonly_mode_l ]] && hostonly_mode=$hostonly_mode_l
-[[ ${hostonly-} != "no" ]] && ! [[ $hostonly_cmdline ]] && hostonly_cmdline="yes"
 # shellcheck disable=SC2034
 [[ $i18n_install_all_l ]] && i18n_install_all=$i18n_install_all_l
 # shellcheck disable=SC2034
@@ -1355,6 +1354,11 @@ if [[ ${hostonly-} ]]; then
     elif ! findmnt --target "/sys" &> /dev/null; then
         dwarning "Hostonly mode with no /sys mounted!"
     fi
+fi
+
+if [[ ${hostonly-} ]] && ! [[ $hostonly_cmdline ]]; then
+    # Enable hostonly-cmdline by default in hostonly mode
+    hostonly_cmdline="yes"
 fi
 
 case $hostonly_mode in
