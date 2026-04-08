@@ -344,15 +344,13 @@ is reported, but does not let dracut fail.
 installs multiple directories (but not their content) located on a library
 directory to the initramfs image.
 
-==== inst_libdir_file [-n <pattern>] [-o] <file> [<file>...]
+==== inst_libdir_file [-n <pattern>] <file> [<file>...]
 
 installs multiple files located on a library directory to the initramfs image.
 
 options:
 
 -n <pattern>:: install all library files matching a pattern.
-
--o:: optional, a missing library does not lead to an error.
 
 ==== instmods [-c] [-s] <kernelmodule> [ <kernelmodule> ... ]
 
