@@ -1189,6 +1189,20 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $sbat_l ]] && sbat="$sbat_l"
 [[ $machine_id_l ]] && machine_id="$machine_id_l"
 
+TMPDIR="$(realpath -e "$tmpdir")"
+readonly TMPDIR
+[ -d "$TMPDIR" ] || {
+    printf "%s\n" "dracut[F]: Invalid tmpdir '$tmpdir'." >&2
+    exit 1
+}
+
+DRACUT_TMPDIR="$(mktemp -p "$TMPDIR/" -d -t dracut.dXXXXXX)"
+readonly DRACUT_TMPDIR
+[ -d "$DRACUT_TMPDIR" ] || {
+    printf "%s\n" "dracut[F]: mktemp -p '$TMPDIR/' -d -t dracut.dXXXXXX failed." >&2
+    exit 1
+}
+
 # shellcheck source=./dracut-functions.sh
 . "$dracutbasedir"/dracut-functions.sh
 
@@ -1405,24 +1419,10 @@ if [[ -z $DRACUT_KMODDIR_OVERRIDE && -n $drivers_dir ]]; then
     fi
 fi
 
-TMPDIR="$(realpath -e "$tmpdir")"
-readonly TMPDIR
-[ -d "$TMPDIR" ] || {
-    dfatal "Invalid tmpdir '$tmpdir'."
-    exit 1
-}
-
 if findmnt --raw -n --target "$tmpdir" --output=options | grep -q noexec; then
     [[ $debug == yes ]] && ddebug "Tmpdir '$tmpdir' is mounted with 'noexec'."
     noexec=1
 fi
-
-DRACUT_TMPDIR="$(mktemp -p "$TMPDIR/" -d -t dracut.dXXXXXX)"
-readonly DRACUT_TMPDIR
-[ -d "$DRACUT_TMPDIR" ] || {
-    dfatal "mktemp -p '$TMPDIR/' -d -t dracut.dXXXXXX failed."
-    exit 1
-}
 
 # Cache file used to optimize get_maj_min()
 declare -x -r get_maj_min_cache_file="${DRACUT_TMPDIR}/majmin_cache"
