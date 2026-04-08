@@ -29,6 +29,6 @@ install() {
         {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libffi.so.*" \
         {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libp11-kit.so.*" \
         {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libcryptsetup.so.*" \
-        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"/cryptsetup/libcryptsetup-token-systemd-pkcs11.so*"
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"cryptsetup/libcryptsetup-token-systemd-pkcs11.so*"
 
 }
