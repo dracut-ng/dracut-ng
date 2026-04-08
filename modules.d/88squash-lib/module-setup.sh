@@ -53,10 +53,10 @@ squash_install() {
         DRACUT_RESOLVE_LAZY="" inst_multiple sh mount modprobe mkdir switch_root grep umount
 
         # libpthread workaround: pthread_cancel wants to dlopen libgcc_s.so
-        inst_libdir_file -o "libgcc_s.so*"
+        inst_libdir_file "libgcc_s.so*"
 
         # FIPS workaround for Fedora/RHEL: libcrypto needs libssl when FIPS is enabled
-        [[ $DRACUT_FIPS_MODE ]] && inst_libdir_file -o "libssl.so*"
+        [[ $DRACUT_FIPS_MODE ]] && inst_libdir_file "libssl.so*"
     fi
 
     hostonly="" instmods "loop" "overlay"
