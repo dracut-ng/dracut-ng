@@ -158,6 +158,6 @@ install() {
 
     # Install required libraries.
     inst_libdir_file \
-        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"/ossl-modules/fips.so" \
-        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"/ossl-modules/legacy.so"
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"ossl-modules/fips.so" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"ossl-modules/legacy.so"
 }

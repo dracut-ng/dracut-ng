@@ -57,7 +57,7 @@ install() {
         {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libtss2-tcti-swtpm.so.*" \
         {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libtss2-tctildr.so.*" \
         {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libcryptsetup.so.*" \
-        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"/cryptsetup/libcryptsetup-token-systemd-tpm2.so" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"cryptsetup/libcryptsetup-token-systemd-tpm2.so" \
         {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libcurl.so.*" \
         {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libjson-c.so.*"
 

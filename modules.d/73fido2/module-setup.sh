@@ -23,7 +23,7 @@ install() {
         {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libfido2.so.*" \
         {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libz.so.*" \
         {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libcryptsetup.so.*" \
-        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"/cryptsetup/libcryptsetup-token-systemd-fido2.so" \
+        {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"cryptsetup/libcryptsetup-token-systemd-fido2.so" \
         {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libcbor.so.*" \
         {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libhidapi-hidraw.so.*"
 }
