@@ -3040,7 +3040,7 @@ if [[ $kernel_only != yes ]]; then
         for _dir in $libdirs; do
             for _f in "${dracutsysrootdir-}$_dir/libcrypto.so"*; do
                 [[ -e $_f ]] || continue
-                inst_libdir_file -o "libssl.so*"
+                inst_libdir_file "libssl.so*"
                 break 2
             done
         done
