@@ -120,7 +120,6 @@ test_setup() {
         network_handler="systemd-networkd"
     fi
     test_dracut \
-        --no-hostonly-cmdline \
         "${local_pubring[@]}" \
         -a "systemd-import $network_handler"
 }
