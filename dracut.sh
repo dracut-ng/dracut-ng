@@ -602,170 +602,21 @@ PARMS_TO_STORE=""
 eval set -- "$TEMP"
 
 while :; do
-    if [[ $1 != "--" ]] && [[ $1 != "--rebuild" ]]; then
-        PARMS_TO_STORE="${PARMS_TO_STORE:+$PARMS_TO_STORE }$1"
-    fi
     case $1 in
-        --kver)
-            kernel="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
+        -h | --help)
+            long_usage
+            exit 0
             ;;
-        -a | --add)
-            add_dracutmodules_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --force-add)
-            force_add_dracutmodules_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --add-drivers)
-            add_drivers_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --force-drivers)
-            force_drivers_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --omit-drivers)
-            omit_drivers_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        -m | --modules)
-            dracutmodules_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        -o | --omit)
-            omit_dracutmodules_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        -d | --drivers)
-            drivers_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --filesystems)
-            filesystems_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        -I | --install)
-            install_items_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --remove)
-            remove_items_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --install-optional)
-            install_optional_items_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --fwdir)
-            fw_dir_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --libdirs)
-            libdirs_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --fscks)
-            fscks_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --add-fstab)
-            add_fstab_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --mount)
-            fstab_lines+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --add-device | --device)
-            add_device_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --kernel-cmdline)
-            kernel_cmdline_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --nofscks) nofscks_l="yes" ;;
-        --ro-mnt) ro_mnt_l="yes" ;;
-        -k | --kmoddir)
-            drivers_dir_l="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        -c | --conf)
-            conffile="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --confdir)
-            confdir="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --add-confdir)
-            add_confdir="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
+        --version)
+            long_version
+            exit 0
             ;;
         --tmpdir)
             tmpdir_l="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        -r | --sysroot)
-            sysroot_l="$2"
-            PARMS_TO_STORE+=" '$2'"
             shift
             ;;
         -L | --stdlog)
             stdloglvl_l="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --compress)
-            compress_l="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --compress-level)
-            compress_level_l="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --squash-compressor)
-            squash_compress_l="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --prefix)
-            prefix_l="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --loginstall)
-            loginstall_l="$2"
-            PARMS_TO_STORE+=" '$2'"
             shift
             ;;
         --rebuild)
@@ -775,160 +626,308 @@ while :; do
             shift
             ;;
         -f | --force) force=yes ;;
-        --kernel-only)
-            kernel_only="yes"
-            no_kernel="no"
-            ;;
-        --no-kernel)
-            kernel_only="no"
-            no_kernel="yes"
-            ;;
-        --print-cmdline)
-            print_cmdline="yes"
-            hostonly_l="yes"
-            kernel_only="yes"
-            no_kernel="yes"
-            ;;
-        --early-microcode)
-            early_microcode_l="yes"
-            ;;
-        --no-early-microcode)
-            early_microcode_l="no"
-            ;;
-        --strip) do_strip_l="yes" ;;
-        --aggressive-strip) aggressive_strip_l="yes" ;;
-        --nostrip) do_strip_l="no" ;;
-        --hardlink) do_hardlink_l="yes" ;;
-        --nohardlink) do_hardlink_l="no" ;;
-        --noprefix) prefix_l="/" ;;
-        --mdadmconf) mdadmconf_l="yes" ;;
-        --nomdadmconf) mdadmconf_l="no" ;;
-        --lvmconf) lvmconf_l="yes" ;;
-        --nolvmconf) lvmconf_l="no" ;;
         --debug) debug="yes" ;;
-        --profile) profile="yes" ;;
-        --sshkey)
-            sshkey="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
         --logfile)
             logfile_l="$2"
             shift
             ;;
         -v | --verbose) ((verbosity_mod_l++)) ;;
         -q | --quiet) ((verbosity_mod_l--)) ;;
-        -l | --local)
-            allowlocal="yes"
-            [[ -f "$(readlink -f "${0%/*}")/dracut.sh" ]] \
-                && dracutbasedir="$(readlink -f "${0%/*}")"
-            ;;
-        -H | --hostonly | --host-only)
-            hostonly_l="yes"
-            ;;
-        -N | --no-hostonly | --no-host-only)
-            hostonly_l="no"
-            ;;
-        --hostonly-mode)
-            hostonly_mode_l="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --hostonly-cmdline)
-            hostonly_cmdline_l="yes"
-            ;;
-        --hostonly-i18n)
-            i18n_install_all_l="no"
-            ;;
-        --hostonly-nics)
-            hostonly_nics_l+=("$2")
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --no-hostonly-i18n)
-            i18n_install_all_l="yes"
-            ;;
-        --no-hostonly-cmdline)
-            hostonly_cmdline_l="no"
-            ;;
-        --no-hostonly-default-device)
-            hostonly_default_device="no"
-            ;;
-        --persistent-policy)
-            persistent_policy_l="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --fstab) use_fstab_l="yes" ;;
-        -h | --help)
-            long_usage
-            exit 0
-            ;;
-        --bzip2) compress_l="bzip2" ;;
-        --lzma) compress_l="lzma" ;;
-        --xz) compress_l="xz" ;;
-        --lzo) compress_l="lzop" ;;
-        --lz4) compress_l="lz4" ;;
-        --zstd) compress_l="zstd" ;;
-        --no-compress) _no_compress_l="cat" ;;
-        --gzip) compress_l="gzip" ;;
-        --enhanced-cpio) enhanced_cpio_l="yes" ;;
-        --list-modules)
-            do_list="yes"
-            kernel_only="no"
-            no_kernel="yes"
-            ;;
-        -M | --show-modules)
-            show_modules_l="yes"
-            ;;
-        --keep) keep="yes" ;;
-        --printsize) printsize="yes" ;;
-        --printconfig) printconfig="yes" ;;
         --regenerate-all) regenerate_all_l="yes" ;;
         -p | --parallel) parallel_l="yes" ;;
-        --noimageifnotneeded) noimageifnotneeded="yes" ;;
-        --reproducible) reproducible_l="yes" ;;
-        --no-reproducible) reproducible_l="no" ;;
-        --uefi) uefi_l="yes" ;;
-        --ukify) ukify_l="yes" ;;
-        --no-uefi) uefi_l="no" ;;
-        --no-ukify) ukify_l="no" ;;
-        --uefi-stub)
-            uefi_stub_l="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --uefi-splash-image)
-            uefi_splash_image_l="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --kernel-image)
-            kernel_image_l="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --sbat)
-            sbat_l="$2"
-            PARMS_TO_STORE+=" '$2'"
-            shift
-            ;;
-        --no-machineid)
-            machine_id_l="no"
-            ;;
-        --version)
-            long_version
-            exit 0
-            ;;
+        --printsize) printsize="yes" ;;
+        --printconfig) printconfig="yes" ;;
         --)
             shift
             break
             ;;
-
-        *) # should not even reach this point
-            printf "\n!Unknown option: '%s'\n\n" "$1" >&2
-            usage
-            exit 1
+        *)
+            PARMS_TO_STORE="${PARMS_TO_STORE:+$PARMS_TO_STORE }$1"
+            case "$1" in
+                --kver)
+                    kernel="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                -a | --add)
+                    add_dracutmodules_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --force-add)
+                    force_add_dracutmodules_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --add-drivers)
+                    add_drivers_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --force-drivers)
+                    force_drivers_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --omit-drivers)
+                    omit_drivers_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                -m | --modules)
+                    dracutmodules_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                -o | --omit)
+                    omit_dracutmodules_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                -d | --drivers)
+                    drivers_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --filesystems)
+                    filesystems_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                -I | --install)
+                    install_items_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --remove)
+                    remove_items_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --install-optional)
+                    install_optional_items_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --fwdir)
+                    fw_dir_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --libdirs)
+                    libdirs_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --fscks)
+                    fscks_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --add-fstab)
+                    add_fstab_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --mount)
+                    fstab_lines+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --add-device | --device)
+                    add_device_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --kernel-cmdline)
+                    kernel_cmdline_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --nofscks) nofscks_l="yes" ;;
+                --ro-mnt) ro_mnt_l="yes" ;;
+                -k | --kmoddir)
+                    drivers_dir_l="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                -c | --conf)
+                    conffile="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --confdir)
+                    confdir="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --add-confdir)
+                    add_confdir="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                -r | --sysroot)
+                    sysroot_l="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --compress)
+                    compress_l="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --compress-level)
+                    compress_level_l="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --squash-compressor)
+                    squash_compress_l="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --prefix)
+                    prefix_l="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --loginstall)
+                    loginstall_l="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --kernel-only)
+                    kernel_only="yes"
+                    no_kernel="no"
+                    ;;
+                --no-kernel)
+                    kernel_only="no"
+                    no_kernel="yes"
+                    ;;
+                --print-cmdline)
+                    print_cmdline="yes"
+                    hostonly_l="yes"
+                    kernel_only="yes"
+                    no_kernel="yes"
+                    ;;
+                --early-microcode)
+                    early_microcode_l="yes"
+                    ;;
+                --no-early-microcode)
+                    early_microcode_l="no"
+                    ;;
+                --strip) do_strip_l="yes" ;;
+                --aggressive-strip) aggressive_strip_l="yes" ;;
+                --nostrip) do_strip_l="no" ;;
+                --hardlink) do_hardlink_l="yes" ;;
+                --nohardlink) do_hardlink_l="no" ;;
+                --noprefix) prefix_l="/" ;;
+                --mdadmconf) mdadmconf_l="yes" ;;
+                --nomdadmconf) mdadmconf_l="no" ;;
+                --lvmconf) lvmconf_l="yes" ;;
+                --nolvmconf) lvmconf_l="no" ;;
+                --profile) profile="yes" ;;
+                --sshkey)
+                    sshkey="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                -l | --local)
+                    allowlocal="yes"
+                    [[ -f "$(readlink -f "${0%/*}")/dracut.sh" ]] \
+                        && dracutbasedir="$(readlink -f "${0%/*}")"
+                    ;;
+                -H | --hostonly | --host-only)
+                    hostonly_l="yes"
+                    ;;
+                -N | --no-hostonly | --no-host-only)
+                    hostonly_l="no"
+                    ;;
+                --hostonly-mode)
+                    hostonly_mode_l="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --hostonly-cmdline)
+                    hostonly_cmdline_l="yes"
+                    ;;
+                --hostonly-i18n)
+                    i18n_install_all_l="no"
+                    ;;
+                --hostonly-nics)
+                    hostonly_nics_l+=("$2")
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --no-hostonly-i18n)
+                    i18n_install_all_l="yes"
+                    ;;
+                --no-hostonly-cmdline)
+                    hostonly_cmdline_l="no"
+                    ;;
+                --no-hostonly-default-device)
+                    hostonly_default_device="no"
+                    ;;
+                --persistent-policy)
+                    persistent_policy_l="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --fstab) use_fstab_l="yes" ;;
+                --bzip2) compress_l="bzip2" ;;
+                --lzma) compress_l="lzma" ;;
+                --xz) compress_l="xz" ;;
+                --lzo) compress_l="lzop" ;;
+                --lz4) compress_l="lz4" ;;
+                --zstd) compress_l="zstd" ;;
+                --no-compress) _no_compress_l="cat" ;;
+                --gzip) compress_l="gzip" ;;
+                --enhanced-cpio) enhanced_cpio_l="yes" ;;
+                --list-modules)
+                    do_list="yes"
+                    kernel_only="no"
+                    no_kernel="yes"
+                    ;;
+                -M | --show-modules)
+                    show_modules_l="yes"
+                    ;;
+                --keep) keep="yes" ;;
+                --noimageifnotneeded) noimageifnotneeded="yes" ;;
+                --reproducible) reproducible_l="yes" ;;
+                --no-reproducible) reproducible_l="no" ;;
+                --uefi) uefi_l="yes" ;;
+                --ukify) ukify_l="yes" ;;
+                --no-uefi) uefi_l="no" ;;
+                --no-ukify) ukify_l="no" ;;
+                --uefi-stub)
+                    uefi_stub_l="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --uefi-splash-image)
+                    uefi_splash_image_l="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --kernel-image)
+                    kernel_image_l="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --sbat)
+                    sbat_l="$2"
+                    PARMS_TO_STORE+=" '$2'"
+                    shift
+                    ;;
+                --no-machineid)
+                    machine_id_l="no"
+                    ;;
+                *) # should not even reach this point
+                    printf "\n!Unknown option: '%s'\n\n" "$1" >&2
+                    usage
+                    exit 1
+                    ;;
+            esac
             ;;
     esac
     shift
