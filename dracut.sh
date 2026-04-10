@@ -603,7 +603,7 @@ eval set -- "$TEMP"
 
 while :; do
     if [[ $1 != "--" ]] && [[ $1 != "--rebuild" ]]; then
-        PARMS_TO_STORE+=" $1"
+        PARMS_TO_STORE="${PARMS_TO_STORE:+$PARMS_TO_STORE }$1"
     fi
     case $1 in
         --kver)
@@ -941,7 +941,7 @@ while (($# > 0)); do
     if [ "${1%%=*}" == "++include" ]; then
         include_src+=("$2")
         include_target+=("$3")
-        PARMS_TO_STORE+=" --include '$2' '$3'"
+        PARMS_TO_STORE="${PARMS_TO_STORE:+$PARMS_TO_STORE }--include '$2' '$3'"
         shift 2
     fi
     shift
