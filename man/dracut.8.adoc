@@ -673,6 +673,9 @@ and no /etc/cmdline/*.conf will be generated into the initramfs.
 ENVIRONMENT
 -----------
 
+Environment variables override settings in configuration files,
+and command-line options override both.
+
 _INITRD_COMPRESS_::
     sets the default compression program. See **--compress**.
 
