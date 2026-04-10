@@ -135,6 +135,28 @@ ask_for_password() {
     return $ret
 }
 
+# luks_open_interactive dev mapname [prompt] [cryptsetupopts]
+#
+# Prompt for a LUKS passphrase and open the device.  Uses Plymouth if
+# available, otherwise falls back to TTY.  Reads rd.luks.timeout for
+# the passphrase input timeout.
+luks_open_interactive() {
+    local dev="$1" mapname="$2"
+    local prompt="${3:-Password ($dev)}"
+    local cryptsetupopts="${4:-}"
+    local luks_open _timeout
+
+    _timeout=$(getarg rd.luks.timeout)
+    _timeout="${_timeout:-0}"
+    luks_open="$(command -v cryptsetup) $cryptsetupopts luksOpen"
+    ask_for_password \
+        --ply-tries 5 \
+        --ply-cmd "$luks_open -T1 $dev $mapname" \
+        --ply-prompt "$prompt" \
+        --tty-tries 1 \
+        --tty-cmd "$luks_open -T5 -t $_timeout $dev $mapname"
+}
+
 # Try to mount specified device (by path, by UUID or by label) and check
 # the path with 'test'.
 #

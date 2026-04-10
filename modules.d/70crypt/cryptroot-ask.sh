@@ -78,7 +78,7 @@ asked_file=/tmp/cryptroot-asked-$luksname
 # load dm_crypt if it is not already loaded
 [ -d /sys/module/dm_crypt ] || modprobe dm_crypt
 
-command -v ask_for_password > /dev/null || . /lib/dracut-crypt-lib.sh
+command -v luks_open_interactive > /dev/null || . /lib/dracut-crypt-lib.sh
 
 #
 # Open LUKS device
@@ -175,16 +175,7 @@ else
 fi
 
 if [ $ask_passphrase -ne 0 ]; then
-    luks_open="$(command -v cryptsetup) $cryptsetupopts luksOpen"
-    _timeout=$(getarg "rd.luks.timeout")
-    _timeout=${_timeout:-0}
-    ask_for_password --ply-tries 5 \
-        --ply-cmd "$luks_open -T1 $device $luksname" \
-        --ply-prompt "Password ($device)" \
-        --tty-tries 1 \
-        --tty-cmd "$luks_open -T5 -t $_timeout $device $luksname"
-    unset luks_open
-    unset _timeout
+    luks_open_interactive "$device" "$luksname" "Password ($device)" "$cryptsetupopts"
 fi
 
 if [ "$is_keysource" -ne 0 ] && [ "${luksname##luks-}" != "$luksname" ]; then
