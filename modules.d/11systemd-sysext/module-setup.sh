@@ -44,17 +44,24 @@ install() {
         "/usr/lib/extension-release.d/extension-release.*" \
         "$systemdsystemunitdir"/systemd-confext${_suffix}.service \
         "$systemdsystemunitdir/systemd-confext${_suffix}.service.d/*.conf" \
+        "$systemdsystemunitdir"/systemd-confext-sysroot.service \
+        "$systemdsystemunitdir/systemd-confext-sysroot.service.d/*.conf" \
         "$systemdsystemunitdir"/systemd-sysext${_suffix}.service \
         "$systemdsystemunitdir/systemd-sysext${_suffix}.service.d/*.conf" \
+        "$systemdsystemunitdir"/systemd-sysext-sysroot.service \
+        "$systemdsystemunitdir/systemd-sysext-sysroot.service.d/*.conf" \
         "$systemdsystemunitdir"/initrd.target.wants/systemd-confext${_suffix}.service \
         "$systemdsystemunitdir"/initrd.target.wants/systemd-sysext${_suffix}.service \
         systemd-confext systemd-sysext
 
-    # Enable systemd type unit(s) for systemd < v258 which doesn't ship
-    # initrd.target.wants symlinks.
+    # Enable systemd-{confext, sysext} systemd type unit(s) for systemd < v258
+    # which doesn't ship initrd.target.wants symlinks and systemd-{confext,sysext}-sysroot.service
+    # which are enabled through systemd-initrd.preset.
     for i in \
         systemd-confext.service \
-        systemd-sysext.service; do
+        systemd-sysext.service \
+        systemd-confext-sysroot.service \
+        systemd-sysext-sysroot.service; do
         if [[ -e "$initdir$systemdsystemunitdir"/"$i" ]]; then
             $SYSTEMCTL -q --root "$initdir" enable "$i"
         fi
@@ -67,7 +74,11 @@ install() {
             "$systemdsystemconfdir"/systemd-confext${_suffix}.service \
             "$systemdsystemconfdir/systemd-confext${_suffix}.service.d/*.conf" \
             "$systemdsystemconfdir"/systemd-sysext${_suffix}.service \
-            "$systemdsystemconfdir/systemd-sysext${_suffix}.service.d/*.conf"
+            "$systemdsystemconfdir/systemd-sysext${_suffix}.service.d/*.conf" \
+            "$systemdsystemconfdir"/systemd-confext-sysroot.service \
+            "$systemdsystemconfdir/systemd-confext-sysroot.service.d/*.conf" \
+            "$systemdsystemconfdir"/systemd-sysext-sysroot.service \
+            "$systemdsystemconfdir/systemd-sysext-sysroot.service.d/*.conf"
     fi
 
 }
