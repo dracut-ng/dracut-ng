@@ -1157,6 +1157,38 @@ rd.overlay=UUID=12345678-1234-1234-1234-123456789abc
 rd.overlay=/dev/sdb1
 ----
 
+**rd.overlay.crypt=**__<device>__[**,**__<option>__]...::
+Requires the dracut 'overlayfs-crypt' module.
++
+Specifies an encrypted (LUKS) device for persistent overlay storage.  If the
+device already contains a valid LUKS volume, the user will be prompted for the
+passphrase interactively (via Plymouth if available, otherwise via TTY).
+Otherwise, the device will be wiped, formatted with LUKS using a randomly
+generated passphrase, and a new filesystem will be created on it.  The random
+passphrase is stored in `/run/initramfs/overlayfs.passwd` for the duration of
+the boot.
++
+The device is specified as the first argument, followed by optional
+comma-separated options:
++
+--
+* _<device>_ - (Required) Device specification: LABEL=, UUID=, PARTLABEL=,
+  PARTUUID=, or /dev/<device>.
+* _mapname=<name>_ - Device mapper name (default: overlay-crypt).
+* _fstype=<type>_ - Filesystem type: ext2, ext3, or ext4 (default: ext4).
+* _mkfs=<0|1>_ - Filesystem creation behavior: 0=never create (require existing
+  LUKS), 1=create if needed (default).
+* _timeout=<seconds>_ - Time to wait for the device to appear.  By default,
+  the global `rd.timeout` value is used.  Set to 0 to skip waiting entirely.
+--
++
+[listing]
+.Examples
+----
+rd.overlay.crypt=LABEL=CRYPTOVL
+rd.overlay.crypt=UUID=12345678-1234-1234-1234-123456789abc,fstype=ext3
+----
+
 Booting live images
 ~~~~~~~~~~~~~~~~~~~
 Requires the dracut 'dmsquash-live' module.

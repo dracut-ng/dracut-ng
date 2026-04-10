@@ -16,6 +16,7 @@ client_run() {
     declare -a disk_args=()
     qemu_add_drive disk_args "$TESTDIR"/root.img root
     qemu_add_drive disk_args "$TESTDIR"/overlay.img overlay
+    qemu_add_drive disk_args "$TESTDIR"/crypt.img crypt
 
     "$testdir"/run-qemu -nic none \
         "${disk_args[@]}" \
@@ -24,6 +25,12 @@ client_run() {
     check_qemu_log
 
     client_test_end
+}
+
+setup_crypt_disk() {
+    rm -f "$TESTDIR"/crypt.img
+    truncate -s 100M "$TESTDIR"/crypt.img
+    mkfs.ext4 -q -L CRYPT "$TESTDIR"/crypt.img
 }
 
 test_run() {
@@ -40,6 +47,10 @@ test_run() {
     client_run "fallback to tmpfs (non-existent LABEL)" "rd.overlay=LABEL=NONEXISTENT test.expect=tmpfs"
     client_run "tmpfs overlay with size (rd.overlay=tmpfs:size=32M,nr_inodes=100000)" \
         "rd.overlay=tmpfs:size=32M,nr_inodes=100000 test.expect=tmpfs-sized"
+
+    setup_crypt_disk
+    client_run "encrypted overlay (new device, random password)" \
+        "rd.overlay.crypt=LABEL=CRYPT test.expect=crypt"
 }
 
 test_setup() {
@@ -50,7 +61,9 @@ test_setup() {
     truncate -s 32M "$TESTDIR"/overlay.img
     mkfs.ext4 -q -L OVERLAY "$TESTDIR"/overlay.img
 
-    test_dracut --add overlayfs
+    setup_crypt_disk
+
+    test_dracut --add "overlayfs overlayfs-crypt"
 }
 
 # shellcheck disable=SC1090
