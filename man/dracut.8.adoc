@@ -734,6 +734,18 @@ _DRACUT_ARCH_::
 Default:
     _empty_ (the value of **uname -m** on the host system)
 
+_DRACUT_EXTRA_ARGS_::
+    A string of additional _dracut_ command-line arguments.  The value is
+    word-split and prepended to the argument list before option parsing, so
+    explicit flags supplied directly on the command line will override the
+    values set here.
++
+Arguments that contain spaces must be shell-quoted within the value:
++
+----
+DRACUT_EXTRA_ARGS='--add "module1 module2"' dracut
+----
+
 _SYSTEMD_VERSION_::
     overrides systemd version. Used for **--sysroot**.
 
