@@ -731,6 +731,11 @@ _DRACUT_ARCH_::
 Default:
     _empty_ (the value of **uname -m** on the host system)
 
+_DRACUT_HOSTONLY_::
+    Enable/disable host-only mode.
+    Setting to _yes_ enables the host-only mode (see **--hostonly**).
+    Setting to _no_ disables the host-only mode (see **--no-hostonly**).
+
 _SYSTEMD_VERSION_::
     overrides systemd version. Used for **--sysroot**.
 

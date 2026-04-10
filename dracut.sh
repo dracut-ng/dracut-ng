@@ -1138,6 +1138,7 @@ drivers_dir="${drivers_dir%"${drivers_dir##*[!/]}"}"
 [[ $do_hardlink ]] || do_hardlink=yes
 [[ $prefix_l ]] && prefix=$prefix_l
 [[ $prefix == "/" ]] && unset prefix
+[[ ${DRACUT_HOSTONLY-} ]] && hostonly=$DRACUT_HOSTONLY
 [[ $hostonly_l ]] && hostonly=$hostonly_l
 [[ $hostonly_cmdline_l ]] && hostonly_cmdline=$hostonly_cmdline_l
 [[ $hostonly_mode_l ]] && hostonly_mode=$hostonly_mode_l
