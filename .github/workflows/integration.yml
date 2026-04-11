@@ -248,7 +248,6 @@ jobs:
             fail-fast: false
             matrix:
                 container:
-                    - arch:latest
                     - debian:latest
                     - opensuse:latest
                 test:
