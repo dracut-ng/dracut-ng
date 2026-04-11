@@ -19,6 +19,10 @@ FROM docker.io/archlinux
 # prefer running tests with btrfs
 ENV TEST_FSTYPE=btrfs
 
+# Ensure /etc/vconsole.conf exists
+RUN \
+touch /etc/vconsole.conf
+
 RUN pacman --noconfirm -Syu \
     3cpio \
     asciidoctor \
