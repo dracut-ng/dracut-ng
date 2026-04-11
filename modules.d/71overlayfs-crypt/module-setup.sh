@@ -6,7 +6,7 @@ check() {
 }
 
 depends() {
-    echo overlayfs
+    echo overlayfs crypt-lib
 }
 
 installkernel() {
@@ -18,7 +18,5 @@ install() {
     inst_hook pre-pivot 01 "$moddir/prepare-overlayfs-crypt.sh"
 
     inst_simple "$moddir/overlayfs-crypt-lib.sh" "/lib/overlayfs-crypt-lib.sh"
-    inst_simple "${moddir%/*}/70crypt/crypt-lib.sh" "/lib/dracut-crypt-lib.sh"
     inst_multiple cryptsetup wipefs mkfs.ext4 mkfs.ext3 mkfs.ext2 sha512sum mktemp chmod readlink
-    inst_multiple -o stty
 }
