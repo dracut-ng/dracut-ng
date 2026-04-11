@@ -387,6 +387,10 @@ crypt-gpg:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]crypt-gpg/*'
 
+crypt-lib:
+    - changed-files:
+          - any-glob-to-any-file: 'modules.d/[0-9][0-9]crypt-lib/*'
+
 crypt-loop:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]crypt-loop/*'

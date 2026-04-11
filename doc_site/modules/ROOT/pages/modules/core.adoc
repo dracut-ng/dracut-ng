@@ -53,6 +53,10 @@ code, there are no specific types or categories for dracut modules.
 | https://repology.org/project/gnupg[GPG] for crypto operations and SmartCards (may requires GPG keys)
 |
 
+| crypt-lib
+| crypt tools shared between several dracut modules
+| library
+
 | crypt-loop
 | encrypted loopback devices (symmetric key)
 |
