@@ -5,7 +5,7 @@ set -eu
 
 export PATH=/usr/sbin:/usr/bin:/sbin:/bin
 ARCH="${ARCH-$(uname -m)}"
-default_qemu_timeout=1200 # 20 min (default might be increased based on the architecture)
+default_qemu_timeout=2400 # 40 min (default might be increased based on the architecture)
 if [ -z "${QEMU_CPU-}" ]; then
     case "$ARCH" in
         aarch64 | arm64)
