@@ -111,3 +111,40 @@ jobs:
               uses: actions/checkout@v6
             - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
               run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
+    arm64-openrc:
+        name: ${{ matrix.test }} on ${{ matrix.container }} on ${{ matrix.architecture.tag }}
+        runs-on: ${{ matrix.architecture.runner }}
+        timeout-minutes: 60
+        concurrency:
+            group: >
+                daily-basic-${{ github.workflow }}-${{ github.ref }}
+                -${{ matrix.container }}-${{ matrix.test }}-${{ matrix.architecture.tag }}
+            cancel-in-progress: true
+        strategy:
+            fail-fast: false
+            matrix:
+                architecture:
+                    - {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                container:
+                    - gentoo:arm64-openrc
+                test:
+                    - "10"
+                    - "11"
+                    - "13"
+                    - "14"
+                    - "20"
+                    - "21"
+                    - "26"
+                    - "30"
+                    - "50"
+                    - "80"
+                    - "81"
+                    - "82"
+        container:
+            image: ghcr.io/dracut-ng/${{ matrix.container }}
+            options: '--device=/dev/kvm --privileged'
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v6
+            - name: "${{ matrix.container }} TEST-${{ matrix.test }}"
+              run: ./test/test-container.sh "TEST-${{ matrix.test }}" ${{ matrix.test }}
