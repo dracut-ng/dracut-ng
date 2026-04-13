@@ -20,6 +20,9 @@ else
     ovlfs=lowerdir=/run/rootfsbase
 fi
 
-if ! strstr "$(cat /proc/mounts)" LiveOS_rootfs; then
-    mount -t overlay LiveOS_rootfs -o "$ovlfs",upperdir=/run/overlayfs,workdir=/run/ovlwork "$NEWROOT"
+if strstr "$(cat /proc/mounts)" LiveOS_rootfs; then
+    # LiveOS_rootfs already mounted
+    return 0
 fi
+
+mount -t overlay LiveOS_rootfs -o "$ovlfs",upperdir=/run/overlayfs,workdir=/run/ovlwork "$NEWROOT"
