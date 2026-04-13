@@ -25,4 +25,7 @@ if strstr "$(cat /proc/mounts)" LiveOS_rootfs; then
     return 0
 fi
 
+if incol2 /proc/mounts "$NEWROOT"; then
+    umount "$NEWROOT"
+fi
 mount -t overlay LiveOS_rootfs -o "$ovlfs",upperdir=/run/overlayfs,workdir=/run/ovlwork "$NEWROOT"
