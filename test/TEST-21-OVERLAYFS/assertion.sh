@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-# required binaries: cat grep
+# required binaries: cat cut grep sort
 
 check_crypt_mounted() {
     if ! grep -q "^/dev/mapper/overlay-crypt /run/overlayfs-backing " /proc/mounts; then
@@ -24,6 +24,16 @@ check_crypt_passphrase() {
     if [ ! -f /run/initramfs/overlayfs.passwd ]; then
         echo "password file /run/initramfs/overlayfs.passwd not found" >> /run/failed
     fi
+}
+
+check_shadowed_mounts() {
+    local mount previous_mount=
+    cut -d ' ' -f 2 /proc/mounts | sort | while IFS= read -r mount; do
+        if [ "$mount" = "$previous_mount" ]; then
+            echo "Error: $mount found twice in /proc/mounts." >> /run/failed
+        fi
+        previous_mount="$mount"
+    done
 }
 
 if grep -q 'test.expect=none' /proc/cmdline; then
@@ -65,6 +75,8 @@ if grep -q 'test.expect=tmpfs-sized' /proc/cmdline; then
         echo "sized tmpfs does not have expected nr_inodes (100000)" >> /run/failed
     fi
 fi
+
+check_shadowed_mounts
 
 # Dump /proc/mounts at the end if there were any failures for easier debugging
 if [ -s /run/failed ]; then
