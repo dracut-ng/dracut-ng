@@ -60,6 +60,16 @@ wait_for_route_ok() {
     return 1
 }
 
+wait_for_tgtd_startup() {
+    local cnt=0
+    while [ $cnt -lt 200 ]; do
+        tgtadm --mode target --op show && return 0
+        sleep 0.1
+        cnt=$((cnt + 1))
+    done
+    return 1
+}
+
 linkup() {
     wait_for_if_link "$1" 2> /dev/null && ip link set "$1" up 2> /dev/null && wait_for_if_up "$1" 2> /dev/null
 }
@@ -76,6 +86,7 @@ linkup enx525400123457
 dnsmasq
 
 tgtd
+wait_for_tgtd_startup
 tgtadm --lld iscsi --mode target --op new --tid 1 --targetname iqn.2009-06.dracut:target0
 tgtadm --lld iscsi --mode target --op new --tid 2 --targetname iqn.2009-06.dracut:target1
 tgtadm --lld iscsi --mode target --op new --tid 3 --targetname iqn.2009-06.dracut:target2
