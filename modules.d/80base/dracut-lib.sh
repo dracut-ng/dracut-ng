@@ -394,9 +394,9 @@ source_hook() {
     _dir=$1
     shift
     for f in $(list_hooks "$_dir"); do
+        set -- "$@"
         # shellcheck disable=SC1090
-        # shellcheck disable=SC2240
-        . "$f" "$@"
+        . "$f"
     done
 }
 
