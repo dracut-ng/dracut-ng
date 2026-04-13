@@ -131,8 +131,11 @@ _check_shutdown() {
     local __f
     local __s=0
     for __f in $(list_hooks "shutdown"); do
-        # shellcheck disable=SC1090 disable=SC2240
-        if (final="$1" . "$__f" "$1"); then
+        if (
+            set -- "$1"
+            # shellcheck disable=SC1090
+            final="$1" . "$__f"
+        ); then
             rm -f -- "$__f"
         else
             __s=1
