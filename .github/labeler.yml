@@ -343,6 +343,10 @@ overlayfs:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]overlayfs/*'
 
+overlayfs-crypt:
+    - changed-files:
+          - any-glob-to-any-file: 'modules.d/[0-9][0-9]overlayfs-crypt/*'
+
 pcmcia:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]pcmcia/*'
