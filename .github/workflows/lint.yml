@@ -60,3 +60,11 @@ jobs:
 
             - name: check formatting
               run: git diff --exit-code
+
+    update-labeler-config:
+        runs-on: ubuntu-latest
+        steps:
+            - name: "Checkout Repository"
+              uses: actions/checkout@v6
+            - name: "Check for needed updates for .github/labeler.yml"
+              run: ./.github/update_labeler.py --check
