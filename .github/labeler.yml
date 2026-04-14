@@ -421,7 +421,7 @@ squash:
 
 squash-erofs:
     - changed-files:
-          - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash/*'
+          - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash-erofs/*'
 
 squash-lib:
     - changed-files:
@@ -429,7 +429,7 @@ squash-lib:
 
 squash-squashfs:
     - changed-files:
-          - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash/*'
+          - any-glob-to-any-file: 'modules.d/[0-9][0-9]squash-squashfs/*'
 
 ssh-client:
     - changed-files:
