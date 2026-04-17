@@ -58,10 +58,7 @@ install() {
         "$tmpfilesdir"/cryptsetup.conf \
         "$systemdutildir"/system-generators/systemd-cryptsetup-generator \
         "$systemdutildir"/systemd-cryptsetup \
-        "$systemdsystemunitdir"/cryptsetup-pre.target \
-        "$systemdsystemunitdir"/cryptsetup.target \
         "$systemdsystemunitdir"/sysinit.target.wants/cryptsetup.target \
-        "$systemdsystemunitdir"/remote-cryptsetup.target \
         "$systemdsystemunitdir"/initrd-root-device.target.wants/remote-cryptsetup.target
 
     # Install required libraries.

@@ -47,6 +47,9 @@ install() {
         "$systemdutildir"/system-generators/systemd-gpt-auto-generator \
         "$systemdutildir"/system.conf \
         "$systemdutildir"/system.conf.d/*.conf \
+        "$systemdsystemunitdir"/cryptsetup-pre.target \
+        "$systemdsystemunitdir"/cryptsetup.target \
+        "$systemdsystemunitdir"/remote-cryptsetup.target \
         "$systemdsystemunitdir"/debug-shell.service \
         "$systemdsystemunitdir"/emergency.target \
         "$systemdsystemunitdir"/sysinit.target \
