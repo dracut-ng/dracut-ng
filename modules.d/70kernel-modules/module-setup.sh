@@ -100,6 +100,7 @@ installkernel() {
                 "=drivers/usb/host" \
                 "=drivers/usb/isp1760" \
                 "=drivers/usb/misc" \
+                "=drivers/usb/mtu3" \
                 "=drivers/usb/musb" \
                 "=drivers/usb/phy" \
                 "=drivers/scsi/hisi_sas" \
