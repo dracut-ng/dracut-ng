@@ -1468,11 +1468,11 @@ fi
 
 export LC_MESSAGES=C kernel
 
-srcmods="$(realpath -e "${dracutsysrootdir-}/lib/modules/$kernel")"
-
-[[ ${drivers_dir-} ]] && {
+if [[ ${drivers_dir-} ]]; then
     srcmods="$drivers_dir"
-}
+else
+    srcmods="$(realpath -e "${dracutsysrootdir-}/lib/modules/$kernel")"
+fi
 export srcmods
 
 # export standard hookdirs
