@@ -11,6 +11,11 @@ check() {
     return 255
 }
 
+# Config adjustments before installing anything.
+config() {
+    add_dlopen_features+=" libsystemd-shared-*.so:fdisk "
+}
+
 # Install the required file(s) for the module in the initramfs.
 install() {
     inst_multiple -o \
@@ -29,6 +34,12 @@ install() {
         "mkfs.vfat" \
         "mkfs.erofs" \
         "mksquashfs"
+
+    # Install library file(s)
+    if [[ ! $USE_SYSTEMD_DLOPEN_DEPS ]]; then
+        inst_libdir_file \
+            {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libfdisk.so.*"
+    fi
 
     # Install the hosts local user configurations if enabled.
     if [[ $hostonly ]]; then
