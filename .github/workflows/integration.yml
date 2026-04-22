@@ -133,6 +133,7 @@ jobs:
                     - "43"
                     - "44"
                     - "45"
+                    - "46"
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
             options: '--device=/dev/kvm --privileged'
