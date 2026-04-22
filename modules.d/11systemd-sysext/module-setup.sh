@@ -25,7 +25,7 @@ depends() {
 
 # Install kernel module(s).
 installkernel() {
-    hostonly=$(optional_hostonly) instmods -s erofs
+    hostonly=$(optional_hostonly) instmods -s erofs ext4 squashfs
     hostonly='' instmods loop
 }
 
