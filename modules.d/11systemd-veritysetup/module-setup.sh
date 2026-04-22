@@ -40,6 +40,7 @@ installkernel() {
 install() {
 
     inst_multiple -o \
+        "/usr/lib/verity.d/*.conf" \
         "$systemdutildir"/systemd-veritysetup \
         "$systemdutildir"/system-generators/systemd-veritysetup-generator \
         "$systemdsystemunitdir"/remote-veritysetup.target \
@@ -52,6 +53,7 @@ install() {
     if [[ $hostonly ]]; then
         inst_multiple -H -o \
             /etc/veritytab \
+            "/etc/verity.d/*.conf" \
             "$systemdsystemconfdir"/veritysetup.target \
             "$systemdsystemconfdir/veritysetup.target.wants/*.target" \
             "$systemdsystemconfdir"/veritysetup-pre.target \
