@@ -121,7 +121,7 @@ ask_for_password() {
             while [ 0 -eq "$tty_tries" ] || [ $i -le "$tty_tries" ]; do
                 if [ -n "$tty_prompt" ]; then
                     printf "%s" "$tty_prompt" >&2
-                    if [ 0 -ne "$tty_tries" ] ; then
+                    if [ 0 -ne "$tty_tries" ]; then
                         printf "%s" " [$i/$tty_tries]" >&2
                     fi
                     printf "%s" ":" >&2
