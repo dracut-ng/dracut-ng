@@ -46,6 +46,11 @@ depends() {
 }
 
 # called by dracut
+config() {
+    add_dlopen_features+=" libsystemd-shared-*.so:cryptsetup "
+}
+
+# called by dracut
 install() {
     # the cryptsetup targets are already pulled in by 00systemd, but not
     # the enablement symlinks
@@ -58,6 +63,12 @@ install() {
         "$systemdsystemunitdir"/sysinit.target.wants/cryptsetup.target \
         "$systemdsystemunitdir"/remote-cryptsetup.target \
         "$systemdsystemunitdir"/initrd-root-device.target.wants/remote-cryptsetup.target
+
+    # Install required libraries.
+    if [[ ! $USE_SYSTEMD_DLOPEN_DEPS ]]; then
+        inst_libdir_file \
+            {"tls/$DRACUT_ARCH/",tls/,"$DRACUT_ARCH/",}"libcryptsetup.so.*"
+    fi
 
     if [[ $hostonly ]] && [[ -f $initdir/etc/crypttab ]]; then
         # for each entry in /etc/crypttab check if the key file is backed by a socket unit and if so,
