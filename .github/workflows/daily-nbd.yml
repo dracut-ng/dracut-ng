@@ -1,5 +1,5 @@
 ---
-name: Daily Tests - network
+name: Daily Tests - nbd
 
 on:  # yamllint disable-line rule:truthy
     schedule:
@@ -10,7 +10,7 @@ on:  # yamllint disable-line rule:truthy
 
     pull_request:
         paths:
-            - '.github/workflows/daily-network.yml'
+            - '.github/workflows/daily-nbd.yml'
 
 jobs:
     network:
@@ -31,21 +31,20 @@ jobs:
                 container:
                     - arch:latest
                     - debian:latest
-                    - debian:sid
                     - fedora:latest
                     - opensuse:latest
                     - ubuntu:devel
                     - ubuntu:rolling
                 test:
-                    - "31"
-                    - "60"
+                    - "72"
                 exclude:
                     - container: arch:latest
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                     - container: fedora:latest
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
-                    # https://github.com/dracut-ng/dracut-ng/issues/1988
-                    - container: debian:sid
+                    - container: ubuntu:devel
+                      architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
+                    - container: ubuntu:rolling
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
         container:
             image: ghcr.io/dracut-ng/${{ matrix.container }}
