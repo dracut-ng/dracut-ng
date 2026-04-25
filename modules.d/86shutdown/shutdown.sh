@@ -43,9 +43,10 @@ getargs 'rd.break=pre-shutdown' && emergency_shell --shutdown pre-shutdown "Brea
 
 source_hook pre-shutdown
 
-info "Killing all remaining processes"
-
-killall_proc_mountpoint /oldroot || sleep 0.2
+if ! killall_proc_mountpoint /oldroot; then
+    warn "Killed remaining processes using /oldroot"
+    sleep 0.2
+fi
 
 # Timeout for umount calls. The value can be set to 0 to wait forever.
 _umount_timeout=$(getarg rd.shutdown.timeout.umount)
