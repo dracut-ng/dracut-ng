@@ -26,7 +26,7 @@ test_setup() {
     # test DRACUT_EXTRA_ARGS
     DRACUT_EXTRA_ARGS="--keep --hostonly --sysroot '$TESTDIR/sysroot'" test_dracut
 
-    grep 'hostonly' "$TESTDIR"/initrd/dracut.*/initramfs/usr/lib/dracut/build-parameter.txt
+    grep 'hostonly' "$TESTDIR"/initrd/dracut.*/initramfs/lib/dracut/build-parameter.txt
 
     if grep -q '^root:' /etc/shadow; then
         if ! grep -q '^root:' "$TESTDIR"/initrd/dracut.*/initramfs/etc/shadow; then
