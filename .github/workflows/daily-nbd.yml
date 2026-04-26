@@ -3,7 +3,7 @@ name: Daily Tests - nbd
 
 on:  # yamllint disable-line rule:truthy
     schedule:
-        - cron: '30 23 * * *'   # every day at 23:30 UTC
+        - cron: '30 17 * * *'   # every day at 17:30 UTC
 
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:

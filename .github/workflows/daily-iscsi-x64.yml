@@ -3,7 +3,7 @@ name: Daily Tests - iscsi (x64)
 
 on:  # yamllint disable-line rule:truthy
     schedule:
-        - cron: '30 23 * * *'   # every day at 23:30 UTC
+        - cron: '00 16 * * *'   # every day at 16:00 UTC
 
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
