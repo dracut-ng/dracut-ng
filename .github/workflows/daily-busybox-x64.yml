@@ -3,7 +3,7 @@ name: Daily Tests - busybox (x64)
 
 on:  # yamllint disable-line rule:truthy
     schedule:
-        - cron: '30 23 * * *'   # every day at 23:30 UTC
+        - cron: '00 15 * * *'   # every day at 15:00 UTC
 
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:

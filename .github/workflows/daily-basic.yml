@@ -3,7 +3,7 @@ name: Daily Tests - basic
 
 on:  # yamllint disable-line rule:truthy
     schedule:
-        - cron: '30 23 * * *'   # every day at 23:30 UTC
+        - cron: '00 13 * * *'   # every day at 13:00 UTC
 
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
