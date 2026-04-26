@@ -548,6 +548,10 @@ systemd-sysusers:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-sysusers/*'
 
+systemd-sysusers-service:
+    - changed-files:
+          - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-sysusers-service/*'
+
 systemd-timedated:
     - changed-files:
           - any-glob-to-any-file: 'modules.d/[0-9][0-9]systemd-timedated/*'
