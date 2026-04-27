@@ -182,6 +182,7 @@ Module should only read (and not write) these variables.
  * `$hostonly_mode` (could be an empty string)
  * `$hostonly_cmdline` (not an empty string)
  * `$moddir` (not an empty string)
+ * `$hookdir` (not an empty string)
 
 First we create a check() function, which just exits with 0 indicating that this
 module should be included by default.
