@@ -94,7 +94,7 @@ find_binary() {
             printf "%s\n" "${_path}"
             return 0
         fi
-    done <<< "$PATH"
+    done <<< "${PATH}:"
 
     [[ -n ${dracutsysrootdir-} ]] && return 1
     type -P "${1##*/}"
