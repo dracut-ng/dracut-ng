@@ -26,8 +26,8 @@ RUN case $(dpkg --print-architecture) in \
     if [ "$DISTRIBUTION" = "ubuntu:rolling" ]; then \
         coreutils="coreutils-from-gnu coreutils-from-uutils- --allow-remove-essential"; \
     fi; \
-    apt-get update -y -qq && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -qq && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends -o Dpkg::Use-Pty=0 \
+    apt-get update && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends -o Dpkg::Use-Pty=0 \
     $arch_pkgs \
     $cpio \
     $coreutils \
