@@ -99,7 +99,7 @@ det_img_fs() {
     # avoid blkid options to maintain compatibility with busybox
     devicetype=$(blkid "$1")
     fstype="${devicetype#*TYPE=\"}"
-    echo "${fstype=%%\"*}"
+    echo "${fstype%%\"*}"
 }
 
 CMDLINE=$(getcmdline)
