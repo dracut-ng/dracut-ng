@@ -23,7 +23,7 @@
 # Please do not use functions from this file in your dracut module
 # Only use functions from dracut-functions.sh
 
-DRACUT_VERSION="110"
+DRACUT_VERSION="111"
 
 unset BASH_ENV
 unset GZIP
