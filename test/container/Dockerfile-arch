@@ -12,7 +12,7 @@
 # - busybox (no need, tested elsewhere)
 # - cifs-utils (no need, tested elsewhere)
 # - openssh (no need, tested elsewhere)
-# - rng-tools (does not start, https://github.com/dracut-ng/dracut-ng/pull/290#issuecomment-2138184351)
+# - rng-tools (does not start, https://github.com/dracut-ng/dracut/pull/290#issuecomment-2138184351)
 
 FROM docker.io/archlinux
 

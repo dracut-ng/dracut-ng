@@ -163,10 +163,10 @@ night scheme of Farce Majeure, link:https://github.com/katzj[Jeremy Katz] and
 link:https://lwn.net/Articles/317874/[Dave Jones] who also did the initial
 implementation until link:https://github.com/haraldh[Harald Hoyer] took it
 under his care in 2009 and continued its development from there
-link:https://github.com/dracut-ng/dracut-ng/commit/9371dcaba3c58377428eee44bd702fae7b2ab20e[on].
+link:https://github.com/dracut-ng/dracut/commit/9371dcaba3c58377428eee44bd702fae7b2ab20e[on].
 
 The project
-link:https://github.com/dracut-ng/dracut-ng/commit/ec9315e56222d38fdbfca5f8e47f05c156ce4927[started]
+link:https://github.com/dracut-ng/dracut/commit/ec9315e56222d38fdbfca5f8e47f05c156ce4927[started]
 and was link:https://lkml.org/lkml/2008/12/17/318[announced] in 2008.
 
 Some people inside Red Hat started to name their projects after cities and
@@ -205,7 +205,7 @@ components.
 == License
 
 dracut is licensed under the GNU General Public License (GPL) v2; see
-link:https://github.com/dracut-ng/dracut-ng/blob/main/COPYING[COPYING]
+link:https://github.com/dracut-ng/dracut/blob/main/COPYING[COPYING]
 
 Parts of this documentation site are taken from work licensed under the
 Creative Commons Attribution/Share-Alike License. To view a copy of this

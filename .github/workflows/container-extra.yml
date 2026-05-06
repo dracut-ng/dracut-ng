@@ -25,7 +25,7 @@ permissions:
 
 jobs:
     container-extra:
-        if: github.repository == 'dracut-ng/dracut-ng' || vars.CONTAINER == 'enabled'
+        if: github.repository == 'dracut-ng/dracut' || vars.CONTAINER == 'enabled'
         name: ${{ matrix.config.tag }}-${{ matrix.architecture.tag }}
         runs-on: ${{ matrix.architecture.runner }}
         concurrency:

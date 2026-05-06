@@ -19,7 +19,7 @@ depends() {
 
     # when systemd and crypt are both included
     # systemd-cryptsetup is mandatory dependency
-    # see https://github.com/dracut-ng/dracut-ng/issues/563
+    # see https://github.com/dracut-ng/dracut/issues/563
     if dracut_module_included "crypt"; then
         module_check systemd-cryptsetup > /dev/null 2>&1
         if [[ $? == 255 ]]; then

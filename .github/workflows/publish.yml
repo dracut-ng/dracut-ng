@@ -24,7 +24,7 @@ permissions:
 
 jobs:
     build:
-        if: github.repository == 'dracut-ng/dracut-ng'
+        if: github.repository == 'dracut-ng/dracut'
         runs-on: ubuntu-latest
         environment:
             name: github-pages

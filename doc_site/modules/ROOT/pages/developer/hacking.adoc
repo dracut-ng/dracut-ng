@@ -6,7 +6,7 @@ Please make sure to follow our xref:developer/contributing.adoc[Contribution Gui
 
 Currently dracut-ng lives on github.com.
 
-* https://github.com/dracut-ng/dracut-ng.git
+* https://github.com/dracut-ng/dracut.git
 
 Pull requests should be filed in this project
 

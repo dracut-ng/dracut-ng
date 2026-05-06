@@ -15,18 +15,18 @@ system and combining it with dracut modules, usually found in
 Generated documentation from this source tree is available at
 https://dracut-ng.github.io/
 
-The [Wiki](https://github.com/dracut-ng/dracut-ng/wiki) is available to share
+The [Wiki](https://github.com/dracut-ng/dracut/wiki) is available to share
 information.
 
 # Releases
 
-The release tarballs are [here](https://github.com/dracut-ng/dracut-ng/releases).
+The release tarballs are [here](https://github.com/dracut-ng/dracut/releases).
 
 See [News](NEWS.md) for information about changes in the releases
 
 # Contributing
 
-Currently dracut-ng is developed on [github.com](https://github.com/dracut-ng/dracut-ng).
+Currently dracut-ng is developed on [github.com](https://github.com/dracut-ng/dracut).
 
 See the developer guide at https://dracut-ng.github.io/ for information on
 reporting issues, contributing code via pull requests and guidelines for how to
@@ -43,7 +43,7 @@ public tracker.  For guidelines on reporting security issues see the
 Chat (Matrix):
  - https://matrix.to/#/#dracut-ng:matrix.org
 
-See the [GitHub issue tracker](https://github.com/dracut-ng/dracut-ng/issues) for
+See the [GitHub issue tracker](https://github.com/dracut-ng/dracut/issues) for
 things which still need to be done. This is also the main place used for
 discussions.
 
