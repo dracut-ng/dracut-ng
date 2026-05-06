@@ -87,3 +87,4 @@ fi
 } | dd oflag=direct of=/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_marker status=none
 
 sync
+exit 0
