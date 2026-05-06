@@ -106,7 +106,7 @@ exportfs -r
 dnsmasq
 : > /dev/watchdog
 exportfs -s
-# tcpdump is a workaround for https://github.com/dracut-ng/dracut-ng/issues/2283
+# tcpdump is a workaround for https://github.com/dracut-ng/dracut/issues/2283
 tcpdump -Z root -i enx525400123456 -n port 67 or port 68 &
 echo "Serving NFS mounts"
 while :; do

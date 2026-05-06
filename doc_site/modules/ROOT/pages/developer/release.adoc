@@ -3,6 +3,6 @@
 This documents contains the necessary steps to conduct a successful release.
 
 . Run `tools/release.sh` shell script
-. Create a new release on github (https://github.com/dracut-ng/dracut-ng/releases/new)
+. Create a new release on github (https://github.com/dracut-ng/dracut/releases/new)
  ** Add the section from `NEWS.md` to the release.
-. Open a new milestone, move all unfinished issue from the previous milestone to the new one and close the released milestone (https://github.com/dracut-ng/dracut-ng/milestones)
+. Open a new milestone, move all unfinished issue from the previous milestone to the new one and close the released milestone (https://github.com/dracut-ng/dracut/milestones)

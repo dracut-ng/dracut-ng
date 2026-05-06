@@ -43,13 +43,13 @@ cat CONTRIBUTORS.md NEWS_body.md > NEWS_body_with_conttributors.md
 
 # Get a template with [`clog`](https://github.com/clog-tool/clog-cli)
 # clog will always output both the new release and old release information together
-clog -F --infile NEWS_body_with_conttributors.md -r https://github.com/dracut-ng/dracut-ng | sed '1,2d' > NEWS_body_full.md
+clog -F --infile NEWS_body_with_conttributors.md -r https://github.com/dracut-ng/dracut | sed '1,2d' > NEWS_body_full.md
 
 # Use diff to separate new release information and remove repeated empty lines
 diff NEWS_body_with_conttributors.md NEWS_body_full.md | grep -e ^\>\  | sed s/^\>\ // | cat -s > NEWS_body_new.md
 cat NEWS_header.md NEWS_header_new.md NEWS_body_new.md NEWS_body_with_conttributors.md > NEWS.md
 
-# message for https://github.com/dracut-ng/dracut-ng/releases/tag
+# message for https://github.com/dracut-ng/dracut/releases/tag
 cat -s NEWS_body_new.md CONTRIBUTORS.md > release.md
 
 # update DRACUT_VERSION

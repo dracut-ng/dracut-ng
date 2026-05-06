@@ -59,7 +59,7 @@ jobs:
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                     - container: centos:latest
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
-                    # https://github.com/dracut-ng/dracut-ng/issues/1677
+                    # https://github.com/dracut-ng/dracut/issues/1677
                     - container: arch:latest
                       test: "41"
                     # intentionally skipped
@@ -70,7 +70,7 @@ jobs:
                     - container: ubuntu:rolling
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                       test: "43"
-                    # https://github.com/dracut-ng/dracut-ng/issues/1988
+                    # https://github.com/dracut-ng/dracut/issues/1988
                     - container: debian:sid
                       architecture: {runner: 'ubuntu-24.04-arm', tag: 'arm'}
                     # TEST-45-SYSTEMD-IMPORT requires systemd >= v258
