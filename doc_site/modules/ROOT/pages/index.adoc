@@ -154,7 +154,7 @@ procedure.  See xref:man/dracut-shutdown.service.8.adoc[] for details.
 == Development
 
 Issues and merge requests can be found at the GitHub development page at
-link:https://github.com/dracut-ng//dracut-ng[]
+link:https://github.com/dracut-ng/dracut[].
 
 == History
 
