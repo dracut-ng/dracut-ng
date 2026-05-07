@@ -86,15 +86,14 @@ test_setup() {
         "$TESTDIR/$confext_name.raw"
 
     # Create a system extension: this will create a script in
-    # initqueue/finished that checks if the marker created with the confext
-    # exists and prints its content (if this check fails, the initqueue loop
-    # will not end and the system will not boot)
+    # pre-pivot that checks if the marker created with the confext
+    # exists and prints its content
     sysext_name="dracut-sysext"
-    mkdir -p "$TESTDIR/$sysext_name/usr/lib/dracut/hooks/initqueue/finished"
+    mkdir -p "$TESTDIR/$sysext_name/usr/lib/dracut/hooks/pre-pivot"
     pushd "$TESTDIR/$sysext_name/usr/lib"
-    touch "dracut/hooks/initqueue/finished/$sysext_name.sh"
-    chmod +x "dracut/hooks/initqueue/finished/$sysext_name.sh"
-    echo "[ -e \"/etc/$confext_name.marker\" ] && warn \"\$(cat /etc/$confext_name.marker)\"" > "dracut/hooks/initqueue/finished/$sysext_name.sh"
+    touch "dracut/hooks/pre-pivot/$sysext_name.sh"
+    chmod +x "dracut/hooks/pre-pivot/$sysext_name.sh"
+    echo "[ -e \"/etc/$confext_name.marker\" ] && warn \"\$(cat /etc/$confext_name.marker)\"" > "dracut/hooks/pre-pivot/50-$sysext_name.sh"
     mkdir -p "extension-release.d"
     {
         grep -e "^ID=" -e "^VERSION_ID=" /etc/os-release
@@ -117,7 +116,7 @@ test_setup() {
         -i "$TESTDIR/$confext_name.raw" "/.extra/confext/$confext_name.raw" \
         -i "$TESTDIR/$sysext_name.raw" "/.extra/sysext/$sysext_name.raw" \
         -i "$TESTDIR/$crt_dir/dracut.crt" "/etc/verity.d/dracut.crt" \
-        -a "systemd-sysext initqueue"
+        -a "systemd-sysext"
 }
 
 # shellcheck disable=SC1090
