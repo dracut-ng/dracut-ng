@@ -301,7 +301,7 @@ if ! [ "$netif" = "online" ]; then
         for nroot in $(getargs netroot); do
             [ "${nroot%%:*}" = "iscsi" ] || continue
             nroot="${nroot##iscsi:}"
-            if [ -n "$nroot" ]; then
+            if [ -n "$nroot" ] && [ "$nroot" != "iscsi" ]; then
                 handle_netroot "$nroot"
                 ret=$((ret + $?))
             fi

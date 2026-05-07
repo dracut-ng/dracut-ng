@@ -426,6 +426,7 @@ parse_iscsi_root() {
     set $v
     IFS="$OLDIFS"
 
+    [ $# -ge 2 ] || return 0
     iscsi_protocol=$1
     shift # ignored
     iscsi_target_port=$1
