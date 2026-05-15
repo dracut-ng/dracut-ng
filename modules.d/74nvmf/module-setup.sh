@@ -91,11 +91,7 @@ cmdline() {
     gen_nvmf_cmdline() {
         local _dev=$1
         local trtype
-        local traddr
-        local host_traddr
-        local trsvcid
-        local _address
-        local -a _address_parts
+        local discover
 
         [[ -L "/sys/dev/block/$_dev" ]] || return 0
         cd -P "/sys/dev/block/$_dev" || return 0
@@ -111,20 +107,19 @@ cmdline() {
         done
 
         [ -z "$trtype" ] && return 0
-        nvme list-subsys "${PWD##*/}" | while read -r _ _ trtype _address _; do
-            [[ -z $trtype || $trtype != "${trtype#NQN}" ]] && continue
-            unset traddr
-            unset host_traddr
-            unset trsvcid
-            mapfile -t -d ',' _address_parts < <(printf "%s" "$_address")
-            for i in "${_address_parts[@]}"; do
-                [[ $i =~ ^traddr= ]] && traddr="${i#traddr=}"
-                [[ $i =~ ^host_traddr= ]] && host_traddr="${i#host_traddr=}"
-                [[ $i =~ ^trsvcid= ]] && trsvcid="${i#trsvcid=}"
-            done
-            [[ -z $traddr && -z $host_traddr && -z $trsvcid ]] && continue
-            echo -n " rd.nvmf.discover=$trtype,$traddr,$host_traddr,$trsvcid"
-        done
+        discover=$(nvme list-subsys "${PWD##*/}" -o json | jq -j '
+        if type == "array" then .[] else . end
+        | .Subsystems[]?
+        | .Paths[]?
+        | select(.Transport == "'"$trtype"'" and .Address)
+        | .Address as $a
+        | ($a | capture("traddr=(?<traddr>[^,]*)(,trsvcid=(?<trsvcid>[^,]*))?(,host_traddr=(?<host_traddr>[^,]*))?")) as $m
+        | if $m.traddr == null and $m.trsvcid == null and $m.host_traddr == null
+        then .
+        else " rd.nvmf.discover=\(.Transport),\($m.traddr // ""),\($m.host_traddr // ""),\($m.trsvcid // "")"
+        end
+        ')
+        echo -n "$discover"
     }
 
     if [ -f /etc/nvme/hostnqn ]; then
