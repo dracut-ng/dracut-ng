@@ -215,6 +215,11 @@ WARNING: If chrooted to another root other than the real root device, use
 *use_fstab=*"__{yes|no}__"::
 Use _/etc/fstab_ instead of _/proc/self/mountinfo_ (default=no).
 
+*prefer_busybox=*"__{yes|no}__"::
+If the busybox module is included, do not copy host binaries into the
+initrd when busybox provides an equivalent applet. This reduces initrd
+size at the cost of busybox's reduced feature set (default=no).
+
 *add_fstab+=*" __<filename>__ "::
 Add entries of __<filename>__ to the initramfs `/etc/fstab`.
 

@@ -24,36 +24,64 @@ depends() {
 
 # called by dracut
 install() {
-    inst_multiple \
-        cp \
-        dmesg \
-        flock \
-        ln \
-        ls \
-        mkdir \
-        mkfifo \
-        mknod \
-        modprobe \
-        mount \
-        mv \
-        readlink \
-        rm \
-        rmmod \
-        sed \
-        setsid \
-        sleep \
-        tr \
+    local _progs=(
+        cp
+        dmesg
+        flock
+        ln
+        ls
+        mkdir
+        mkfifo
+        mknod
+        modprobe
+        mount
+        mv
+        readlink
+        rm
+        rmmod
+        sed
+        setsid
+        sleep
+        tr
         umount
-
-    inst_multiple -o \
-        chown \
-        findmnt \
-        kmod \
-        less \
-        halt \
-        poweroff \
-        reboot \
+    )
+    local _optprogs=(
+        chown
+        findmnt
+        kmod
+        less
+        halt
+        poweroff
+        reboot
         sysctl
+    )
+
+    if [[ $prefer_busybox == yes ]] && dracut_module_included "busybox"; then
+        # Drop names busybox provides so they aren't copied from the host
+        local _busybox _applet
+        declare -A _bb_applets
+        _busybox=$(find_binary busybox)
+        for _applet in $($_busybox --list); do
+            _bb_applets[$_applet]=1
+        done
+
+        local _filtered=()
+        for _applet in "${_progs[@]}"; do
+            [[ ${_bb_applets[$_applet]:-} ]] && continue
+            _filtered+=("$_applet")
+        done
+        _progs=("${_filtered[@]}")
+
+        _filtered=()
+        for _applet in "${_optprogs[@]}"; do
+            [[ ${_bb_applets[$_applet]:-} ]] && continue
+            _filtered+=("$_applet")
+        done
+        _optprogs=("${_filtered[@]}")
+    fi
+
+    inst_multiple "${_progs[@]}"
+    inst_multiple -o "${_optprogs[@]}"
 
     inst_binary "${dracutbasedir}/dracut-util" "/usr/bin/dracut-util"
 
