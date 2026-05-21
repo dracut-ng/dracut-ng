@@ -63,15 +63,13 @@ The kernel modules have to be specified without the ".ko" suffix.
 The kernel subsystems have to be specified with an "=" as a prefix, like
 "=drivers/net/team".
 
-*force_drivers+=*" __<kernel drivers>__ "::
-See add_drivers above. But in this case it is ensured that the drivers
-are tried to be loaded early via modprobe.
+*force_drivers+=*" __<list of kernel modules>__ "::
+Specify a space-separated list of kernel modules to add. Modules are tried to
+be loaded early via modprobe. Only accepts kernel modules.
 
-*omit_drivers+=*" __<kernel drivers>__ "::
-Specify a space-separated list of kernel drivers not to add to the
+*omit_drivers+=*" __<kernel modules>__ "::
+Specify a space-separated list of kernel modules not to add to the
 initramfs. The kernel modules have to be specified without the ".ko" suffix.
-The kernel subsystems have to be specified with an "=" as a prefix, like
-"=drivers/net/team".
 
 *drivers+=*" __<kernel drivers>__ "::
 Specify a space-separated list of kernel drivers to exclusively include in the
